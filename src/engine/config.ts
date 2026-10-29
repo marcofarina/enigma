@@ -20,7 +20,7 @@ export interface MachineConfig {
   plugboard?: readonly string[];
   /**
    * Posizione dell’Uhr (0–39). Richiede esattamente 10 cavi: per ogni coppia del pannello,
-   * la prima lettera riceve la spina rossa (a) e la seconda quella bianca (b), nell’ordine 1–10.
+   * la prima lettera riceve la spina rossa (a) e la seconda quella nera (b), nell’ordine 1–10.
    */
   uhr?: number;
   /** Cablaggio dell’UKW-D: 12 coppie in notazione di Bletchley Park (J–Y è fissa e va omessa). */
