@@ -1,6 +1,9 @@
 @import 'tailwindcss';
 @import './tokens.css';
 
+/* `lim:` vale dentro il simulatore in modalità LIM (attributo `data-lim`). */
+@custom-variant lim (&:where([data-lim], [data-lim] *));
+
 /* Le utility Tailwind puntano ai design token, così il tema si cambia solo in tokens.css. */
 @theme inline {
   --color-bg: var(--color-bg);
@@ -17,6 +20,8 @@
   --color-lamp-on: var(--color-lamp-on);
   --color-lamp-on-text: var(--color-lamp-on-text);
   --color-plug-red: var(--color-plug-red);
+  --color-qr-dark: var(--color-qr-dark);
+  --color-qr-light: var(--color-qr-light);
   --font-sans: var(--font-sans);
   --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);

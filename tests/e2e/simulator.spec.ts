@@ -127,3 +127,31 @@ test('la traccia passo-passo segue il segnale dell’ultimo tasto', async ({ pag
   await screenKey(page, 'A').click();
   await expect(trace).toContainText('Passo 13 di 13');
 });
+
+test('la modalità LIM mostra solo la macchina ed è accessibile', async ({ page }) => {
+  await open(page);
+  const config = page.getByRole('heading', { name: 'Configurazione', exact: true });
+  await expect(config).toBeVisible();
+  await page.getByRole('button', { name: 'Modalità LIM' }).click();
+  await expect(page.locator('[data-lim]')).toHaveCount(1);
+  await expect(config).toBeHidden();
+  await screenKey(page, 'A').click();
+  await expect(lit(page)).toHaveText('B');
+  for (const scheme of ['light', 'dark'] as const) {
+    await page.emulateMedia({ colorScheme: scheme });
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(results.violations).toEqual([]);
+  }
+  await page.getByRole('button', { name: 'Esci dalla modalità LIM' }).click();
+  await expect(page.locator('[data-lim]')).toHaveCount(0);
+  await expect(config).toBeVisible();
+});
+
+test('il link condivisibile si mostra anche come codice QR', async ({ page }) => {
+  await open(page);
+  const toggle = page.getByRole('button', { name: 'Mostra il codice QR' });
+  await toggle.click();
+  const qr = page.getByRole('img', { name: 'Codice QR del link condivisibile' });
+  await expect(qr).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Nascondi il codice QR' })).toHaveAttribute('aria-expanded', 'true');
+});

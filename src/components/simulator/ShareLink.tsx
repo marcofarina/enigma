@@ -1,6 +1,7 @@
 import { useId, useState } from 'react';
 import { t } from '@/i18n';
 import { url } from '@/lib/url';
+import QrCode from '@/components/ui/QrCode.tsx';
 import { copyText } from './labels.ts';
 import { tapeLetters } from './session.ts';
 import { shareQuery } from './share.ts';
@@ -11,6 +12,7 @@ export default function ShareLink() {
   const session = useSimulator((s) => s.session);
   const [withMessage, setWithMessage] = useState(false);
   const [status, setStatus] = useState('');
+  const [showQr, setShowQr] = useState(false);
   if (!session.machine) return null;
 
   const message = withMessage ? tapeLetters(session).input : '';
@@ -52,6 +54,25 @@ export default function ShareLink() {
       <p className="text-sm text-text-muted" aria-live="polite">
         {status}
       </p>
+      <div>
+        <button
+          type="button"
+          aria-expanded={showQr}
+          aria-controls={`${id}-qr`}
+          className="min-h-11 rounded-md border border-border bg-surface px-3 py-2 text-sm hover:border-accent"
+          onClick={() => setShowQr(!showQr)}
+        >
+          {showQr ? t('sim.share.hideQr') : t('sim.share.showQr')}
+        </button>
+      </div>
+      <div id={`${id}-qr`} hidden={!showQr}>
+        {showQr && (
+          <figure className="flex flex-col items-start gap-2">
+            <QrCode text={link} label={t('sim.share.qrLabel')} className="w-56 rounded-md lim:w-96" />
+            <figcaption className="max-w-sm text-sm text-text-muted">{t('sim.share.qrHint')}</figcaption>
+          </figure>
+        )}
+      </div>
     </section>
   );
 }
