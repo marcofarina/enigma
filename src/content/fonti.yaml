@@ -1,0 +1,51 @@
+# Bibliografia di base. L’id di ogni voce si usa nel frontmatter delle lezioni (campo `fonti`).
+- id: singh-codici-segreti
+  autori: Simon Singh
+  titolo: Codici & segreti. La storia affascinante dei messaggi cifrati dall’antico Egitto a Internet
+  editore: Rizzoli
+  anno: 1999
+  note: Edizione originale “The Code Book”, Fourth Estate, 1999. Numeri di pagina delle citazioni da verificare sull’edizione in uso.
+- id: rejewski-1980
+  autori: Marian Rejewski
+  titolo: An Application of the Theory of Permutations in Breaking the Enigma Cipher
+  editore: Applicationes Mathematicae 16 (4)
+  anno: 1980
+- id: welchman-hut-six
+  autori: Gordon Welchman
+  titolo: The Hut Six Story. Breaking the Enigma Codes
+  editore: McGraw-Hill
+  anno: 1982
+- id: kozaczuk-enigma
+  autori: Władysław Kozaczuk
+  titolo: Enigma. How the German Machine Cipher Was Broken, and How It Was Read by the Allies in World War Two
+  editore: University Publications of America
+  anno: 1984
+- id: sebag-montefiore-enigma
+  autori: Hugh Sebag-Montefiore
+  titolo: 'Enigma: The Battle for the Code'
+  editore: Weidenfeld & Nicolson
+  anno: 2000
+- id: batey-dilly
+  autori: Mavis Batey
+  titolo: 'Dilly: The Man Who Broke Enigmas'
+  editore: Dialogue
+  anno: 2009
+- id: bauer-decrypted-secrets
+  autori: Friedrich L. Bauer
+  titolo: Decrypted Secrets. Methods and Maxims of Cryptology
+  editore: Springer
+  anno: 2007
+- id: crypto-museum
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Enigma
+  url: https://www.cryptomuseum.com/crypto/enigma/
+- id: cryptocellar
+  autori: Frode Weierud
+  titolo: CryptoCellar — Enigma documents and rotor wiring catalog
+  url: https://cryptocellar.org/enigma/
+- id: summerside-enigma
+  autori: Summerside Makerspace
+  titolo: EnigmaMachine — browser based simulation of the cipher machine
+  anno: 2016
+  url: https://github.com/SummersideMakerspace/EnigmaMachine
+  note: Simulatore da cui provengono i vettori di test usati per verificare il motore.

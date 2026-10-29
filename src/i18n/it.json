@@ -1,0 +1,23 @@
+{
+  "site.title": "Enigma",
+  "site.project": "Rainbow Bits",
+  "site.description": "Simulatore didattico della macchina Enigma, con storia, funzionamento, matematica, crittoanalisi ed esercizi.",
+  "nav.label": "Navigazione principale",
+  "nav.home": "Home",
+  "nav.simulator": "Simulatore",
+  "nav.howItWorks": "Come funziona",
+  "nav.history": "Storia",
+  "nav.cryptanalysis": "Crittoanalisi",
+  "nav.exercises": "Esercizi",
+  "nav.teachers": "Docenti",
+  "nav.sources": "Fonti",
+  "a11y.skipToContent": "Vai al contenuto",
+  "theme.toggle": "Cambia tema chiaro/scuro",
+  "footer.license.code": "Codice con licenza MIT",
+  "footer.license.content": "testi e materiali didattici con licenza CC BY-NC-SA 4.0",
+  "footer.thirdParty": "Le immagini di terzi mantengono la propria licenza.",
+  "status.draft": "Bozza in revisione: il testo non è ancora stato approvato.",
+  "status.comingSoon": "Questa sezione è in preparazione.",
+  "lesson.next": "Lezione successiva",
+  "lesson.previous": "Lezione precedente"
+}

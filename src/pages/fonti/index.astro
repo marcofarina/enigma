@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const fonti = (await getCollection('fonti')).sort((a, b) => a.data.autori.localeCompare(b.data.autori, 'it'));
+const immagini = await getCollection('immagini');
+---
+
+<BaseLayout title="Fonti e crediti">
+  <section class="prose-it">
+    <h1>Fonti e crediti</h1>
+    <h2>Bibliografia</h2>
+    <ul>
+      {fonti.map(({ data }) => (
+        <li>
+          {data.autori}, <cite>{data.url ? <a href={data.url}>{data.titolo}</a> : data.titolo}</cite>
+          {data.editore && `, ${data.editore}`}
+          {data.anno && `, ${data.anno}`}.{data.note && ` ${data.note}`}
+        </li>
+      ))}
+    </ul>
+    <h2>Crediti delle immagini</h2>
+    {immagini.length === 0 ? (
+      <p>Non sono ancora presenti immagini di terzi.</p>
+    ) : (
+      <ul>
+        {immagini.map(({ data }) => (
+          <li>
+            {data.titolo}: {data.attribuzione} (<a href={data.fonte}>fonte</a>, licenza {data.licenza}).
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+</BaseLayout>

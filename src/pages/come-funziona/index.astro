@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { isLessonIn, lessonSlug } from '@/lib/lessons';
+import { url } from '@/lib/url';
+
+const lezioni = (await getCollection('lezioni', (lezione) => isLessonIn(lezione, 'come-funziona'))).sort(
+  (a, b) => a.data.ordine - b.data.ordine,
+);
+---
+
+<BaseLayout title="Come funziona">
+  <section class="prose-it">
+    <h1>Come funziona</h1>
+    <p>Un percorso in più tappe, dal cifrario a sostituzione fino alla macchina completa.</p>
+  </section>
+  <ol class="mt-6 grid max-w-3xl gap-3">
+    {lezioni.map((lezione) => (
+      <li>
+        <a
+          href={url(`come-funziona/${lessonSlug(lezione)}/`)}
+          class="block rounded-lg border border-border bg-surface p-4 text-text no-underline hover:border-accent"
+        >
+          <span class="font-semibold">{lezione.data.title}</span>
+          <span class="block text-text-muted">{lezione.data.description}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</BaseLayout>
