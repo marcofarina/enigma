@@ -8,18 +8,19 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
 - PR marcofarina/enigma#1 (`claude/fase-0-setup`): struttura Astro 7 + React + TypeScript + Tailwind 4 + MDX, design token, collezioni (lezioni, fonti, immagini), `lint:content`, ESLint, Prettier, Vitest, Playwright + axe, CI e deploy su GitHub Pages (attivato).
 - PR marcofarina/enigma#2 (`claude/fase-1-motore`, impilata sulla #1): motore in `src/engine/` con 15 modelli, API immutabile con traccia del segnale, validazione, Uhr, UKW-D, `prepareText` e codec dei link; 83 test; 2.250 vettori del motore originale in `fixtures/` (150.000 verificati in locale, tutti coincidenti).
 
-## Prossimo passo: fase 1b
+- Branch `claude/fase-1b-simulatore` (impilato sulla #2): simulatore schematico in `/simulatore/`.
+  - `src/components/simulator/`: sessione pura (`session.ts`, unica fonte di verità, annulla e ripeti sulle pressioni), store Zustand, modifiche alla configurazione (`config-edit.ts`), filtro della tastiera fisica (`keys.ts`), link condivisibili con messaggio facoltativo (`share.ts`, parametro `t`).
+  - Pannello: modello, riflettore (sulla M4 l’UKW-D toglie il rotore sottile), Walzenlage con scambio, anelli, pannello a spine (coppie digitate o due clic sulle prese), Uhr, UKW-D. Finestrelle girevoli con frecce, rotella o lettera; lampade e tastiera QWERTZ; nastro con gruppi da cinque e copia; “Digita un testo” con `prepareText`.
+  - Schema SVG in `src/components/views/schematic/` (`layout.ts` puro e testato): colonne di contatti che scorrono, andata continua e ritorno tratteggiato, tutti i collegamenti a richiesta, descrizione testuale del percorso.
+  - L’indirizzo della pagina segue la configurazione; un link non valido carica la configurazione di base e lo segnala.
+  - `defaultConfig` nel motore; `tf()` per le stringhe con segnaposto; token `--color-lamp-on-text`.
+  - Test: 21 unit test nuovi; e2e in `tests/e2e/simulator.spec.ts` (tastiera fisica con Maiuscolo e Backspace, link, Uhr, M4/UKW-D, axe in tema chiaro e scuro).
 
-Simulatore schematico in `/simulatore/`:
+## Prossimo passo
 
-- store (Zustand) sopra il motore, con annulla e ripeti;
-- pannello di configurazione: modello, Walzenlage a selezione esclusiva, anelli, rotelle delle posizioni, editor di pannello a spine, Uhr e UKW-D;
-- tastiera e lampade con disposizione QWERTZ originale; nastro di input e output con gruppi da cinque e copia;
-- schema SVG del circuito alimentato da `pressKey(...).stages`;
-- link condivisibili (`encodeConfig` / `decodeConfig`);
-- tastiera fisica con `KeyboardEvent.key`, ignorando modificatori e ripetizione; Backspace = annulla.
-
-Poi le lezioni “Come funziona” 2–6. Branch `claude/fase-1b-simulatore`, PR verso `claude/fase-1-motore` (o verso `main` se le precedenti sono già unite).
+- Lezioni “Come funziona” 2–6 con animazioni base e `<MiniSimulatore>` (riusa `createSession` e i componenti del simulatore).
+- Poi la fase 2 (traccia passo-passo, modalità LIM, QR, matematica ed esercizi).
+- Rinviati dalla 1b: cavi trascinabili sul pannello, schema in verticale su mobile (ora scorre in orizzontale), notazione tedesca dell’UKW-D (da verificare prima di mostrarla).
 
 ## Note operative
 

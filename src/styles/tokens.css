@@ -20,6 +20,7 @@
   --color-signal-forward: #c26a00;
   --color-signal-return: #1f6fb2;
   --color-lamp-on: #ffcc4d;
+  --color-lamp-on-text: #1f1d1a;
 
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
@@ -45,6 +46,7 @@
   --color-signal-forward: #f29b38;
   --color-signal-return: #6cb4f0;
   --color-lamp-on: #ffd66e;
+  --color-lamp-on-text: #1f1d1a;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -64,5 +66,6 @@
     --color-signal-forward: #f29b38;
     --color-signal-return: #6cb4f0;
     --color-lamp-on: #ffd66e;
+    --color-lamp-on-text: #1f1d1a;
   }
 }

@@ -12,3 +12,8 @@ export type UiKey = keyof typeof it;
 export function t(key: UiKey, locale: Locale = defaultLocale): string {
   return dictionaries[locale][key] ?? dictionaries[defaultLocale][key];
 }
+
+/** Come `t`, sostituendo i segnaposto `{nome}` con i valori indicati. */
+export function tf(key: UiKey, values: Record<string, string | number>, locale: Locale = defaultLocale): string {
+  return t(key, locale).replace(/\{(\w+)\}/g, (match, name: string) => String(values[name] ?? match));
+}
