@@ -36,3 +36,29 @@ export function invert(map: readonly number[]): number[] {
   });
   return inverse;
 }
+
+/**
+ * Scompone una permutazione in cicli disgiunti, ciascuno a partire dalla lettera più piccola,
+ * ordinati per lettera iniziale. I punti fissi sono cicli di lunghezza 1.
+ */
+export function cycles(map: readonly number[]): number[][] {
+  const seen = new Set<number>();
+  const result: number[][] = [];
+  map.forEach((_, start) => {
+    if (seen.has(start)) return;
+    const cycle: number[] = [];
+    for (let i = start; !seen.has(i); i = map[i] ?? i) {
+      seen.add(i);
+      cycle.push(i);
+    }
+    result.push(cycle);
+  });
+  return result;
+}
+
+/** Lunghezze dei cicli in ordine decrescente: la “struttura in cicli” della permutazione. */
+export function cycleType(map: readonly number[]): number[] {
+  return cycles(map)
+    .map((cycle) => cycle.length)
+    .sort((a, b) => b - a);
+}

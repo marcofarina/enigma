@@ -1,0 +1,28 @@
+---
+import 'katex/dist/katex.min.css';
+import katex from 'katex';
+
+interface Props {
+  /** Formula in LaTeX. */
+  tex: string;
+  /** Formula a blocco, centrata su una riga propria. */
+  blocco?: boolean;
+  /** Punteggiatura subito dopo una formula in linea, che deve restare sulla stessa riga. */
+  dopo?: string;
+}
+
+const { tex, blocco = false, dopo } = Astro.props;
+// Resa in fase di build: HTML per la vista e MathML per i lettori di schermo. Un errore nella
+// formula fa fallire la build invece di arrivare al lettore.
+const html = katex.renderToString(tex, { displayMode: blocco, output: 'htmlAndMathml', throwOnError: true });
+---
+
+{/* Una formula a blocco può scorrere sugli schermi stretti: deve ricevere il focus da tastiera. */}
+{blocco ? (
+  <div class="my-4 overflow-x-auto" tabindex="0" set:html={html} />
+) : (
+  <span class="whitespace-nowrap">
+    <Fragment set:html={html} />
+    {dopo}
+  </span>
+)}

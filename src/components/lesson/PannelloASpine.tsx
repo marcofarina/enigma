@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { plugboardSettings } from '@/engine';
 import { t, tf } from '@/i18n';
+import { groupDigits } from '@/lib/format';
 import { parsePairs } from '@/components/simulator/config-edit.ts';
 import PairEditor from '@/components/simulator/PairEditor.tsx';
 
@@ -8,9 +9,6 @@ interface Props {
   /** Coppie iniziali, per esempio `AZ BN GI`. */
   coppie?: string;
 }
-
-/** Raggruppa le cifre a tre a tre con uno spazio che non va a capo, come nel testo delle lezioni. */
-const groupDigits = (value: bigint) => value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
 /**
  * Pannello a spine da solo: si collegano i cavi e si vede quali lettere si scambiano e quante

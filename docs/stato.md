@@ -25,15 +25,21 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
   - `MiniSimulatore` accetta `traccia`; usata nella lezione 3.
   - Corretto “1 lettere” nel nastro.
 
-- Fase 2b, branch `claude/zen-pasteur-4nev9o`: modalità LIM e codici QR.
+- Fase 2b (PR marcofarina/enigma#7, unita): modalità LIM e codici QR.
   - Pulsante “Modalità LIM” nel simulatore: schermo intero con l’API Fullscreen (altrimenti un livello che copre la pagina), configurazione e “Digita un testo” nascosti, macchina ingrandita con `zoom`, macchina e nastro affiancati sugli schermi larghi, schema limitato in larghezza. Si esce con il pulsante, con Esc o uscendo dallo schermo intero.
   - Variante Tailwind `lim:` (attributo `data-lim`) e token di alto contrasto per la LIM in `tokens.css`.
   - Codice QR del link condivisibile (`src/components/ui/QrCode.tsx`, `qr.ts` testato), con la libreria `uqr` (MIT, senza dipendenze); colori fissi scuro su chiaro (`--color-qr-dark`, `--color-qr-light`). Verificato decodificandolo con OpenCV.
 
+- Fase 2c, branch `claude/zen-pasteur-4nev9o`: lezione 8 “La matematica di Enigma” in bozza e calcolatore dello spazio delle chiavi.
+  - Lezione: permutazioni e cicli, composizione e inversa, coniugio (il rotore che gira), involuzioni, E = P⁻¹ R⁻¹ U R P con le dimostrazioni di reciprocità e assenza di punti fissi, conteggio delle impostazioni, differenza tra spazio delle chiavi e sicurezza.
+  - Componenti `CicliRotore` (struttura in cicli che non cambia con la posizione), `CalcolatoreChiavi` (Enigma I e M4 come punti di partenza, ogni fattore modificabile, totale, notazione scientifica e bit) e `Formula` (KaTeX in fase di build, HTML più MathML; la punteggiatura che segue va in `dopo`).
+  - Motore: `keySpace()`, `log2()`, `cycles()`, `cycleType()`, con test; `src/lib/format.ts` con `groupDigits` e `scientific`.
+  - KaTeX senza remark-math: Astro 7 usa il processore satteri, che ignora i plugin remark/rehype; cambiare processore avrebbe toccato tutte le lezioni.
+
 ## Prossimo passo
 
 - Revisione delle bozze 1–7 da parte dell’autore.
-- Fase 2, prossimi rilasci: lezione di matematica con calcolatore dello spazio delle chiavi (2c), esercizi di livello 1–2 con progressi (2d).
+- Fase 2, ultimo rilascio: esercizi di livello 1–2 con progressi (2d).
 - Rinviati dalla 1b: cavi trascinabili sul pannello, schema in verticale su mobile, notazione tedesca dell’UKW-D (da verificare prima di mostrarla).
 
 ## Note operative
@@ -55,3 +61,4 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
 - Numero di cavi nel tempo: Crypto Museum indica sei cavi all’inizio e dieci “dal 1° ottobre 1936”, mentre altre ricostruzioni danno per quella data da cinque a otto cavi. La lezione 7 evita la data; da controllare su Rejewski o Kozaczuk.
 - Dettagli tecnici dell’Enigma K usata dalla Regia Marina.
 - Numeri di pagina delle citazioni da *Codici & segreti* di Singh (sulla copia dell’autore).
+- Crypto Museum, pagina “How does an Enigma machine work?”: i totali con la correzione del doppio passo sono sbagliati. Per l’Enigma I scrive 685 518 560 invece di 60 × 676 × 16 926 = 686 518 560; per la M4 toglie 650 posizioni una volta sola invece che per ciascuna delle 26 posizioni del rotore sottile (440 076 posizioni distinte, verificato con il motore). Con i rotori navali a due tacche nel mezzo la riduzione è diversa. La lezione 8 usa i valori ricalcolati.
