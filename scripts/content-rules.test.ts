@@ -40,5 +40,7 @@ describe('lintContent', () => {
     expect(rulesOf('## Il Riflettore')).toEqual(['maiuscole-titolo']);
     expect(rulesOf('La macchina ha 3 rotori.')).toEqual(['numero-in-cifre']);
     expect(rulesOf('Nel 1918 e con 26 lettere.')).toEqual([]);
+    expect(rulesOf('Arrivò il 10 luglio 1944, con 3 giorni di ritardo.')).toEqual(['numero-in-cifre']);
+    expect(rulesOf('Arrivò il 2 novembre 1944.')).toEqual([]);
   });
 });

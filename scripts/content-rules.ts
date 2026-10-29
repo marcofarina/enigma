@@ -47,7 +47,9 @@ const rules: { rule: string; severity: Severity; pattern: RegExp; message: strin
   {
     rule: 'numero-in-cifre',
     severity: 'warning',
-    pattern: /(?<![\d.,/-])\b(?:[0-9]|10)\b(?![\d.,/×x-]) [a-zà-ù]/,
+    // Le date restano in cifre: “il 10 luglio 1944”.
+    pattern:
+      /(?<![\d.,/-])\b(?:[0-9]|10)\b(?![\d.,/×x-]) (?!(?:gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)\b)[a-zà-ù]/,
     message: 'I numeri fino a dieci vanno scritti in lettere nel testo discorsivo.',
   },
 ];

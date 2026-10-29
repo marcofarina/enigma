@@ -52,7 +52,7 @@
   "sim.uhr.title": "Uhr",
   "sim.uhr.enable": "Collega l’Uhr al posto dei cavi",
   "sim.uhr.setting": "Posizione del selettore",
-  "sim.uhr.hint": "L’Uhr richiede esattamente 10 cavi. In ogni coppia la prima lettera riceve la spina rossa (a), la seconda quella bianca (b). Solo le posizioni multiple di 4 danno una sostituzione reciproca.",
+  "sim.uhr.hint": "L’Uhr richiede esattamente 10 cavi. In ogni coppia la prima lettera riceve la spina rossa (a), la seconda quella nera (b). Solo le posizioni multiple di 4 danno una sostituzione reciproca.",
   "sim.ukwd.title": "Cablaggio dell’UKW-D",
   "sim.ukwd.label": "Coppie del riflettore",
   "sim.ukwd.hint": "Notazione di Bletchley Park: la coppia J–Y è fissa, servono altre 12 coppie.",
@@ -154,5 +154,17 @@
   "lesson.rotor.ring": "Anello (Ringstellung)",
   "lesson.rotor.step1": "Il contatto {input} della carcassa (numero {inputNumber}, contando da A = 0) tocca il contatto {core} del cablaggio: ({inputNumber} + {position} − {ring}) mod 26 = {coreNumber}.",
   "lesson.rotor.step2": "Dentro il rotore {rotor} il filo porta da {core} a {coreOut}.",
-  "lesson.rotor.step3": "Il contatto {coreOut} del cablaggio, tolto lo stesso spostamento, corrisponde al contatto {output} della carcassa."
+  "lesson.rotor.step3": "Il contatto {coreOut} del cablaggio, tolto lo stesso spostamento, corrisponde al contatto {output} della carcassa.",
+  "lesson.plugboard.none": "Nessun cavo: ogni lettera passa diritta, come se il pannello non ci fosse.",
+  "lesson.plugboard.countOne": "Con un cavo si scambia una sola coppia di lettere e le altre {free} restano libere. I modi di collegarlo sono {settings}.",
+  "lesson.plugboard.count": "Con {cables} cavi si scambiano {cables} coppie di lettere e {free} restano libere. I modi diversi di collegare {cables} cavi sono {settings}.",
+  "lesson.uhr.previous": "Posizione precedente",
+  "lesson.uhr.next": "Posizione successiva",
+  "lesson.uhr.caption": "Dove va ciascuna lettera collegata all’Uhr, con il selettore in posizione {setting}",
+  "lesson.uhr.rowFirst": "Spine da 1 a 5",
+  "lesson.uhr.rowSecond": "Spine da 6 a 10",
+  "lesson.uhr.red": "spina rossa",
+  "lesson.uhr.black": "spina nera",
+  "lesson.uhr.reciprocal": "Posizione {setting}: la sostituzione è reciproca, le lettere si scambiano a coppie come con i cavi normali.",
+  "lesson.uhr.oneWay": "Posizione {setting}: la sostituzione non è reciproca. La {from} va in {to}, ma la {to} non torna in {from}: va in {back}."
 }

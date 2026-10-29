@@ -2,7 +2,7 @@ import { toIndex } from './alphabet.ts';
 
 /**
  * Enigma-Uhr: accessorio della Luftwaffe (luglio 1944) che si collega al pannello a spine con
- * 10 coppie di cavi (spine rosse “a” e bianche “b”). Un selettore a 40 posizioni rimescola i
+ * 10 coppie di cavi (spine rosse “a” e nere “b”). Un selettore a 40 posizioni rimescola i
  * collegamenti: solo le posizioni multiple di 4 danno una sostituzione reciproca.
  *
  * Tabelle e logica riprendono il simulatore di Summerside Makerspace. Ogni spina ha due
@@ -16,7 +16,7 @@ const AB_WIRING = [
   22, 19, 20, 13, 34, 15, 32, 9,
 ];
 
-/** Ordine delle spine bianche (b) intorno al disco. */
+/** Ordine delle spine nere (b) intorno al disco. */
 const B_PLUG_ORDER = [6, 0, 7, 5, 1, 8, 4, 2, 9, 3];
 
 const CONTACTS = 40;

@@ -16,6 +16,7 @@ const lessons = [
   'i-rotori',
   'il-passo-e-il-doppio-passo',
   'il-riflettore',
+  'il-pannello-a-spine-e-l-uhr',
 ];
 
 for (const slug of lessons) {
@@ -64,4 +65,21 @@ test('il mini simulatore usa la tastiera fisica solo quando ha il focus', async 
   await mini.getByRole('region', { name: 'Tastiera' }).getByRole('button', { name: 'H', exact: true }).click();
   await page.keyboard.type('ELLO');
   await expect(mini.locator('[data-tape="output"]')).toHaveText('ILBDA');
+});
+
+test('il pannello a spine conta le configurazioni dei cavi collegati', async ({ page }) => {
+  const board = await island(page, 'come-funziona/il-pannello-a-spine-e-l-uhr/');
+  await expect(board.locator('p[aria-live]').last()).toContainText('3 cavi');
+  await board.getByRole('textbox').fill('AZ BN GI KL PC ED QT HV MF JR');
+  await expect(board.locator('p[aria-live]').last()).toContainText('150\u00a0738\u00a0274\u00a0937\u00a0250');
+});
+
+test('l’Uhr è reciproca solo nelle posizioni multiple di quattro', async ({ page }) => {
+  const uhr = await island(page, 'come-funziona/il-pannello-a-spine-e-l-uhr/', 2);
+  const status = uhr.locator('p[aria-live]');
+  await expect(status).toContainText('Posizione 00: la sostituzione è reciproca');
+  await uhr.getByRole('combobox', { name: 'Posizione del selettore' }).selectOption('3');
+  await expect(status).toContainText('La A va in C, ma la C non torna in A: va in K.');
+  await uhr.getByRole('button', { name: 'Posizione successiva' }).click();
+  await expect(status).toContainText('Posizione 04: la sostituzione è reciproca');
 });

@@ -1,0 +1,79 @@
+---
+title: Il pannello a spine e l’Uhr
+description: Il pannello che scambia le lettere a coppie prima e dopo i rotori, perché moltiplica le chiavi possibili e come l’Uhr della Luftwaffe provò a renderlo meno prevedibile.
+sezione: come-funziona
+ordine: 7
+stato: bozza
+fonti:
+  - crypto-museum
+---
+
+import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
+import Nota from '@/components/lesson/Nota.astro';
+import PannelloASpine from '@/components/lesson/PannelloASpine.tsx';
+import UhrSelettore from '@/components/lesson/UhrSelettore.tsx';
+
+Sul davanti dell’Enigma I, sotto la tastiera, c’è un pannello con 26 prese, una per lettera: il **pannello a spine**, in tedesco *Steckerbrett*. Era un’esclusiva delle forze armate tedesche, che lo avevano brevettato: nessuna Enigma commerciale lo montava. Ed è proprio il pannello, più dei rotori, a far crescere il numero delle chiavi possibili.
+
+## Un cavo, due lettere scambiate
+
+Ogni cavo termina con due spine, e ogni spina ha due perni di diametro diverso, uno spesso e uno sottile, così che non la si possa inserire al contrario. I due fili del cavo sono incrociati: il perno spesso di una spina è collegato a quello sottile dell’altra. Se si collega un cavo tra la A e la Z, la A diventa Z e la Z diventa A. Una presa senza cavo, invece, lascia passare la lettera così com’è, perché una lamella a molla ne chiude i due contatti.
+
+Il pannello sta tra la tastiera e la ruota d’ingresso, e la corrente lo attraversa due volte: all’andata, prima di entrare nei rotori, e al ritorno, prima di accendere la lampada. In pratica è un rotore che non gira mai e il cui cablaggio si cambia a mano. Sul foglio delle chiavi i collegamenti del giorno comparivano come un elenco di coppie, per esempio AZ BN GI KL PC ED QT HV MF JR.
+
+<PannelloASpine client:visible coppie="AZ BN GI" />
+
+Collega o stacca qualche cavo, scrivendo le coppie nel campo o facendo clic su due prese: sotto ogni lettera compare la sua compagna. Il conteggio in basso dice in quanti modi diversi si possono collegare quei cavi.
+
+Ecco la stessa macchina delle lezioni precedenti, con i dieci cavi dell’esempio. Nello schema il segnale attraversa il pannello (la colonna “Stecker”) prima di entrare nei rotori e dopo esserne uscito.
+
+<MiniSimulatore client:visible config="v=1&m=I&w=I-II-III&r=AAA&p=AAA&u=B&s=AZ.BN.GI.KL.PC.ED.QT.HV.MF.JR" schema didascalia="Enigma I con i rotori I, II e III in posizione AAA, riflettore B e dieci cavi sul pannello." />
+
+Mentre i rotori avanzano a ogni lettera, il pannello resta fermo per tutto il messaggio: la sua sostituzione cambia solo quando l’operatore sposta i cavi, di solito una volta al giorno insieme al resto della chiave.
+
+## Quanti modi di collegare i cavi
+
+Ogni Enigma I aveva in dotazione 12 cavi: dieci da usare e due di scorta, riposti nel coperchio della cassetta. I progettisti pensavano che sei collegamenti sarebbero bastati, ma durante la guerra le procedure tedesche prescrivevano quasi sempre dieci cavi, cioè dieci coppie di lettere scambiate e sei lettere libere.
+
+Con sei cavi le configurazioni possibili sono 100 391 791 500; con dieci diventano 150 738 274 937 250, circa 150 milioni di miliardi. Per confronto, le posizioni iniziali di tre rotori sono 26 × 26 × 26 = 17 576. Il massimo, curiosamente, non si raggiunge con 13 cavi ma con 11 (205 552 193 096 250). Il costruttore, Heimsoeth und Rinke, lo sapeva, ma per ragioni di spazio dieci cavi erano considerati il limite pratico.
+
+<Approfondimento titolo="Da dove viene il conteggio">
+Con n cavi si scelgono 2n lettere su 26 e le si divide in n coppie. Il numero di modi è
+
+N(n) = 26! / ((26 − 2n)! · n! · 2ⁿ)
+
+Il 26! conta tutti gli ordinamenti delle lettere; si divide per (26 − 2n)! perché l’ordine delle lettere libere non conta, per n! perché non conta l’ordine delle coppie e per 2ⁿ perché non conta l’ordine delle due lettere dentro una coppia (AZ e ZA sono lo stesso cavo).
+
+Aggiungendo un cavo, da n a n + 1, il numero si moltiplica per (26 − 2n)(25 − 2n) / (2(n + 1)). Aggiungendo l’undicesimo cavo il fattore è 6 · 5 / 22, più grande di uno; aggiungendo il dodicesimo è 4 · 3 / 24, cioè un mezzo. Oltre gli 11 cavi restano troppo poche lettere libere, e le configurazioni diminuiscono.
+</Approfondimento>
+
+Prima di arrivare a questa soluzione l’esercito tedesco ne aveva provate altre. Nel febbraio 1928 fu presentato a Berlino un pannello con 26 cavi lunghi che permetteva qualunque permutazione delle 26 lettere, cioè 26! possibilità; i presenti lo giudicarono troppo complicato e soggetto a errori. Fu scelto allora il pannello a coppie, il più semplice da usare e, dal punto di vista crittografico, il più debole tra quelli sperimentati. L’Enigma I con il pannello definitivo entrò in servizio il 1° giugno 1930.
+
+<Nota titolo="Un punto debole">
+Anche il pannello, come il riflettore, è reciproco: se la A è collegata alla Z, la Z è collegata alla A. Gordon Welchman sfruttò proprio questa proprietà per migliorare la *Bombe* di Turing, la macchina con cui Bletchley Park cercava le chiavi giornaliere: la sua *diagonal board* rendeva più brevi le ricerche. Ne parleremo nella sezione sulla crittoanalisi.
+</Nota>
+
+## L’Uhr
+
+Nel luglio 1944, senza alcun preavviso, la Luftwaffe introdusse un accessorio per il pannello a spine: l’**Uhr** (“orologio”), chiamato anche *Steckeruhr*. Era una cassetta di legno da fissare sul fianco destro della macchina, con 20 cavi che prendevano il posto dei dieci cavi normali e una grande manopola al centro, con un selettore a 40 posizioni numerate da 00 a 39.
+
+Le spine dell’Uhr erano di due tipi: dieci rosse, marcate da 1a a 10a, e dieci nere, da 1b a 10b. L’operatore le inseriva seguendo il foglio delle chiavi: per la prima coppia la spina 1a nella prima lettera e la 1b nella seconda, e così via. Con l’elenco dell’esempio, 1a andava nella A, 1b nella Z, 2a nella B, 2b nella N. Nella posizione 00 l’Uhr si comportava esattamente come i dieci cavi normali, e questo permetteva di comunicare anche con chi non l’aveva.
+
+Dentro l’Uhr un disco con 80 contatti collega le spine rosse a quelle nere secondo un cablaggio fisso; girando la manopola, il disco ruota e i collegamenti cambiano. Nella maggior parte delle posizioni le lettere non si scambiano più a coppie: la A può andare in C senza che la C torni in A.
+
+<UhrSelettore client:visible />
+
+Porta il selettore sulla posizione 03: la A va in C, ma la C va in K. Prova poi le posizioni 04, 08, 12: solo una posizione su quattro, a partire da 00, dà ancora una sostituzione reciproca. Le altre 30 no. Le sei lettere senza cavo, invece, passano sempre diritte.
+
+<Nota titolo="La macchina resta reciproca">
+Si legge a volte che l’Uhr rendesse Enigma non reciproca. Non è così: all’andata la corrente attraversa l’Uhr in un verso e al ritorno nel verso opposto, e la reciprocità della macchina intera dipende dal riflettore. Per decifrare basta ancora impostare la macchina come il mittente e digitare il testo cifrato.
+</Nota>
+
+<MiniSimulatore client:visible config="v=1&m=I&w=I-II-III&r=AAA&p=AAA&u=B&s=AZ.BN.GI.KL.PC.ED.QT.HV.MF.JR&uhr=3" schema didascalia="Enigma I con i dieci cavi dell’esempio sostituiti dall’Uhr in posizione 03." />
+
+Digita una parola, premi “Ricomincia” e digita le lettere accese: torna la parola di partenza, anche se l’Uhr è in una posizione non reciproca.
+
+I primi messaggi cifrati con l’Uhr arrivarono a Bletchley Park il 10 luglio 1944. Cominciavano tutti con un numero scritto per esteso, per esempio *dreineun* per 39, cioè la posizione del selettore, dopo il quale il testo diventava incomprensibile. I crittoanalisti capirono presto che si trattava di un dispositivo collegato al pannello, che agiva solo sulle 20 lettere collegate. Alcuni operatori, non ancora informati della nuova procedura, ritrasmisero gli stessi messaggi con la sola chiave di base: da lì venne la prima rottura, pochi giorni dopo l’introduzione dell’Uhr, e una volta ricostruita una posizione si poterono prevedere tutte le altre.
+
+L’Uhr aveva però tolto ai crittoanalisti un aiuto prezioso: la *diagonal board*, che si basava sulla reciprocità del pannello, non serviva più. Le *Bombe* restavano utilizzabili, ma servivano *crib* più lunghi, cioè frammenti più estesi del testo in chiaro che si sospettava fossero nel messaggio. A rendere l’Uhr poco efficace fu soprattutto la procedura: per comunicare anche con le unità che non l’avevano, i tedeschi mescolavano messaggi con e senza Uhr cifrati con la stessa chiave di base, e chi conosceva la chiave di base aveva già fatto gran parte del lavoro.
