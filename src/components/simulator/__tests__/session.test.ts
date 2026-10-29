@@ -179,3 +179,11 @@ describe('link condivisibili', () => {
     expect(link.kind === 'ok' && link.message).toBe('CIAOMONDO');
   });
 });
+
+describe('disco cifrante', () => {
+  it('con l’alfabeto ordinato è il cifrario di Cesare', async () => {
+    const { discEncipher } = await import('@/components/lesson/DiscoCifrante.tsx');
+    expect(discEncipher('VENIVIDIVICI', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 3, false)).toBe('YHQLYLGLYLFL');
+    expect(discEncipher('AAAAAA', 'EKMFLGDQVZNTOWYHXUSPAIBRCJ', 0, true)).toBe('EKMFLG');
+  });
+});

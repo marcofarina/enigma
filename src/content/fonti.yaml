@@ -49,3 +49,9 @@
   anno: 2016
   url: https://github.com/SummersideMakerspace/EnigmaMachine
   note: Simulatore da cui provengono i vettori di test usati per verificare il motore.
+- id: hamer-1997
+  autori: David H. Hamer
+  titolo: Enigma. Actions Involved in the “Double Stepping” of the Middle Rotor
+  editore: Cryptologia 21 (1)
+  anno: 1997
+  note: Citato da Crypto Museum come gennaio 1997, numero 1; il volume (21) è da verificare.

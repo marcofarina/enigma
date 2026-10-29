@@ -16,11 +16,17 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
   - `defaultConfig` nel motore; `tf()` per le stringhe con segnaposto; token `--color-lamp-on-text`.
   - Test: 21 unit test nuovi; e2e in `tests/e2e/simulator.spec.ts` (tastiera fisica con Maiuscolo e Backspace, link, Uhr, M4/UKW-D, axe in tema chiaro e scuro).
 
+- Branch `claude/fase-1c-lezioni` (impilato sulla 1b): lezioni “Come funziona” 2–6 in bozza.
+  - Componenti in `src/components/lesson/`: `Nota`, `Approfondimento`, `MiniSimulatore` (stato per istanza, tastiera fisica solo con il focus dentro), `DiscoCifrante`, `CircuitoTasto`, `RotoreSingolo`, `AnimazionePasso`.
+  - Pagina della lezione con elenco delle fonti e navigazione precedente/successiva.
+  - Fatti tecnici e storici verificati su Crypto Museum (pagine “How does an Enigma machine work?”, “History”, “Enigma I”); nuova fonte `hamer-1997`.
+  - Periodo del doppio passo: il motore dà 16 900 (26 × 25 × 26); Crypto Museum riporta 16 926. La lezione 5 spiega la differenza (676 posizioni fuori ciclo, non 650).
+
 ## Prossimo passo
 
-- Lezioni “Come funziona” 2–6 con animazioni base e `<MiniSimulatore>` (riusa `createSession` e i componenti del simulatore).
-- Poi la fase 2 (traccia passo-passo, modalità LIM, QR, matematica ed esercizi).
-- Rinviati dalla 1b: cavi trascinabili sul pannello, schema in verticale su mobile (ora scorre in orizzontale), notazione tedesca dell’UKW-D (da verificare prima di mostrarla).
+- Revisione delle bozze 2–6 da parte dell’autore.
+- Lezione sul pannello a spine e sull’Uhr, poi la fase 2 (traccia passo-passo, modalità LIM, QR, matematica ed esercizi).
+- Rinviati dalla 1b: cavi trascinabili sul pannello, schema in verticale su mobile, notazione tedesca dell’UKW-D (da verificare prima di mostrarla).
 
 ## Note operative
 
@@ -31,6 +37,10 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
 - **Simulatore originale**: clonato in `/home/user/EnigmaMachine`. I vettori di confronto si rigenerano con `node scripts/legacy/generate-vectors.cjs /home/user/EnigmaMachine/enigma.js <numero per modello> <file di uscita>`.
 
 ## Da verificare
+
+- Lezione 1: adozione da parte della marina (1926) e dell’esercito (1928). Crypto Museum data l’entrata in servizio dell’Enigma I al 1° giugno 1930; anche `period` dell’Enigma I in `models.ts` (1932) va riallineato.
+- Lezione 2: data del trattato di Alberti (intorno al 1467) e attribuzione ad al-Kindi, da controllare su Singh.
+- Volume di Cryptologia dell’articolo di Hamer (21 secondo la numerazione della rivista).
 
 - `period` e `users` dei modelli in `src/engine/models.ts`, prima di mostrarli nelle schede storiche.
 - Notazione dell’UKW-D (Bletchley J–Y o tedesca B–O) e vettori dell’Uhr contro una fonte indipendente.

@@ -1,0 +1,51 @@
+---
+title: Dalla sostituzione al rotore
+description: Dal cifrario di Cesare al disco di Alberti, fino all’idea che sta dentro ogni rotore di Enigma.
+sezione: come-funziona
+ordine: 2
+stato: bozza
+fonti:
+  - singh-codici-segreti
+  - bauer-decrypted-secrets
+  - crypto-museum
+---
+
+import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import DiscoCifrante from '@/components/lesson/DiscoCifrante.tsx';
+import Nota from '@/components/lesson/Nota.astro';
+
+Per capire che cosa fa un rotore conviene partire da molto più lontano, dal più semplice dei cifrari: la **sostituzione monoalfabetica**. Ogni lettera del messaggio viene sostituita da un’altra, sempre la stessa, secondo una tabella fissata in anticipo. Chi conosce la tabella decifra ripercorrendola al contrario; chi non la conosce vede soltanto una sequenza di lettere senza senso.
+
+## Il cifrario di Cesare
+
+Secondo il biografo Svetonio, Giulio Cesare scriveva i messaggi riservati spostando ogni lettera di tre posizioni nell’alfabeto: la A diventava D, la B diventava E, e così via, ricominciando dall’inizio dopo la Z. È la sostituzione più semplice che si possa immaginare, ed è comodo rappresentarla con due dischi concentrici: quello esterno porta l’alfabeto in chiaro, quello interno lo stesso alfabeto ruotato.
+
+<DiscoCifrante client:visible />
+
+Prova a ruotare il disco interno: ogni posizione è una chiave diversa. Le chiavi però sono soltanto 25 — la ventiseiesima riporta ogni lettera su sé stessa — e chi intercetta il messaggio può provarle tutte in pochi minuti.
+
+## Un punto debole: le frequenze
+
+Anche senza limitarsi agli spostamenti, cioè ammettendo qualunque rimescolamento dell’alfabeto, la sostituzione monoalfabetica ha un difetto di fondo: la stessa lettera in chiaro produce sempre la stessa lettera cifrata. In un testo italiano le vocali E, A, I e O sono molto più frequenti della Z o della Q, e queste proporzioni sopravvivono alla cifratura. Contando quante volte compare ogni simbolo, un crittoanalista può ricostruire la tabella pezzo per pezzo. Il metodo, l’**analisi delle frequenze**, era descritto già nel IX secolo dal filosofo arabo al-Kindi.
+
+## L’idea di Alberti: cambiare alfabeto
+
+Nel Quattrocento l’architetto e umanista Leon Battista Alberti propose una contromossa geniale. Nel suo trattato sulle cifre, scritto intorno al 1467, descrisse un disco cifrante simile a quello qui sopra e suggerì di **ruotarlo durante il messaggio**, così da cifrare parti diverse del testo con alfabeti diversi. È il principio dei cifrari **polialfabetici**: la stessa lettera in chiaro non dà più sempre la stessa lettera cifrata, e le frequenze si confondono.
+
+<Nota titolo="Una semplificazione">
+Il disco di Alberti non era identico a quello del simulatore: l’anello esterno portava le lettere dell’alfabeto latino e alcune cifre, quello interno un alfabeto mescolato. Il principio, però, è lo stesso.
+</Nota>
+
+## Dal disco al rotore
+
+Facciamo due modifiche al disco. Al posto dell’alfabeto ordinato, sul disco interno scriviamo un alfabeto **mescolato**; poi stabiliamo che il disco avanzi di un passo **dopo ogni lettera**, in modo automatico. Il disco qui sotto usa proprio il cablaggio del rotore I di Enigma: attiva la rotazione e cifra un messaggio con molte lettere ripetute, per esempio “AAAAAA”.
+
+<DiscoCifrante client:visible interno="EKMFLGDQVZNTOWYHXUSPAIBRCJ" spostamento={0} testo="AAAAAA" rotazione />
+
+Senza rotazione le sei A diventano sei E; con la rotazione diventano sei lettere diverse. È esattamente ciò che fa un rotore di Enigma: un alfabeto mescolato che cambia posizione a ogni tasto premuto. Il rotore realizza il rimescolamento con 26 fili saldati tra due facce di contatti, invece che con due anelli di lettere, ma l’effetto è lo stesso.
+
+Tra il 1917 e il 1919 l’idea della macchina a rotori venne in mente, in modo indipendente, a diversi inventori: Edward Hebern negli Stati Uniti, Arvid Damm in Svezia, Hugo Koch nei Paesi Bassi e Arthur Scherbius in Germania. Due ufficiali della marina olandese, Theo van Hengel e Rudolf Spengler, avevano costruito macchine a rotori già nel 1915.
+
+<Approfondimento titolo="Perché un solo rotore non basta">
+Un rotore che avanza di un passo a ogni lettera torna nella posizione di partenza dopo 26 lettere: da lì in poi la sequenza degli alfabeti si ripete. In un messaggio lungo, le lettere che si trovano a distanza di 26 l’una dall’altra sono cifrate con lo stesso alfabeto, e su ciascuno di questi gruppi l’analisi delle frequenze torna a funzionare. Per allungare il periodo, Enigma mette in fila più rotori che si trascinano l’un l’altro come le cifre di un contachilometri: ne parleremo nella lezione sul passo dei rotori.
+</Approfondimento>

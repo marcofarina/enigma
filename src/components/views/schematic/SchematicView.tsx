@@ -69,7 +69,7 @@ function describePath(input: string, stages: readonly Stage[]): string {
   return tf('sim.schematic.path', { path: [input, ...steps].join(' → ') });
 }
 
-export default function SchematicView() {
+export default function SchematicView({ heading = true }: { heading?: boolean }) {
   const id = useId();
   const session = useSimulator((s) => s.session);
   const [allWiring, setAllWiring] = useState(false);
@@ -100,10 +100,10 @@ export default function SchematicView() {
 
   return (
     <section aria-labelledby={`${id}-title`} className="flex flex-col gap-2">
-      <h2 id={`${id}-title`} className="text-xl font-semibold">
+      <h2 id={`${id}-title`} className={heading ? 'text-xl font-semibold' : 'sr-only'}>
         {t('sim.schematic.title')}
       </h2>
-      <p className="text-sm text-text-muted">{t('sim.schematic.hint')}</p>
+      {heading && <p className="text-sm text-text-muted">{t('sim.schematic.hint')}</p>}
       {!schematic ? (
         <p className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm">
           {t('sim.schematic.unavailable')}

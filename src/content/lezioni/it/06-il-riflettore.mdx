@@ -1,0 +1,42 @@
+---
+title: Il riflettore
+description: Il componente che rimanda indietro la corrente, rende la macchina reciproca e le impedisce di cifrare una lettera in sé stessa.
+sezione: come-funziona
+ordine: 6
+stato: bozza
+fonti:
+  - crypto-museum
+  - bauer-decrypted-secrets
+---
+
+import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
+import Nota from '@/components/lesson/Nota.astro';
+
+A sinistra dei rotori c’è un disco con contatti su una sola faccia: il **riflettore**, in tedesco *Umkehrwalze* (“ruota d’inversione”), abbreviato UKW. Al suo interno 13 fili collegano le 26 lettere a coppie. La corrente che arriva dai rotori entra in un contatto, esce da quello accoppiato e viene rimandata indietro attraverso i rotori, per una strada diversa, fino alla ruota d’ingresso e alle lampade.
+
+L’idea del riflettore si deve a Willi Korn, collaboratore di Arthur Scherbius e in seguito alla guida dell’azienda che produceva Enigma. Nelle macchine commerciali, a partire dalla Enigma D del 1926, il riflettore si poteva impostare a mano su 26 posizioni; nell’Enigma I dell’esercito era fisso.
+
+## Cifrare e decifrare sono la stessa cosa
+
+Il riflettore rende Enigma **reciproca**: se, con una certa posizione dei rotori, la A si cifra in Q, con la stessa posizione la Q si cifra in A. Ne segue una comodità enorme per gli operatori: per decifrare basta impostare la macchina come il mittente e digitare il testo cifrato, e sulle lampade compare il testo in chiaro. Non serve una procedura separata, né una seconda macchina.
+
+<MiniSimulatore client:visible config="v=1&m=I&w=I-II-III&r=AAA&p=AAA&u=B" schema didascalia="Enigma I con i rotori I, II e III in posizione AAA e riflettore B." />
+
+Prova a digitare una parola, poi premi “Ricomincia” per riportare i rotori ad AAA e digita le lettere accese: riappare la parola di partenza. Nello schema si vede perché: andata e ritorno percorrono la stessa strada in versi opposti.
+
+## Nessuna lettera in sé stessa
+
+Il riflettore non collega mai una lettera con sé stessa, e la corrente torna sempre indietro su un contatto diverso da quello da cui è arrivata. Insieme al deviatore sotto ogni tasto, che stacca la lampada del tasto premuto, questo produce una regola senza eccezioni: **in Enigma nessuna lettera può essere cifrata in sé stessa**. Digita quante A vuoi nel simulatore qui sopra: non si accenderà mai la lampada A.
+
+Sembra un dettaglio, ma fu una delle debolezze più sfruttate dai crittoanalisti alleati. Se si sospetta che un messaggio contenga una certa parola, per esempio un saluto o una previsione del tempo, la si può far scorrere sotto il testo cifrato: ogni posizione in cui una lettera della parola coincide con la lettera cifrata che le sta sotto è impossibile, e va scartata. Ne parleremo nella sezione sulla crittoanalisi.
+
+<Nota titolo="Un compromesso di progetto">
+Il riflettore raddoppia il numero di passaggi attraverso i rotori senza aggiungere rotori, e semplifica la vita degli operatori. Il prezzo è proprio la reciprocità senza punti fissi, che restringe le sostituzioni possibili e offre un appiglio a chi attacca la cifra.
+</Nota>
+
+<Approfondimento titolo="Perché la macchina intera è reciproca">
+Il riflettore è una permutazione U che scambia le lettere a coppie: applicata due volte riporta ogni lettera al suo posto (U = U⁻¹) e non lascia nessuna lettera ferma. Una permutazione con queste proprietà si chiama **involuzione senza punti fissi**. Se R è la permutazione prodotta dai rotori all’andata, al ritorno la corrente attraversa gli stessi fili in senso inverso, cioè R⁻¹. La lettera accesa è quindi data da R⁻¹ U R, una permutazione che “trasporta” U con R: ha la stessa struttura di U, quindi è anch’essa un’involuzione senza punti fissi. Lo stesso vale aggiungendo il pannello a spine P, che compare all’inizio e alla fine: E = P⁻¹ R⁻¹ U R P.
+</Approfondimento>
+
+Nel gennaio 1944 le forze armate tedesche introdussero un riflettore ricablabile, l’UKW-D, il cui cablaggio veniva cambiato ogni dieci giorni secondo le tabelle delle chiavi; nel simulatore lo trovi tra i riflettori dell’Enigma I e della M4.

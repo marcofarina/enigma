@@ -1,0 +1,45 @@
+---
+title: 'I rotori: cablaggio, posizione e anello'
+description: Come un rotore rimescola l’alfabeto, perché ogni scatto cambia la sostituzione e a che cosa serve l’anello.
+sezione: come-funziona
+ordine: 4
+stato: bozza
+fonti:
+  - crypto-museum
+  - bauer-decrypted-secrets
+  - rejewski-1980
+---
+
+import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import Nota from '@/components/lesson/Nota.astro';
+import RotoreSingolo from '@/components/lesson/RotoreSingolo.tsx';
+
+Il rotore è il cuore di Enigma. È un disco di materiale isolante con 26 contatti elettrici su ciascuna faccia: a destra contatti a molla, a sinistra contatti piatti. All’interno, 26 fili collegano ogni contatto di destra a un contatto di sinistra secondo un ordine rimescolato. Ogni rotore è identificato da un numero romano e ha un cablaggio suo; quello del rotore I, letto dalla A alla Z, è
+
+`EKMFLGDQVZNTOWYHXUSPAIBRCJ`
+
+cioè la corrente che entra dal contatto A esce dal contatto E, quella che entra dal B esce dal K, e così via. Un rotore fermo, da solo, è quindi una sostituzione monoalfabetica come quelle della lezione precedente.
+
+## La posizione
+
+Il rotore può girare, e la sua posizione si legge in una finestrella sul coperchio della macchina. Quando gira, i fili interni non cambiano, ma si spostano rispetto ai contatti fissi della macchina: la corrente che arriva sempre dallo stesso punto incontra un filo diverso. Ogni posizione dà così una sostituzione diversa, e le 26 posizioni ne danno 26.
+
+<RotoreSingolo client:visible />
+
+Prova a lasciare fissa la lettera in ingresso e a cambiare la posizione: la lettera in uscita cambia ogni volta. Il calcolo nel riquadro mostra il meccanismo. Si numerano le lettere da 0 (A) a 25 (Z), si sposta l’ingresso della posizione del rotore, si segue il filo e si toglie lo stesso spostamento in uscita. L’operazione “modulo 26” fa ricominciare il conteggio dopo la Z, come le ore su un orologio.
+
+## L’anello
+
+Intorno al rotore c’è un **anello** con l’alfabeto (sull’Enigma I i numeri da 01 a 26): sono le lettere che si vedono nella finestrella. L’anello si può ruotare rispetto al cablaggio e bloccare in una qualunque delle 26 posizioni; questa regolazione si chiama **Ringstellung**. In pratica sposta il cablaggio rispetto alle lettere visibili: a parità di lettera nella finestrella, la sostituzione cambia.
+
+<RotoreSingolo client:visible conAnello posizione="B" anello="B" lettera="A" />
+
+Qui posizione e anello sono entrambi su B, e la sostituzione è la stessa che si ottiene con entrambi su A: i due spostamenti si compensano. Cambiane uno solo e la lettera in uscita cambia.
+
+<Nota titolo="A che cosa serve, allora, l’anello?">
+L’anello porta anche la **tacca** che fa avanzare il rotore vicino, come vedremo nella prossima lezione. Spostando l’anello si cambia quindi il rapporto tra il cablaggio e il momento in cui avviene il riporto. Per chi cercava di violare la macchina, l’anello era un’incognita in più.
+</Nota>
+
+<Approfondimento titolo="Il rotore come permutazione">
+In termini matematici, il cablaggio di un rotore è una **permutazione** σ delle 26 lettere. Chiamiamo ρ lo spostamento di una posizione (A → B, B → C, …, Z → A). Il rotore in posizione p, con l’anello in posizione r, applica la permutazione ρ⁻ᵏ σ ρᵏ con k = p − r: prima sposta di k, poi applica il cablaggio, poi torna indietro di k. Questa costruzione si chiama **coniugio**, e il matematico polacco Marian Rejewski la usò per scrivere le equazioni con cui ricostruì il cablaggio dei rotori militari.
+</Approfondimento>
