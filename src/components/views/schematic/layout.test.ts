@@ -38,4 +38,24 @@ describe('schema del circuito', () => {
     const fast = layoutSchematic(machine, result.state, result.stages).columns.find((c) => c.slot === 2);
     expect(fast?.labels.slice(0, 2)).toEqual(['B', 'C']);
   });
+
+  it('disegna solo i primi stadi durante la traccia passo-passo', () => {
+    const result = pressKey(machine, initialState(machine), 'A');
+    const lamp = result.output.charCodeAt(0) - 65;
+    const start = layoutSchematic(machine, result.state, result.stages, 0);
+    expect(start.columns.at(-1)?.rightMarks[0]).toBe('forward');
+    expect(start.columns.find((c) => c.kind === 'plugboard')?.leftMarks.every((m) => m === null)).toBe(true);
+
+    // Fino al riflettore compreso: andata completa, ritorno appena iniziato.
+    const reflector = result.stages.findIndex((stage) => stage.kind === 'reflector');
+    const half = layoutSchematic(machine, result.state, result.stages, reflector + 1);
+    expect(half.forward).not.toBe('');
+    expect(half.columns.find((c) => c.kind === 'rotor' && c.slot === 0)?.leftMarks.includes('return')).toBe(false);
+
+    const beforeLamp = layoutSchematic(machine, result.state, result.stages, result.stages.length);
+    expect(beforeLamp.columns.at(-1)?.rightMarks[lamp]).toBeNull();
+    const full = layoutSchematic(machine, result.state, result.stages);
+    expect(full.columns.at(-1)?.rightMarks[lamp]).toBe('return');
+    expect(full.back.length).toBeGreaterThan(beforeLamp.back.length);
+  });
 });

@@ -1,4 +1,4 @@
-import { LETTER_COUNT, mod, toLetter, type Machine, type MachineState, type Stage } from '@/engine';
+import { LETTER_COUNT, stageMap, toLetter, type Machine, type MachineState, type Stage } from '@/engine';
 
 /**
  * Geometria dello schema del circuito. Le colonne vanno da sinistra a destra: riflettore,
@@ -55,25 +55,15 @@ function mark(marks: Mark[], row: number, value: 'forward' | 'return') {
   marks[row] = current === null || current === value ? value : 'both';
 }
 
-/** Sostituzione vista dallo statore per ciascun componente, con la macchina nello stato dato. */
+/** Sostituzione vista dallo statore per ciascun componente, nel verso dell’andata. */
 function statorMap(machine: Machine, state: MachineState, column: Column): number[] {
-  const rows = Array.from({ length: LETTER_COUNT }, (_, i) => i);
-  switch (column.kind) {
-    case 'plugboard':
-      return rows.map((i) => machine.plugboard.forward[i] ?? i);
-    case 'entry':
-      return rows.map((i) => machine.entry.forward[i] ?? i);
-    case 'rotor': {
-      const rotor = machine.rotors[column.slot ?? 0];
-      if (!rotor) return rows;
-      const offset = (state.positions[column.slot ?? 0] ?? 0) - rotor.ring;
-      return rows.map((i) => mod((rotor.forward[mod(i + offset)] ?? 0) - offset));
-    }
-    case 'reflector':
-      return rows.map((i) => mod((machine.reflector[mod(i + state.reflectorPosition)] ?? 0) - state.reflectorPosition));
-    case 'keys':
-      return rows;
-  }
+  if (column.kind === 'keys') return Array.from({ length: LETTER_COUNT }, (_, i) => i);
+  const direction = column.kind === 'reflector' ? 'reflect' : 'forward';
+  return stageMap(machine, state, {
+    kind: column.kind,
+    direction,
+    ...(column.slot === undefined ? {} : { slot: column.slot }),
+  });
 }
 
 const innerLeft = (c: Column) => c.x + LABEL;
@@ -84,7 +74,17 @@ function reflectorCurve(c: Column, from: number, to: number): string {
   return `C ${bend} ${rowY(from)} ${bend} ${rowY(to)} ${innerRight(c)} ${rowY(to)}`;
 }
 
-export function layoutSchematic(machine: Machine, state: MachineState, stages: readonly Stage[] = []): Schematic {
+/**
+ * `progress` limita il percorso disegnato ai primi stadi, per la traccia passo-passo: con 0 si
+ * vede solo il tasto premuto, con `stages.length` il segnale è arrivato al pannello di ritorno e
+ * da `stages.length + 1` in poi raggiunge la lampada. Per difetto il percorso è completo.
+ */
+export function layoutSchematic(
+  machine: Machine,
+  state: MachineState,
+  stages: readonly Stage[] = [],
+  progress = stages.length + 1,
+): Schematic {
   const kinds: { kind: ColumnKind; slot?: number }[] = [
     { kind: 'reflector' },
     ...machine.rotors.map((_, slot) => ({ kind: 'rotor' as const, slot })),
@@ -144,12 +144,13 @@ export function layoutSchematic(machine: Machine, state: MachineState, stages: r
   if (keys && stages.length > 0) {
     const first = stages[0];
     const last = stages.at(-1);
+    const complete = progress > stages.length;
     if (first && last) {
       mark(keys.rightMarks, first.input, 'forward');
-      mark(keys.rightMarks, last.output, 'return');
+      if (complete) mark(keys.rightMarks, last.output, 'return');
       forward = `M ${keys.leftX} ${rowY(first.input)}`;
       back = '';
-      for (const stage of stages) {
+      for (const stage of stages.slice(0, Math.max(0, progress))) {
         const column = find(stage.kind, stage.slot);
         if (!column) continue;
         const yIn = rowY(stage.input);
@@ -169,7 +170,7 @@ export function layoutSchematic(machine: Machine, state: MachineState, stages: r
           back += ` L ${column.leftX} ${yIn} L ${innerLeft(column)} ${yIn} L ${innerRight(column)} ${yOut} L ${column.rightX} ${yOut}`;
         }
       }
-      back += ` L ${keys.rightX} ${rowY(last.output)}`;
+      if (complete) back += ` L ${keys.rightX} ${rowY(last.output)}`;
     }
   }
 

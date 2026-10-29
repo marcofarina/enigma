@@ -8,7 +8,9 @@ import {
   initialState,
   MODEL_IDS,
   MODELS,
+  pressKey,
   rotorNames,
+  stageMap,
   step,
   type MachineConfig,
 } from '../index.ts';
@@ -118,6 +120,25 @@ describe('proprietà della macchina', () => {
           });
           if (machine.rotors[0]?.notches.size === 0 && state.positions.length === 4) expect(next.moved[0]).toBe(false);
           state = next.state;
+        }
+      }),
+      { numRuns: 200 },
+    );
+  });
+
+  it('ogni stadio coincide con la sostituzione completa del suo componente', () => {
+    fc.assert(
+      fc.property(configArb, messageArb, (config, message) => {
+        const machine = createMachine(config);
+        let state = initialState(machine);
+        for (const letter of message) {
+          const press = pressKey(machine, state, letter);
+          for (const stage of press.stages) {
+            const map = stageMap(machine, press.state, stage);
+            expect(map[stage.input]).toBe(stage.output);
+            expect(new Set(map).size).toBe(26);
+          }
+          state = press.state;
         }
       }),
       { numRuns: 200 },

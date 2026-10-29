@@ -9,6 +9,7 @@ import { readSharedLink } from './share.ts';
 import ShareLink from './ShareLink.tsx';
 import { createSimulatorStore, handlePhysicalKey, SimulatorContext } from './store.ts';
 import Tape, { TextInput } from './Tape.tsx';
+import TracePanel from './TracePanel.tsx';
 
 /** Apre la configurazione del link (con l’eventuale messaggio già digitato) o quella di base. */
 function initialStore() {
@@ -57,6 +58,7 @@ export default function Simulator() {
             <Keyboard />
           </div>
           <Tape />
+          <TracePanel />
           <SchematicView />
           <TextInput />
           <ShareLink />

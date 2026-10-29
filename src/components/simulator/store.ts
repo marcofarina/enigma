@@ -6,6 +6,12 @@ import * as ops from './session.ts';
 
 export interface SimulatorState {
   session: ops.Session;
+  /**
+   * Passo della traccia dell’ultimo tasto (vedi `trace.ts`), oppure `null` per il percorso
+   * completo. Ogni cambiamento della sessione la riporta a `null`.
+   */
+  trace: number | null;
+  setTrace: (step: number | null) => void;
   /** Sostituisce la configurazione (il nastro ricomincia). */
   configure: (update: (config: MachineConfig) => MachineConfig) => void;
   press: (letter: string) => void;
@@ -21,9 +27,12 @@ export type SimulatorStore = StoreApi<SimulatorState>;
 
 export function createSimulatorStore(initial: ops.Session): SimulatorStore {
   return createStore<SimulatorState>()((set) => {
-    const apply = (change: (session: ops.Session) => ops.Session) => set((s) => ({ session: change(s.session) }));
+    const apply = (change: (session: ops.Session) => ops.Session) =>
+      set((s) => ({ session: change(s.session), trace: null }));
     return {
       session: initial,
+      trace: null,
+      setTrace: (step) => set({ trace: step }),
       configure: (update) => apply((s) => ops.createSession(update(s.config))),
       press: (letter) => apply((s) => ops.press(s, letter)),
       pressAll: (letters) => apply((s) => ops.pressAll(s, letters)),

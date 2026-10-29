@@ -232,6 +232,37 @@ export function traceSignal(
 }
 
 /**
+ * Sostituzione completa operata dal componente di uno stadio, sui contatti dello statore, con la
+ * macchina nello stato indicato: per ogni contatto d’ingresso, il contatto d’uscita. Per lo stadio
+ * effettivamente attraversato vale `stageMap(...)[stage.input] === stage.output`.
+ */
+export function stageMap(
+  machine: Machine,
+  state: MachineState,
+  stage: Pick<Stage, 'kind' | 'direction' | 'slot'>,
+): number[] {
+  const rows = Array.from({ length: LETTER_COUNT }, (_, i) => i);
+  const backward = stage.direction === 'backward';
+  switch (stage.kind) {
+    case 'plugboard':
+      return [...(backward ? machine.plugboard.backward : machine.plugboard.forward)];
+    case 'entry':
+      return [...(backward ? machine.entry.backward : machine.entry.forward)];
+    case 'rotor': {
+      const rotor = machine.rotors[stage.slot ?? 0];
+      if (!rotor) return rows;
+      const offset = (state.positions[stage.slot ?? 0] ?? 0) - rotor.ring;
+      const table = backward ? rotor.backward : rotor.forward;
+      return rows.map((i) => mod((table[mod(i + offset)] ?? 0) - offset));
+    }
+    case 'reflector': {
+      const offset = state.reflectorPosition;
+      return rows.map((i) => mod((machine.reflector[mod(i + offset)] ?? 0) - offset));
+    }
+  }
+}
+
+/**
  * Preme un tasto: prima avanzano i rotori, poi passa la corrente.
  * Accetta solo lettere da A a Z; per qualunque altro carattere lancia un errore senza cambiare stato.
  */

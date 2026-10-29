@@ -10,7 +10,7 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
   - Fase 1b: simulatore schematico in `/simulatore/` (sessione pura in `session.ts`, store Zustand, pannello di configurazione completo, finestrelle, lampade e tastiera QWERTZ, nastro, link condivisibili, schema SVG in `src/components/views/schematic/`).
   - Fase 1c: lezioni “Come funziona” 2–6 in bozza, con i componenti `Nota`, `Approfondimento`, `MiniSimulatore`, `DiscoCifrante`, `CircuitoTasto`, `RotoreSingolo`, `AnimazionePasso`. Periodo del doppio passo: il motore dà 16 900 (26 × 25 × 26), Crypto Museum 16 926; la lezione 5 spiega la differenza.
 
-- Branch `claude/zen-pasteur-4nev9o`: lezione 7 “Il pannello a spine e l’Uhr” in bozza, che completa le lezioni 1–7 della v0.1.
+- Lezione 7 “Il pannello a spine e l’Uhr” in bozza (PR marcofarina/enigma#5, unita), che completa le lezioni 1–7 della v0.1.
   - Componenti `PannelloASpine` (riusa `PairEditor`, conta le configurazioni) e `UhrSelettore` (40 posizioni, segnala quando la sostituzione non è reciproca).
   - `plugboardSettings(n)` in `src/engine/keyspace.ts` (in `bigint`), con test sui valori della tabella di Crypto Museum; servirà anche al calcolatore della fase 2.
   - Token `--color-plug-red` per le spine rosse dell’Uhr.
@@ -18,10 +18,17 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
   - `lint:content` non segnala più le date in cifre (“il 10 luglio 1944”).
   - Fatti verificati su Crypto Museum (pagine “Enigma Uhr”, “Enigma I”, “Enigma Steckerbrett”, “History”).
 
+- Fase 2a, branch `claude/zen-pasteur-4nev9o`: traccia passo-passo nel simulatore.
+  - `stageMap()` nel motore: sostituzione completa del componente di uno stadio, con test di proprietà; lo schema la usa al posto del suo calcolo interno.
+  - `layoutSchematic(..., progress)` disegna il percorso solo fino al passo scelto; la lampada si accende quando il segnale la raggiunge.
+  - `trace.ts` (puro, testato) costruisce i passi e le frasi; `TracePanel` con Inizio, Indietro, Avvia/Ferma, Avanti, Fine, tre velocità e la permutazione del componente in chiaro. Il passo scelto sta nello store (`trace`) e torna a `null` a ogni cambiamento della sessione.
+  - `MiniSimulatore` accetta `traccia`; usata nella lezione 3.
+  - Corretto “1 lettere” nel nastro.
+
 ## Prossimo passo
 
 - Revisione delle bozze 1–7 da parte dell’autore.
-- Fase 2: traccia passo-passo, modalità LIM, QR, lezione di matematica con calcolatore dello spazio delle chiavi, esercizi di livello 1–2 e progressi.
+- Fase 2, prossimi rilasci: modalità LIM e QR (2b), lezione di matematica con calcolatore dello spazio delle chiavi (2c), esercizi di livello 1–2 con progressi (2d).
 - Rinviati dalla 1b: cavi trascinabili sul pannello, schema in verticale su mobile, notazione tedesca dell’UKW-D (da verificare prima di mostrarla).
 
 ## Note operative
