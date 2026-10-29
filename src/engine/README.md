@@ -25,6 +25,7 @@ groupLetters(output); // gruppi da cinque
 - **Immutabile**: `pressKey`, `step` ed `encipher` restituiscono uno stato nuovo; annullare significa tenere lo stato precedente.
 - **Validazione**: `createMachine` lancia `InvalidConfigError` (con l’elenco dei problemi in italiano) se la configurazione non è realizzabile sulla macchina reale; `validateConfig` restituisce lo stesso elenco senza lanciare.
 - **Traccia**: `stages` descrive il percorso del segnale (pannello, ruota d’ingresso, rotori, riflettore e ritorno) e alimenta le visualizzazioni.
+- **Configurazioni di base**: `defaultConfig(modello)` restituisce una chiave valida (riflettore B dove esiste, primi rotori, anelli e posizioni su A).
 - **Link**: `encodeConfig` / `decodeConfig` convertono la configurazione in una query string leggibile.
 
 ## Verifica

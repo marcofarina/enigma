@@ -15,6 +15,7 @@
   --color-signal-forward: var(--color-signal-forward);
   --color-signal-return: var(--color-signal-return);
   --color-lamp-on: var(--color-lamp-on);
+  --color-lamp-on-text: var(--color-lamp-on-text);
   --font-sans: var(--font-sans);
   --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
