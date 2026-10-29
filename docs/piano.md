@@ -18,7 +18,7 @@ Il fork `marcofarina/EnigmaMachine` (Summerside Makerspace, 2016, Apache-2.0) è
 | Testi | Bozze scritte da Claude in italiano secondo le regole tipografiche dell’utente; revisione dell’utente |
 | Fonti | Singh (*Codici & segreti*) come fonte + brevi citazioni (art. 70 LdA) con pagina da verificare, più fonti specialistiche |
 | Identità visiva | Tema neutro basato su design token, sostituibile |
-| Modelli | Tutti e 16 nel motore; I, M3, M4 in evidenza |
+| Modelli | Tutti e 15 nel motore; I, M3, M4 in evidenza |
 | Funzioni extra | Link condivisibili (+ QR), traccia passo-passo, modalità LIM |
 | Vista realistica | Illustrazione SVG parametrica; 3D (React Three Fiber) in fase 2 |
 | Licenze | Codice MIT; contenuti CC BY-NC-SA 4.0 (immagini di terzi con licenza propria) |
@@ -26,7 +26,7 @@ Il fork `marcofarina/EnigmaMachine` (Summerside Makerspace, 2016, Apache-2.0) è
 
 ## Analisi della code base esistente
 
-- `enigma.js` — motore: `Plugboard`, `Uhr`, `EntryWheel`, `Rotor`, `ReflectorWheel`, `EnigmaMachine`; catalogo di 16 modelli costruito per ereditarietà con `$.extend` (il motore dipende da jQuery).
+- `enigma.js` — motore: `Plugboard`, `Uhr`, `EntryWheel`, `Rotor`, `ReflectorWheel`, `EnigmaMachine`; catalogo di 15 modelli costruito per ereditarietà con `$.extend` (il motore dipende da jQuery).
 - `enigma-gui.js` — GUI imperativa sul DOM; i fili sono `<div>` ruotati via CSS con correzioni a pixel; lo stato è sparso tra DOM e oggetto `EnigmaMachine`, che viene ricreato a ogni modifica.
 - `test/enigma-tests.js` — ~70 test QUnit con tabelle di cablaggio e messaggi storici (Barbarossa parte 1 e 2, U-264, Scharnhorst): **da riusare come test vector**.
 

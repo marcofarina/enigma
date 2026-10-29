@@ -15,6 +15,12 @@ export default defineConfig(
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
   },
   {
+    // Script CommonJS che esegue il motore del simulatore originale per generare i vettori di test.
+    files: ['**/*.cjs'],
+    languageOptions: { sourceType: 'commonjs' },
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
+  },
+  {
     files: ['**/*.{tsx,jsx}'],
     plugins: { 'react-hooks': reactHooks, 'jsx-a11y': jsxA11y },
     rules: {
