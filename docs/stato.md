@@ -18,17 +18,22 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
   - `lint:content` non segnala più le date in cifre (“il 10 luglio 1944”).
   - Fatti verificati su Crypto Museum (pagine “Enigma Uhr”, “Enigma I”, “Enigma Steckerbrett”, “History”).
 
-- Fase 2a, branch `claude/zen-pasteur-4nev9o`: traccia passo-passo nel simulatore.
+- Fase 2a (PR marcofarina/enigma#6, unita): traccia passo-passo nel simulatore.
   - `stageMap()` nel motore: sostituzione completa del componente di uno stadio, con test di proprietà; lo schema la usa al posto del suo calcolo interno.
   - `layoutSchematic(..., progress)` disegna il percorso solo fino al passo scelto; la lampada si accende quando il segnale la raggiunge.
   - `trace.ts` (puro, testato) costruisce i passi e le frasi; `TracePanel` con Inizio, Indietro, Avvia/Ferma, Avanti, Fine, tre velocità e la permutazione del componente in chiaro. Il passo scelto sta nello store (`trace`) e torna a `null` a ogni cambiamento della sessione.
   - `MiniSimulatore` accetta `traccia`; usata nella lezione 3.
   - Corretto “1 lettere” nel nastro.
 
+- Fase 2b, branch `claude/zen-pasteur-4nev9o`: modalità LIM e codici QR.
+  - Pulsante “Modalità LIM” nel simulatore: schermo intero con l’API Fullscreen (altrimenti un livello che copre la pagina), configurazione e “Digita un testo” nascosti, macchina ingrandita con `zoom`, macchina e nastro affiancati sugli schermi larghi, schema limitato in larghezza. Si esce con il pulsante, con Esc o uscendo dallo schermo intero.
+  - Variante Tailwind `lim:` (attributo `data-lim`) e token di alto contrasto per la LIM in `tokens.css`.
+  - Codice QR del link condivisibile (`src/components/ui/QrCode.tsx`, `qr.ts` testato), con la libreria `uqr` (MIT, senza dipendenze); colori fissi scuro su chiaro (`--color-qr-dark`, `--color-qr-light`). Verificato decodificandolo con OpenCV.
+
 ## Prossimo passo
 
 - Revisione delle bozze 1–7 da parte dell’autore.
-- Fase 2, prossimi rilasci: modalità LIM e QR (2b), lezione di matematica con calcolatore dello spazio delle chiavi (2c), esercizi di livello 1–2 con progressi (2d).
+- Fase 2, prossimi rilasci: lezione di matematica con calcolatore dello spazio delle chiavi (2c), esercizi di livello 1–2 con progressi (2d).
 - Rinviati dalla 1b: cavi trascinabili sul pannello, schema in verticale su mobile, notazione tedesca dell’UKW-D (da verificare prima di mostrarla).
 
 ## Note operative

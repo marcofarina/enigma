@@ -92,6 +92,10 @@
   "sim.text.submit": "Digita sulla macchina",
   "sim.share.title": "Link condivisibile",
   "sim.share.includeMessage": "Includi le lettere digitate",
+  "sim.share.showQr": "Mostra il codice QR",
+  "sim.share.hideQr": "Nascondi il codice QR",
+  "sim.share.qrLabel": "Codice QR del link condivisibile",
+  "sim.share.qrHint": "Inquadralo con la fotocamera del telefono per aprire il simulatore con questa configurazione.",
   "sim.share.label": "Link alla configurazione",
   "sim.share.copy": "Copia il link",
   "sim.share.invalid": "Il link aperto non è valido, quindi è stata caricata la configurazione di base.",
@@ -197,5 +201,8 @@
   "lesson.uhr.red": "spina rossa",
   "lesson.uhr.black": "spina nera",
   "lesson.uhr.reciprocal": "Posizione {setting}: la sostituzione è reciproca, le lettere si scambiano a coppie come con i cavi normali.",
-  "lesson.uhr.oneWay": "Posizione {setting}: la sostituzione non è reciproca. La {from} va in {to}, ma la {to} non torna in {from}: va in {back}."
+  "lesson.uhr.oneWay": "Posizione {setting}: la sostituzione non è reciproca. La {from} va in {to}, ma la {to} non torna in {from}: va in {back}.",
+  "sim.lim.enter": "Modalità LIM",
+  "sim.lim.exit": "Esci dalla modalità LIM",
+  "sim.lim.hint": "Modalità LIM: macchina ingrandita e controlli essenziali. Esc per uscire."
 }
