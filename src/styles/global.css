@@ -108,3 +108,19 @@
     font-size: 0.9em;
   }
 }
+
+/* Scatto di un rotore che avanza (annullato da prefers-reduced-motion). */
+@theme {
+  --animate-scatto: scatto 220ms ease-out;
+
+  @keyframes scatto {
+    from {
+      transform: translateY(-30%);
+      opacity: 0.4;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}

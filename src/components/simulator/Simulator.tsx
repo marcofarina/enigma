@@ -3,12 +3,11 @@ import { defaultConfig, encodeConfig } from '@/engine';
 import { t } from '@/i18n';
 import SchematicView from '@/components/views/schematic/SchematicView.tsx';
 import ConfigPanel from './ConfigPanel.tsx';
-import { isEditableTarget, keyAction } from './keys.ts';
 import { Issues, Keyboard, Lampboard, Windows } from './Machine.tsx';
 import { createSession, pressAll } from './session.ts';
 import { readSharedLink } from './share.ts';
 import ShareLink from './ShareLink.tsx';
-import { createSimulatorStore, SimulatorContext } from './store.ts';
+import { createSimulatorStore, handlePhysicalKey, SimulatorContext } from './store.ts';
 import Tape, { TextInput } from './Tape.tsx';
 
 /** Apre la configurazione del link (con l’eventuale messaggio già digitato) o quella di base. */
@@ -24,15 +23,7 @@ export default function Simulator() {
 
   // Tastiera fisica: lettere e Backspace, ma non mentre si scrive in un campo del pannello.
   useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.defaultPrevented || isEditableTarget(event.target)) return;
-      const action = keyAction(event);
-      const state = store.getState();
-      if (!action || !state.session.machine) return;
-      event.preventDefault();
-      if (action.type === 'undo') state.undo();
-      else state.press(action.letter);
-    };
+    const onKeyDown = (event: KeyboardEvent) => handlePhysicalKey(store, event);
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [store]);

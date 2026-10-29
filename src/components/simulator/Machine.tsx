@@ -15,10 +15,7 @@ export function Windows() {
   const { config } = session;
 
   return (
-    <section aria-labelledby="windows-title" className="flex flex-col items-center gap-2">
-      <h2 id="windows-title" className="sr-only">
-        {t('sim.windows.title')}
-      </h2>
+    <section aria-label={t('sim.windows.title')} className="flex flex-col items-center gap-2">
       <div className="flex items-end gap-3">
         {hasSettableReflector(config) && (
           <div className="flex flex-col items-center gap-1 border-r border-border pr-3">
@@ -49,10 +46,7 @@ export function Windows() {
 export function Lampboard() {
   const last = useSimulator((s) => s.session.presses.at(-1));
   return (
-    <section aria-labelledby="lamps-title" className="flex flex-col items-center gap-1">
-      <h2 id="lamps-title" className="sr-only">
-        {t('sim.lamps.title')}
-      </h2>
+    <section aria-label={t('sim.lamps.title')} className="flex flex-col items-center gap-1">
       <div aria-hidden="true" className="flex flex-col items-center gap-1 sm:gap-1.5">
         {KEYBOARD_ROWS.map((row) => (
           <div key={row} className="flex gap-1 sm:gap-1.5">
@@ -88,10 +82,7 @@ export function Keyboard() {
   const locked = useSimulator((s) => s.session.machine === null);
   const press = useSimulator((s) => s.press);
   return (
-    <section aria-labelledby="keyboard-title" className="flex flex-col items-center gap-1.5">
-      <h2 id="keyboard-title" className="sr-only">
-        {t('sim.keyboard.title')}
-      </h2>
+    <section aria-label={t('sim.keyboard.title')} className="flex flex-col items-center gap-1.5">
       {KEYBOARD_ROWS.map((row) => (
         <div key={row} className="flex gap-1 sm:gap-1.5">
           {[...row].map((letter) => (

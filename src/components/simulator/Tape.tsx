@@ -54,7 +54,9 @@ function TapeLine({
   );
 }
 
-export default function Tape() {
+/** Il nastro; `heading` a falso lo nasconde dove un titolo romperebbe la struttura della pagina (lezioni). */
+export default function Tape({ heading = true }: { heading?: boolean }) {
+  const titleId = useId();
   const session = useSimulator((s) => s.session);
   const undo = useSimulator((s) => s.undo);
   const redo = useSimulator((s) => s.redo);
@@ -62,8 +64,8 @@ export default function Tape() {
   const { input, output } = useMemo(() => tapeLetters(session), [session]);
 
   return (
-    <section aria-labelledby="tape-title" className="flex flex-col gap-3">
-      <h2 id="tape-title" className="text-xl font-semibold">
+    <section aria-labelledby={titleId} className="flex flex-col gap-3">
+      <h2 id={titleId} className={heading ? 'text-xl font-semibold' : 'sr-only'}>
         {t('sim.tape.title')}
       </h2>
       <div className="flex flex-col gap-2">

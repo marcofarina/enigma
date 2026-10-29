@@ -1,0 +1,42 @@
+---
+title: Tastiera, lampade e circuito
+description: Che cosa succede, elettricamente, tra la pressione di un tasto e l’accensione di una lampada.
+sezione: come-funziona
+ordine: 3
+stato: bozza
+fonti:
+  - crypto-museum
+---
+
+import CircuitoTasto from '@/components/lesson/CircuitoTasto.tsx';
+import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
+import Nota from '@/components/lesson/Nota.astro';
+
+Enigma non stampa nulla. Sul davanti c’è una tastiera di 26 tasti, sopra di essa un pannello di 26 lampadine con le stesse lettere, nello stesso ordine. L’Enigma I dell’esercito funzionava con una batteria da 4,5 volt, alloggiata in un vano accanto ai rotori. Quando l’operatore preme un tasto si chiude un circuito elettrico e si accende una sola lampada: la lettera cifrata.
+
+La disposizione dei tasti non è quella alfabetica ma quella delle macchine da scrivere tedesche, che comincia con QWERTZ. Le prime Enigma commerciali avevano tasti e lampade in ordine alfabetico; la disposizione QWERTZ arrivò nel 1926, con il modello noto come Enigma D, da cui derivano quasi tutte le macchine successive.
+
+## Un interruttore a due posizioni
+
+Sotto ogni tasto c’è un **deviatore**, un interruttore a due posizioni. A riposo collega il filo della sua lettera alla lampada corrispondente; quando il tasto è premuto fino in fondo, stacca la lampada e collega lo stesso filo alla batteria. Il modello qui sotto riduce la macchina a quattro lettere e sostituisce rotori e riflettore con uno **scambiatore** fisso, che collega A con C e B con D.
+
+<CircuitoTasto client:visible />
+
+Premendo A la corrente parte dalla batteria, passa per il deviatore di A, attraversa lo scambiatore e torna sul filo di C. Il tasto C è a riposo, quindi il suo deviatore porta la corrente alla lampada C, e da lì di nuovo alla batteria. Il circuito si chiude soltanto attraverso la lampada di un’altra lettera.
+
+Da questo semplice schema discendono due proprietà fondamentali di Enigma, su cui torneremo parlando del riflettore:
+
+- la macchina è **reciproca**: se premendo A si accende C, premendo C si accende A;
+- una lettera **non può mai cifrare sé stessa**, perché la lampada del tasto premuto è scollegata.
+
+## Il percorso completo
+
+Nella macchina vera, tra la tastiera e le lampade la corrente compie un viaggio molto più lungo. Dal tasto passa per il pannello a spine (nei modelli militari), entra nella **ruota d’ingresso**, attraversa i rotori da destra a sinistra, raggiunge il **riflettore**, che la rimanda indietro, ripercorre i rotori da sinistra a destra per un’altra strada, esce dalla ruota d’ingresso, attraversa di nuovo il pannello a spine e infine accende la lampada.
+
+<MiniSimulatore client:visible config="v=1&m=I&w=I-II-III&r=AAA&p=AAA&u=B" schema didascalia="Enigma I con i rotori I, II e III, riflettore B, tutti in posizione A." />
+
+Premi un tasto e segui il percorso nello schema: la linea continua è l’andata, quella tratteggiata il ritorno. Prima di ogni lettera il rotore di destra avanza di un passo, e per questo lo stesso tasto, premuto due volte, segue due percorsi diversi.
+
+<Nota titolo="Prima si muove, poi si accende">
+Il tasto comanda anche il movimento dei rotori, che avviene nella prima parte della corsa. Il deviatore scatta solo quando il tasto è premuto fino in fondo: la lettera viene quindi cifrata con i rotori già nella nuova posizione.
+</Nota>

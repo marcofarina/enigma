@@ -1,0 +1,55 @@
+---
+title: Il passo e il doppio passo
+description: Come i rotori si trascinano l’un l’altro, perché quello centrale a volte fa due passi di fila e quante posizioni attraversa la macchina prima di ripetersi.
+sezione: come-funziona
+ordine: 5
+stato: bozza
+fonti:
+  - crypto-museum
+  - hamer-1997
+---
+
+import AnimazionePasso from '@/components/lesson/AnimazionePasso.tsx';
+import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
+import Nota from '@/components/lesson/Nota.astro';
+
+Un rotore solo torna al punto di partenza dopo 26 lettere. Enigma ne monta tre (quattro sulla M4 della marina), e li fa avanzare come le ruote di un contachilometri: il rotore di destra, detto **veloce**, scatta di un passo a ogni tasto; quando completa il giro trascina di un passo il rotore centrale, che a sua volta, dopo un giro intero, trascina quello di sinistra.
+
+## Tacche e nottolini
+
+Il trascinamento è affidato a un meccanismo semplice. Sull’anello di ogni rotore c’è una **tacca**; davanti ai rotori ci sono tre **nottolini**, leve che a ogni pressione di un tasto spingono in avanti. Il nottolino di destra fa sempre avanzare il rotore veloce. Gli altri due appoggiano sull’anello del rotore alla loro destra: di solito scivolano a vuoto, ma quando trovano la tacca vi si infilano e spingono anche il rotore alla loro sinistra.
+
+Ogni rotore ha la tacca in un punto diverso. Sui cinque rotori dell’Enigma I il riporto scatta quando nella finestrella compaiono queste lettere:
+
+| Rotore | I | II | III | IV | V |
+| --- | --- | --- | --- | --- | --- |
+| Lettera della tacca | Q | E | V | J | Z |
+
+Per esempio, con il rotore III a destra il rotore centrale avanza nel passaggio da V a W.
+
+## Il doppio passo
+
+C’è però un dettaglio. Il nottolino che si infila nella tacca del rotore centrale spinge **due rotori insieme**: quello di sinistra, ma anche lo stesso rotore centrale, perché è proprio la sua tacca che sta spingendo. Il rotore centrale avanza quindi due volte di seguito: una volta trascinato dal rotore veloce, e subito dopo, alla pressione successiva, insieme al rotore di sinistra. È il **doppio passo**, descritto in dettaglio dal crittologo David Hamer nel 1997.
+
+<AnimazionePasso client:visible rotori="I-II-III" inizio="ADU" />
+
+Premi il tasto tre volte. Da ADU si passa ad ADV; poi il rotore III è sulla tacca e il centrale avanza (AEW); ora è il rotore II a trovarsi sulla sua tacca, la E, e alla pressione successiva avanzano sia il centrale sia quello di sinistra: BFX. Il rotore centrale è passato da D a F in due tasti consecutivi.
+
+<Nota titolo="Una differenza dal contachilometri">
+Un contachilometri vero non ha il doppio passo: la cifra delle decine resta ferma per un intero giro delle unità. Lo stesso valeva per le Enigma con trascinamento a ingranaggi, come il modello G, che si potevano anche riavvolgere con una manovella in caso di errore. Le Enigma a nottolini, invece, potevano solo avanzare.
+</Nota>
+
+## Il periodo
+
+Con un movimento da contachilometri, tre rotori attraverserebbero tutte le 26 × 26 × 26 = 17 576 combinazioni prima di ripetersi. Il doppio passo salta alcune combinazioni, e il ciclo si riduce a 26 × 25 × 26 = **16 900** posizioni: dopo 16 900 lettere la sequenza delle sostituzioni ricomincia da capo. Per i messaggi militari, lunghi di solito poche centinaia di lettere, il ciclo non si chiudeva mai.
+
+<Approfondimento titolo="Quali posizioni mancano">
+Facendo girare il simulatore a partire da AAA con i rotori I, II e III, le posizioni che non compaiono mai nel ciclo sono 676 = 26 × 26. Sono le 650 in cui il rotore centrale è fermo sulla sua tacca (la E) mentre il rotore veloce non è appena scattato oltre la propria, più 26 posizioni del tipo AFW, in cui il centrale ha appena superato la tacca mentre il veloce è appena scattato oltre la sua. Da una di queste posizioni la macchina può partire, ma dopo una o due lettere entra nel ciclo e non ci torna più.
+
+Crypto Museum riporta un periodo di 16 926 posizioni, ottenuto come 17 576 − 650. Il conteggio del simulatore dà 16 900: la differenza sono proprio le 26 posizioni del secondo tipo. Chi vuole può verificarlo con la funzione `step` del motore, contando i passi necessari per tornare ad AAA.
+</Approfondimento>
+
+Nel simulatore completo puoi osservare il doppio passo digitando una lettera alla volta da una posizione come ADU.
+
+<MiniSimulatore client:visible config="v=1&m=I&w=I-II-III&r=AAA&p=ADU&u=B" nastro={false} didascalia="Enigma I con i rotori I, II e III in posizione ADU." />

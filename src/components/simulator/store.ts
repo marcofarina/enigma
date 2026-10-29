@@ -1,6 +1,7 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { createStore, useStore, type StoreApi } from 'zustand';
 import type { MachineConfig } from '@/engine';
+import { isEditableTarget, keyAction } from './keys.ts';
 import * as ops from './session.ts';
 
 export interface SimulatorState {
@@ -42,4 +43,19 @@ export function useSimulator<T>(selector: (state: SimulatorState) => T): T {
   const store = useContext(SimulatorContext);
   if (!store) throw new Error('useSimulator va usato dentro <SimulatorContext>.');
   return useStore(store, selector);
+}
+
+/**
+ * Inoltra alla macchina un tasto della tastiera fisica: lettere e Backspace, ma non mentre si
+ * scrive in un campo. Restituisce vero se il tasto è stato usato.
+ */
+export function handlePhysicalKey(store: SimulatorStore, event: KeyboardEvent | ReactKeyboardEvent): boolean {
+  if (event.defaultPrevented || isEditableTarget(event.target)) return false;
+  const action = keyAction(event);
+  const state = store.getState();
+  if (!action || !state.session.machine) return false;
+  event.preventDefault();
+  if (action.type === 'undo') state.undo();
+  else state.press(action.letter);
+  return true;
 }
