@@ -1,0 +1,22 @@
+---
+import { getCollection, render } from 'astro:content';
+import DraftNotice from '@/components/content/DraftNotice.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { isLessonIn, lessonSlug } from '@/lib/lessons';
+
+export async function getStaticPaths() {
+  const lezioni = await getCollection('lezioni', (lezione) => isLessonIn(lezione, 'come-funziona'));
+  return lezioni.map((lezione) => ({ params: { slug: lessonSlug(lezione) }, props: { lezione } }));
+}
+
+const { lezione } = Astro.props;
+const { Content } = await render(lezione);
+---
+
+<BaseLayout title={lezione.data.title} description={lezione.data.description}>
+  <article class="prose-it">
+    {lezione.data.stato === 'bozza' && <DraftNotice />}
+    <h1>{lezione.data.title}</h1>
+    <Content />
+  </article>
+</BaseLayout>

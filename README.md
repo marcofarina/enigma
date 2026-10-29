@@ -15,6 +15,30 @@ Simulatore didattico della macchina Enigma, con un percorso su storia, funzionam
 | 4 | Crittoanalisi, vista realistica 2.5D, missioni storiche | da fare |
 | 5 | Vista 3D | da fare |
 
+## Sviluppo
+
+Servono Node ≥ 22.23.4 (vedi `.nvmrc`) e pnpm 10.
+
+```bash
+pnpm install
+```
+
+```bash
+pnpm dev
+```
+
+Prima di ogni push:
+
+```bash
+pnpm verify
+```
+
+I test end-to-end (Playwright + axe) girano sulla build:
+
+```bash
+pnpm build && pnpm test:e2e
+```
+
 ## Licenze
 
 - **Codice**: [MIT](LICENSE).

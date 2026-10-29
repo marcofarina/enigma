@@ -1,0 +1,47 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { url } from '@/lib/url';
+
+const paths = [
+  {
+    href: url('simulatore/'),
+    title: 'Prova la macchina',
+    text: 'Imposta rotori, anelli e spine come un operatore del 1940 e guarda il segnale attraversare la macchina lettera dopo lettera.',
+  },
+  {
+    href: url('come-funziona/'),
+    title: 'Scopri come funziona',
+    text: 'Dai cifrari a sostituzione ai rotori, al riflettore e al pannello a spine: ogni componente spiegato con animazioni e un po’ di matematica.',
+  },
+  {
+    href: url('esercizi/'),
+    title: 'Mettiti alla prova',
+    text: 'Esercizi autocorretti di cifratura, decifratura e ragionamento sulla macchina, più schede da stampare per la classe.',
+  },
+];
+---
+
+<BaseLayout>
+  <section class="mb-12 max-w-3xl">
+    <p class="mb-2 font-mono text-sm tracking-widest text-text-muted">RAINBOW BITS · CRITTOGRAFIA</p>
+    <h1 class="mb-4 text-4xl font-bold leading-tight sm:text-5xl">La macchina Enigma, dentro e fuori</h1>
+    <p class="text-lg text-text-muted">
+      Un simulatore fedele dei principali modelli di Enigma e un percorso per capire come funzionava, come veniva usata
+      e come fu violata.
+    </p>
+  </section>
+
+  <ul class="grid gap-4 sm:grid-cols-3">
+    {paths.map((path) => (
+      <li>
+        <a
+          href={path.href}
+          class="block h-full rounded-lg border border-border bg-surface p-5 text-text no-underline transition-colors hover:border-accent"
+        >
+          <h2 class="mb-2 text-xl font-semibold">{path.title}</h2>
+          <p class="text-text-muted">{path.text}</p>
+        </a>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

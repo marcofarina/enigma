@@ -1,0 +1,68 @@
+/*
+ * Design token del tema neutro.
+ * L'identità visiva di Rainbow Bits sostituirà questi valori senza toccare i componenti:
+ * ogni componente usa solo le variabili qui definite (direttamente o tramite le utility Tailwind in global.css).
+ */
+:root {
+  color-scheme: light;
+
+  --color-bg: #f7f5f0;
+  --color-surface: #ffffff;
+  --color-surface-muted: #ece8df;
+  --color-border: #d6d0c4;
+  --color-text: #1f1d1a;
+  --color-text-muted: #5c574e;
+  --color-accent: #8a5a00;
+  --color-accent-contrast: #ffffff;
+  --color-focus: #1d5fd1;
+
+  /* Colori del percorso del segnale: scelti per restare distinguibili anche con deficit cromatici. */
+  --color-signal-forward: #c26a00;
+  --color-signal-return: #1f6fb2;
+  --color-lamp-on: #ffcc4d;
+
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Roboto Mono', Menlo, Consolas, monospace;
+
+  --radius: 0.5rem;
+  --content-width: 72ch;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-bg: #141518;
+  --color-surface: #1c1e22;
+  --color-surface-muted: #262a30;
+  --color-border: #3a3f47;
+  --color-text: #ecebe7;
+  --color-text-muted: #a7a59f;
+  --color-accent: #f0b54a;
+  --color-accent-contrast: #141518;
+  --color-focus: #7fb0ff;
+
+  --color-signal-forward: #f29b38;
+  --color-signal-return: #6cb4f0;
+  --color-lamp-on: #ffd66e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --color-bg: #141518;
+    --color-surface: #1c1e22;
+    --color-surface-muted: #262a30;
+    --color-border: #3a3f47;
+    --color-text: #ecebe7;
+    --color-text-muted: #a7a59f;
+    --color-accent: #f0b54a;
+    --color-accent-contrast: #141518;
+    --color-focus: #7fb0ff;
+
+    --color-signal-forward: #f29b38;
+    --color-signal-return: #6cb4f0;
+    --color-lamp-on: #ffd66e;
+  }
+}
