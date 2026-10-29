@@ -17,6 +17,7 @@ const lessons = [
   'il-passo-e-il-doppio-passo',
   'il-riflettore',
   'il-pannello-a-spine-e-l-uhr',
+  'la-matematica-di-enigma',
 ];
 
 for (const slug of lessons) {
@@ -82,4 +83,24 @@ test('l’Uhr è reciproca solo nelle posizioni multiple di quattro', async ({ p
   await expect(status).toContainText('La A va in C, ma la C non torna in A: va in K.');
   await uhr.getByRole('button', { name: 'Posizione successiva' }).click();
   await expect(status).toContainText('Posizione 04: la sostituzione è reciproca');
+});
+
+test('i cicli del rotore cambiano lettere ma non lunghezze', async ({ page }) => {
+  const cycles = await island(page, 'come-funziona/la-matematica-di-enigma/');
+  const summary = cycles.locator('p[aria-live]');
+  await expect(summary).toHaveText('Rotore I in posizione A: 7 cicli, di lunghezza 10, 4, 4, 3, 2, 2, 1.');
+  await expect(cycles.getByText('(AELTPHQXRU)')).toBeVisible();
+  await cycles.getByRole('combobox', { name: 'Posizione (finestrella)' }).selectOption('B');
+  await expect(summary).toHaveText('Rotore I in posizione B: 7 cicli, di lunghezza 10, 4, 4, 3, 2, 2, 1.');
+  await expect(cycles.getByText('(AELTPHQXRU)')).toHaveCount(0);
+});
+
+test('il calcolatore dà le impostazioni dell’Enigma I e della M4', async ({ page }) => {
+  const calculator = await island(page, 'come-funziona/la-matematica-di-enigma/', 1);
+  const summary = calculator.locator('p[aria-live]');
+  await expect(summary).toHaveText('Circa 1,07 × 10²³ impostazioni, cioè una chiave di circa 76,5 bit.');
+  await calculator.getByRole('button', { name: 'Enigma M4' }).click();
+  await expect(summary).toContainText('6,26 × 10²⁵');
+  await calculator.getByRole('checkbox').check();
+  await expect(calculator.locator('tfoot')).toContainText('60 269 444 695 419 208 913 664 000');
 });

@@ -1,0 +1,106 @@
+---
+title: La matematica di Enigma
+description: Permutazioni, composizione, coniugio e involuzioni spiegano perché Enigma è reciproca e quante impostazioni aveva davvero.
+sezione: come-funziona
+ordine: 8
+stato: bozza
+fonti:
+  - crypto-museum
+  - rejewski-1980
+---
+
+import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import CalcolatoreChiavi from '@/components/lesson/CalcolatoreChiavi.tsx';
+import CicliRotore from '@/components/lesson/CicliRotore.tsx';
+import Formula from '@/components/lesson/Formula.astro';
+import Nota from '@/components/lesson/Nota.astro';
+
+Ogni componente di Enigma fa la stessa cosa: riceve una lettera e ne restituisce un’altra, senza mai mandare due lettere diverse nella stessa. In matematica una regola di questo tipo si chiama **permutazione** dell’alfabeto. Bastano poche idee sulle permutazioni per spiegare la reciprocità della macchina, il divieto di cifrare una lettera in sé stessa e il numero delle chiavi. Sono le stesse idee con cui Marian Rejewski, matematico del servizio cifra polacco, alla fine del 1932 ricostruì in poche settimane il cablaggio dei rotori.
+
+## Le permutazioni
+
+Una permutazione si può scrivere come una tabella a due righe: sopra le lettere che entrano, sotto quelle che escono. Per il rotore I:
+
+```
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+EKMFLGDQVZNTOWYHXUSPAIBRCJ
+```
+
+La A va in E, la B in K, la C in M, e così via. Le permutazioni possibili delle 26 lettere sono <Formula tex="26! = 26 \times 25 \times \cdots \times 1" dopo="," /> circa <Formula tex="4{,}03 \times 10^{26}" dopo="." />
+
+C’è un modo più compatto di scriverle. Si parte da una lettera e la si segue: nel rotore I la A va in E, la E in L, la L in T, e dopo dieci passi si torna alla A. Si ottiene un **ciclo**, che si scrive tra parentesi. Ogni permutazione si scompone in cicli che non hanno lettere in comune; per il rotore I:
+
+```
+(AELTPHQXRU) (BKNW) (CMOY) (DFG) (IV) (JZ) (S)
+```
+
+La S forma un ciclo da sola: è un **punto fisso**, una lettera che il rotore lascia com’è. Le lunghezze dei cicli, qui <Formula tex="10, 4, 4, 3, 2, 2" /> e <Formula tex="1" dopo="," /> formano la **struttura in cicli** della permutazione.
+
+## Composizione e inversa
+
+Il segnale attraversa i componenti uno dopo l’altro, quindi la sostituzione complessiva è la **composizione** delle singole permutazioni. La scriviamo come le funzioni, da destra a sinistra: <Formula tex="YX" /> vuol dire “prima <Formula tex="X" dopo="," /> poi <Formula tex="Y" dopo="”." /> L’ordine conta. Se <Formula tex="X" /> scambia la A con la B e <Formula tex="Y" /> manda la A in B, la B in C e la C in A, allora con <Formula tex="YX" /> la A va in C, mentre con <Formula tex="XY" /> la A torna in A.
+
+L’**inversa** <Formula tex="X^{-1}" /> è la permutazione che annulla <Formula tex="X" dopo=":" /> si ottiene leggendo la tabella dal basso verso l’alto, e <Formula tex="X^{-1}X" /> lascia ogni lettera al suo posto. È l’**identità**, che indichiamo con <Formula tex="\mathrm{id}" dopo="." /> Al ritorno dal riflettore la corrente attraversa i rotori nel verso opposto: subisce le loro inverse.
+
+## Il rotore che gira: il coniugio
+
+Quando un rotore avanza, il cablaggio resta lo stesso ma si sposta. Chiamiamo <Formula tex="\rho" /> lo spostamento di un posto, che manda la A in B, la B in C e la Z in A. Un rotore con cablaggio <Formula tex="R" dopo="," /> spostato di <Formula tex="k" /> posti, opera la permutazione
+
+<Formula blocco tex="\rho^{-k}\, R\, \rho^{k}" />
+
+prima si spostano i contatti di <Formula tex="k" /> posti, poi si attraversa il cablaggio, infine si torna indietro di <Formula tex="k" dopo="." /> Una permutazione della forma <Formula tex="T^{-1} X T" /> si dice **coniugata** di <Formula tex="X" dopo="," /> e le coniugate hanno sempre la stessa struttura in cicli: <Formula tex="T" /> cambia il nome delle lettere, non la lunghezza dei cicli. In qualunque posizione, il rotore I ha cicli lunghi <Formula tex="10, 4, 4, 3, 2, 2" /> e <Formula tex="1" dopo="." />
+
+<CicliRotore client:visible />
+
+Cambia la posizione: le lettere dei cicli cambiano, le lunghezze no. Questa proprietà, che sembra un dettaglio, ebbe un ruolo centrale nel lavoro dei crittoanalisti polacchi, come vedremo nella sezione sulla crittoanalisi.
+
+## Involuzioni e reciprocità
+
+Il riflettore scambia le lettere a coppie, quindi applicarlo due volte riporta ogni lettera al suo posto: <Formula tex="U^2 = \mathrm{id}" dopo="," /> cioè <Formula tex="U = U^{-1}" dopo="." /> Una permutazione così si chiama **involuzione**. Il riflettore B è fatto di 13 cicli di lunghezza due, senza punti fissi:
+
+```
+(AY) (BR) (CU) (DH) (EQ) (FS) (GL) (IP) (JX) (KN) (MO) (TZ) (VW)
+```
+
+Anche il pannello a spine è un’involuzione, ma con punti fissi: le lettere senza cavo.
+
+Chiamiamo <Formula tex="P" /> il pannello e <Formula tex="R" /> il tratto che va dalla ruota d’ingresso al riflettore, rotori compresi. Con la macchina ferma in una certa posizione, la lettera accesa è data da
+
+<Formula blocco tex="E = P^{-1} R^{-1}\, U\, R\, P" />
+
+cioè <Formula tex="E" /> è coniugata di <Formula tex="U" dopo="." /> Ne seguono le due proprietà già viste nelle lezioni precedenti. La prima è la reciprocità:
+
+<Formula blocco tex="E^2 = P^{-1} R^{-1} U R P \, P^{-1} R^{-1} U R P = P^{-1} R^{-1} U^2 R P = \mathrm{id}" />
+
+La seconda è che nessuna lettera si cifra in sé stessa: <Formula tex="E" /> ha la stessa struttura in cicli di <Formula tex="U" dopo="," /> quindi 13 scambi e nessun punto fisso. Il ragionamento non usa il fatto che <Formula tex="P" /> sia un’involuzione: vale anche con l’Uhr, che all’andata opera una permutazione e al ritorno la sua inversa.
+
+<Approfondimento titolo="Perché la coniugata ha la stessa struttura">
+Se <Formula tex="X" /> manda <Formula tex="a" /> in <Formula tex="b" dopo="," /> allora <Formula tex="T^{-1} X T" /> manda <Formula tex="T^{-1}(a)" /> in <Formula tex="T^{-1}(b)" dopo="." /> Ogni ciclo <Formula tex="(a\,b\,c \ldots)" /> di <Formula tex="X" /> diventa il ciclo <Formula tex="(T^{-1}(a)\;T^{-1}(b)\;T^{-1}(c) \ldots)" /> della coniugata: stesse lunghezze, lettere rinominate. Vale anche il viceversa: due permutazioni con la stessa struttura in cicli sono sempre coniugate.
+</Approfondimento>
+
+## Quante impostazioni?
+
+Per contare le chiavi conviene mettersi nei panni di chi attacca e supporre, come vuole il principio di Kerckhoffs, che conosca la macchina e i cablaggi. Restano da indovinare le scelte del giorno:
+
+- l’ordine dei rotori: per l’Enigma I tre su cinque, cioè <Formula tex="5 \times 4 \times 3 = 60" /> possibilità;
+- gli anelli: contano solo quelli del rotore destro e del centrale, perché la tacca dell’anello di sinistra non ha un rotore da spingere, quindi <Formula tex="26 \times 26 = 676" dopo=";" />
+- le posizioni iniziali dei tre rotori: <Formula tex="26^3 = 17\,576" dopo=";" />
+- il pannello a spine con dieci cavi: <Formula tex="150\,738\,274\,937\,250" dopo="." />
+
+Il prodotto è circa <Formula tex="1{,}07 \times 10^{23}" dopo="," /> più o meno <Formula tex="2^{76}" dopo=":" /> una chiave di 76 bit. Per la M4 della marina, con tre rotori su otto, il rotore sottile, il riflettore sottile e una posizione in più, si arriva a circa <Formula tex="6{,}26 \times 10^{25}" dopo="." />
+
+<CalcolatoreChiavi client:visible />
+
+Prova a cambiare il numero di cavi, a passare alla M4 o a contare tutti e tre gli anelli, e guarda quale fattore pesa di più: il pannello a spine, da solo, vale più di tutto il resto.
+
+<Approfondimento titolo="Le posizioni che il doppio passo rende equivalenti">
+Per via del doppio passo, due posizioni iniziali diverse possono dare la stessa cifratura. Se il rotore centrale è sulla sua tacca, al primo tasto avanzano tutti e tre i rotori; la stessa posizione d’arrivo si raggiunge partendo con il rotore sinistro e il centrale già un passo avanti, quando il rotore destro non è sulla sua tacca. Con rotori a una tacca le coppie equivalenti sono <Formula tex="26 \times 25 = 650" dopo="," /> e le posizioni iniziali distinte scendono a <Formula tex="17\,576 - 650 = 16\,926" dopo=";" /> il simulatore lo conferma contando le posizioni raggiunte dopo il primo tasto. Sulla M4 la riduzione si ripete per ciascuna delle 26 posizioni del rotore sottile; con i rotori navali a due tacche il conto cambia ancora.
+</Approfondimento>
+
+## Tante chiavi non bastano
+
+Un numero enorme di chiavi non rende per forza sicura una cifra. Il pannello a spine, il fattore più grande, resta uguale per tutto il messaggio: preso da solo è una semplice sostituzione monoalfabetica. Gli anelli spostano soltanto il momento in cui i rotori si trascinano a vicenda, e cambiano poco la sostanza della cifratura. Inoltre alcune regole delle procedure tedesche, pensate per rendere le chiavi più varie, finivano per escluderne molte: per esempio, lo stesso rotore non poteva occupare la stessa posizione due giorni di seguito.
+
+<Nota titolo="Chiavi e sicurezza">
+Lo spazio delle chiavi dice quanto costerebbe provarle tutte, una per una. Chi attacca una cifra però non procede così: cerca le regolarità che permettono di scartare intere famiglie di chiavi in un colpo solo. La storia della crittoanalisi di Enigma è, in gran parte, la storia di queste scorciatoie.
+</Nota>
