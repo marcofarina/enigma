@@ -30,16 +30,22 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
   - Variante Tailwind `lim:` (attributo `data-lim`) e token di alto contrasto per la LIM in `tokens.css`.
   - Codice QR del link condivisibile (`src/components/ui/QrCode.tsx`, `qr.ts` testato), con la libreria `uqr` (MIT, senza dipendenze); colori fissi scuro su chiaro (`--color-qr-dark`, `--color-qr-light`). Verificato decodificandolo con OpenCV.
 
-- Fase 2c, branch `claude/zen-pasteur-4nev9o`: lezione 8 “La matematica di Enigma” in bozza e calcolatore dello spazio delle chiavi.
+- Fase 2c (PR marcofarina/enigma#8, unita): lezione 8 “La matematica di Enigma” in bozza e calcolatore dello spazio delle chiavi.
   - Lezione: permutazioni e cicli, composizione e inversa, coniugio (il rotore che gira), involuzioni, E = P⁻¹ R⁻¹ U R P con le dimostrazioni di reciprocità e assenza di punti fissi, conteggio delle impostazioni, differenza tra spazio delle chiavi e sicurezza.
   - Componenti `CicliRotore` (struttura in cicli che non cambia con la posizione), `CalcolatoreChiavi` (Enigma I e M4 come punti di partenza, ogni fattore modificabile, totale, notazione scientifica e bit) e `Formula` (KaTeX in fase di build, HTML più MathML; la punteggiatura che segue va in `dopo`).
   - Motore: `keySpace()`, `log2()`, `cycles()`, `cycleType()`, con test; `src/lib/format.ts` con `groupDigits` e `scientific`.
   - KaTeX senza remark-math: Astro 7 usa il processore satteri, che ignora i plugin remark/rehype; cambiare processore avrebbe toccato tutte le lezioni.
 
+- Fase 2d, branch `claude/zen-pasteur-4nev9o`: esercizi autocorretti di livello 1 e 2, con i progressi.
+  - `src/exercises/` (TypeScript puro, testato): generatore con seme (mulberry32, semi da 1 a 999 999), messaggi in italiano, catalogo di sette esercizi (cifra, decifra, foglio chiave con anelli numerati, procedura dell’indicatore doppio; posizioni dopo N tasti, una lettera a mano dalle tabelle, crittogramma impossibile), progressi in `localStorage` protetti da `try/catch`.
+  - Ogni variante è fatta di blocchi strutturati (testo, foglio chiave, messaggio, tabelle di cablaggio, confronto lettera per lettera): serviranno anche alle schede stampabili della fase 3.
+  - Pagine `/esercizi/` (per livello, con le varianti risolte) e `/esercizi/<id>/?seme=…`; il seme sta nell’indirizzo, così un docente può assegnare la stessa variante a tutta la classe. Soluzione con link “Rivedi nel simulatore”.
+  - Negli esercizi da operatore c’è il simulatore completo, che parte dalla configurazione di base; in quelli di meccanica no.
+
 ## Prossimo passo
 
 - Revisione delle bozze 1–7 da parte dell’autore.
-- Fase 2, ultimo rilascio: esercizi di livello 1–2 con progressi (2d).
+- Fase 3 (v0.3): storia e procedure, Enigma e l’Italia, galleria con crediti, glossario, schede stampabili (dai blocchi degli esercizi), esercizi di livello 3.
 - Rinviati dalla 1b: cavi trascinabili sul pannello, schema in verticale su mobile, notazione tedesca dell’UKW-D (da verificare prima di mostrarla).
 
 ## Note operative
@@ -62,3 +68,4 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
 - Dettagli tecnici dell’Enigma K usata dalla Regia Marina.
 - Numeri di pagina delle citazioni da *Codici & segreti* di Singh (sulla copia dell’autore).
 - Crypto Museum, pagina “How does an Enigma machine work?”: i totali con la correzione del doppio passo sono sbagliati. Per l’Enigma I scrive 685 518 560 invece di 60 × 676 × 16 926 = 686 518 560; per la M4 toglie 650 posizioni una volta sola invece che per ciascuna delle 26 posizioni del rotore sottile (440 076 posizioni distinte, verificato con il motore). Con i rotori navali a due tacche nel mezzo la riduzione è diversa. La lezione 8 usa i valori ricalcolati.
+- Esercizio sulla procedura dell’indicatore: descrive l’indicatore cifrato due volte con la Grundstellung del giorno, senza date. Prima di aggiungerle (e di scrivere la lezione sulle procedure) vanno verificati periodi e varianti della procedura per esercito, aviazione e marina.

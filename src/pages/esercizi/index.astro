@@ -1,11 +1,35 @@
 ---
-import ComingSoon from '@/components/content/ComingSoon.astro';
+import SolvedCount from '@/components/exercises/SolvedCount.tsx';
+import { EXERCISES } from '@/exercises/catalog';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { t } from '@/i18n';
+import { url } from '@/lib/url';
+
+const levels = [
+  { level: 1, title: t('ex.level1') },
+  { level: 2, title: t('ex.level2') },
+] as const;
 ---
 
-<BaseLayout title="Esercizi">
-  <ComingSoon
-    title="Esercizi"
-    intro="Esercizi autocorretti su cifratura, decifratura, meccanica dei rotori e matematica della macchina, con schede stampabili."
-  />
+<BaseLayout title={t('ex.title')}>
+  <h1 class="mb-2 text-3xl font-bold">{t('ex.title')}</h1>
+  <p class="mb-8 max-w-3xl text-text-muted">{t('ex.intro')}</p>
+  {levels.map(({ level, title }) => (
+    <section aria-labelledby={`livello-${level}`} class="mb-10">
+      <h2 id={`livello-${level}`} class="mb-4 text-2xl font-semibold">
+        {title}
+      </h2>
+      <ul class="grid gap-4 sm:grid-cols-2">
+        {EXERCISES.filter((exercise) => exercise.level === level).map((exercise) => (
+          <li class="flex flex-col gap-1 rounded-xl border border-border bg-surface p-4">
+            <a href={url(`esercizi/${exercise.id}/`)} class="text-lg font-semibold text-text underline">
+              {exercise.title}
+            </a>
+            <p class="text-text-muted">{exercise.summary}</p>
+            <SolvedCount client:only="react" exerciseId={exercise.id} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
 </BaseLayout>

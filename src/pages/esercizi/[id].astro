@@ -1,0 +1,28 @@
+---
+import ExerciseView from '@/components/exercises/ExerciseView.tsx';
+import { EXERCISES, type Exercise } from '@/exercises/catalog';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { t } from '@/i18n';
+import { url } from '@/lib/url';
+
+export function getStaticPaths() {
+  return EXERCISES.map((exercise) => ({ params: { id: exercise.id }, props: { exercise } }));
+}
+
+const { exercise } = Astro.props as { exercise: Exercise };
+---
+
+<BaseLayout title={exercise.title} description={exercise.summary}>
+  <p class="mb-2 text-sm">
+    <a href={url('esercizi/')} class="underline">
+      ← {t('ex.back')}
+    </a>
+    <span class="text-text-muted"> · {t(exercise.level === 1 ? 'ex.level1' : 'ex.level2')}</span>
+  </p>
+  <h1 class="mb-6 text-3xl font-bold">{exercise.title}</h1>
+  <ExerciseView client:only="react" exerciseId={exercise.id}>
+    <p slot="fallback" class="text-text-muted">
+      {t('ex.loading')}
+    </p>
+  </ExerciseView>
+</BaseLayout>
