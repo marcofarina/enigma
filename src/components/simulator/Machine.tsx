@@ -45,13 +45,16 @@ export function Windows() {
 
 export function Lampboard() {
   const last = useSimulator((s) => s.session.presses.at(-1));
+  // Durante la traccia passo-passo la lampada si accende solo quando il segnale la raggiunge.
+  const trace = useSimulator((s) => s.trace);
+  const reached = trace === null || (last !== undefined && trace > last.stages.length);
   return (
     <section aria-label={t('sim.lamps.title')} className="flex flex-col items-center gap-1">
       <div aria-hidden="true" className="flex flex-col items-center gap-1 sm:gap-1.5">
         {KEYBOARD_ROWS.map((row) => (
           <div key={row} className="flex gap-1 sm:gap-1.5">
             {[...row].map((letter) => {
-              const lit = last?.output === letter;
+              const lit = reached && last?.output === letter;
               return (
                 <span
                   key={letter}

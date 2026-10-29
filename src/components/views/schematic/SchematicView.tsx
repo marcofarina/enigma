@@ -72,13 +72,15 @@ function describePath(input: string, stages: readonly Stage[]): string {
 export default function SchematicView({ heading = true }: { heading?: boolean }) {
   const id = useId();
   const session = useSimulator((s) => s.session);
+  // Durante la traccia passo-passo il percorso si ferma al passo scelto.
+  const trace = useSimulator((s) => s.trace);
   const [allWiring, setAllWiring] = useState(false);
   const { machine, config } = session;
   const last = session.presses.at(-1);
   const schematic = useMemo(() => {
     const state = currentState(session);
-    return machine && state ? layoutSchematic(machine, state, last?.stages) : null;
-  }, [session, machine, last]);
+    return machine && state ? layoutSchematic(machine, state, last?.stages, trace ?? undefined) : null;
+  }, [session, machine, last, trace]);
 
   const header = (column: Column): [string, string] => {
     switch (column.kind) {

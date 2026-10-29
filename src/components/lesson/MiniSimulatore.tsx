@@ -5,6 +5,7 @@ import { Issues, Keyboard, Lampboard, Windows } from '@/components/simulator/Mac
 import { createSession } from '@/components/simulator/session.ts';
 import { createSimulatorStore, handlePhysicalKey, SimulatorContext } from '@/components/simulator/store.ts';
 import Tape from '@/components/simulator/Tape.tsx';
+import TracePanel from '@/components/simulator/TracePanel.tsx';
 import SchematicView from '@/components/views/schematic/SchematicView.tsx';
 
 interface Props {
@@ -14,6 +15,8 @@ interface Props {
   schema?: boolean;
   /** Mostra il nastro con le lettere digitate. */
   nastro?: boolean;
+  /** Mostra i comandi della traccia passo-passo, sopra lo schema. */
+  traccia?: boolean;
   didascalia?: string;
 }
 
@@ -21,7 +24,7 @@ interface Props {
  * Simulatore ridotto da inserire nelle lezioni. Ogni istanza ha il suo stato; la tastiera del
  * computer agisce solo quando il focus è dentro il simulatore (per esempio dopo un clic su un tasto).
  */
-export default function MiniSimulatore({ config, schema = false, nastro = true, didascalia }: Props) {
+export default function MiniSimulatore({ config, schema = false, nastro = true, traccia = false, didascalia }: Props) {
   // Una configurazione sbagliata in una lezione fa fallire la build, invece di arrivare al lettore.
   const [store] = useState(() => createSimulatorStore(createSession(decodeConfigOrThrow(config))));
 
@@ -39,6 +42,7 @@ export default function MiniSimulatore({ config, schema = false, nastro = true, 
           <Lampboard />
           <Keyboard />
           {nastro && <Tape heading={false} />}
+          {traccia && <TracePanel heading={false} />}
           {schema && <SchematicView heading={false} />}
         </div>
         <figcaption className="mt-2 text-sm text-text-muted">

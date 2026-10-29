@@ -26,7 +26,9 @@ function TapeLine({
       <div className="flex items-center justify-between gap-2">
         <h3 id={`${id}-label`} className="text-sm font-semibold">
           {label}{' '}
-          <span className="font-normal text-text-muted">· {tf('sim.tape.count', { count: letters.length })}</span>
+          <span className="font-normal text-text-muted">
+            · {tf(letters.length === 1 ? 'sim.tape.countOne' : 'sim.tape.count', { count: letters.length })}
+          </span>
         </h3>
         <button
           type="button"

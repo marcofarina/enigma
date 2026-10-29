@@ -91,3 +91,39 @@ test('il simulatore in uso è accessibile, anche in tema scuro', async ({ page }
     expect(results.violations).toEqual([]);
   }
 });
+
+test('la traccia passo-passo segue il segnale dell’ultimo tasto', async ({ page }) => {
+  await open(page);
+  const trace = page.getByRole('region', { name: 'Traccia passo-passo' });
+  await expect(trace).toContainText('Premi un tasto per seguirne il percorso');
+  await screenKey(page, 'A').click();
+  await expect(trace).toContainText('Passo 13 di 13');
+  await expect(trace).toContainText('Si accende la lampada B');
+
+  await trace.getByRole('button', { name: 'Primo passo' }).click();
+  await expect(trace).toContainText('Passo 1 di 13');
+  await expect(trace).toContainText('AAA → AAB. Si muove il rotore destro.');
+  await expect(page.locator('[data-lit]')).toHaveCount(0);
+
+  for (let i = 0; i < 3; i++) await trace.getByRole('button', { name: 'Passo successivo' }).click();
+  await expect(trace).toContainText('Rotore III (destro), andata, con B nella finestrella');
+  await expect(
+    trace.getByRole('region', { name: 'Sostituzione operata dal componente in questo momento' }),
+  ).toBeVisible();
+  for (const scheme of ['light', 'dark'] as const) {
+    await page.emulateMedia({ colorScheme: scheme });
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(results.violations).toEqual([]);
+  }
+
+  await trace.getByRole('button', { name: 'Avvia' }).click();
+  await expect(trace).toContainText('Passo 5 di 13');
+  await trace.getByRole('button', { name: 'Ferma' }).click();
+  await trace.getByRole('button', { name: 'Ultimo passo' }).click();
+  await expect(page.locator('[data-lit]')).toHaveText('B');
+
+  // Un tasto nuovo riporta la traccia al percorso completo.
+  await trace.getByRole('button', { name: 'Primo passo' }).click();
+  await screenKey(page, 'A').click();
+  await expect(trace).toContainText('Passo 13 di 13');
+});
