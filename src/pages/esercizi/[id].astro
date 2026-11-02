@@ -17,7 +17,7 @@ const { exercise } = Astro.props as { exercise: Exercise };
     <a href={url('esercizi/')} class="underline">
       ← {t('ex.back')}
     </a>
-    <span class="text-text-muted"> · {t(exercise.level === 1 ? 'ex.level1' : 'ex.level2')}</span>
+    <span class="text-text-muted"> · {t(`ex.level${exercise.level}`)}</span>
   </p>
   <h1 class="mb-6 text-3xl font-bold">{exercise.title}</h1>
   <ExerciseView client:only="react" exerciseId={exercise.id}>

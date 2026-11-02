@@ -15,95 +15,27 @@ import {
 } from '@/engine';
 import { t, tf } from '@/i18n';
 import { randomMessage } from './messages.ts';
-import { createRng, int, MAX_SEED, shuffle, type Rng } from './random.ts';
+import { MILITARY_ROTORS, randomKey, randomLetters, sheetOf } from './keys.ts';
+import { LEVEL_3 } from './math.ts';
+import { createRng, int, MAX_SEED, shuffle } from './random.ts';
+import type { Answer, Exercise, Variant } from './types.ts';
 
 /**
  * Catalogo degli esercizi autocorretti. Ogni esercizio genera una variante da un seme; la
- * risposta attesa la calcola sempre il motore. Il testo è fatto di blocchi strutturati, che
- * l’interfaccia rende (e che un domani serviranno anche per le schede stampabili).
+ * risposta attesa la calcola sempre il motore.
  */
 
-export type Level = 1 | 2;
+export type * from './types.ts';
 
-export interface KeySheet {
-  rotors: string[];
-  rings: string;
-  plugboard: string[];
-  /** Grundstellung, quando fa parte della chiave. */
-  positions?: string;
-  /** Anelli scritti come numeri da 01 a 26, come sui rotori dell’Enigma I. */
-  ringsAsNumbers?: boolean;
-}
-
-export type Block =
-  | { kind: 'text'; text: string }
-  | { kind: 'key'; sheet: KeySheet }
-  | { kind: 'message'; label: string; text: string }
-  | { kind: 'wiring'; rows: { name: string; wiring: string }[] }
-  | { kind: 'compare'; plain: string; cipher: string };
-
-export interface Answer {
-  kind: 'letters' | 'number';
-  label: string;
-  /** Già normalizzata: solo lettere maiuscole, oppure un numero senza zeri iniziali. */
-  expected: string;
-}
-
-export interface Variant {
-  seed: number;
-  blocks: Block[];
-  answer: Answer;
-  solution: string[];
-  /** Configurazione e testo per rivedere la soluzione nel simulatore. */
-  replay?: { config: MachineConfig; message: string };
-}
-
-export interface Exercise {
-  id: string;
-  level: Level;
-  title: string;
-  summary: string;
-  /** Mostra il simulatore accanto all’esercizio (negli esercizi “a mano” resta nascosto). */
-  simulator: boolean;
-  generate: (seed: number) => Variant;
-}
-
-const MILITARY_ROTORS = ['I', 'II', 'III', 'IV', 'V'];
-
-const randomLetters = (rng: Rng, count: number) =>
-  Array.from({ length: count }, () => toLetter(int(rng, 0, 25))).join('');
-
-function randomPairs(rng: Rng, count: number): string[] {
-  const letters = shuffle(rng, [...ALPHABET]).slice(0, 2 * count);
-  const pairs: string[] = [];
-  for (let i = 0; i < letters.length; i += 2) pairs.push([letters[i], letters[i + 1]].sort().join(''));
-  return pairs.sort();
-}
-
-/** Chiave casuale per l’Enigma I con riflettore B. */
-function randomKey(rng: Rng, cables: number, rings = true): MachineConfig {
-  return {
-    model: 'I',
-    rotors: shuffle(rng, MILITARY_ROTORS).slice(0, 3),
-    rings: rings ? randomLetters(rng, 3) : 'AAA',
-    positions: randomLetters(rng, 3),
-    reflector: 'B',
-    plugboard: randomPairs(rng, cables),
-  };
-}
-
-const sheetOf = (config: MachineConfig, extra: Partial<KeySheet> = {}): KeySheet => ({
-  rotors: [...config.rotors],
-  rings: config.rings,
-  plugboard: [...(config.plugboard ?? [])],
-  ...extra,
-});
-
-/** Normalizza la risposta digitata: le lettere come sulla tastiera di Enigma, i numeri senza zeri. */
+/**
+ * Normalizza la risposta digitata: le lettere come sulla tastiera di Enigma, i numeri senza zeri
+ * iniziali e senza separatori delle migliaia (spazi, punti, apostrofi). I numeri restano stringhe,
+ * perché quelli dello spazio delle chiavi superano la precisione di `number`.
+ */
 export function normalizeAnswer(kind: Answer['kind'], input: string): string {
   if (kind === 'letters') return prepareText(input);
-  const digits = input.trim();
-  return /^\d+$/.test(digits) ? String(Number(digits)) : digits;
+  const digits = input.trim().replace(/(?<=\d)[\s.'’\u00a0\u202f](?=\d{3}(?!\d))/g, '');
+  return /^\d+$/.test(digits) ? digits.replace(/^0+(?=\d)/, '') : digits;
 }
 
 export function isCorrect(variant: Variant, input: string): boolean {
@@ -335,7 +267,16 @@ const impossibile: Exercise = {
   },
 };
 
-export const EXERCISES: readonly Exercise[] = [cifra, decifra, foglioChiave, indicatore, posizioni, aMano, impossibile];
+export const EXERCISES: readonly Exercise[] = [
+  cifra,
+  decifra,
+  foglioChiave,
+  indicatore,
+  posizioni,
+  aMano,
+  impossibile,
+  ...LEVEL_3,
+];
 
 export function exerciseById(id: string): Exercise | undefined {
   return EXERCISES.find((exercise) => exercise.id === id);

@@ -24,3 +24,10 @@ export function scientific(value: bigint): string {
   const sup = [...String(power)].map((d) => SUPERSCRIPT[Number(d)]).join('');
   return `${text} × 10${sup}`;
 }
+
+const WORDS = ['zero', 'uno', 'due', 'tre', 'quattro', 'cinque', 'sei', 'sette', 'otto', 'nove', 'dieci'];
+
+/** Nel testo discorsivo i numeri fino a dieci vanno in lettere; gli altri restano in cifre. */
+export function numberInWords(value: number): string {
+  return WORDS[value] ?? String(value);
+}

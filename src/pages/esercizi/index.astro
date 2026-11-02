@@ -8,12 +8,18 @@ import { url } from '@/lib/url';
 const levels = [
   { level: 1, title: t('ex.level1') },
   { level: 2, title: t('ex.level2') },
+  { level: 3, title: t('ex.level3') },
 ] as const;
 ---
 
 <BaseLayout title={t('ex.title')}>
   <h1 class="mb-2 text-3xl font-bold">{t('ex.title')}</h1>
-  <p class="mb-8 max-w-3xl text-text-muted">{t('ex.intro')}</p>
+  <p class="mb-4 max-w-3xl text-text-muted">{t('ex.intro')}</p>
+  <p class="mb-8 max-w-3xl">
+    <a href={url('schede/')} class="underline">
+      {t('ex.sheetsLink')}
+    </a>
+  </p>
   {levels.map(({ level, title }) => (
     <section aria-labelledby={`livello-${level}`} class="mb-10">
       <h2 id={`livello-${level}`} class="mb-4 text-2xl font-semibold">

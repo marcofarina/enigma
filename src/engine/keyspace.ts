@@ -10,15 +10,24 @@ function factorial(n: number): bigint {
 }
 
 /**
- * Modi di collegare `cables` cavi sul pannello a spine da 26 prese:
- * 26! / ((26 − 2n)! · n! · 2ⁿ). Si scelgono le 2n lettere collegate, le si divide in coppie
- * e non conta né l’ordine delle coppie né quello delle due lettere in una coppia.
+ * Modi di formare `pairs` coppie disgiunte con `letters` lettere:
+ * letters! / ((letters − 2·pairs)! · pairs! · 2^pairs). Si scelgono le lettere collegate, le si
+ * divide in coppie e non conta né l’ordine delle coppie né quello delle due lettere in una coppia.
  */
+export function pairings(letters: number, pairs: number): bigint {
+  if (!Number.isInteger(letters) || letters < 0) throw new RangeError('Il numero di lettere non è valido.');
+  if (!Number.isInteger(pairs) || pairs < 0 || 2 * pairs > letters) {
+    throw new RangeError(`Con ${letters} lettere si formano da 0 a ${Math.floor(letters / 2)} coppie.`);
+  }
+  return factorial(letters) / (factorial(letters - 2 * pairs) * factorial(pairs) * 2n ** BigInt(pairs));
+}
+
+/** Modi di collegare `cables` cavi sul pannello a spine da 26 prese. */
 export function plugboardSettings(cables: number): bigint {
   if (!Number.isInteger(cables) || cables < 0 || cables > 13) {
     throw new RangeError('Il pannello a spine accetta da 0 a 13 cavi.');
   }
-  return factorial(26) / (factorial(26 - 2 * cables) * factorial(cables) * 2n ** BigInt(cables));
+  return pairings(26, cables);
 }
 
 export interface KeySpaceOptions {

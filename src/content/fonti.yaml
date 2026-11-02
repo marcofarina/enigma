@@ -55,3 +55,15 @@
   editore: Cryptologia 21 (1)
   anno: 1997
   note: Citato da Crypto Museum come gennaio 1997, numero 1; il volume (21) è da verificare.
+- id: us-6812-bombe-report
+  autori: 6812th Signal Security Detachment, US Army
+  titolo: Decoding German Enigma Machine Messages (The US 6812 Bombe Report)
+  anno: 1944
+  url: https://www.codesandciphers.org.uk/documents/bmbrpt/usbmbrpt.pdf
+  note: Rapporto datato 1° ottobre 1944, trascritto da Tony Sale nel 2002. Descrive il foglio chiave, che si legge dal basso verso l’alto e si taglia giorno per giorno, e l’indicatore in due gruppi di tre lettere.
+- id: luftwaffe-schluessel-619
+  autori: Luftwaffe
+  titolo: Luftwaffen-Maschinenschlüssel Nr. 619
+  anno: 1944
+  url: https://cryptocellar.org/enigma/e-keys/luftwaffen-mschluessel-nr619.pdf
+  note: Foglio chiave originale, pubblicato da CryptoCellar. Modello delle schede stampabili. Anno da verificare.

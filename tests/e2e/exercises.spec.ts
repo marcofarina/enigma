@@ -69,3 +69,48 @@ test('gli esercizi da operatore hanno il simulatore e sono accessibili', async (
     await axe(page);
   }
 });
+
+test('gli esercizi di matematica accettano numeri grandi con i separatori', async ({ page }) => {
+  await page.goto('esercizi/pannello/?seme=2');
+  await expect(page.getByRole('heading', { name: 'Variante 2' })).toBeVisible();
+  await page.getByText('Mostra la soluzione').click();
+  const total = await page.getByText(/^In tutto /).textContent();
+  const answer = /= ([\d\s\u00a0]+) modi/.exec(total ?? '')?.[1]?.trim() ?? '';
+  await page.getByLabel('Risultato (un numero intero)').fill(answer.replace(/\u00a0/g, ' '));
+  await page.getByRole('button', { name: 'Verifica' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Corretto!' })).toBeVisible();
+  await axe(page);
+});
+
+test('gli esercizi di livello 3 sono accessibili', async ({ page }) => {
+  await page.goto('esercizi/');
+  await expect(page.getByRole('heading', { name: 'Livello 3 — Matematica' })).toBeVisible();
+  for (const id of ['spazio-chiavi', 'involuzione', 'posizione-iniziale']) {
+    await page.goto(`esercizi/${id}/?seme=5`);
+    await expect(page.getByRole('heading', { name: 'Variante 5' })).toBeVisible();
+    await axe(page);
+  }
+});
+
+test('le schede stampabili generano una serie per la classe con le soluzioni', async ({ page }) => {
+  await page.goto('schede/?seme=4827&copie=3');
+  await expect(page.getByRole('article', { name: 'Scheda n. 4827' })).toBeVisible();
+  await expect(page.getByRole('article', { name: 'Scheda n. 4829' })).toBeVisible();
+  await expect(page.getByRole('article')).toHaveCount(3);
+  await expect(page.getByRole('heading', { name: 'Soluzioni' })).toBeVisible();
+  const first = page.getByRole('article', { name: 'Scheda n. 4827' });
+  const keys = first.getByRole('table', { name: /Maschinenschlüssel Nr\. \d+/ });
+  await expect(keys.getByRole('row')).toHaveCount(32);
+  await expect(keys.getByRole('rowheader').first()).toHaveText('31');
+
+  await page.getByLabel('Schede (una per studente)').fill('1');
+  await expect(page.getByRole('article')).toHaveCount(1);
+  expect(new URL(page.url()).searchParams.get('copie')).toBe('1');
+  await page.getByLabel('Aggiungi le soluzioni su pagine separate, in fondo').uncheck();
+  await expect(page.getByRole('heading', { name: 'Soluzioni' })).toHaveCount(0);
+  await axe(page);
+
+  await page.emulateMedia({ media: 'print' });
+  await expect(page.getByRole('button', { name: 'Stampa' })).toBeHidden();
+  await expect(first).toBeVisible();
+});
