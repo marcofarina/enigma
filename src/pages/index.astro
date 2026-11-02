@@ -14,6 +14,11 @@ const paths = [
     text: 'Dai cifrari a sostituzione ai rotori, al riflettore e al pannello a spine: ogni componente spiegato con animazioni e un po’ di matematica.',
   },
   {
+    href: url('crittoanalisi/'),
+    title: 'Scopri come fu violata',
+    text: 'Dai matematici polacchi alla Bombe di Turing e Welchman: prova il metodo dei cicli di Rejewski e fai girare una Bombe sulle 17 576 posizioni dei rotori.',
+  },
+  {
     href: url('esercizi/'),
     title: 'Mettiti alla prova',
     text: 'Esercizi autocorretti di cifratura, decifratura e ragionamento sulla macchina, più schede da stampare per la classe.',
@@ -31,7 +36,7 @@ const paths = [
     </p>
   </section>
 
-  <ul class="grid gap-4 sm:grid-cols-3">
+  <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
     {paths.map((path) => (
       <li>
         <a
@@ -44,4 +49,16 @@ const paths = [
       </li>
     ))}
   </ul>
+
+  <p class="mt-8 max-w-3xl">
+    Vuoi cominciare da un messaggio vero? Decifra le{' '}
+    <a href={url('missioni/')} class="underline">
+      missioni storiche
+    </a>
+    . Insegni? Leggi la{' '}
+    <a href={url('docenti/')} class="underline">
+      guida per i docenti
+    </a>
+    .
+  </p>
 </BaseLayout>

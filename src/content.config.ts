@@ -9,7 +9,7 @@ const lezioni = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    sezione: z.enum(['come-funziona', 'storia', 'crittoanalisi']),
+    sezione: z.enum(['come-funziona', 'storia', 'crittoanalisi', 'docenti']),
     ordine: z.number().int().nonnegative(),
     livello: z.enum(['base', 'avanzato']).default('base'),
     /** Le bozze mostrano un avviso finché l’autore non le approva. */

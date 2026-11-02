@@ -6,7 +6,10 @@ import { url } from '@/lib/url';
 <footer class="no-print mt-16 border-t border-border bg-surface text-sm text-text-muted">
   <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6">
     <p>
-      <a href={url('glossario/')}>{t('nav.glossary')}</a> · <a href={url('schede/')}>{t('nav.sheets')}</a> ·
+      <a href={url('glossario/')}>{t('nav.glossary')}</a> · <a href={url('schede/')}>{t('nav.sheets')}</a>
+      {' · '}
+      <a href={url('missioni/')}>{t('nav.missions')}</a>
+      {' · '}
       <a href={url('fonti/')}>{t('nav.sources')}</a>
     </p>
     <p>

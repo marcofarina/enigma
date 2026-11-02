@@ -1,0 +1,66 @@
+---
+title: Guida per i docenti
+description: Come usare il simulatore, le lezioni, gli esercizi e le schede in classe — percorsi per il triennio, modalità LIM, link condivisibili e licenze.
+sezione: docenti
+ordine: 1
+stato: bozza
+fonti: []
+---
+
+import Nota from '@/components/lesson/Nota.astro';
+
+Il sito è pensato per il triennio dell’istituto tecnico a indirizzo informatico, ma si può usare anche altrove: la parte storica e il simulatore non richiedono prerequisiti, la parte matematica e la crittoanalisi chiedono un po’ di familiarità con le permutazioni, introdotte comunque nelle lezioni. Tutti i materiali funzionano nel browser, senza installare nulla e senza creare account.
+
+<Nota titolo="Testi in revisione">
+Le lezioni marcate come bozza sono in attesa di revisione da parte dell’autore. Date, cifre e citazioni rimandano alle fonti elencate in fondo a ogni pagina; dove le fonti non concordano, il testo lo dice.
+</Nota>
+
+## Che cosa c’è
+
+- **[Simulatore](../simulatore/)**: tutti i 15 modelli di Enigma, con l’Enigma I, la M3 e la M4 in evidenza. Mostra il percorso del segnale nello schema e nella vista della macchina, e lo può seguire un componente alla volta con la traccia passo-passo.
+- **[Come funziona](../come-funziona/)**: otto lezioni, dal cifrario di Cesare alla matematica delle permutazioni e allo spazio delle chiavi, con piccoli simulatori dentro il testo.
+- **[Storia](../storia/)**: le macchine commerciali, l’adozione militare, i fogli chiave e le procedure, Enigma e la marina italiana, con una galleria di immagini dai musei.
+- **[Crittoanalisi](../crittoanalisi/)**: Rejewski e i matematici polacchi, Bletchley Park e la Bombe, la battaglia dell’Atlantico e il dibattito sull’impatto di Ultra.
+- **[Esercizi](../esercizi/)**: esercizi autocorretti su tre livelli — operatore, meccanica, matematica — e [schede stampabili](../schede/) per lavorare su carta.
+- **[Missioni storiche](../missioni/)**: messaggi veri intercettati durante la guerra, da decifrare con la chiave originale.
+- **[Glossario](../glossario/)** tedesco–italiano–inglese e **[fonti](../fonti/)**.
+
+## Percorsi per il triennio
+
+Le proposte che seguono sono indicative: ogni lezione sta in piedi da sola e si può riordinare secondo la programmazione della classe.
+
+**Terzo anno.** Il punto di partenza sono i cifrari a sostituzione, che si collegano bene alla rappresentazione dei caratteri e agli algoritmi su stringhe di Informatica. Lezioni da “Che cos’è Enigma” a “Tastiera, lampade e circuito”, poi il simulatore in modalità libera e gli esercizi di livello 1: cifrare e decifrare con una chiave data, leggere un foglio chiave. Un buon compito è scrivere in un linguaggio di programmazione un cifrario di Cesare e poi un rotore singolo, confrontando i risultati con il simulatore.
+
+**Quarto anno.** Rotori, doppio passo, riflettore e pannello a spine, con gli esercizi di livello 2: prevedere le posizioni dei rotori, cifrare una lettera a mano con le tabelle di cablaggio, riconoscere un crittogramma che non può venire da Enigma. Le lezioni di storia sulle procedure si prestano a un discorso di Sistemi e reti e di TPSIT: una cifratura forte non basta se la gestione delle chiavi è debole, e gli errori degli operatori furono decisivi quanto la matematica. Le missioni storiche chiudono il percorso con un’attività pratica.
+
+**Quinto anno.** La matematica di Enigma — permutazioni, composizione, involuzioni, coniugio — e lo spazio delle chiavi, con il calcolatore e gli esercizi di livello 3. La crittoanalisi mostra come quella matematica sia stata usata per forzare la macchina: il metodo delle caratteristiche di Rejewski e la Bombe si possono provare direttamente nelle lezioni. La lezione su Ultra offre un aggancio a Storia e a Educazione civica: come si valuta una tesi controfattuale, come cambia la storia quando un segreto viene rivelato decenni dopo.
+
+## In classe con la LIM
+
+Il pulsante **Modalità LIM** del simulatore porta la macchina a tutto schermo, con i caratteri più grandi, i controlli essenziali e un contrasto più alto, pensato per la lettura a distanza. I tasti sono abbastanza grandi da usarli con il dito. Si esce con il pulsante o con il tasto Esc.
+
+Durante la spiegazione conviene usare la **traccia passo-passo**: dopo aver premuto un tasto, si segue il segnale componente per componente, con la sostituzione di ciascuno mostrata per intero. La vista **Macchina** aiuta a collegare lo schema astratto all’oggetto reale; la scelta tra schema, macchina o entrambe resta memorizzata nel browser.
+
+## Link condivisibili e codici QR
+
+Ogni configurazione del simulatore ha un link: basta copiare l’indirizzo dalla sezione “Link condivisibile”, eventualmente con il messaggio già digitato. Chi apre il link trova la macchina impostata nello stesso modo. Il codice QR permette agli studenti di aprirlo dal telefono senza ricopiare l’indirizzo, e si può proiettare o stampare in una scheda. Gli stessi link si possono usare nei compiti: per esempio “decifrate il messaggio che trovate a questo indirizzo”.
+
+## Esercizi, semi e progressi
+
+Ogni esercizio genera una variante a partire da un numero, il **seme**, che compare nell’indirizzo. Dando a tutta la classe lo stesso link si assegna lo stesso esercizio; lasciando che ciascuno prema “Nuova variante” si ottengono esercizi diversi ma equivalenti. Le risposte sono controllate dal motore del simulatore.
+
+I progressi — quali varianti sono state risolte — restano salvati solo nel browser dello studente. Il sito non usa account, non raccoglie dati personali e non invia nulla a un server: per la valutazione si possono chiedere le risposte su carta o uno screenshot.
+
+## Schede stampabili
+
+Il generatore di [schede](../schede/) prepara una serie di fogli A4, uno per studente, ciascuno con un foglio chiave mensile in stile Luftwaffe, alcuni messaggi da decifrare e, se si vuole, esercizi aggiuntivi. I semi consecutivi garantiscono che ogni studente abbia una scheda diversa; le soluzioni di tutta la serie sono su pagine separate, in fondo, da staccare prima di distribuire. Le schede permettono di lavorare anche senza computer, per esempio con una macchina di carta o con le tabelle di cablaggio.
+
+## Accessibilità
+
+Il simulatore si usa interamente da tastiera: le lettere cifrano, Backspace annulla, le rotelle dei rotori si girano con le frecce. Un lettore di schermo annuncia la lampada che si accende, e gli schemi hanno una descrizione testuale. Le animazioni si riducono se nel sistema è attiva l’opzione per ridurre il movimento. Il tema chiaro e quello scuro si scelgono con il pulsante in alto a destra.
+
+## Licenze e riuso
+
+I testi e i materiali didattici sono distribuiti con licenza Creative Commons BY-NC-SA 4.0: si possono copiare, modificare e distribuire per scopi non commerciali, citando la fonte e mantenendo la stessa licenza. Le immagini di terzi hanno ciascuna la propria licenza, indicata nella [galleria](../storia/galleria/). Il codice è distribuito con licenza MIT.
+
+Per segnalare un errore o proporre un miglioramento si può aprire una segnalazione sul [repository del progetto](https://github.com/marcofarina/enigma).
