@@ -11,18 +11,22 @@ async function island(page: Page, path: string, index = 0): Promise<Locator> {
 }
 
 const lessons = [
-  'dalla-sostituzione-al-rotore',
-  'tastiera-lampade-e-circuito',
-  'i-rotori',
-  'il-passo-e-il-doppio-passo',
-  'il-riflettore',
-  'il-pannello-a-spine-e-l-uhr',
-  'la-matematica-di-enigma',
+  'come-funziona/dalla-sostituzione-al-rotore',
+  'come-funziona/tastiera-lampade-e-circuito',
+  'come-funziona/i-rotori',
+  'come-funziona/il-passo-e-il-doppio-passo',
+  'come-funziona/il-riflettore',
+  'come-funziona/il-pannello-a-spine-e-l-uhr',
+  'come-funziona/la-matematica-di-enigma',
+  'storia/scherbius-e-le-macchine-commerciali',
+  'storia/l-adozione-militare',
+  'storia/fogli-chiave-e-procedure',
+  'storia/enigma-e-l-italia',
 ];
 
-for (const slug of lessons) {
-  test(`la lezione ${slug} è accessibile, anche in tema scuro`, async ({ page }) => {
-    await page.goto(`come-funziona/${slug}/`);
+for (const path of lessons) {
+  test(`la lezione ${path} è accessibile, anche in tema scuro`, async ({ page }) => {
+    await page.goto(`${path}/`);
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.getByRole('navigation', { name: 'Navigazione tra le lezioni' })).toBeVisible();
     // Le isole React si idratano quando entrano nello schermo.
@@ -103,4 +107,14 @@ test('il calcolatore dà le impostazioni dell’Enigma I e della M4', async ({ p
   await expect(summary).toContainText('6,26 × 10²⁵');
   await calculator.getByRole('checkbox').check();
   await expect(calculator.locator('tfoot')).toContainText('60 269 444 695 419 208 913 664 000');
+});
+
+test('nell’Enigma K la L premuta di continuo non dà mai L', async ({ page }) => {
+  const mini = await island(page, 'storia/enigma-e-l-italia/');
+  const key = mini.getByRole('region', { name: 'Tastiera' }).getByRole('button', { name: 'L', exact: true });
+  for (let i = 0; i < 20; i++) await key.click();
+  await expect(mini.locator('[data-tape=input]')).toHaveText('LLLLL LLLLL LLLLL LLLLL');
+  const output = (await mini.locator('[data-tape=output]').textContent())?.replaceAll(' ', '') ?? '';
+  expect(output).toHaveLength(20);
+  expect(output).not.toContain('L');
 });

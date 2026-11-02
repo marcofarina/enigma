@@ -1,7 +1,15 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-const pages = ['', 'simulatore/', 'come-funziona/', 'come-funziona/che-cos-e-enigma/', 'storia/', 'fonti/'];
+const pages = [
+  '',
+  'simulatore/',
+  'come-funziona/',
+  'come-funziona/che-cos-e-enigma/',
+  'storia/',
+  'glossario/',
+  'fonti/',
+];
 
 for (const path of pages) {
   test(`la pagina /${path} si carica ed è accessibile`, async ({ page }) => {
@@ -25,4 +33,15 @@ test('il tema scuro si attiva e viene ricordato', async ({ page }) => {
 
   const results = await new AxeBuilder({ page }).withTags(['wcag2aa']).analyze();
   expect(results.violations).toEqual([]);
+});
+
+test('il glossario è ordinato, collega le lezioni ed è accessibile', async ({ page }) => {
+  await page.goto('glossario/');
+  await expect(page.getByRole('heading', { level: 1, name: 'Glossario' })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Iniziali del glossario' })).toBeVisible();
+  const entry = page.locator('#riflettore');
+  await expect(entry).toContainText('Umkehrwalze (UKW)');
+  await expect(entry).toContainText('reflector');
+  await entry.getByRole('link', { name: 'Approfondisci' }).click();
+  await expect(page).toHaveURL(/come-funziona\/il-riflettore\/$/);
 });

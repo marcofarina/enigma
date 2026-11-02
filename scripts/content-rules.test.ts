@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { lintContent } from './content-rules.ts';
+import { lintContent, lintYaml } from './content-rules.ts';
 
 const rulesOf = (source: string) => lintContent(source).map((issue) => issue.rule);
 
@@ -42,5 +42,15 @@ describe('lintContent', () => {
     expect(rulesOf('Nel 1918 e con 26 lettere.')).toEqual([]);
     expect(rulesOf('Arrivò il 10 luglio 1944, con 3 giorni di ritardo.')).toEqual(['numero-in-cifre']);
     expect(rulesOf('Arrivò il 2 novembre 1944.')).toEqual([]);
+  });
+});
+
+describe('lintYaml', () => {
+  it('controlla solo i campi di prosa', () => {
+    const source = ['- id: l\'uhr', '  definizione: L\'Uhr - un accessorio.', '  tedesco: "Uhr"'].join('\n');
+    expect(lintYaml(source).map((issue) => [issue.line, issue.rule])).toEqual([
+      [2, 'apostrofo-diritto'],
+      [2, 'inciso-trattino'],
+    ]);
   });
 });

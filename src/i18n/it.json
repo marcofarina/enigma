@@ -374,5 +374,15 @@
   "sheet.form.extras": "Esercizi da aggiungere a ogni scheda",
   "sheet.form.solutions": "Aggiungi le soluzioni su pagine separate, in fondo",
   "sheet.form.print": "Stampa",
-  "ex.sheetsLink": "Vuoi lavorare su carta? Prepara le schede stampabili per la classe."
+  "ex.sheetsLink": "Vuoi lavorare su carta? Prepara le schede stampabili per la classe.",
+  "nav.glossary": "Glossario",
+  "glossary.title": "Glossario",
+  "glossary.intro": "I termini di Enigma in italiano, con l’originale tedesco e l’equivalente inglese che si incontra nei libri e nei documenti di Bletchley Park.",
+  "glossary.letters": "Iniziali del glossario",
+  "glossary.german": "tedesco",
+  "glossary.english": "inglese",
+  "glossary.more": "Approfondisci",
+  "history.title": "Storia",
+  "history.intro": "Dalle macchine commerciali di Arthur Scherbius all’adozione da parte delle forze armate tedesche, fino alle procedure con cui gli operatori usavano la macchina e alle Enigma della marina italiana.",
+  "history.glossary": "I termini tedeschi che compaiono nelle lezioni sono raccolti nel glossario."
 }

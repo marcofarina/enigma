@@ -59,4 +59,21 @@ const immagini = defineCollection({
   }),
 });
 
-export const collections = { lezioni, fonti, immagini };
+/** Glossario tedesco–italiano–inglese. */
+const glossario = defineCollection({
+  loader: file('./src/content/glossario.yaml'),
+  schema: z.object({
+    termine: z.string(),
+    tedesco: z.string().default('—'),
+    inglese: z.string().default('—'),
+    definizione: z.string(),
+    /** Pagina del sito da cui approfondire, senza `base` (per esempio `come-funziona/i-rotori/`). */
+    vedi: z
+      .string()
+      .regex(/^[a-z0-9-]+(\/[a-z0-9-]+)*\/$/)
+      .optional(),
+    fonti: z.array(reference('fonti')).default([]),
+  }),
+});
+
+export const collections = { lezioni, fonti, immagini, glossario };

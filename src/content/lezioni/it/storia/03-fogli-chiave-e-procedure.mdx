@@ -1,0 +1,58 @@
+---
+title: Fogli chiave e procedure
+description: La chiave del giorno, la chiave del messaggio e l’indicatore — come gli operatori usavano davvero la macchina.
+sezione: storia
+ordine: 3
+stato: bozza
+fonti:
+  - us-6812-bombe-report
+  - luftwaffe-schluessel-619
+  - crypto-museum-storia
+  - crypto-museum-ukw-d
+  - crypto-museum-m4
+---
+
+import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import Nota from '@/components/lesson/Nota.astro';
+
+Una macchina cifrante è sicura solo quanto le regole con cui la si usa. Mittente e destinatario devono impostare la macchina nello stesso modo, ma l’impostazione non può viaggiare in chiaro insieme al messaggio. Le forze armate tedesche risolsero il problema in due livelli: una **chiave del giorno**, uguale per tutta una rete e distribuita in anticipo su carta, e una **chiave del messaggio**, diversa per ogni messaggio e trasmessa in forma cifrata.
+
+## Il foglio chiave
+
+La chiave del giorno arrivava agli operatori su un foglio chiave mensile. Un rapporto del 1944 dell’esercito statunitense, scritto per addestrare il personale che lavorava sulle Bombe, lo descrive così: per ogni giorno il foglio indica quali tre dei cinque rotori montare e in che ordine (*Walzenlage*), la posizione degli anelli (*Ringstellung*), numerati da 01 a 26, e le coppie di lettere da collegare sul pannello a spine (*Steckerverbindungen*). Il foglio si legge dal basso verso l’alto: la riga di un giorno già passato si taglia e si distrugge, così un foglio catturato non permette di leggere i messaggi dei giorni precedenti.
+
+Su un foglio originale della Luftwaffe, il *Luftwaffen-Maschinenschlüssel* n. 619, ogni riga riporta il numero del foglio, il giorno — dal 31 in alto all’1 in basso —, l’ordine dei rotori, i tre anelli, dieci coppie di lettere per il pannello e quattro gruppi di tre lettere, le *Kenngruppen*. In testa al foglio si legge:
+
+<blockquote lang="de">
+  <p>Geheime Kommandosache! Jeder einzelne Tagesschlüssel ist geheim. Mitnahme im Flugzeug verboten!</p>
+</blockquote>
+
+cioè “Documento segreto di comando! Ogni singola chiave del giorno è segreta. Vietato portarlo in volo”. Più sotto, un avvertimento: il materiale delle chiavi non deve cadere intatto in mano al nemico, e in caso di pericolo va distrutto completamente e per tempo.
+
+I fogli della Luftwaffe erano sempre di 31 giorni, qualunque fosse la lunghezza del mese: i giorni in più si ignoravano o si usavano per i messaggi d’emergenza. Dal gennaio 1944, con l’introduzione del riflettore D ricablabile, gli stessi fogli riportarono anche le coppie da collegare sul riflettore, in una colonna intitolata *an der Umkehrwalze*, “sul riflettore”.
+
+<Nota titolo="Prova con le schede">
+Le [schede stampabili](../../schede/) contengono un foglio chiave mensile costruito sullo stesso schema, con i giorni dal 31 all’1 e alcuni messaggi da decifrare: si possono usare in classe anche senza computer.
+</Nota>
+
+## I gruppi di riconoscimento
+
+Le *Kenngruppen* non servivano a cifrare. Permettevano a chi riceveva un messaggio di capire a quale rete e a quale chiave appartenesse. La marina aveva procedure più complicate e un libro apposito, il *Kenngruppenbuch* (nella versione del 1941 un volume di 120 pagine), che legava i gruppi di riconoscimento alle chiavi dei messaggi secondo il giorno e la rete.
+
+## La chiave del messaggio
+
+Se tutti i messaggi di un giorno fossero stati cifrati partendo dalla stessa posizione dei rotori, un avversario si sarebbe trovato decine di testi cifrati con la stessa identica sequenza di sostituzioni, e confrontarli sarebbe stato molto più facile. Per questo, prima di ogni messaggio, l’operatore sceglieva tre lettere, la chiave del messaggio, portava i rotori su quella posizione e solo allora cifrava il testo. Il destinatario doveva conoscerla: per questo la si trasmetteva cifrata all’inizio del messaggio, in un gruppo di lettere chiamato **indicatore**.
+
+Il modo di cifrare l’indicatore cambiò più volte.
+
+- Fino al 15 settembre 1938 la posizione di partenza per cifrare la chiave del messaggio, la *Grundstellung*, era scritta sul foglio chiave ed era la stessa per tutti. L’operatore cifrava la chiave del messaggio **due volte di seguito**, per proteggersi dagli errori di trasmissione: sei lettere che aprivano il messaggio.
+- Da quella data la *Grundstellung* non fu più comune a tutti: la sceglieva l’operatore, che la trasmetteva in chiaro, ma la chiave del messaggio restava cifrata due volte.
+- Il 1° maggio 1940 i tedeschi abbandonarono la doppia cifratura: all’inizio di quell’anno alcuni matematici appena assunti dai servizi crittografici tedeschi si erano accorti che indeboliva il sistema.
+
+Il rapporto statunitense del 1944 descrive la procedura che ne seguì: in testa al messaggio c’è un gruppo di sei lettere, per esempio OMP QTZ. Le prime tre sono una posizione di partenza scelta dall’operatore — sul foglio chiave non ce n’è più una — e viaggiano in chiaro; con i rotori in quella posizione, digitando QTZ si accendono le tre lettere della chiave del messaggio. Il destinatario porta i rotori sulla chiave e decifra il resto, che viaggia in gruppi di cinque lettere.
+
+<Approfondimento titolo="Perché la doppia cifratura era un errore">
+Ripetere la chiave del messaggio sembrava una precauzione innocua: se un disturbo radio rovinava una lettera, la copia permetteva di correggerla. Ma così la prima e la quarta lettera dell’indicatore erano sempre la cifratura della stessa lettera, a tre posizioni di distanza; lo stesso per la seconda e la quinta, la terza e la sesta. Con molti messaggi dello stesso giorno, queste coppie rivelavano qualcosa della struttura della macchina in quella posizione, senza sapere nulla del testo. Dalla fine del 1932 i crittoanalisti polacchi del Biuro Szyfrów, a partire dal lavoro di Marian Rejewski, costruirono su questo dettaglio un metodo completo di attacco. È il punto di partenza della sezione sulla crittoanalisi.
+</Approfondimento>
+
+Le due procedure si possono provare negli esercizi: in [la procedura dell’indicatore](../../esercizi/indicatore/) la chiave del messaggio è cifrata due volte con la *Grundstellung* del giorno, come prima del 1938; nelle schede stampabili si usa la procedura descritta dal rapporto del 1944.

@@ -67,3 +67,24 @@
   anno: 1944
   url: https://cryptocellar.org/enigma/e-keys/luftwaffen-mschluessel-nr619.pdf
   note: Foglio chiave originale, pubblicato da CryptoCellar. Modello delle schede stampabili. Anno da verificare.
+- id: crypto-museum-storia
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — History of the Enigma
+  url: https://www.cryptomuseum.com/crypto/enigma/hist.htm
+- id: crypto-museum-enigma-k
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Enigma K
+  url: https://www.cryptomuseum.com/crypto/enigma/k/index.htm
+  note: Comprende le macchine fornite all’Italia e la rottura del traffico della marina italiana.
+- id: crypto-museum-ukw-d
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Umkehrwalze D
+  url: https://www.cryptomuseum.com/crypto/enigma/ukwd/index.htm
+- id: crypto-museum-m4
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Enigma M4
+  url: https://www.cryptomuseum.com/crypto/enigma/m4/index.htm
+- id: crypto-museum-m3
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Enigma M1, M2 e M3
+  url: https://www.cryptomuseum.com/crypto/enigma/m3/index.htm

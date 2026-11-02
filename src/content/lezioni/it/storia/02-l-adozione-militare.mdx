@@ -1,0 +1,45 @@
+---
+title: L’adozione militare
+description: Come marina, esercito e aviazione tedeschi trasformarono una macchina commerciale in un sistema di cifratura militare.
+sezione: storia
+ordine: 2
+stato: bozza
+fonti:
+  - crypto-museum-storia
+  - crypto-museum-m3
+  - crypto-museum-m4
+  - us-6812-bombe-report
+---
+
+import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
+import Nota from '@/components/lesson/Nota.astro';
+
+Le forze armate tedesche cercavano un sistema di cifratura che si potesse usare sul campo e che tenesse i messaggi segreti a lungo. Enigma era portatile e già esisteva: si trattava di adattarla.
+
+## La marina arriva per prima
+
+La marina tedesca conobbe Enigma già nel 1926, quando acquistò il *Funkschlüssel C*, una versione dell’Enigma C adattata alle sue esigenze. Per l’esercito, la Reichswehr, nello stesso 1926 cominciò lo sviluppo di una macchina apposita, l’Enigma I, costruita sul telaio delle commerciali D e K: tre rotori, un riflettore fisso e una novità che ne cambiava la sicurezza, un pannello di collegamenti sul fronte della macchina.
+
+## Il pannello a spine
+
+La prima Enigma I fu pronta nel 1927, ma il pannello passò per diversi progetti prima di arrivare, nel 1928, alla versione definitiva: una coppia di prese per ogni lettera, disposte su tre file, e cavi con una spina a ciascun capo per collegare due lettere tra loro. Secondo Crypto Museum fu progettato dalla stessa Reichswehr ed era il più debole tra quelli provati — eppure, come si vede nella lezione sul [pannello a spine](../../come-funziona/il-pannello-a-spine-e-l-uhr/), da solo moltiplicava le impostazioni possibili per circa 150 000 miliardi con dieci cavi.
+
+La versione finale dell’Enigma I entrò in servizio il 1° giugno 1930. Il pannello a spine restò un’esclusiva delle macchine militari. Nel 1932 l’esercito ottenne i diritti esclusivi sulla macchina: da quel momento ogni vendita commerciale o all’estero doveva essere approvata dai militari.
+
+<Nota titolo="Date che non coincidono">
+Nei libri si trovano anni diversi per l’adozione di Enigma da parte delle forze armate, perché si contano cose diverse: il primo acquisto, la prima versione di prova, l’entrata in servizio della versione definitiva. Qui seguiamo la ricostruzione di Crypto Museum; dove serve una data precisa conviene dire a quale di questi momenti si riferisce.
+</Nota>
+
+## Il riarmo
+
+Dalla metà degli anni Trenta, con la preparazione alla guerra, l’esercito — dal 1935 Wehrmacht — e la nuova aviazione, la Luftwaffe, ordinarono l’Enigma I in grandi quantità. Il servizio informazioni militare, l’Abwehr, usava invece l’Enigma G con il contatore.
+
+La marina adottò la macchina militare nel 1934, in una versione compatibile con l’Enigma I: l’Enigma M1, seguita dalle M2 e M3, funzionalmente identiche. Nel 1939 la marina aggiunse tre rotori, VI, VII e VIII, riservati esclusivamente a lei; a bordo si sceglievano quindi tre rotori su otto, contro i tre su cinque di esercito e aviazione.
+
+<MiniSimulatore client:visible config="v=1&m=I&w=II-IV-V&r=BUL&p=ABL&u=B&s=AV.BS.CG.DL.FU.HZ.IN.KM.OW.RX" didascalia="Enigma I con tre dei cinque rotori, anelli impostati e dieci cavi: la configurazione tipica di esercito e aviazione durante la guerra." />
+
+## Più rotori, più chiavi
+
+Fino al 1938 l’esercito disponeva di soli tre rotori, I, II e III, che potevano essere montati in sei ordini diversi. Intorno al 15 settembre 1938 se ne aggiunsero altri due, IV e V: scegliendo tre rotori su cinque gli ordini diventano 5 × 4 × 3 = 60, dieci volte tanti. Nel 1944 un rapporto dell’esercito statunitense descriveva ancora la stessa dotazione per esercito e aviazione: tre rotori su cinque.
+
+Per la flotta sottomarina la marina introdusse a sorpresa, il 1° febbraio 1942, la M4. Accanto a un riflettore sottile montava un quarto rotore sottile, β o γ, che si impostava a mano e non avanzava. Bletchley Park chiamò Shark la rete cifrata con la M4, e per nove mesi non riuscì a leggerla: è una delle storie della sezione sulla crittoanalisi.

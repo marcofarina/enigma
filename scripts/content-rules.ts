@@ -121,3 +121,20 @@ export function lintContent(source: string): Issue[] {
 
   return issues;
 }
+
+/** Campi dei file YAML che contengono prosa italiana. */
+const YAML_PROSE_FIELDS = ['definizione', 'didascalia', 'descrizione'];
+
+/** Regole della prosa applicate ai campi testuali di un file YAML dei contenuti. */
+export function lintYaml(source: string): Issue[] {
+  const issues: Issue[] = [];
+  source.split('\n').forEach((raw, index) => {
+    const match = /^\s*-?\s*([a-z]+):\s*(.+)$/.exec(raw);
+    if (!match?.[1] || !match[2] || !YAML_PROSE_FIELDS.includes(match[1])) return;
+    const value = match[2].replace(/^(['"])(.*)\1$/, '$2');
+    for (const r of rules) {
+      if (r.pattern.test(value)) issues.push({ line: index + 1, severity: r.severity, rule: r.rule, message: r.message });
+    }
+  });
+  return issues;
+}
