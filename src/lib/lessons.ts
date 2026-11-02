@@ -7,7 +7,7 @@ export function lessonLocale(lezione: CollectionEntry<'lezioni'>): string {
 }
 
 /** Slug pubblico: senza prefisso di lingua e senza numero d’ordine. */
-export function lessonSlug(lezione: CollectionEntry<'lezioni'>): string {
+export function lessonSlug(lezione: { id: string }): string {
   const name = lezione.id.split('/').at(-1) ?? lezione.id;
   return name.replace(/^\d+-/, '');
 }

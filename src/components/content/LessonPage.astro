@@ -1,7 +1,8 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { getEntries, render } from 'astro:content';
+import { render } from 'astro:content';
 import DraftNotice from '@/components/content/DraftNotice.astro';
+import SourceList from '@/components/content/SourceList.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { t } from '@/i18n';
 import { lessonSlug } from '@/lib/lessons';
@@ -16,7 +17,6 @@ interface Props {
 
 const { lezione, previous, next } = Astro.props;
 const { Content } = await render(lezione);
-const fonti = await getEntries(lezione.data.fonti);
 const link = (entry: CollectionEntry<'lezioni'>) => url(`${entry.data.sezione}/${lessonSlug(entry)}/`);
 ---
 
@@ -25,29 +25,7 @@ const link = (entry: CollectionEntry<'lezioni'>) => url(`${entry.data.sezione}/$
     {lezione.data.stato === 'bozza' && <DraftNotice />}
     <h1>{lezione.data.title}</h1>
     <Content />
-    {fonti.length > 0 && (
-      <section aria-labelledby="fonti-lezione" class="mt-12 border-t border-border pt-4 font-sans text-base">
-        <h2 id="fonti-lezione" class="!mt-0 !text-lg">
-          {t('lesson.sources')}
-        </h2>
-        <ul class="text-sm text-text-muted">
-          {fonti.map(({ data }) => (
-            <li>
-              {data.autori},{' '}
-              {data.url ? (
-                <a href={data.url} class="underline">
-                  {data.titolo}
-                </a>
-              ) : (
-                <cite>{data.titolo}</cite>
-              )}
-              {data.editore && `, ${data.editore}`}
-              {data.anno && `, ${data.anno}`}.
-            </li>
-          ))}
-        </ul>
-      </section>
-    )}
+    <SourceList fonti={lezione.data.fonti} />
   </article>
   {(previous || next) && (
     <nav aria-label={t('lesson.nav')} class="no-print mt-10 flex max-w-[72ch] flex-wrap justify-between gap-4">

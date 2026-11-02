@@ -84,8 +84,8 @@ export function lintContent(source: string): Issue[] {
         inFrontmatter = false;
         return;
       }
-      // Nel frontmatter si controllano solo i valori testuali di title e description.
-      const match = /^(title|description):\s*(.*)$/.exec(raw);
+      // Nel frontmatter si controllano solo i valori testuali in italiano.
+      const match = /^(title|description|traduzione):\s*(.*)$/.exec(raw);
       if (!match?.[2]) return;
       const value = match[2].replace(/^(['"])(.*)\1$/, '$2');
       for (const r of rules.filter((r) => r.severity === 'error')) {

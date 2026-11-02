@@ -15,11 +15,18 @@ const levels = [
 <BaseLayout title={t('ex.title')}>
   <h1 class="mb-2 text-3xl font-bold">{t('ex.title')}</h1>
   <p class="mb-4 max-w-3xl text-text-muted">{t('ex.intro')}</p>
-  <p class="mb-8 max-w-3xl">
-    <a href={url('schede/')} class="underline">
-      {t('ex.sheetsLink')}
-    </a>
-  </p>
+  <ul class="mb-8 flex max-w-3xl flex-col gap-1">
+    <li>
+      <a href={url('schede/')} class="underline">
+        {t('ex.sheetsLink')}
+      </a>
+    </li>
+    <li>
+      <a href={url('missioni/')} class="underline">
+        {t('mission.simulatorLink')}
+      </a>
+    </li>
+  </ul>
   {levels.map(({ level, title }) => (
     <section aria-labelledby={`livello-${level}`} class="mb-10">
       <h2 id={`livello-${level}`} class="mb-4 text-2xl font-semibold">

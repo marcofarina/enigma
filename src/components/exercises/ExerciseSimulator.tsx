@@ -1,25 +1,39 @@
-import { useState } from 'react';
-import { defaultConfig } from '@/engine';
+import { useState, type ReactNode } from 'react';
+import { defaultConfig, type MachineConfig } from '@/engine';
 import { t } from '@/i18n';
 import ConfigPanel from '@/components/simulator/ConfigPanel.tsx';
 import { Issues, Keyboard, Lampboard, Windows } from '@/components/simulator/Machine.tsx';
 import { createSession } from '@/components/simulator/session.ts';
 import { createSimulatorStore, handlePhysicalKey, SimulatorContext } from '@/components/simulator/store.ts';
-import Tape from '@/components/simulator/Tape.tsx';
+import Tape, { TextInput } from '@/components/simulator/Tape.tsx';
 
-/**
- * Simulatore completo da impostare a mano, accanto all’esercizio: parte sempre dalla
- * configurazione di base, perché impostare la chiave fa parte dell’esercizio.
- */
-export default function ExerciseSimulator() {
-  const [store] = useState(() => createSimulatorStore(createSession(defaultConfig('I'))));
+interface Props {
+  /** Configurazione di partenza: quella di base, se impostare la chiave fa parte dell’esercizio. */
+  initial?: MachineConfig;
+  title?: string;
+  hint?: string;
+  /** Aggiunge il campo per digitare un testo intero. */
+  textInput?: boolean;
+  /** Contenuto mostrato sotto il nastro, dentro lo stesso store (per esempio una verifica). */
+  children?: ReactNode;
+}
+
+/** Simulatore completo da impostare a mano, accanto a un esercizio o a una missione. */
+export default function ExerciseSimulator({
+  initial,
+  title = t('ex.simulator'),
+  hint = t('ex.simulatorHint'),
+  textInput = false,
+  children,
+}: Props) {
+  const [store] = useState(() => createSimulatorStore(createSession(initial ?? defaultConfig('I'))));
   return (
     <SimulatorContext value={store}>
       <section aria-labelledby="exercise-simulator" className="flex flex-col gap-3">
         <h2 id="exercise-simulator" className="text-xl font-semibold">
-          {t('ex.simulator')}
+          {title}
         </h2>
-        <p className="text-sm text-text-muted">{t('ex.simulatorHint')}</p>
+        <p className="text-sm text-text-muted">{hint}</p>
         <div className="grid gap-6 lg:grid-cols-[22rem_minmax(0,1fr)]">
           <ConfigPanel />
           {/* Il contenitore raccoglie i tasti premuti mentre il focus è su uno dei suoi controlli. */}
@@ -31,7 +45,9 @@ export default function ExerciseSimulator() {
               <Lampboard />
               <Keyboard />
             </div>
+            {children}
             <Tape />
+            {textInput && <TextInput />}
           </div>
         </div>
       </section>

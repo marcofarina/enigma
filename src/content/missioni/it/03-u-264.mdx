@@ -1,0 +1,39 @@
+---
+title: L’U-264 di Hartwig Looks
+description: Un messaggio di un sommergibile, cifrato con l’Enigma M4 a quattro rotori nel novembre 1942 e decifrato solo nel 2006.
+ordine: 3
+stato: bozza
+data: 25 novembre 1942
+mittente: Il sommergibile U-264, al comando del Kapitänleutnant Hartwig Looks
+chiave:
+  model: M4
+  rotors: [Beta, II, IV, I]
+  rings: AAAV
+  reflector: B-thin
+  plugboard: [AT, BL, DF, GJ, HM, NW, OP, QY, RZ, VX]
+chiaveMessaggio: VJNA
+cifrato: NCZWVUSXPNYMINHZXMQXSFWXWLKJAHSHNMCOCCAKUQPMKCSMHKSEINJUSBLKIOSXCKUBHMLLXCSJUSRRDVKOHULXWCCBGVLIYXEOAHXRHKKFVDREWEZLXOBAFGYUJQUKGRTVUKAMEURBVEKSUHHVOYHABCJWMAKLFKLMYFVNRIZRVVRTKOFDANJMOLBGFFLEOPRGTFLVRHOWOPBEKVWMUQFMPWPARMFHAGKXIIBG
+chiaro: VONVONJLOOKSJHFFTTTEINSEINSDREIZWOYYQNNSNEUNINHALTXXBEIANGRIFFUNTERWASSERGEDRUECKTYWABOSXLETZTERGEGNERSTANDNULACHTDREINULUHRMARQUANTONJOTANEUNACHTSEYHSDREIYZWOZWONULGRADYACHTSMYSTOSSENACHXEKNSVIERMBFAELLTYNNNNNNOOOVIERYSICHTEINSNULL
+tedesco: Von Looks. Funktelegramm 1132/19. Inhalt — Bei Angriff unter Wasser gedrückt, Wasserbomben. Letzter Gegnerstandort 0830 Uhr, Marinequadrat AJ 9863, 220 Grad, 8 sm, stoße nach. 14 mb fällt, NNO 4, Sicht 10.
+traduzione: Da Looks. Radiotelegramma 1132/19. Contenuto — durante l’attacco costretto a immergermi, bombe di profondità. Ultima posizione del nemico alle 08:30, quadrato AJ 9863 della carta navale, rotta 220 gradi, 8 nodi, inseguo. Barometro a 14 millibar, cioè 1014, in calo, vento da nord-nord-est forza 4, visibilità 10 miglia.
+fonti:
+  - krah-m4-project
+  - rijmenants-m4-project
+  - crypto-museum-m4
+---
+
+## Il contesto
+
+Nel febbraio 1942 i sommergibili tedeschi dell’Atlantico passarono all’Enigma M4, con un quarto rotore sottile accanto al riflettore. Per circa dieci mesi Bletchley Park non riuscì più a leggere quel traffico. Proprio in quei mesi, il 25 novembre 1942, il cacciatorpediniere britannico HMS Hurricane intercettò nell’Atlantico settentrionale alcuni messaggi della marina tedesca, tra cui questo.
+
+Il messaggio rimase indecifrato per più di sessant’anni. Lo storico Ralph Erskine lo pubblicò sulla rivista *Cryptologia* insieme ad altri due, e nel 2006 Stefan Krah organizzò il **M4 Project**: migliaia di computer volontari collegati in rete provarono le posizioni dei rotori e, per ciascuna, migliorarono passo dopo passo i collegamenti del pannello, tenendo quelli che rendevano il testo più simile al tedesco. Il messaggio fu rotto il 20 febbraio 2006. Il contenuto coincide con un radiotelegramma annotato nel diario di guerra dell’U-264, conservato negli archivi nazionali statunitensi.
+
+L’U-264 era un sommergibile di tipo VIIC, comandato dal Kapitänleutnant Hartwig Looks. Fu affondato il 19 febbraio 1944 nell’Atlantico, dopo un giorno intero di attacchi con bombe di profondità; l’equipaggio, 52 uomini, fu raccolto dalla nave britannica HMS Woodpecker e passò il resto della guerra in prigionia.
+
+## Che cosa ti serve
+
+La marina tedesca cifrava la chiave del messaggio con un procedimento più complicato di quello dell’esercito, basato su un libro di gruppi di riconoscimento, il *Kenngruppenbuch*, e su tabelle di sostituzione delle lettere. Qui non lo ripetiamo: ti diamo direttamente la chiave del messaggio, VJNA, cioè la posizione di partenza dei quattro rotori. I gruppi di riconoscimento che aprivano e chiudevano il messaggio sono già stati tolti.
+
+## Come si legge il testo
+
+La marina usava convenzioni diverse da quelle dell’esercito: Y al posto della virgola, J per separare un nome proprio (J LOOKS J), lettere ripetute tre volte per i punti cardinali (NNN NNN OOO è nord-nord-est) e i numeri in lettere. MARQU ANTON JOTA indica il quadrato AJ della carta navale tedesca: le lettere del quadrato sono scritte con l’alfabeto fonetico, come ANTON per A.

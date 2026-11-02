@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { t } from '@/i18n';
+import { lessonSlug } from '@/lib/lessons';
+import { url } from '@/lib/url';
+
+const missioni = (await getCollection('missioni')).sort((a, b) => a.data.ordine - b.data.ordine);
+---
+
+<BaseLayout title={t('mission.title')} description={t('mission.intro')}>
+  <h1 class="mb-2 text-3xl font-bold">{t('mission.title')}</h1>
+  <p class="mb-8 max-w-3xl text-text-muted">{t('mission.intro')}</p>
+  <ol class="grid gap-4 sm:grid-cols-2">
+    {missioni.map((missione) => (
+      <li>
+        <a
+          href={url(`missioni/${lessonSlug(missione)}/`)}
+          class="block h-full rounded-xl border border-border bg-surface p-4 text-text no-underline hover:border-accent"
+        >
+          <span class="block text-sm text-text-muted">{missione.data.data}</span>
+          <span class="block text-lg font-semibold underline">{missione.data.title}</span>
+          <span class="block text-text-muted">{missione.data.description}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</BaseLayout>

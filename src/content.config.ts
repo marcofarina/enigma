@@ -1,6 +1,7 @@
 import { defineCollection, reference } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { encipherWith, validateConfig, type MachineConfig } from './engine/index.ts';
 
 /** Lezioni e capitoli divulgativi, scritti in MDX. */
 const lezioni = defineCollection({
@@ -83,4 +84,68 @@ const glossario = defineCollection({
   }),
 });
 
-export const collections = { lezioni, fonti, immagini, glossario };
+/**
+ * Missioni storiche: messaggi reali da decifrare con la chiave originale. La build fallisce se la
+ * chiave non è valida o se il motore non riporta il testo cifrato al testo in chiaro.
+ */
+const missioni = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/missioni' }),
+  schema: z
+    .object({
+      title: z.string(),
+      description: z.string(),
+      ordine: z.number().int().nonnegative(),
+      stato: z.enum(['bozza', 'rivista']).default('bozza'),
+      /** Data del messaggio, in forma leggibile (per esempio “7 luglio 1941”). */
+      data: z.string(),
+      /** Chi trasmise il messaggio. */
+      mittente: z.string(),
+      /** Chiave del giorno, senza la posizione dei rotori. */
+      chiave: z.object({
+        model: z.enum(['I', 'M3', 'M4']),
+        rotors: z.array(z.string()),
+        rings: z.string(),
+        reflector: z.string(),
+        plugboard: z.array(z.string()),
+      }),
+      /** Indicatore in due gruppi di tre lettere (procedura dell’esercito dal 1940), se noto. */
+      indicatore: z.object({ posizione: z.string(), cifrato: z.string() }).optional(),
+      /** Chiave del messaggio: la posizione dei rotori da cui si decifra il testo. */
+      chiaveMessaggio: z.string(),
+      cifrato: z.string().regex(/^[A-Z]+$/),
+      chiaro: z.string().regex(/^[A-Z]+$/),
+      /** Il testo in chiaro con spazi e punteggiatura, in tedesco. */
+      tedesco: z.string(),
+      /** Traduzione italiana, controllata da `lint:content`. */
+      traduzione: z.string(),
+      fonti: z.array(reference('fonti')).default([]),
+    })
+    .superRefine((missione, ctx) => {
+      const config: MachineConfig = { ...missione.chiave, positions: missione.chiaveMessaggio };
+      const issues = validateConfig(config);
+      if (issues.length > 0) {
+        ctx.addIssue({ code: 'custom', path: ['chiave'], message: issues.map((i) => i.message).join(' ') });
+        return;
+      }
+      if (encipherWith(config, missione.cifrato) !== missione.chiaro) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['chiaro'],
+          message: 'Il testo cifrato non si decifra nel testo in chiaro.',
+        });
+      }
+      const { indicatore } = missione;
+      if (
+        indicatore &&
+        encipherWith({ ...config, positions: indicatore.posizione }, indicatore.cifrato) !== missione.chiaveMessaggio
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['indicatore'],
+          message: 'L’indicatore non si decifra nella chiave del messaggio.',
+        });
+      }
+    }),
+});
+
+export const collections = { lezioni, fonti, immagini, glossario, missioni };

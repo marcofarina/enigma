@@ -1,0 +1,36 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getEntries } from 'astro:content';
+import { t } from '@/i18n';
+
+/** Elenco delle fonti in fondo a una pagina di contenuti. */
+interface Props {
+  fonti: CollectionEntry<'lezioni'>['data']['fonti'];
+}
+
+const fonti = await getEntries(Astro.props.fonti);
+---
+
+{fonti.length > 0 && (
+  <section aria-labelledby="fonti-pagina" class="mt-12 border-t border-border pt-4 font-sans text-base">
+    <h2 id="fonti-pagina" class="!mt-0 !text-lg">
+      {t('lesson.sources')}
+    </h2>
+    <ul class="text-sm text-text-muted">
+      {fonti.map(({ data }) => (
+        <li>
+          {data.autori},{' '}
+          {data.url ? (
+            <a href={data.url} class="underline">
+              {data.titolo}
+            </a>
+          ) : (
+            <cite>{data.titolo}</cite>
+          )}
+          {data.editore && `, ${data.editore}`}
+          {data.anno && `, ${data.anno}`}.
+        </li>
+      ))}
+    </ul>
+  </section>
+)}

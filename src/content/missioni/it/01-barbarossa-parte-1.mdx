@@ -1,0 +1,40 @@
+---
+title: Operazione Barbarossa, parte 1
+description: Un messaggio dell’esercito tedesco sul fronte orientale, luglio 1941 — con l’indicatore da decifrare prima del testo.
+ordine: 1
+stato: bozza
+data: 7 luglio 1941
+mittente: Un’unità dell’esercito tedesco sul fronte orientale
+chiave:
+  model: I
+  rotors: [II, IV, V]
+  rings: BUL
+  reflector: B
+  plugboard: [AV, BS, CG, DL, FU, HZ, IN, KM, OW, RX]
+indicatore:
+  posizione: WXC
+  cifrato: KCH
+chiaveMessaggio: BLA
+cifrato: EDPUDNRGYSZRCXNUYTPOMRMBOFKTBZREZKMLXLVEFGUEYSIOZVEQMIKUBPMMYLKLTTDEISMDICAGYKUACTCDOMOHWXMUUIAUBSTSLRNBZSZWNRFXWFYSSXJZVIJHIDISHPRKLKAYUPADTXQSPINQMATLPIFSVKDASCTACDPBOPVHJK
+chiaro: AUFKLXABTEILUNGXVONXKURTINOWAXKURTINOWAXNORDWESTLXSEBEZXSEBEZXUAFFLIEGERSTRASZERIQTUNGXDUBROWKIXDUBROWKIXOPOTSCHKAXOPOTSCHKAXUMXEINSAQTDREINULLXUHRANGETRETENXANGRIFFXINFXRGTX
+tedesco: Aufkl. Abteilung von Kurtinowa Kurtinowa nordwestl. Sebez Sebez [a]uf Fliegerstraße Richtung Dubrowki Dubrowki Opotschka Opotschka um 18.30 Uhr angetreten. Angriff Inf. Rgt. …
+traduzione: Il reparto esplorante, da Kurtinowa a nord-ovest di Sebež, si è mosso alle 18:30 lungo la Fliegerstraße in direzione di Dubrowki e Opočka. L’attacco del reggimento di fanteria… (continua nella seconda parte)
+fonti:
+  - heath-sample-messages
+  - summerside-enigma
+  - us-6812-bombe-report
+---
+
+## Il contesto
+
+Il 22 giugno 1941 la Germania invase l’Unione Sovietica: era l’operazione Barbarossa. Due settimane dopo, il 7 luglio, un’unità dell’esercito tedesco in avanzata verso est trasmise via radio un messaggio in due parti, cifrato con un’Enigma a tre rotori. Il messaggio è uno degli esempi di traffico reale raccolti e decifrati in tempi recenti da appassionati e studiosi, ed è tra i vettori con cui si verifica il motore di questo simulatore.
+
+I luoghi citati — Sebež e Opočka — sono cittadine della Russia occidentale, vicino al confine con la Lettonia e la Bielorussia. I nomi sono trascritti come li scriveva l’operatore tedesco.
+
+## Che cosa ti serve
+
+Il foglio chiave del giorno indica i rotori, gli anelli e i cavi del pannello. Non indica la posizione di partenza dei rotori: dal 1940 la sceglieva l’operatore, messaggio per messaggio. In testa al messaggio c’erano due gruppi di tre lettere, l’**indicatore**: il primo, WXC, viaggiava in chiaro ed è la posizione da cui cifrare il secondo, KCH; decifrando KCH si ottiene la chiave del messaggio, cioè la posizione da cui decifrare il testo. È la procedura descritta nel rapporto statunitense del 1944 e spiegata nella lezione sui [fogli chiave](../../storia/fogli-chiave-e-procedure/).
+
+## Come si legge il testo
+
+Il testo in chiaro non ha spazi né punteggiatura: la macchina ha solo 26 tasti. Gli operatori dell’esercito scrivevano X al posto del punto e degli spazi più importanti, CH come Q (SIQER per *sicher*, “sicuro”) e i numeri in lettere: EINS AQT DREI NULL è 1830, cioè le 18:30. I nomi di luogo sono ripetuti due volte, probabilmente per proteggerli dagli errori di trasmissione, che in un nome proprio non si possono correggere a senso.

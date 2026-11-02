@@ -1,0 +1,137 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import DraftNotice from '@/components/content/DraftNotice.astro';
+import SourceList from '@/components/content/SourceList.astro';
+import MissionSimulator from '@/components/missions/MissionSimulator.tsx';
+import { reflectorLabel } from '@/components/simulator/labels.ts';
+import { shareQuery } from '@/components/simulator/share.ts';
+import { ALPHABET, groupLetters, MODELS, type MachineConfig } from '@/engine';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { t, tf } from '@/i18n';
+import { lessonSlug } from '@/lib/lessons';
+import { url } from '@/lib/url';
+
+export async function getStaticPaths() {
+  const missioni = await getCollection('missioni');
+  return missioni.map((missione) => ({ params: { slug: lessonSlug(missione) }, props: { missione } }));
+}
+
+const { missione } = Astro.props as { missione: CollectionEntry<'missioni'> };
+const { data } = missione;
+const { Content } = await render(missione);
+
+const model = MODELS[data.chiave.model];
+const ringNumbers = [...data.chiave.rings].map((l) => String(ALPHABET.indexOf(l) + 1).padStart(2, '0')).join(' ');
+// La chiave del giorno con i rotori su A: la posizione di partenza la sceglie lo studente.
+const dayKey: MachineConfig = { ...data.chiave, positions: 'A'.repeat(data.chiave.rotors.length) };
+const replay = `${url('simulatore/')}?${shareQuery({ ...data.chiave, positions: data.chiaveMessaggio }, data.cifrato)}`;
+const keyRows: [string, string][] = [
+  [t('mission.key.model'), model.label],
+  [t('ex.key.reflector'), reflectorLabel(data.chiave.reflector)],
+  [t('ex.key.rotors'), data.chiave.rotors.map((r) => (r === 'Beta' ? 'β' : r === 'Gamma' ? 'γ' : r)).join(' – ')],
+  [t('ex.key.rings'), `${[...data.chiave.rings].join(' ')} (${ringNumbers})`],
+  [t('ex.key.plugboard'), data.chiave.plugboard.join(' ')],
+];
+---
+
+<BaseLayout title={data.title} description={data.description}>
+  <p class="mb-2 text-sm">
+    <a href={url('missioni/')} class="underline">
+      ← {t('mission.back')}
+    </a>
+  </p>
+  <article class="prose-it">
+    {data.stato === 'bozza' && <DraftNotice />}
+    <h1>{data.title}</h1>
+    <dl class="grid gap-x-4 font-sans text-base sm:grid-cols-[auto_1fr]">
+      <dt class="text-text-muted">{t('mission.date')}</dt>
+      <dd>{data.data}</dd>
+      <dt class="text-text-muted">{t('mission.sender')}</dt>
+      <dd>{data.mittente}</dd>
+    </dl>
+    <Content />
+  </article>
+
+  <div class="mt-10 flex flex-col gap-8">
+    <section aria-labelledby="chiave" class="max-w-3xl rounded-lg border-2 border-border bg-surface-muted p-4">
+      <h2 id="chiave" class="mb-2 text-xl font-semibold">
+        {t('mission.key.title')}
+      </h2>
+      <dl class="grid gap-x-4 gap-y-1 sm:grid-cols-[auto_1fr]">
+        {keyRows.map(([label, value]) => (
+          <>
+            <dt class="text-sm text-text-muted">{label}</dt>
+            <dd class="font-mono text-lg tracking-wider">{value}</dd>
+          </>
+        ))}
+        {data.indicatore ? (
+          <>
+            <dt class="text-sm text-text-muted">{t('mission.indicator')}</dt>
+            <dd>
+              <span class="font-mono text-lg tracking-wider">
+                {data.indicatore.posizione} {data.indicatore.cifrato}
+              </span>
+              <span class="block text-sm text-text-muted">
+                {tf('mission.indicatorHint', { start: data.indicatore.posizione, cipher: data.indicatore.cifrato })}
+              </span>
+            </dd>
+          </>
+        ) : (
+          <>
+            <dt class="text-sm text-text-muted">{t('mission.messageKey')}</dt>
+            <dd class="font-mono text-lg tracking-wider">{data.chiaveMessaggio}</dd>
+          </>
+        )}
+      </dl>
+    </section>
+
+    <section aria-labelledby="cifrato" class="max-w-3xl">
+      <h2 id="cifrato" class="mb-2 text-xl font-semibold">
+        {t('mission.cipher.title')}
+      </h2>
+      <p class="mb-2 text-sm text-text-muted">{tf('mission.cipher.count', { count: data.cifrato.length })}</p>
+      <p data-cipher class="break-words rounded-md bg-surface-muted px-3 py-2 font-mono text-lg tracking-wider">
+        {groupLetters(data.cifrato)}
+      </p>
+    </section>
+
+    <MissionSimulator client:only="react" config={dayKey} cipher={data.cifrato} plain={data.chiaro}>
+      <p slot="fallback" class="text-text-muted">
+        {t('ex.loading')}
+      </p>
+    </MissionSimulator>
+
+    <section aria-labelledby="soluzione" class="max-w-3xl">
+      <h2 id="soluzione" class="mb-2 text-xl font-semibold">
+        {t('mission.solution.title')}
+      </h2>
+      <details class="rounded-lg border border-border bg-surface p-4">
+        <summary class="cursor-pointer font-semibold">{t('mission.solution.show')}</summary>
+        <dl class="mt-3 flex flex-col gap-3">
+          <div>
+            <dt class="text-sm font-semibold">{t('mission.solution.raw')}</dt>
+            <dd class="break-words font-mono tracking-wider">{groupLetters(data.chiaro)}</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-semibold">{t('mission.solution.german')}</dt>
+            <dd lang="de">{data.tedesco}</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-semibold">{t('mission.solution.translation')}</dt>
+            <dd>{data.traduzione}</dd>
+          </div>
+        </dl>
+        <p class="mt-3">
+          <a href={replay} class="underline">
+            {t('mission.solution.replay')}
+          </a>
+        </p>
+      </details>
+    </section>
+  </div>
+
+  <div class="max-w-[72ch]">
+    <SourceList fonti={data.fonti} />
+  </div>
+</BaseLayout>

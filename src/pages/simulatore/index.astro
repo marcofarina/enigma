@@ -2,11 +2,17 @@
 import Simulator from '@/components/simulator/Simulator.tsx';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { t } from '@/i18n';
+import { url } from '@/lib/url';
 ---
 
 <BaseLayout title={t('sim.title')}>
   <h1 class="mb-2 text-3xl font-bold">{t('sim.title')}</h1>
-  <p class="mb-6 max-w-3xl text-text-muted">{t('sim.intro')}</p>
+  <p class="mb-2 max-w-3xl text-text-muted">{t('sim.intro')}</p>
+  <p class="mb-6 max-w-3xl">
+    <a href={url('missioni/')} class="underline">
+      {t('mission.simulatorLink')}
+    </a>
+  </p>
   <div data-simulator>
     <Simulator client:only="react">
       <p slot="fallback" class="text-text-muted">

@@ -88,3 +88,22 @@
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — Enigma M1, M2 e M3
   url: https://www.cryptomuseum.com/crypto/enigma/m3/index.htm
+- id: heath-sample-messages
+  autori: Franklin Heath
+  titolo: Enigma Sample Messages
+  url: http://wiki.franklinheath.co.uk/index.php/Enigma/Sample_Messages
+  note: Raccolta di messaggi reali decifrati (con Frank Spieß), da cui vengono i vettori di test del simulatore di Summerside Makerspace. Pagina non consultata direttamente durante la stesura, da verificare.
+- id: weierud-scharnhorst
+  autori: Frode Weierud
+  titolo: Scharnhorst’s Last Message?
+  url: https://cryptocellar.org/bgac/scharnhorst.html
+  note: Modulo d’intercettazione della HMS Duke of York, decifrazione di Bletchley Park del 13 gennaio 1944 e nuova rottura del messaggio nel maggio 2008.
+- id: krah-m4-project
+  autori: Stefan Krah
+  titolo: M4 Project — first break
+  url: https://www.equn.com/m4/m4-project-first-break.html
+  note: Testo cifrato, chiave e testo in chiaro del messaggio dell’U-264 rotto il 20 febbraio 2006, con il riscontro nel diario di guerra dell’U-boot.
+- id: rijmenants-m4-project
+  autori: Dirk Rijmenants
+  titolo: Cipher Machines and Cryptology — Stefan Krah’s M4 Project and the Story of U-264
+  url: https://ciphermachinesandcryptology.com/en/m4project.htm
