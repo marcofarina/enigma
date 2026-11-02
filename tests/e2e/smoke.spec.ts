@@ -8,6 +8,8 @@ const pages = [
   'come-funziona/che-cos-e-enigma/',
   'storia/',
   'glossario/',
+  'storia/galleria/',
+  'schede/',
   'fonti/',
 ];
 
@@ -44,4 +46,19 @@ test('il glossario è ordinato, collega le lezioni ed è accessibile', async ({ 
   await expect(entry).toContainText('reflector');
   await entry.getByRole('link', { name: 'Approfondisci' }).click();
   await expect(page).toHaveURL(/come-funziona\/il-riflettore\/$/);
+});
+
+test('la galleria mostra ogni immagine con i crediti', async ({ page }) => {
+  await page.goto('storia/galleria/');
+  const figures = page.locator('figure');
+  expect(await figures.count()).toBeGreaterThan(5);
+  for (const figure of await figures.all()) {
+    await expect(figure.locator('img')).toHaveAttribute('alt', /.{20,}/);
+    await expect(figure.getByRole('link', { name: 'fonte' })).toHaveAttribute(
+      'href',
+      /^https:\/\/commons\.wikimedia\.org\//,
+    );
+  }
+  await page.goto('fonti/');
+  await expect(page.getByText('Alessandro Nassiri', { exact: false }).first()).toBeVisible();
 });

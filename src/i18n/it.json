@@ -384,5 +384,13 @@
   "glossary.more": "Approfondisci",
   "history.title": "Storia",
   "history.intro": "Dalle macchine commerciali di Arthur Scherbius all’adozione da parte delle forze armate tedesche, fino alle procedure con cui gli operatori usavano la macchina e alle Enigma della marina italiana.",
-  "history.glossary": "I termini tedeschi che compaiono nelle lezioni sono raccolti nel glossario."
+  "history.glossary": "I termini tedeschi che compaiono nelle lezioni sono raccolti nel glossario.",
+  "gallery.title": "Galleria",
+  "gallery.intro": "Macchine, componenti e documenti originali conservati nei musei, con i crediti completi di ogni immagine. Le immagini sono di pubblico dominio o con licenze Creative Commons che ne permettono il riuso citando l’autore.",
+  "gallery.machines": "Macchine",
+  "gallery.parts": "Componenti",
+  "gallery.documents": "Documenti",
+  "gallery.people": "Persone",
+  "gallery.places": "Luoghi",
+  "history.gallery": "Galleria di macchine, componenti e documenti"
 }

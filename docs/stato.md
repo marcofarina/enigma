@@ -42,10 +42,19 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
   - Pagine `/esercizi/` (per livello, con le varianti risolte) e `/esercizi/<id>/?seme=…`; il seme sta nell’indirizzo, così un docente può assegnare la stessa variante a tutta la classe. Soluzione con link “Rivedi nel simulatore”.
   - Negli esercizi da operatore c’è il simulatore completo, che parte dalla configurazione di base; in quelli di meccanica no.
 
+- Fase 3 (v0.3), branch `claude/zen-pasteur-4nev9o`.
+  - 3a: quattro esercizi di livello 3 in `src/exercises/math.ts` (spazio delle chiavi con una regola sull’ordine dei rotori, collegamenti del pannello con k cavi anche su alfabeti ridotti, quale tabella può venire da un’Enigma, posizione iniziale da ritrovare con un crib). Tipi e chiavi casuali spostati in `types.ts` e `keys.ts`; `pairings()` nel motore; le risposte numeriche restano stringhe e accettano i separatori delle migliaia; `numberInWords()` per i numeri fino a dieci nei testi generati.
+  - 3a: schede stampabili in `/schede/` (`src/exercises/sheets.ts`, `SheetGenerator.tsx`): foglio chiave mensile sul modello del Luftwaffen-Maschinenschlüssel Nr. 619 (giorni dal 31 all’1, anelli in numeri, dieci cavi, Kenngruppen), messaggi intercettati con l’indicatore descritto dal rapporto 6812 del 1944, esercizi del catalogo a scelta, serie per la classe con semi consecutivi (`?seme=…&copie=…`) e soluzioni su pagine separate. Stile di stampa in `print.css`, verificato producendo il PDF con Playwright.
+  - 3b: glossario tedesco–italiano–inglese (`src/content/glossario.yaml`, pagina `/glossario/`). `lint:content` controlla anche i campi di prosa dei file YAML (`definizione`, `didascalia`, `descrizione`).
+  - 3c: lezioni di storia 1–4 in bozza (Scherbius e le macchine commerciali, l’adozione militare, fogli chiave e procedure, Enigma e l’Italia), con `LessonPage.astro` comune alle sezioni. Fonti: pagine di Crypto Museum (storia, Enigma K, M3, M4, UKW-D), rapporto 6812, foglio chiave 619.
+  - 3d: galleria in `/storia/galleria/` con dieci immagini da Wikimedia Commons (PD, CC0, CC BY-SA), file in `src/assets/immagini/` ottimizzati da `astro:assets`. Componente `Figura` (`src/components/lesson/Figura.astro`): un `id` senza voce in `immagini.yaml` ferma la build; un test controlla che ogni file abbia i crediti e viceversa. Schema delle immagini con `alt`, `didascalia` e `categoria`; ammessa anche la CC BY-SA 2.5. Figure nelle lezioni di storia 1–3.
+  - Test e2e: nuovi esercizi, schede (anche in modalità di stampa), lezioni di storia con axe, glossario e un crawler che controlla tutti i link interni (`tests/e2e/links.spec.ts`).
+  - Nelle lezioni i link interni sono relativi (`../../schede/`): rispettano `base` e il crawler li verifica.
+
 ## Prossimo passo
 
-- Revisione delle bozze 1–7 da parte dell’autore.
-- Fase 3 (v0.3): storia e procedure, Enigma e l’Italia, galleria con crediti, glossario, schede stampabili (dai blocchi degli esercizi), esercizi di livello 3.
+- Revisione delle bozze 1–7 e delle lezioni di storia 1–4 da parte dell’autore.
+- Fase 4 (v1.0): crittoanalisi, vista “Macchina” 2.5D, missioni storiche, guida per i docenti.
 - Rinviati dalla 1b: cavi trascinabili sul pannello, schema in verticale su mobile, notazione tedesca dell’UKW-D (da verificare prima di mostrarla).
 
 ## Note operative
@@ -53,10 +62,19 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
 - **Node**: Astro 7 richiede Node ≥ 22.23.4. Nel container c’è Node 24 in `/opt/node24/bin` (`export PATH=/opt/node24/bin:$PATH`); pnpm 10 è quello di sistema. In un container nuovo va riscaricato da nodejs.org (`node-v24.x-linux-x64.tar.xz`).
 - **Preview**: `astro preview` in Astro 7 usa un file di lock e può restare attivo in background. Usare `astro preview --ignore-lock` (già nel `playwright.config.ts`) e `pnpm exec astro preview stop` per fermarlo.
 - **Playwright**: nel container c’è la 1.63.0 con i browser in `/opt/pw-browsers`; tenere `@playwright/test@1.63.0` finché l’ambiente non cambia.
-- **Rete**: `cryptomuseum.com` è raggiungibile con `curl` dal container, ma non con WebFetch; le pagine si scaricano e si convertono in testo nella cartella temporanea. Per immagini e altre fonti servono negli Allowed domains dell’ambiente `cryptocellar.org`, `codesandciphers.org.uk`, `commons.wikimedia.org`, `upload.wikimedia.org`.
+- **Rete**: `cryptomuseum.com`, `cryptocellar.org`, `codesandciphers.org.uk` e Wikimedia sono raggiungibili con `curl` (non con WebFetch). L’API di Commons (`w/api.php`) risponde spesso 429: funzionano meglio `https://commons.wikimedia.org/wiki/File:<nome>?action=raw` per autore e licenza e `Special:FilePath/<nome>?width=1200` per il file, con uno User-Agent descrittivo e qualche secondo di pausa tra le richieste.
 - **Simulatore originale**: clonato in `/home/user/EnigmaMachine`. I vettori di confronto si rigenerano con `node scripts/legacy/generate-vectors.cjs /home/user/EnigmaMachine/enigma.js <numero per modello> <file di uscita>`.
 
 ## Da verificare
+
+- Storia: date di adozione. Crypto Museum scrive che esercito e aviazione adottarono Enigma nel 1927 e che l’Enigma I definitiva entrò in servizio il 1° giugno 1930; la lezione 1 di “Come funziona” dice “marina nel 1926, esercito nel 1928”. Va armonizzata (la lezione di storia 2 spiega la differenza).
+- Storia: data dei rotori IV e V (Crypto Museum: “intorno” al 15 settembre 1938; altre ricostruzioni danno il dicembre 1938).
+- Storia: procedura dell’indicatore tra il 15 settembre 1938 e il 1° maggio 1940 (posizione scelta dall’operatore e trasmessa in chiaro, chiave cifrata due volte) e motivo della doppia cifratura (errori di trasmissione): da controllare su Rejewski o Kozaczuk.
+- Italia: Crypto Museum parla di un messaggio di prova mandato da un operatore “tedesco”; nella lezione si scrive solo “l’operatore”. Controllare su Batey, *Dilly*, anche la data (marzo 1941) e il ruolo delle decifrazioni a Matapan. Crypto Museum colloca la rottura “a ISK”, che però nacque solo nell’ottobre 1941: la lezione parla della sezione di Knox.
+- Italia: nella tabella del cablaggio D (marina italiana) di Crypto Museum il rotore I contiene due volte la U, quindi non è una permutazione; per questo il modello non è stato aggiunto al motore.
+- Rapporto 6812: nella trascrizione di Tony Sale l’esempio di pannello d’emergenza (parola CHRISTENSEN) ha un refuso (ABDYG al posto di ABDFG); non è usato nei testi.
+- Galleria: il foglio chiave della Luftwaffe n. 649 su Commons è marcato solo “PD-US-no notice”; non è stato usato. Il ritratto di Rejewski (CC BY-SA 2.5, archivio della figlia) è piccolo, 200 × 274 pixel.
+- Anno del Luftwaffen-Maschinenschlüssel Nr. 619 (1944 per analogia con il 649 di Commons).
 
 - Lezione 1: adozione da parte della marina (1926) e dell’esercito (1928). Crypto Museum data l’entrata in servizio dell’Enigma I al 1° giugno 1930; anche `period` dell’Enigma I in `models.ts` (1932) va riallineato.
 - Lezione 2: data del trattato di Alberti (intorno al 1467) e attribuzione ad al-Kindi, da controllare su Singh.

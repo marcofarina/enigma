@@ -38,6 +38,7 @@ const licenzeAmmesse = z.enum([
   'CC-BY-3.0',
   'CC-BY-4.0',
   'CC-BY-SA-2.0',
+  'CC-BY-SA-2.5',
   'CC-BY-SA-3.0',
   'CC-BY-SA-3.0-DE',
   'CC-BY-SA-4.0',
@@ -48,8 +49,14 @@ const licenzeAmmesse = z.enum([
 const immagini = defineCollection({
   loader: file('./src/content/immagini.yaml'),
   schema: z.object({
-    file: z.string(),
+    /** Nome del file in `src/assets/immagini/`. */
+    file: z.string().regex(/^[a-z0-9-]+\.(jpg|png|webp)$/),
     titolo: z.string(),
+    /** Testo alternativo: che cosa si vede, per chi non vede l’immagine. */
+    alt: z.string(),
+    /** Didascalia in italiano, controllata da `lint:content`. */
+    didascalia: z.string(),
+    categoria: z.enum(['macchine', 'componenti', 'documenti', 'persone', 'luoghi']),
     autore: z.string(),
     fonte: z.url(),
     licenza: licenzeAmmesse,

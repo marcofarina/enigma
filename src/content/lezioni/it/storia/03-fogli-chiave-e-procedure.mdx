@@ -13,6 +13,7 @@ fonti:
 ---
 
 import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import Figura from '@/components/lesson/Figura.astro';
 import Nota from '@/components/lesson/Nota.astro';
 
 Una macchina cifrante è sicura solo quanto le regole con cui la si usa. Mittente e destinatario devono impostare la macchina nello stesso modo, ma l’impostazione non può viaggiare in chiaro insieme al messaggio. Le forze armate tedesche risolsero il problema in due livelli: una **chiave del giorno**, uguale per tutta una rete e distribuita in anticipo su carta, e una **chiave del messaggio**, diversa per ogni messaggio e trasmessa in forma cifrata.
@@ -20,6 +21,8 @@ Una macchina cifrante è sicura solo quanto le regole con cui la si usa. Mittent
 ## Il foglio chiave
 
 La chiave del giorno arrivava agli operatori su un foglio chiave mensile. Un rapporto del 1944 dell’esercito statunitense, scritto per addestrare il personale che lavorava sulle Bombe, lo descrive così: per ogni giorno il foglio indica quali tre dei cinque rotori montare e in che ordine (*Walzenlage*), la posizione degli anelli (*Ringstellung*), numerati da 01 a 26, e le coppie di lettere da collegare sul pannello a spine (*Steckerverbindungen*). Il foglio si legge dal basso verso l’alto: la riga di un giorno già passato si taglia e si distrugge, così un foglio catturato non permette di leggere i messaggi dei giorni precedenti.
+
+<Figura id="foglio-chiave-heer" />
 
 Su un foglio originale della Luftwaffe, il *Luftwaffen-Maschinenschlüssel* n. 619, ogni riga riporta il numero del foglio, il giorno — dal 31 in alto all’1 in basso —, l’ordine dei rotori, i tre anelli, dieci coppie di lettere per il pannello e quattro gruppi di tre lettere, le *Kenngruppen*. In testa al foglio si legge:
 

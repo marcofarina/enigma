@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import Figura from '@/components/lesson/Figura.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { t } from '@/i18n';
+import { url } from '@/lib/url';
+
+const immagini = await getCollection('immagini');
+const categorie = [
+  { id: 'macchine', title: t('gallery.machines') },
+  { id: 'componenti', title: t('gallery.parts') },
+  { id: 'documenti', title: t('gallery.documents') },
+  { id: 'persone', title: t('gallery.people') },
+  { id: 'luoghi', title: t('gallery.places') },
+] as const;
+---
+
+<BaseLayout title={t('gallery.title')} description={t('gallery.intro')}>
+  <p class="mb-2 text-sm">
+    <a href={url('storia/')} class="underline">
+      ← {t('history.title')}
+    </a>
+  </p>
+  <h1 class="mb-2 text-3xl font-bold">{t('gallery.title')}</h1>
+  <p class="mb-8 max-w-3xl text-text-muted">{t('gallery.intro')}</p>
+  {categorie.map(({ id, title }) => {
+    const voci = immagini.filter(({ data }) => data.categoria === id);
+    return (
+      voci.length > 0 && (
+        <section aria-labelledby={`galleria-${id}`} class="mb-10">
+          <h2 id={`galleria-${id}`} class="mb-4 text-2xl font-semibold">
+            {title}
+          </h2>
+          <div class="grid gap-x-6 sm:grid-cols-2 lg:grid-cols-3">
+            {voci.map((voce) => (
+              <Figura id={voce.id} larghezza={400} class="!my-3" />
+            ))}
+          </div>
+        </section>
+      )
+    );
+  })}
+</BaseLayout>

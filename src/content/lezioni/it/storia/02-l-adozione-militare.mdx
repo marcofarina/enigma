@@ -11,6 +11,7 @@ fonti:
   - us-6812-bombe-report
 ---
 
+import Figura from '@/components/lesson/Figura.astro';
 import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
 import Nota from '@/components/lesson/Nota.astro';
 
@@ -23,6 +24,8 @@ La marina tedesca conobbe Enigma già nel 1926, quando acquistò il *Funkschlüs
 ## Il pannello a spine
 
 La prima Enigma I fu pronta nel 1927, ma il pannello passò per diversi progetti prima di arrivare, nel 1928, alla versione definitiva: una coppia di prese per ogni lettera, disposte su tre file, e cavi con una spina a ciascun capo per collegare due lettere tra loro. Secondo Crypto Museum fu progettato dalla stessa Reichswehr ed era il più debole tra quelli provati — eppure, come si vede nella lezione sul [pannello a spine](../../come-funziona/il-pannello-a-spine-e-l-uhr/), da solo moltiplicava le impostazioni possibili per circa 150 000 miliardi con dieci cavi.
+
+<Figura id="enigma-i-milano" larghezza={560} />
 
 La versione finale dell’Enigma I entrò in servizio il 1° giugno 1930. Il pannello a spine restò un’esclusiva delle macchine militari. Nel 1932 l’esercito ottenne i diritti esclusivi sulla macchina: da quel momento ogni vendita commerciale o all’estero doveva essere approvata dai militari.
 
@@ -41,5 +44,7 @@ La marina adottò la macchina militare nel 1934, in una versione compatibile con
 ## Più rotori, più chiavi
 
 Fino al 1938 l’esercito disponeva di soli tre rotori, I, II e III, che potevano essere montati in sei ordini diversi. Intorno al 15 settembre 1938 se ne aggiunsero altri due, IV e V: scegliendo tre rotori su cinque gli ordini diventano 5 × 4 × 3 = 60, dieci volte tanti. Nel 1944 un rapporto dell’esercito statunitense descriveva ancora la stessa dotazione per esercito e aviazione: tre rotori su cinque.
+
+<Figura id="enigma-m4-caen" larghezza={420} />
 
 Per la flotta sottomarina la marina introdusse a sorpresa, il 1° febbraio 1942, la M4. Accanto a un riflettore sottile montava un quarto rotore sottile, β o γ, che si impostava a mano e non avanzava. Bletchley Park chiamò Shark la rete cifrata con la M4, e per nove mesi non riuscì a leggerla: è una delle storie della sezione sulla crittoanalisi.
