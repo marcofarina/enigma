@@ -13,7 +13,7 @@ import { url } from '@/lib/url';
       {t('mission.simulatorLink')}
     </a>
   </p>
-  <div data-simulator>
+  <div data-simulator class="min-h-screen">
     <Simulator client:only="react">
       <p slot="fallback" class="text-text-muted">
         {t('sim.loading')}

@@ -2,17 +2,17 @@
 
 Simulatore didattico della macchina Enigma, con un percorso su storia, funzionamento, matematica e crittoanalisi ed esercizi per gli studenti. Fa parte del progetto **Rainbow Bits**, che accompagna un libro di crittografia.
 
-> Il progetto è agli inizi: il piano di lavoro completo è in [`docs/piano.md`](docs/piano.md).
+> Il piano di lavoro completo è in [`docs/piano.md`](docs/piano.md). I testi sono bozze in attesa di revisione.
 
 ## Stato
 
 | Fase | Contenuto | Stato |
 |---|---|---|
-| 0 | Struttura del progetto, CI, pubblicazione su GitHub Pages | in corso |
-| 1 | Motore, simulatore schematico, link condivisibili, lezioni “Come funziona” | da fare |
-| 2 | Traccia passo-passo, modalità LIM, matematica, esercizi di livello 1–2 | da fare |
-| 3 | Storia, Enigma e l’Italia, galleria, glossario, schede stampabili | da fare |
-| 4 | Crittoanalisi, vista realistica 2.5D, missioni storiche | da fare |
+| 0 | Struttura del progetto, CI, pubblicazione su GitHub Pages | fatto |
+| 1 | Motore, simulatore schematico, link condivisibili, lezioni “Come funziona” | fatto |
+| 2 | Traccia passo-passo, modalità LIM, matematica, esercizi di livello 1–2 | fatto |
+| 3 | Storia, Enigma e l’Italia, galleria, glossario, schede stampabili, esercizi di livello 3 | fatto |
+| 4 | Crittoanalisi con Bombe simulata, vista “Macchina” 2.5D, missioni storiche, guida per i docenti, revisione di accessibilità e prestazioni | fatto (testi in revisione) |
 | 5 | Vista 3D | da fare |
 
 ## Sviluppo

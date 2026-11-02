@@ -10,7 +10,7 @@ import { t } from '@/i18n';
     <p class="mb-8 max-w-3xl text-text-muted">{t('sheet.intro')}</p>
   </div>
   <SheetGenerator client:only="react">
-    <p slot="fallback" class="text-text-muted">
+    <p slot="fallback" class="min-h-[60vh] text-text-muted">
       {t('sheet.loading')}
     </p>
   </SheetGenerator>

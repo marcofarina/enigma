@@ -21,7 +21,7 @@ const { exercise } = Astro.props as { exercise: Exercise };
   </p>
   <h1 class="mb-6 text-3xl font-bold">{exercise.title}</h1>
   <ExerciseView client:only="react" exerciseId={exercise.id}>
-    <p slot="fallback" class="text-text-muted">
+    <p slot="fallback" class="min-h-[60vh] text-text-muted">
       {t('ex.loading')}
     </p>
   </ExerciseView>
