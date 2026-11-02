@@ -12,12 +12,14 @@
   tedesco: —
   inglese: bomba (dal polacco bomba kryptologiczna)
   definizione: Macchina elettromeccanica del Biuro Szyfrów polacco che cercava le posizioni dei rotori sfruttando l’indicatore cifrato due volte. Divenne inutile quando i tedeschi abbandonarono quella procedura.
+  vedi: crittoanalisi/fogli-bombe-e-l-incontro-di-pyry/
   fonti: [crypto-museum-storia]
 - id: bombe
   termine: Bombe
   tedesco: —
   inglese: Bombe
   definizione: Macchina elettromeccanica progettata a Bletchley Park da Alan Turing, con il miglioramento della diagonal board di Gordon Welchman. Partendo da un crib cercava le impostazioni compatibili con i cicli di lettere che il crib formava con il testo cifrato.
+  vedi: crittoanalisi/bletchley-park-e-la-bombe/
   fonti: [crypto-museum, welchman-hut-six]
 - id: chiave
   termine: chiave
@@ -45,12 +47,14 @@
   tedesco: —
   inglese: cillies
   definizione: A Bletchley Park, gli errori di procedura degli operatori tedeschi che aiutavano a indovinare la chiave del messaggio, come tre tasti vicini sulla tastiera o il nome della fidanzata.
+  vedi: crittoanalisi/bletchley-park-e-la-bombe/
   fonti: [crypto-museum]
 - id: crib
   termine: crib
   tedesco: —
   inglese: crib
   definizione: Parte del testo in chiaro che si conosce o si sospetta, per esempio un bollettino meteorologico o una formula di saluto. Era il punto di partenza per le ricerche della Bombe.
+  vedi: crittoanalisi/bletchley-park-e-la-bombe/
   fonti: [crypto-museum, us-6812-bombe-report]
 - id: doppio-passo
   termine: doppio passo
@@ -176,4 +180,61 @@
   tedesco: —
   inglese: Ultra
   definizione: Nome in codice delle informazioni ricavate dalla decifrazione dei messaggi tedeschi, protette da un livello di segretezza superiore a tutti gli altri.
+  vedi: crittoanalisi/l-impatto-di-ultra/
   fonti: [crypto-museum-storia]
+- id: caratteristica
+  termine: caratteristica
+  tedesco: —
+  inglese: characteristic
+  definizione: Nel metodo di Rejewski, le lunghezze dei cicli delle tre sostituzioni ricavate dagli indicatori di un giorno. Non dipende dal pannello a spine, quindi permetteva di cercare in un catalogo la posizione dei rotori.
+  vedi: crittoanalisi/rejewski-e-la-teoria-delle-permutazioni/
+  fonti: [wikipedia-cryptanalysis-enigma, rejewski-1980]
+- id: ciclometro
+  termine: ciclometro
+  tedesco: —
+  inglese: cyclometer
+  definizione: Apparecchio costruito dai polacchi a metà degli anni Trenta, con due serie di rotori collegate, che mostrava la struttura in cicli di una posizione. Servì a compilare il catalogo delle caratteristiche.
+  vedi: crittoanalisi/rejewski-e-la-teoria-delle-permutazioni/
+  fonti: [wikipedia-cryptanalysis-enigma]
+- id: diagonal-board
+  termine: diagonal board
+  tedesco: —
+  inglese: diagonal board
+  definizione: Miglioramento della Bombe proposto da Gordon Welchman nel 1940. Sfrutta la reciprocità del pannello a spine — se la A è collegata alla E, anche la E è collegata alla A — e permette di usare crib più corti.
+  vedi: crittoanalisi/bletchley-park-e-la-bombe/
+  fonti: [wikipedia-bombe, welchman-hut-six]
+- id: femmina
+  termine: femmina
+  tedesco: —
+  inglese: female (dal polacco samiczka)
+  definizione: Indicatore in cui la stessa lettera della chiave del messaggio, cifrata due volte, dà due volte la stessa lettera, come in SZV SIK. Le femmine possono comparire solo in certe posizioni dei rotori e furono la base dei fogli di Zygalski e della bomba.
+  vedi: crittoanalisi/fogli-bombe-e-l-incontro-di-pyry/
+  fonti: [wikipedia-cryptanalysis-enigma]
+- id: fermata
+  termine: fermata
+  tedesco: —
+  inglese: stop
+  definizione: Posizione dei rotori in cui la Bombe non trovava contraddizioni e si fermava. Le fermate andavano controllate a mano, perché molte erano false.
+  vedi: crittoanalisi/bletchley-park-e-la-bombe/
+  fonti: [wikipedia-bombe]
+- id: fogli-di-zygalski
+  termine: fogli di Zygalski
+  tedesco: —
+  inglese: Zygalski sheets
+  definizione: Fogli perforati ideati da Henryk Zygalski, uno per ogni posizione del rotore sinistro, con un foro in ogni posizione in cui poteva nascere una femmina. Sovrapponendoli, il foro rimasto indicava la chiave.
+  vedi: crittoanalisi/fogli-bombe-e-l-incontro-di-pyry/
+  fonti: [wikipedia-cryptanalysis-enigma]
+- id: menu
+  termine: menu
+  tedesco: —
+  inglese: menu
+  definizione: Schema delle coppie di lettere formate da un crib e dal testo cifrato sotto di esso, con il numero della posizione di ciascuna. Indicava come collegare i tamburi della Bombe; i suoi loop la rendevano efficace.
+  vedi: crittoanalisi/bletchley-park-e-la-bombe/
+  fonti: [wikipedia-bombe]
+- id: shark
+  termine: Shark
+  tedesco: Triton
+  inglese: Shark
+  definizione: Nome dato a Bletchley Park alla rete Enigma dei sommergibili dell’Atlantico, cifrata con la M4 dal 1° febbraio 1942. Rimase illeggibile fino al dicembre 1942.
+  vedi: crittoanalisi/l-atlantico-e-la-m4/
+  fonti: [wikipedia-cryptanalysis-enigma, crypto-museum-m4]

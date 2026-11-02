@@ -1,0 +1,62 @@
+---
+title: Rejewski e la teoria delle permutazioni
+description: Come un matematico polacco ricostruì nel 1932 il cablaggio dell’Enigma militare senza averne mai vista una, partendo dagli indicatori dei messaggi.
+sezione: crittoanalisi
+ordine: 1
+stato: bozza
+fonti:
+  - rejewski-1980
+  - wikipedia-cryptanalysis-enigma
+  - crypto-museum-storia
+  - crypto-museum-polish
+---
+
+import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import CicliRejewski from '@/components/lesson/CicliRejewski.tsx';
+import Figura from '@/components/lesson/Figura.astro';
+import Formula from '@/components/lesson/Formula.astro';
+import Nota from '@/components/lesson/Nota.astro';
+
+La prima volta che qualcuno lesse i messaggi dell’Enigma militare non fu in Inghilterra durante la guerra, ma in Polonia, sette anni prima. E non ci riuscì un linguista o un esperto di enigmistica, ma un matematico che usò la teoria delle permutazioni, la stessa che si incontra nella [lezione sulla matematica di Enigma](../../come-funziona/la-matematica-di-enigma/).
+
+## Il Biuro Szyfrów
+
+Per la Polonia, stretta tra Germania e Unione Sovietica, leggere le comunicazioni militari tedesche era una questione di sopravvivenza. L’ufficio cifra dello stato maggiore, il **Biuro Szyfrów**, provò a forzare l’Enigma dalla fine degli anni Venti senza successo. Nel 1929 organizzò un corso di crittologia per gli studenti di matematica dell’Università di Poznań, che conoscevano bene il tedesco perché la regione era stata tedesca fino alla Prima guerra mondiale. Il 1° settembre 1932 tre di loro furono assunti a Varsavia: Marian Rejewski, che aveva 27 anni, Jerzy Różycki e Henryk Zygalski.
+
+<Figura id="marian-rejewski-1932" larghezza={360} />
+
+Alla fine del 1932 Rejewski cominciò a lavorare sull’Enigma, all’inizio per un paio d’ore al giorno. Aveva a disposizione i messaggi intercettati, la descrizione della versione commerciale della macchina e, da dicembre, alcuni documenti procurati dai servizi francesi: due manuali d’uso e due fogli di chiavi giornaliere del 1932. Le aveva vendute ai francesi Hans-Thilo Schmidt, un impiegato dell’ufficio cifra tedesco; i francesi, che non erano riusciti a sfruttarle, le avevano passate ai polacchi.
+
+## L’errore nell’indicatore
+
+Il punto debole che Rejewski notò subito non stava nella macchina, ma nella procedura. In quegli anni tutti gli operatori di una rete usavano la stessa posizione di partenza del giorno per cifrare la chiave del messaggio, e la cifravano **due volte di seguito**: le sei lettere dell’indicatore erano la stessa chiave di tre lettere, cifrata in sei posizioni consecutive dei rotori (la procedura è descritta nella lezione sui [fogli chiave](../../storia/fogli-chiave-e-procedure/)).
+
+Chiamiamo $A_1, A_2, \dots, A_6$ le sostituzioni che la macchina opera in quelle sei posizioni. Se l’operatore sceglie la chiave $xyz$, la prima lettera dell’indicatore è $A_1(x)$ e la quarta è $A_4(x)$. Rejewski non conosceva $x$, ma sapeva che la stessa lettera era stata cifrata due volte. Poiché ogni $A_i$ è un’involuzione — scambia le lettere a coppie, grazie al riflettore — dalla prima lettera si torna a $x$ applicando di nuovo $A_1$, e da $x$ si arriva alla quarta con $A_4$:
+
+<Formula tex="\text{quarta lettera} = A_4\bigl(A_1(\text{prima lettera})\bigr)" />
+
+Con abbastanza messaggi dello stesso giorno, le coppie prima–quarta lettera riempiono una tabella completa: la sostituzione $A_1$ seguita da $A_4$, che indichiamo con $AD$. Lo stesso vale per la seconda e la quinta ($BE$) e per la terza e la sesta ($CF$). Provalo qui sotto: ogni giornata è simulata con il motore del sito. Le chiavi del messaggio sono scelte a caso, quindi per completare le tre tabelle servono di solito più di cento messaggi; gli operatori reali sceglievano spesso chiavi prevedibili, e questo aiutava i polacchi.
+
+<CicliRejewski client:visible />
+
+## I cicli e la caratteristica
+
+Seguendo una tabella lettera dopo lettera — dalla A alla sua compagna, da questa alla successiva — si torna prima o poi al punto di partenza: si ottengono i **cicli** della sostituzione. Rejewski dimostrò un teorema che rese il metodo possibile: nel prodotto di due involuzioni senza punti fissi, i cicli vanno sempre **a coppie di uguale lunghezza**. Nel simulatore lo vedi in ogni giornata: se c’è un ciclo di nove lettere, ce n’è un altro di nove.
+
+L’osservazione decisiva arrivò dopo. Il pannello a spine cambia le lettere dentro i cicli, ma non ne cambia il numero né le lunghezze: in termini matematici, la sostituzione con i cavi è **coniugata** di quella senza cavi, e le permutazioni coniugate hanno la stessa struttura in cicli. Le lunghezze dei cicli di $AD$, $BE$ e $CF$ — Rejewski la chiamò la **caratteristica** del giorno — dipendevano quindi solo dall’ordine e dalla posizione dei rotori, non dai cavi. Attiva il confronto nel simulatore qui sopra per vederlo.
+
+<Approfondimento titolo="Perché il pannello non cambia le lunghezze dei cicli">
+Se $S$ è il pannello e $T_i$ la parte di macchina senza pannello, allora $A_i = S\,T_i\,S$ (il pannello è un’involuzione, quindi coincide con la sua inversa). Il prodotto diventa $AD = S\,T_1\,S\,S\,T_4\,S = S\,(T_1 T_4)\,S$, perché $S\,S$ è l’identità. Il prodotto con i cavi è coniugato di quello senza cavi: se $(a\,b\,c)$ è un ciclo di $T_1 T_4$, allora $(S(a)\,S(b)\,S(c))$ è un ciclo di $AD$, con le lettere cambiate dal pannello e la stessa lunghezza. È lo stesso fatto che nella lezione sulla matematica spiega perché girare un rotore non cambia le lunghezze dei suoi cicli.
+</Approfondimento>
+
+## Dal cablaggio alle chiavi del giorno
+
+Con le sostituzioni ricavate dagli indicatori e le chiavi fornite dai francesi, Rejewski scrisse un sistema di equazioni tra permutazioni per ricavare il cablaggio del rotore destro. All’inizio i risultati erano contraddittori: aveva supposto che la ruota d’ingresso collegasse i tasti ai contatti nell’ordine della tastiera, come nella macchina commerciale. Provò allora l’ipotesi più semplice, l’ordine alfabetico, e funzionò. Nel secondo mese di chiavi a destra c’era un altro rotore, e lo stesso metodo gli diede il suo cablaggio; il terzo rotore e il riflettore seguirono. Senza aver mai visto un’Enigma militare, il Biuro Szyfrów poté farne costruire delle copie, i “doppi”.
+
+Per trovare le chiavi di ogni giorno serviva però un metodo più veloce delle equazioni. Rejewski fece costruire un **ciclometro**, un apparecchio con due serie di rotori collegate in modo da mostrare con delle lampadine la struttura in cicli di una posizione. Con il ciclometro i polacchi compilarono un catalogo delle caratteristiche di tutte le posizioni di partenza: sei ordini dei tre rotori per 17 576 posizioni, cioè 105 456 schede. Secondo Rejewski il lavoro durò più di un anno, ma una volta pronto il catalogo bastavano una quindicina di minuti per ricavare la chiave del giorno: si calcolava la caratteristica dagli indicatori, la si cercava nel catalogo e si ricostruivano poi i cavi confrontando i cicli con e senza pannello.
+
+<Nota titolo="Un catalogo da rifare">
+Il 1° novembre 1937 i tedeschi sostituirono il riflettore. Il catalogo divenne inutile e il Biuro Szyfrów dovette compilarne un altro: questa volta, scrisse Rejewski, con l’esperienza accumulata servì un po’ meno di un anno.
+</Nota>
+
+Il metodo delle caratteristiche funzionò finché tutti gli operatori di una rete usarono la stessa posizione di partenza del giorno. Il 15 settembre 1938 la procedura cambiò, e i polacchi dovettero inventare qualcos’altro: è il tema della prossima lezione.

@@ -1,0 +1,58 @@
+---
+title: Bletchley Park e la Bombe
+description: Crib, menu e loop — come Turing e Welchman trasformarono una parola indovinata in una macchina che provava migliaia di posizioni dei rotori.
+sezione: crittoanalisi
+ordine: 3
+stato: bozza
+fonti:
+  - wikipedia-cryptanalysis-enigma
+  - wikipedia-bombe
+  - crypto-museum-storia
+  - crypto-museum-bombe
+  - welchman-hut-six
+---
+
+import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import BombeSimulata from '@/components/lesson/BombeSimulata.tsx';
+import Figura from '@/components/lesson/Figura.astro';
+import Nota from '@/components/lesson/Nota.astro';
+
+Il 14 agosto 1939 la Government Code and Cypher School, l’ufficio cifra britannico, si trasferì in una villa di campagna a Bletchley, circa 45 miglia (70 chilometri) a nord di Londra, ben collegata in treno con Londra, Oxford e Cambridge. Il 4 settembre, il giorno dopo la dichiarazione di guerra, arrivarono due matematici di Cambridge: Alan Turing e Gordon Welchman.
+
+<Figura id="bletchley-park-mansion" larghezza={560} />
+
+Turing aveva capito presto che i metodi polacchi dipendevano dalla doppia cifratura della chiave del messaggio, e che i tedeschi prima o poi l’avrebbero abbandonata, come la marina aveva già fatto nel 1937. Serviva un attacco che non dipendesse dall’indicatore ma dal testo stesso.
+
+## Il crib
+
+A Bletchley Park si chiamava **crib** un pezzo di testo in chiaro che si sapeva o si sospettava presente in un messaggio. I messaggi militari erano pieni di formule ripetute: bollettini meteorologici che cominciavano sempre allo stesso modo, “nulla da segnalare” (*keine besonderen Ereignisse*), saluti, nomi di reparti. Per trovarli Bletchley Park teneva schedari di tutti i messaggi già decifrati, dei mittenti, dei reparti e delle espressioni ricorrenti.
+
+Sapere che una parola c’è non basta: bisogna capire **dove**. Qui aiuta una proprietà della macchina: per via del riflettore, Enigma **non cifra mai una lettera in sé stessa**. Se si fa scorrere il crib lungo il testo cifrato, ogni posizione in cui una lettera del crib cade sulla stessa lettera del cifrato è impossibile. Spesso restano poche posizioni candidate.
+
+## Il menu e i loop
+
+Supponiamo che il crib stia nella posizione giusta. Ogni lettera del crib e la lettera cifrata sotto di essa formano una coppia legata dalla macchina in quella posizione: nell’esempio qui sotto, alla posizione 1 la W diventa T, alla posizione 2 la E diventa V, e così via. Disegnando le lettere come punti e le coppie come collegamenti numerati si ottiene il **menu**. A Bletchley Park interessavano soprattutto i **loop** del menu (Turing li chiamava *closures*, chiusure): catene di collegamenti che tornano alla lettera di partenza. Turing calcolò a mano quante false soluzioni ci si doveva aspettare con un certo numero di lettere e di loop; per tenerle sotto le quattro per ordine dei rotori, con tre loop bastava un crib di otto lettere, senza loop ne servivano almeno sedici.
+
+## La Bombe
+
+La Bombe sfruttava i loop con un ragionamento per assurdo. Si sceglie la lettera del menu più collegata, la **lettera di prova**, e si fa un’ipotesi sul suo cavo nel pannello: “la E è collegata alla A”. Per una certa posizione dei rotori, l’ipotesi ha delle conseguenze: se alla posizione 2 la macchina senza pannello porta A in X, allora la lettera che sta all’altro capo del collegamento 2 deve essere collegata alla X, e così via lungo tutto il menu. Se seguendo un loop si torna alla E con un cavo diverso da quello ipotizzato, l’ipotesi è falsa. Il punto geniale è che, se l’ipotesi è falsa, di solito tutte le sue conseguenze lo sono; e la Bombe le prova tutte insieme, perché è un circuito elettrico in cui la corrente si propaga in un istante lungo tutte le deduzioni.
+
+Quando in una posizione dei rotori la corrente non accende tutte le 26 ipotesi sulla lettera di prova, la macchina si ferma: è una **fermata** (*stop*). L’operatrice annotava la posizione e faceva ripartire la Bombe; le fermate venivano poi verificate a mano, scartando quelle false, ricostruendo il resto dei cavi e gli anelli, e infine provando la chiave su una macchina britannica Typex modificata per imitare Enigma.
+
+Prova tu: sposta il crib finché non trovi una posizione possibile, guarda il menu e fai partire la Bombe simulata. La posizione giusta è la prima; nelle altre, quando la Bombe si ferma, le fermate sono tutte false.
+
+<BombeSimulata client:visible />
+
+<Approfondimento titolo="La diagonal board di Welchman">
+All’inizio del 1940 Welchman propose un miglioramento che sfruttava un’altra proprietà del pannello: i cavi sono reciproci. Se la E è collegata alla A, anche la A è collegata alla E. La *diagonal board* collegava tra loro i fili corrispondenti a ogni coppia di ipotesi reciproche, così ogni deduzione ne produceva subito un’altra. Il risultato era che bastavano crib più corti e menu con meno loop. Anche la Bombe simulata qui sopra usa la diagonal board.
+</Approfondimento>
+
+Il progetto di Turing fu realizzato dalla British Tabulating Machine Company di Letchworth, sotto la guida dell’ingegnere Harold “Doc” Keen. La prima Bombe, chiamata Victory, entrò in servizio il 18 marzo 1940; la seconda, Agnus Dei, con la diagonal board, arrivò l’8 agosto 1940. Ogni macchina, grande come un armadio e pesante circa una tonnellata, conteneva 36 equivalenti di Enigma in tamburi rotanti, e poteva provare più ordini dei rotori nello stesso giro. Alla fine della guerra le Bombe britanniche erano circa 210.
+
+<Nota titolo="Chi faceva funzionare le Bombe">
+Dal marzo 1941 le Bombe furono affidate alle volontarie del Women’s Royal Naval Service, le *Wrens*: nel 1945 erano circa duemila. Per prudenza, in caso di bombardamenti, gran parte delle macchine non stava a Bletchley Park ma in sedi distaccate, collegate per telescrivente.
+</Nota>
+
+## Gli errori degli operatori
+
+Le Bombe non bastavano da sole: servivano crib buoni e un’idea di quali ordini dei rotori provare. Bletchley Park sfruttava ogni regolarità nell’uso della macchina. Alcuni operatori sceglievano come chiave del messaggio tre tasti vicini o lettere ripetute come AAA, i *cillies*; alcune reti vietavano di ripetere un rotore nella stessa posizione del giorno prima, riducendo gli ordini da provare; lo stesso messaggio veniva a volte ritrasmesso con un cifrario più debole, già forzato, regalando un crib perfetto. La rete della Luftwaffe che Bletchley Park chiamava Red fu letta con regolarità dal 22 maggio 1940 fino alla fine della guerra, in buona parte grazie a errori come questi.

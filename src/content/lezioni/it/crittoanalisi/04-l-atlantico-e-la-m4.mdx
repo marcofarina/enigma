@@ -1,0 +1,57 @@
+---
+title: L’Atlantico e la M4
+description: La marina tedesca, le catture di materiale cifrante dai sommergibili e i dieci mesi in cui Bletchley Park non riuscì a leggere i messaggi degli U-boot.
+sezione: crittoanalisi
+ordine: 4
+stato: bozza
+fonti:
+  - wikipedia-cryptanalysis-enigma
+  - crypto-museum-storia
+  - crypto-museum-m4
+  - wikipedia-u110
+  - wikipedia-u559
+  - rijmenants-m4-project
+---
+
+import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import Figura from '@/components/lesson/Figura.astro';
+import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
+import Nota from '@/components/lesson/Nota.astro';
+
+Per la Gran Bretagna, un’isola che importava via mare cibo, carburante e armi, la guerra si giocava anche nell’Atlantico. I convogli di navi mercantili che arrivavano dal Nord America erano il bersaglio dei sommergibili tedeschi, gli U-boot, che attaccavano in gruppo, coordinati via radio dal comando a terra. Leggere quei messaggi significava sapere dove si trovavano i sommergibili e deviare i convogli.
+
+## Un’Enigma più difficile
+
+La marina tedesca usava Enigma con molta più cura dell’esercito e dell’aviazione. Dal 1° maggio 1937 la chiave del messaggio non era più cifrata due volte con la macchina: l’operatore la sceglieva da un libro di gruppi di tre lettere, il *Kenngruppenbuch*, e la nascondeva nell’indicatore con tabelle di sostituzione a coppie di lettere. All’inizio del 1940 la marina aggiunse tre rotori riservati, il VI, il VII e l’VIII: i tre rotori si sceglievano tra otto, e gli ordini possibili diventavano 336.
+
+Turing se ne occupò quasi da solo — scrisse che nessun altro ci stava lavorando e che poteva averlo tutto per sé — e fondò la Hut 8, la sezione navale. Ricostruì il sistema degli indicatori con un lavoro di deduzione, e sviluppò un metodo statistico, il *Banburismus*, che confrontando a coppie i messaggi dello stesso giorno riduceva i 336 ordini dei rotori a una ventina da provare sulle Bombe. Ma senza le tabelle di sostituzione degli indicatori il metodo non poteva partire.
+
+## Le catture
+
+La soluzione venne dal mare. La marina britannica cominciò a cercare apposta di catturare materiale cifrante: nel febbraio 1940 i rotori VI e VII furono recuperati dall’equipaggio del sommergibile U-33; nel marzo 1941, durante un’incursione alle isole Lofoten, il peschereccio armato Krebs fornì le chiavi di febbraio, che permisero di ricostruire le tabelle.
+
+La cattura più famosa avvenne il 9 maggio 1941 nell’Atlantico settentrionale. Il sommergibile U-110, comandato da Fritz-Julius Lemp, danneggiato dalle bombe di profondità, emerse e fu abbandonato dall’equipaggio. Una squadra del cacciatorpediniere HMS Bulldog, guidata dal sottotenente David Balme, salì a bordo e portò via tutto ciò che si poteva trasportare, tra cui la macchina e il libro dei *Kurzsignale*, i messaggi brevi con cui i sommergibili segnalavano i convogli. Il sommergibile fu affondato durante il rimorchio, perché i tedeschi non sospettassero la cattura, che rimase segreta: Churchill ne informò il presidente Roosevelt solo nel gennaio 1942.
+
+## Il buio di Shark
+
+Il 1° febbraio 1942 i sommergibili dell’Atlantico passarono a una nuova macchina, la M4, con un quarto rotore sottile accanto a un riflettore più sottile. A Bletchley Park la rete dei sommergibili si chiamava Shark, e da quel giorno divenne illeggibile. Le Bombe erano costruite per tre rotori: con quelle, trovare una chiave di Shark avrebbe richiesto da 50 a 100 volte il tempo di un lavoro sull’aviazione o sull’esercito, e i crib dei sommergibili erano pochi e scadenti.
+
+<Figura id="m4-riflettore-sottile" larghezza={480} />
+
+La via d’uscita arrivò da un dettaglio tecnico e da un’altra cattura. Il dettaglio: con il rotore sottile beta in posizione A e il riflettore sottile B, la M4 si comporta esattamente come una macchina a tre rotori con il riflettore B normale. I sommergibili cifravano alcuni messaggi brevi, come i bollettini meteorologici, proprio in quel modo, per compatibilità con le altre navi. Puoi verificarlo qui sotto: la stessa sequenza di tasti dà le stesse lampade su una M3 con riflettore B e su una M4 con beta in A e riflettore B sottile.
+
+<MiniSimulatore client:visible config="v=1&m=M4&w=Beta-II-IV-I&r=AAAA&p=AAAA&u=B-thin" didascalia="Enigma M4 con il rotore sottile beta e i rotori II, IV e I, tutti in posizione A, e il riflettore B sottile." />
+
+<Nota titolo="Prova il confronto">
+Digita qualche lettera sulla M4 qui sopra, poi apri il [simulatore](../../simulatore/?v=1&m=M3&w=II-IV-I&r=AAA&p=AAA&u=B) con una M3 con i rotori II, IV e I e digita le stesse lettere: le lampade sono le stesse. Se però sposti il rotore beta da A, le due macchine non coincidono più.
+</Nota>
+
+La cattura: il 30 ottobre 1942, nel Mediterraneo orientale, il sommergibile U-559 fu costretto a emergere dopo sedici ore di caccia da parte di cinque cacciatorpediniere britannici. Tre uomini della HMS Petard — il tenente Anthony Fasson, il marinaio Colin Grazier e Tommy Brown, un assistente di mensa di sedici anni — salirono sul sommergibile che affondava e recuperarono documenti, tra cui il libro del codice meteorologico breve, il *Wetterkurzschlüssel*. Fasson e Grazier rimasero intrappolati quando il sommergibile affondò; ricevettero alla memoria la George Cross.
+
+Con i bollettini meteorologici come crib e la scorciatoia del rotore beta, Bletchley Park tornò a leggere Shark nel dicembre 1942, dopo circa dieci mesi di buio.
+
+<Approfondimento titolo="Le Bombe americane">
+Per la M4 servivano Bombe a quattro rotori, molto più veloci. In Gran Bretagna i materiali scarseggiavano; negli Stati Uniti, entrati in guerra nel dicembre 1941, la marina affidò il progetto alla National Cash Register di Dayton, in Ohio, dove lo guidò l’ingegnere Joseph Desch. La prima Bombe della marina statunitense fu collaudata il 3 maggio 1943; ne furono costruite 121, con circuiti a valvole che rilevavano le fermate elettronicamente. Da allora la maggior parte del traffico dei sommergibili fu decifrata negli Stati Uniti.
+</Approfondimento>
+
+Non tutti i messaggi di quei mesi furono decifrati. Uno di quelli rimasti illeggibili, inviato dall’U-264 il 25 novembre 1942, è stato rotto solo nel 2006 con migliaia di computer volontari: puoi decifrarlo nella [missione dell’U-264](../../missioni/u-264/).

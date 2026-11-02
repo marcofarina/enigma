@@ -1,0 +1,53 @@
+---
+title: I fogli, la bomba e l’incontro di Pyry
+description: Dal 1938 i polacchi inseguono i cambiamenti tedeschi con i fogli di Zygalski e la bomba, poi consegnano tutto ad alleati francesi e britannici cinque settimane prima della guerra.
+sezione: crittoanalisi
+ordine: 2
+stato: bozza
+fonti:
+  - wikipedia-cryptanalysis-enigma
+  - crypto-museum-storia
+  - crypto-museum-polish
+  - us-6812-bombe-report
+---
+
+import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import Nota from '@/components/lesson/Nota.astro';
+
+Dal 15 settembre 1938 la posizione di partenza per cifrare la chiave del messaggio non fu più comune a tutta la rete: ogni operatore ne sceglieva una e la trasmetteva in chiaro. Gli indicatori di uno stesso giorno non partivano più dalla stessa posizione e il catalogo delle caratteristiche non serviva più. Restava però l’altro errore: la chiave del messaggio era ancora cifrata due volte.
+
+## Le “femmine”
+
+Capitava, in circa un messaggio su otto, che una lettera della chiave venisse cifrata due volte nella **stessa** lettera: per esempio un indicatore come SZV SIK, in cui la prima e la quarta lettera coincidono. I polacchi chiamarono questi casi *samiczki*, “femmine”, e il nome passò poi anche a Bletchley Park (*females*). Una femmina può comparire solo in certe posizioni dei rotori, e questo restringe la ricerca. Lo si vede bene con il simulatore: nella tabella dalla prima alla quarta lettera della lezione precedente, una femmina è un ciclo di lunghezza 1, una lettera che va in sé stessa.
+
+## I fogli di Zygalski
+
+Henryk Zygalski trasformò l’idea in un metodo su carta. Per ogni ordine dei rotori preparò 26 fogli, uno per ogni posizione del rotore sinistro; ciascun foglio era una griglia con le 676 posizioni degli altri due rotori, e in ogni casella in cui poteva nascere una femmina c’era un foro, circa mille per foglio, ritagliato a mano con una lametta. Sovrapponendo i fogli corrispondenti alle femmine di un giorno, nel modo prescritto, i fori che lasciavano passare la luce diminuivano; con una decina di femmine ne restava di solito uno solo, che indicava ordine dei rotori, anelli e infine, per confronto, i cavi del pannello.
+
+## La bomba
+
+Nell’autunno del 1938 Rejewski progettò una macchina per lo stesso scopo, la *bomba kryptologiczna*. Ogni bomba riuniva sei copie dei rotori di Enigma, che giravano insieme provando tutte le 17 576 posizioni di un ordine dei rotori, e si fermava quando trovava una posizione compatibile con tre femmine. Ne furono costruite sei, una per ciascuno dei sei ordini possibili dei tre rotori. Secondo Rejewski una bomba sostituiva il lavoro di un centinaio di persone e ricavava una chiave in circa due ore.
+
+<Nota titolo="Perché “bomba”?">
+Rejewski scrisse che la macchina fu chiamata così “in mancanza di un’idea migliore”. Le altre spiegazioni sono meno affidabili: la storia di un gelato con quel nome che Różycki stava mangiando viene da un testimone che non lavorava al Biuro Szyfrów, e il rapporto statunitense del 1944 racconta di un pezzo che cadeva a terra con un gran rumore a ogni soluzione, un dettaglio che non corrisponde alla macchina descritta dai polacchi. È un buon esempio di come vanno pesate le fonti.
+</Nota>
+
+## Due rotori in più
+
+Il 15 dicembre 1938 i tedeschi introdussero due nuovi rotori, il IV e il V: i tre rotori da montare si sceglievano ora tra cinque, e gli ordini possibili passarono da sei a 60. Rejewski ne ricavò presto i cablaggi, grazie a una rete del servizio di sicurezza delle SS che continuò fino al luglio 1939 a usare la vecchia procedura. Ma per leggere i messaggi ogni giorno sarebbero servite 54 bombe in più e 58 nuove serie di fogli, che il Biuro Szyfrów non poteva permettersi. Dal 1° gennaio 1939 i cavi del pannello passarono inoltre da cinque–otto a sette–dieci. Rejewski commentò dopo la guerra che il cambiamento non era qualitativo ma quantitativo: il metodo funzionava ancora, ma il lavoro era diventato dieci volte più grande.
+
+## L’incontro di Pyry
+
+Con la guerra ormai vicina, lo stato maggiore polacco decise di condividere tutto con francesi e britannici. Alla fine di luglio del 1939, in una sede del Biuro Szyfrów nel bosco di Pyry, a sud di Varsavia, i polacchi mostrarono agli alleati i doppi di Enigma, i fogli di Zygalski e la bomba, e promisero a ciascuno una copia della macchina. Per la Gran Bretagna c’erano Alastair Denniston, capo della Government Code and Cypher School, e il crittoanalista Dilly Knox; per la Francia Gustave Bertrand. Knox, che lavorava sull’Enigma da anni con metodi linguistici, scoprì in quell’occasione che la ruota d’ingresso era cablata in ordine alfabetico, un’ipotesi che né lui né Alan Turing avevano preso in considerazione.
+
+<Approfondimento titolo="Quando, esattamente?">
+Le fonti non concordano sulla data: Crypto Museum indica il 25 e 26 luglio 1939, mentre la voce di Wikipedia, che si basa sulla storiografia polacca, il 26 e 27 luglio. È un caso frequente nella storia di Enigma, dove molte notizie vengono da ricordi scritti decenni dopo: quando due fonti serie divergono, la cosa più onesta è dirlo, e cercare i documenti dell’epoca.
+</Approfondimento>
+
+In agosto due doppi polacchi arrivarono a Parigi, e Bertrand ne portò uno a Londra. Il 1° settembre la Germania invase la Polonia. I crittoanalisti del Biuro Szyfrów distrussero documenti e apparecchiature e fuggirono attraverso la Romania fino in Francia, dove dal 20 ottobre 1939 ripresero a lavorare in un centro vicino a Parigi, il PC Bruno, in collegamento con i britannici. Nel gennaio 1940 Alan Turing li raggiunse con una serie completa di fogli di Zygalski per tutti i 60 ordini dei rotori, perforata a Bletchley Park; il 17 gennaio i polacchi decifrarono il primo traffico Enigma del tempo di guerra.
+
+Il 1° maggio 1940, poco prima dell’offensiva tedesca in Francia, la doppia cifratura della chiave fu abbandonata e i fogli smisero di funzionare. Da quel momento servivano metodi che non dipendessero dall’indicatore: li avrebbe trovati Bletchley Park.
+
+<Nota titolo="Quanto valse il contributo polacco?">
+Gordon Welchman, che diresse la Hut 6 di Bletchley Park, scrisse che senza ciò che i polacchi insegnarono “appena in tempo” il lavoro sull’Enigma dell’esercito e dell’aviazione non sarebbe mai decollato. Peter Calvocoressi, anche lui a Bletchley Park, stimò che il loro dono avesse fatto guadagnare forse un anno. Sono valutazioni di testimoni, non misure: ne riparliamo nella lezione sull’impatto di Ultra.
+</Nota>

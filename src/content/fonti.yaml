@@ -107,3 +107,46 @@
   autori: Dirk Rijmenants
   titolo: Cipher Machines and Cryptology — Stefan Krah’s M4 Project and the Story of U-264
   url: https://ciphermachinesandcryptology.com/en/m4project.htm
+- id: crypto-museum-bombe
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Turing Bombe
+  url: https://www.cryptomuseum.com/crypto/bombe/index.htm
+- id: crypto-museum-polish
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Polish Enigma double
+  url: https://www.cryptomuseum.com/crypto/enigma/polish/index.htm
+- id: wikipedia-cryptanalysis-enigma
+  autori: Wikipedia
+  titolo: Cryptanalysis of the Enigma
+  url: https://en.wikipedia.org/wiki/Cryptanalysis_of_the_Enigma
+  note: Voce consultata nel novembre 2026. Rimanda a Rejewski, Kozaczuk, Welchman, Hinsley e altri; date e cifre vanno riscontrate su quelle fonti.
+- id: wikipedia-bombe
+  autori: Wikipedia
+  titolo: Bombe
+  url: https://en.wikipedia.org/wiki/Bombe
+  note: Voce consultata nel novembre 2026; descrive il menu, i loop e le fermate con l’esempio di Bletchley Park.
+- id: wikipedia-ultra
+  autori: Wikipedia
+  titolo: Ultra (cryptography)
+  url: https://en.wikipedia.org/wiki/Ultra_(cryptography)
+  note: Voce consultata nel novembre 2026; riassume il dibattito sull’impatto di Ultra con i rimandi a Hinsley, Winterbotham, Richelson e altri.
+- id: wikipedia-u110
+  autori: Wikipedia
+  titolo: German submarine U-110 (1940)
+  url: https://en.wikipedia.org/wiki/German_submarine_U-110_(1940)
+  note: Voce consultata nel novembre 2026, basata in parte su Sebag-Montefiore.
+- id: wikipedia-u559
+  autori: Wikipedia
+  titolo: German submarine U-559
+  url: https://en.wikipedia.org/wiki/German_submarine_U-559
+  note: Voce consultata nel novembre 2026, basata in parte su Sebag-Montefiore e su Harper, “Capturing Enigma”.
+- id: hinsley-influence-ultra
+  autori: F. H. Hinsley
+  titolo: The Influence of ULTRA in the Second World War
+  anno: 1993
+  note: Conferenza tenuta all’Università di Cambridge il 19 ottobre 1993. Citata tramite la voce di Wikipedia su Ultra; testo originale da consultare.
+- id: winterbotham-ultra-secret
+  autori: F. W. Winterbotham
+  titolo: The Ultra Secret
+  editore: Weidenfeld & Nicolson
+  anno: 1974

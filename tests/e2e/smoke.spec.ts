@@ -11,6 +11,9 @@ const pages = [
   'storia/galleria/',
   'schede/',
   'fonti/',
+  'crittoanalisi/fogli-bombe-e-l-incontro-di-pyry/',
+  'crittoanalisi/l-atlantico-e-la-m4/',
+  'crittoanalisi/l-impatto-di-ultra/',
 ];
 
 for (const path of pages) {
