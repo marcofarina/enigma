@@ -21,6 +21,18 @@
   --color-lamp-on-text: var(--color-lamp-on-text);
   --color-plug-red: var(--color-plug-red);
   --color-qr-dark: var(--color-qr-dark);
+  --color-wood: var(--color-wood);
+  --color-wood-dark: var(--color-wood-dark);
+  --color-machine: var(--color-machine);
+  --color-machine-edge: var(--color-machine-edge);
+  --color-metal: var(--color-metal);
+  --color-key: var(--color-key);
+  --color-key-text: var(--color-key-text);
+  --color-lamp-off: var(--color-lamp-off);
+  --color-lamp-off-text: var(--color-lamp-off-text);
+  --color-socket: var(--color-socket);
+  --color-cable-a: var(--color-cable-a);
+  --color-cable-b: var(--color-cable-b);
   --color-qr-light: var(--color-qr-light);
   --font-sans: var(--font-sans);
   --font-serif: var(--font-serif);

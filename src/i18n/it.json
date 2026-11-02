@@ -458,5 +458,17 @@
   "lesson.bombe.caption": "Un bollettino meteorologico inventato, cifrato con un’Enigma I con i rotori {rotors}, anelli su A e dieci cavi. Il crib è WETTERVORHERSAGE, “previsioni del tempo”. La Bombe simulata prova l’ordine dei rotori giusto; quella vera provava molti ordini, uno per gruppo di tamburi.",
   "cryptanalysis.title": "Crittoanalisi",
   "cryptanalysis.intro": "Come i matematici polacchi e poi i crittoanalisti di Bletchley Park riuscirono a leggere i messaggi cifrati con Enigma: dalla teoria delle permutazioni di Rejewski alla Bombe di Turing e Welchman, fino alla battaglia dell’Atlantico e al dibattito sul peso di Ultra nella guerra.",
-  "cryptanalysis.missions": "Dopo la teoria, la pratica: decifra le missioni storiche, messaggi veri intercettati durante la guerra."
+  "cryptanalysis.missions": "Dopo la teoria, la pratica: decifra le missioni storiche, messaggi veri intercettati durante la guerra.",
+  "sim.machine.title": "La macchina",
+  "sim.machine.hint": "La macchina disegnata segue il simulatore: finestrelle, lampada accesa, tasto premuto e cavi del pannello a spine. Si usa con la tastiera qui sopra o con quella del computer.",
+  "sim.machine.descModel": "{model} con i rotori {rotors}; nelle finestrelle si legge {windows}.",
+  "sim.machine.descLamp": "Ultimo tasto premuto: {input}; lampada accesa: {output}.",
+  "sim.machine.descIdle": "Nessuna lampada accesa.",
+  "sim.machine.descCables": "Sul pannello a spine {count} cavi: {pairs}.",
+  "sim.machine.descNoCables": "Nessun cavo sul pannello a spine.",
+  "sim.machine.descNoPlugboard": "Questo modello non ha il pannello a spine.",
+  "sim.view.label": "Vista",
+  "sim.view.schematic": "Schema",
+  "sim.view.machine": "Macchina",
+  "sim.view.both": "Entrambe"
 }

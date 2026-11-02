@@ -20,9 +20,17 @@ export function keyAction(event: KeyLike): KeyAction {
   return letter.length === 1 ? { type: 'letter', letter } : null;
 }
 
+/**
+ * Campi in cui le lettere servono a scrivere o a scegliere. Caselle, pulsanti di opzione e cursori
+ * non usano le lettere: con il focus su di loro i tasti vanno alla macchina.
+ */
+const EDITABLE =
+  'textarea, select, [contenteditable=""], [contenteditable="true"], ' +
+  'input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]):not([type="reset"])';
+
 /** Vero se il tasto è destinato a un campo di testo o a un menu, e non alla macchina. */
 export function isEditableTarget(target: EventTarget | null): boolean {
   const element = target as Partial<Element> | null;
   if (typeof element?.closest !== 'function') return false;
-  return Boolean(element.closest('input, textarea, select, [contenteditable=""], [contenteditable="true"]'));
+  return Boolean(element.closest(EDITABLE));
 }

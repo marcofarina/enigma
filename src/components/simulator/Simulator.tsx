@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { defaultConfig, encodeConfig } from '@/engine';
 import { t } from '@/i18n';
+import MachineView from '@/components/views/machine/MachineView.tsx';
 import SchematicView from '@/components/views/schematic/SchematicView.tsx';
 import ConfigPanel from './ConfigPanel.tsx';
 import { Issues, Keyboard, Lampboard, Windows } from './Machine.tsx';
@@ -19,8 +20,63 @@ function initialStore() {
   return { store: createSimulatorStore(session), invalidLink: link.kind === 'invalid' };
 }
 
+type View = 'schematic' | 'machine' | 'both';
+const VIEWS: View[] = ['schematic', 'machine', 'both'];
+const VIEW_KEY = 'enigma.simulatore.vista';
+
+/** La vista scelta l’ultima volta in questo browser (una comodità: se lo storage manca, si parte dallo schema). */
+function savedView(): View {
+  try {
+    const value = window.localStorage.getItem(VIEW_KEY);
+    return VIEWS.includes(value as View) ? (value as View) : 'schematic';
+  } catch {
+    return 'schematic';
+  }
+}
+
+function ViewSwitcher({ view, onChange }: { view: View; onChange: (view: View) => void }) {
+  const labels: Record<View, string> = {
+    schematic: t('sim.view.schematic'),
+    machine: t('sim.view.machine'),
+    both: t('sim.view.both'),
+  };
+  return (
+    <fieldset className="flex flex-wrap items-center gap-2">
+      <legend className="sr-only">{t('sim.view.label')}</legend>
+      <span aria-hidden="true" className="me-1 text-sm text-text-muted">
+        {t('sim.view.label')}
+      </span>
+      {VIEWS.map((option) => (
+        <label
+          key={option}
+          className="flex min-h-11 cursor-pointer items-center rounded-md border-2 border-border bg-surface px-3 font-semibold has-checked:border-accent has-checked:bg-surface-muted has-focus-visible:outline-3 has-focus-visible:outline-focus"
+        >
+          <input
+            type="radio"
+            name="vista-simulatore"
+            value={option}
+            checked={view === option}
+            onChange={() => onChange(option)}
+            className="sr-only"
+          />
+          {labels[option]}
+        </label>
+      ))}
+    </fieldset>
+  );
+}
+
 export default function Simulator() {
   const [{ store, invalidLink }] = useState(initialStore);
+  const [view, setView] = useState<View>(savedView);
+  const changeView = (next: View) => {
+    setView(next);
+    try {
+      window.localStorage.setItem(VIEW_KEY, next);
+    } catch {
+      // Senza storage la scelta vale solo per questa visita.
+    }
+  };
 
   // Tastiera fisica: lettere e Backspace, ma non mentre si scrive in un campo del pannello.
   useEffect(() => {
@@ -109,9 +165,17 @@ export default function Simulator() {
                 <TracePanel />
               </div>
             </div>
+            <ViewSwitcher view={view} onChange={changeView} />
             {/* Lo schema si allarga con lo spazio: sulla lavagna lo si tiene entro un’altezza leggibile. */}
-            <div className="lim:mx-auto lim:w-full lim:max-w-5xl">
-              <SchematicView />
+            <div
+              className={
+                view === 'both'
+                  ? 'grid gap-6 xl:grid-cols-2 xl:items-start lim:mx-auto lim:w-full lim:max-w-6xl'
+                  : 'lim:mx-auto lim:w-full lim:max-w-5xl'
+              }
+            >
+              {view !== 'schematic' && <MachineView />}
+              {view !== 'machine' && <SchematicView />}
             </div>
             <div className="lim:hidden">
               <TextInput />
