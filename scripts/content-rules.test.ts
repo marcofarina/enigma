@@ -47,7 +47,7 @@ describe('lintContent', () => {
 
 describe('lintYaml', () => {
   it('controlla solo i campi di prosa', () => {
-    const source = ['- id: l\'uhr', '  definizione: L\'Uhr - un accessorio.', '  tedesco: "Uhr"'].join('\n');
+    const source = ["- id: l'uhr", "  definizione: L'Uhr - un accessorio.", '  tedesco: "Uhr"'].join('\n');
     expect(lintYaml(source).map((issue) => [issue.line, issue.rule])).toEqual([
       [2, 'apostrofo-diritto'],
       [2, 'inciso-trattino'],

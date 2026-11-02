@@ -133,7 +133,8 @@ export function lintYaml(source: string): Issue[] {
     if (!match?.[1] || !match[2] || !YAML_PROSE_FIELDS.includes(match[1])) return;
     const value = match[2].replace(/^(['"])(.*)\1$/, '$2');
     for (const r of rules) {
-      if (r.pattern.test(value)) issues.push({ line: index + 1, severity: r.severity, rule: r.rule, message: r.message });
+      if (r.pattern.test(value))
+        issues.push({ line: index + 1, severity: r.severity, rule: r.rule, message: r.message });
     }
   });
   return issues;
