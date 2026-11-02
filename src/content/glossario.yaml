@@ -1,0 +1,179 @@
+# Glossario tedesco–italiano–inglese. Ogni voce: id, termine (italiano), tedesco, inglese,
+# definizione, vedi (pagina del sito, senza base) e fonti (id di fonti.yaml).
+- id: anello
+  termine: anello
+  tedesco: Ringstellung (posizione dell’anello)
+  inglese: ring setting
+  definizione: Corona con le lettere o i numeri che si può far ruotare rispetto al cablaggio del rotore. Sposta insieme lettere e tacca, quindi cambia sia la sostituzione sia il momento in cui scatta il riporto. Sull’Enigma I gli anelli portano i numeri da 01 a 26.
+  vedi: come-funziona/i-rotori/
+  fonti: [crypto-museum]
+- id: bomba
+  termine: bomba
+  tedesco: —
+  inglese: bomba (dal polacco bomba kryptologiczna)
+  definizione: Macchina elettromeccanica del Biuro Szyfrów polacco che cercava le posizioni dei rotori sfruttando l’indicatore cifrato due volte. Divenne inutile quando i tedeschi abbandonarono quella procedura.
+  fonti: [crypto-museum-storia]
+- id: bombe
+  termine: Bombe
+  tedesco: —
+  inglese: Bombe
+  definizione: Macchina elettromeccanica progettata a Bletchley Park da Alan Turing, con il miglioramento della diagonal board di Gordon Welchman. Partendo da un crib cercava le impostazioni compatibili con i cicli di lettere che il crib formava con il testo cifrato.
+  fonti: [crypto-museum, welchman-hut-six]
+- id: chiave
+  termine: chiave
+  tedesco: Schlüssel
+  inglese: key
+  definizione: L’insieme delle impostazioni che, insieme al cablaggio della macchina, determinano la cifratura. Per Enigma comprende ordine dei rotori, anelli, collegamenti del pannello a spine e posizione iniziale dei rotori.
+  vedi: come-funziona/la-matematica-di-enigma/
+  fonti: [crypto-museum]
+- id: chiave-del-giorno
+  termine: chiave del giorno
+  tedesco: Tagesschlüssel
+  inglese: daily key
+  definizione: Le impostazioni valide per un giorno in una rete, lette dal foglio chiave. Valevano per tutti i messaggi di quel giorno; ciò che cambiava da un messaggio all’altro era la chiave del messaggio.
+  vedi: storia/fogli-chiave-e-procedure/
+  fonti: [us-6812-bombe-report]
+- id: chiave-del-messaggio
+  termine: chiave del messaggio
+  tedesco: Spruchschlüssel
+  inglese: message key
+  definizione: Tre lettere scelte dall’operatore per ogni messaggio, che indicano la posizione di partenza dei rotori per cifrare il testo. Si trasmetteva cifrata nell’indicatore.
+  vedi: storia/fogli-chiave-e-procedure/
+  fonti: [crypto-museum-m4]
+- id: cillies
+  termine: cillies
+  tedesco: —
+  inglese: cillies
+  definizione: A Bletchley Park, gli errori di procedura degli operatori tedeschi che aiutavano a indovinare la chiave del messaggio, come tre tasti vicini sulla tastiera o il nome della fidanzata.
+  fonti: [crypto-museum]
+- id: crib
+  termine: crib
+  tedesco: —
+  inglese: crib
+  definizione: Parte del testo in chiaro che si conosce o si sospetta, per esempio un bollettino meteorologico o una formula di saluto. Era il punto di partenza per le ricerche della Bombe.
+  fonti: [crypto-museum, us-6812-bombe-report]
+- id: doppio-passo
+  termine: doppio passo
+  tedesco: —
+  inglese: double stepping
+  definizione: Anomalia del meccanismo a leve per cui il rotore centrale, quando raggiunge la propria tacca, avanza per due tasti di seguito insieme al rotore di sinistra.
+  vedi: come-funziona/il-passo-e-il-doppio-passo/
+  fonti: [hamer-1997]
+- id: foglio-chiave
+  termine: foglio chiave
+  tedesco: Schlüsseltafel, Maschinenschlüssel
+  inglese: key sheet, key list
+  definizione: Tabella con le chiavi del giorno di un mese intero. Si leggeva dal basso verso l’alto e la riga di un giorno già passato si tagliava e si distruggeva, così un foglio catturato non rivelava i messaggi dei giorni precedenti.
+  vedi: storia/fogli-chiave-e-procedure/
+  fonti: [us-6812-bombe-report, luftwaffe-schluessel-619]
+- id: gruppo-di-riconoscimento
+  termine: gruppo di riconoscimento
+  tedesco: Kenngruppe
+  inglese: identifier group
+  definizione: Gruppo di lettere che permetteva al destinatario di capire a quale rete e a quale chiave apparteneva un messaggio. Non serviva a decifrare. I fogli chiave della Luftwaffe ne riportavano quattro per ogni giorno.
+  vedi: storia/fogli-chiave-e-procedure/
+  fonti: [luftwaffe-schluessel-619, crypto-museum]
+- id: indicatore
+  termine: indicatore
+  tedesco: —
+  inglese: indicator
+  definizione: Lettere all’inizio del messaggio da cui il destinatario ricava la chiave del messaggio. Fino al 1° maggio 1940 l’esercito e l’aviazione cifravano la chiave del messaggio due volte di seguito; poi la si cifrò una volta sola.
+  vedi: storia/fogli-chiave-e-procedure/
+  fonti: [crypto-museum-storia, us-6812-bombe-report]
+- id: involuzione
+  termine: involuzione
+  tedesco: —
+  inglese: involution
+  definizione: Permutazione che, applicata due volte, riporta ogni elemento al punto di partenza. Il riflettore e il pannello a spine sono involuzioni, e quindi lo è anche la sostituzione di Enigma in ogni posizione.
+  vedi: come-funziona/la-matematica-di-enigma/
+- id: ordine-dei-rotori
+  termine: ordine dei rotori
+  tedesco: Walzenlage
+  inglese: wheel order
+  definizione: Quali rotori montare e in quale ordine, da sinistra a destra. Con cinque rotori a disposizione e tre posti le scelte sono 60.
+  vedi: come-funziona/i-rotori/
+  fonti: [us-6812-bombe-report]
+- id: pannello-a-spine
+  termine: pannello a spine
+  tedesco: Steckerbrett
+  inglese: plugboard
+  definizione: Pannello sul fronte delle macchine militari, con una presa per lettera. Un cavo tra due prese scambia le due lettere prima e dopo il passaggio nei rotori. Non c’era sulle macchine commerciali.
+  vedi: come-funziona/il-pannello-a-spine-e-l-uhr/
+  fonti: [crypto-museum]
+- id: permutazione
+  termine: permutazione
+  tedesco: —
+  inglese: permutation
+  definizione: Corrispondenza biunivoca di un insieme in sé stesso; per Enigma, un modo di sostituire ciascuna delle 26 lettere con una lettera diversa per ognuna. Rejewski descrisse la macchina come composizione di permutazioni.
+  vedi: come-funziona/la-matematica-di-enigma/
+  fonti: [rejewski-1980]
+- id: posizione-iniziale
+  termine: posizione iniziale
+  tedesco: Grundstellung
+  inglese: ground setting
+  definizione: Le lettere visibili nelle finestrelle prima di cominciare. Fino al 15 settembre 1938 era la stessa per tutti i messaggi e veniva dal foglio chiave; poi la scelse l’operatore, che la trasmetteva in chiaro all’inizio del messaggio.
+  vedi: storia/fogli-chiave-e-procedure/
+  fonti: [crypto-museum-storia]
+- id: riflettore
+  termine: riflettore
+  tedesco: Umkehrwalze (UKW)
+  inglese: reflector
+  definizione: Disco fisso a sinistra dei rotori che collega le lettere a coppie e rimanda indietro la corrente. Rende la macchina reciproca, ma impedisce che una lettera venga cifrata in sé stessa.
+  vedi: come-funziona/il-riflettore/
+  fonti: [crypto-museum]
+- id: riflettore-d
+  termine: riflettore D
+  tedesco: Umkehrwalze D (UKW-D)
+  inglese: reflector D, Uncle Dick
+  definizione: Riflettore con il cablaggio modificabile dall’operatore, introdotto dalla Luftwaffe nel gennaio 1944. I fogli chiave riportavano le coppie da collegare. A Bletchley Park lo chiamavano Uncle Dick.
+  fonti: [crypto-museum-ukw-d]
+- id: rotore
+  termine: rotore
+  tedesco: Walze
+  inglese: rotor, wheel
+  definizione: Disco con 26 contatti per lato collegati da fili incrociati. A ogni tasto uno o più rotori avanzano, e la sostituzione cambia.
+  vedi: come-funziona/i-rotori/
+  fonti: [crypto-museum]
+- id: rotore-sottile
+  termine: rotore sottile
+  tedesco: Zusatzwalze, Griechenwalze
+  inglese: thin rotor, Greek wheel
+  definizione: Quarto rotore della M4, chiamato β o γ, montato a sinistra degli altri accanto a un riflettore sottile. Si impostava a mano e non avanzava durante la cifratura.
+  fonti: [crypto-museum-m4]
+- id: ruota-d-ingresso
+  termine: ruota d’ingresso
+  tedesco: Eintrittswalze (ETW)
+  inglese: entry wheel
+  definizione: Disco fisso a destra dei rotori che collega i fili della tastiera ai contatti del primo rotore. Sulle macchine militari collegava ogni lettera al contatto con la stessa lettera; su quelle commerciali seguiva l’ordine della tastiera.
+  vedi: come-funziona/i-rotori/
+  fonti: [crypto-museum]
+- id: tacca
+  termine: tacca
+  tedesco: —
+  inglese: notch
+  definizione: Incavo sull’anello di un rotore. Quando arriva sotto la leva, al tasto successivo fa avanzare il rotore alla sua sinistra.
+  vedi: come-funziona/il-passo-e-il-doppio-passo/
+  fonti: [crypto-museum]
+- id: testo-cifrato
+  termine: testo cifrato
+  tedesco: Geheimtext
+  inglese: ciphertext
+  definizione: Il messaggio come esce dalla macchina e viene trasmesso, di solito in gruppi di cinque lettere.
+- id: testo-in-chiaro
+  termine: testo in chiaro
+  tedesco: Klartext
+  inglese: plaintext
+  definizione: Il messaggio prima della cifratura o dopo la decifrazione.
+- id: uhr
+  termine: Uhr
+  tedesco: Enigma-Uhr
+  inglese: Enigma Uhr
+  definizione: Accessorio della Luftwaffe, in uso dal luglio 1944, che si collegava al pannello a spine al posto dei cavi. Con un selettore a 40 posizioni rendeva la sostituzione del pannello non reciproca nella maggior parte delle posizioni.
+  vedi: come-funziona/il-pannello-a-spine-e-l-uhr/
+  fonti: [crypto-museum]
+- id: ultra
+  termine: Ultra
+  tedesco: —
+  inglese: Ultra
+  definizione: Nome in codice delle informazioni ricavate dalla decifrazione dei messaggi tedeschi, protette da un livello di segretezza superiore a tutti gli altri.
+  fonti: [crypto-museum-storia]

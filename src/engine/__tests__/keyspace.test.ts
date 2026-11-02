@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createMachine, defaultConfig, keySpace, log2, plugboardSettings, step } from '../index.ts';
+import { createMachine, defaultConfig, keySpace, log2, pairings, plugboardSettings, step } from '../index.ts';
 
 describe('configurazioni del pannello a spine', () => {
   // Valori della tabella di Crypto Museum, ricalcolati da Olaf Ostwald.
@@ -28,6 +28,14 @@ describe('configurazioni del pannello a spine', () => {
   it('rifiuta numeri di cavi impossibili', () => {
     expect(() => plugboardSettings(14)).toThrow(RangeError);
     expect(() => plugboardSettings(-1)).toThrow(RangeError);
+  });
+
+  it('su alfabeti più piccoli coincide con il conteggio a mano', () => {
+    // Quattro lettere: nessuna coppia, sei coppie singole, tre modi di formarne due.
+    expect([0, 1, 2].map((pairs) => pairings(4, pairs))).toEqual([1n, 6n, 3n]);
+    // Sei lettere, tre coppie: 5 × 3 × 1.
+    expect(pairings(6, 3)).toBe(15n);
+    expect(() => pairings(5, 3)).toThrow(RangeError);
   });
 });
 

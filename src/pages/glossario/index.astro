@@ -1,0 +1,72 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { t } from '@/i18n';
+import { url } from '@/lib/url';
+
+const voci = (await getCollection('glossario')).sort((a, b) =>
+  a.data.termine.localeCompare(b.data.termine, 'it', { sensitivity: 'base' }),
+);
+const initial = (termine: string) => termine.normalize('NFD').charAt(0).toUpperCase();
+const lettere = [...new Set(voci.map(({ data }) => initial(data.termine)))];
+---
+
+<BaseLayout title={t('glossary.title')} description={t('glossary.intro')}>
+  <h1 class="mb-2 text-3xl font-bold">{t('glossary.title')}</h1>
+  <p class="mb-6 max-w-3xl text-text-muted">{t('glossary.intro')}</p>
+  <nav aria-label={t('glossary.letters')} class="no-print mb-8">
+    <ul class="flex flex-wrap gap-2">
+      {lettere.map((lettera) => (
+        <li>
+          <a
+            href={`#lettera-${lettera}`}
+            class="inline-flex size-11 items-center justify-center rounded-md border border-border bg-surface font-mono font-semibold no-underline hover:border-accent"
+          >
+            {lettera}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+  {lettere.map((lettera) => (
+    <section aria-labelledby={`lettera-${lettera}`} class="mb-8 max-w-3xl">
+      <h2 id={`lettera-${lettera}`} class="mb-3 border-b border-border pb-1 font-mono text-2xl font-semibold">
+        {lettera}
+      </h2>
+      <dl class="flex flex-col gap-5">
+        {voci
+          .filter(({ data }) => initial(data.termine) === lettera)
+          .map(({ id, data }) => (
+            <div id={id} class="scroll-mt-4">
+              <dt class="text-lg font-semibold">{data.termine}</dt>
+              <dd class="flex flex-col gap-1">
+                <p class="text-sm text-text-muted">
+                  <span lang="de">
+                    <abbr title={t('glossary.german')} class="no-underline">
+                      DE
+                    </abbr>{' '}
+                    {data.tedesco}
+                  </span>
+                  {' · '}
+                  <span lang="en">
+                    <abbr title={t('glossary.english')} class="no-underline">
+                      EN
+                    </abbr>{' '}
+                    {data.inglese}
+                  </span>
+                </p>
+                <p>{data.definizione}</p>
+                {data.vedi && (
+                  <p class="text-sm">
+                    <a href={url(data.vedi)} class="underline">
+                      {t('glossary.more')}
+                    </a>
+                  </p>
+                )}
+              </dd>
+            </div>
+          ))}
+      </dl>
+    </section>
+  ))}
+</BaseLayout>

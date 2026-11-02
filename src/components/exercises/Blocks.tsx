@@ -101,7 +101,7 @@ export default function Blocks({ blocks }: { blocks: readonly Block[] }) {
           case 'compare':
             return (
               <Scroll key={i} label={t('ex.compare.caption')}>
-                <table className="border-collapse font-mono">
+                <table data-compare className="border-collapse font-mono">
                   <caption className="sr-only">{t('ex.compare.caption')}</caption>
                   <tbody>
                     <tr className="text-xs text-text-muted">

@@ -27,3 +27,65 @@
     break-before: page;
   }
 }
+
+/* Schede per la classe: inchiostro nero su carta bianca, niente riquadri colorati né scorrimenti. */
+@media print {
+  main {
+    max-width: none;
+    padding: 0;
+  }
+
+  .sheet,
+  .sheet * {
+    color: #000 !important;
+    background: transparent !important;
+    border-color: #000 !important;
+    box-shadow: none !important;
+  }
+
+  html {
+    background: #fff !important;
+  }
+
+  /* In stampa la scheda è un blocco normale: i contenitori flessibili spezzano male le pagine. */
+  .sheet {
+    display: block !important;
+    border: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .sheet > * + * {
+    margin-top: 6mm;
+  }
+
+  .sheet .overflow-x-auto {
+    overflow: visible !important;
+  }
+
+  .sheet-keys {
+    font-size: 8.5pt;
+  }
+
+  /* Il confronto lettera per lettera deve stare nella larghezza della pagina. */
+  .sheet [data-compare] td {
+    min-width: 0 !important;
+    padding: 0 0.4mm !important;
+    font-size: 8pt;
+  }
+
+  .break-inside-avoid {
+    break-inside: avoid;
+  }
+}
+
+@media print {
+  .sheet h3 {
+    break-after: avoid;
+  }
+
+  .sheet p,
+  .sheet table {
+    break-inside: avoid;
+  }
+}

@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { licenseLabel } from '@/lib/images';
 
 const fonti = (await getCollection('fonti')).sort((a, b) => a.data.autori.localeCompare(b.data.autori, 'it'));
 const immagini = await getCollection('immagini');
@@ -26,7 +27,9 @@ const immagini = await getCollection('immagini');
       <ul>
         {immagini.map(({ data }) => (
           <li>
-            {data.titolo}: {data.attribuzione} (<a href={data.fonte}>fonte</a>, licenza {data.licenza}).
+            {data.titolo}: {data.attribuzione} (<a href={data.fonte}>fonte</a>,{' '}
+            {data.urlLicenza ? <a href={data.urlLicenza}>{licenseLabel(data.licenza)}</a> : licenseLabel(data.licenza)}
+            ).
           </li>
         ))}
       </ul>

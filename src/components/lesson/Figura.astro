@@ -1,0 +1,53 @@
+---
+import { getEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { imageFile, licenseLabel } from '@/lib/images';
+
+/**
+ * Figura con un’immagine di terzi. L’`id` deve avere una voce in `src/content/immagini.yaml`,
+ * altrimenti la build si ferma: nessuna immagine arriva al lettore senza crediti.
+ */
+interface Props {
+  id: string;
+  /** Sostituisce la didascalia della voce, per adattarla al testo della lezione. */
+  didascalia?: string;
+  /** Larghezza massima in pixel con cui l’immagine viene mostrata. */
+  larghezza?: number;
+  class?: string;
+}
+
+const { id, didascalia, larghezza = 720, class: className = '' } = Astro.props;
+const entry = await getEntry('immagini', id);
+if (!entry) throw new Error(`Immagine senza crediti: ${id}. Aggiungi una voce in src/content/immagini.yaml.`);
+const { data } = entry;
+const image = imageFile(data.file);
+---
+
+<figure class={`my-6 flex flex-col gap-2 font-sans ${className}`}>
+  <Image
+    src={image}
+    alt={data.alt}
+    widths={[360, 720, Math.min(image.width, 1200)].filter((w) => w <= image.width)}
+    sizes={`(max-width: ${larghezza}px) 100vw, ${larghezza}px`}
+    class="h-auto w-full rounded-md border border-border bg-surface-muted"
+    style={`max-width: min(${larghezza}px, ${image.width}px)`}
+  />
+  <figcaption class="text-sm text-text-muted">
+    <span class="text-text">{didascalia ?? data.didascalia}</span>
+    <span class="block">
+      {data.attribuzione}
+      {' · '}
+      <a href={data.fonte} class="underline">
+        fonte
+      </a>
+      {' · '}
+      {data.urlLicenza ? (
+        <a href={data.urlLicenza} class="underline">
+          {licenseLabel(data.licenza)}
+        </a>
+      ) : (
+        licenseLabel(data.licenza)
+      )}
+    </span>
+  </figcaption>
+</figure>

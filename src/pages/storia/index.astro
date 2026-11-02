@@ -1,11 +1,36 @@
 ---
-import ComingSoon from '@/components/content/ComingSoon.astro';
+import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { t } from '@/i18n';
+import { isLessonIn, lessonSlug } from '@/lib/lessons';
+import { url } from '@/lib/url';
+
+const lezioni = (await getCollection('lezioni', (lezione) => isLessonIn(lezione, 'storia'))).sort(
+  (a, b) => a.data.ordine - b.data.ordine,
+);
 ---
 
-<BaseLayout title="Storia">
-  <ComingSoon
-    title="Storia"
-    intro="Dalle macchine commerciali di Arthur Scherbius all’adozione da parte delle forze armate tedesche, fino alle procedure operative della seconda guerra mondiale."
-  />
+<BaseLayout title={t('history.title')} description={t('history.intro')}>
+  <section class="prose-it">
+    <h1>{t('history.title')}</h1>
+    <p>{t('history.intro')}</p>
+  </section>
+  <ol class="mt-6 grid max-w-3xl gap-3">
+    {lezioni.map((lezione) => (
+      <li>
+        <a
+          href={url(`storia/${lessonSlug(lezione)}/`)}
+          class="block rounded-lg border border-border bg-surface p-4 text-text no-underline hover:border-accent"
+        >
+          <span class="font-semibold">{lezione.data.title}</span>
+          <span class="block text-text-muted">{lezione.data.description}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+  <p class="mt-8 max-w-3xl">
+    <a href={url('glossario/')} class="underline">
+      {t('history.glossary')}
+    </a>
+  </p>
 </BaseLayout>

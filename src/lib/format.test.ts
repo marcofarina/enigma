@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { groupDigits, scientific } from './format.ts';
+import { groupDigits, scientific, numberInWords } from './format.ts';
 
 describe('formattazione dei numeri', () => {
   it('raggruppa le cifre a tre a tre', () => {
@@ -14,5 +14,11 @@ describe('formattazione dei numeri', () => {
     expect(scientific(62_583_939_499_390_760_715_264_000n)).toBe('6,26 × 10²⁵');
     expect(scientific(99_960n)).toBe('1,00 × 10⁵');
     expect(scientific(325n)).toBe('325');
+  });
+});
+
+describe('numeri in lettere', () => {
+  it('scrive in lettere fino a dieci', () => {
+    expect([0, 1, 7, 10, 11, 26].map(numberInWords)).toEqual(['zero', 'uno', 'sette', 'dieci', '11', '26']);
   });
 });
