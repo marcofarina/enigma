@@ -1,0 +1,10 @@
+---
+import Riquadro from '@/components/lesson/Riquadro.astro';
+import { t } from '@/i18n';
+
+/** Chiusura della lezione: per ogni obiettivo, il risultato a cui la lezione è arrivata. */
+---
+
+<Riquadro id="riepilogo" titolo={t('lesson.summary')} chiusura>
+  <slot />
+</Riquadro>

@@ -1,0 +1,187 @@
+---
+import { t } from '@/i18n';
+
+/**
+ * Domanda di previsione, da mettere prima del componente interattivo che la verifica
+ * (scrittura-didattica §6): lo studente sceglie o scrive che cosa succederà, poi confronta la sua
+ * risposta con l’esito. Nel corpo vanno la domanda, le `<Risposta>` (una `corretta`) e l’`<Esito>`.
+ * Il corpo è prosa della lezione, quindi passa dal linter dei contenuti.
+ */
+interface Props {
+  /**
+   * Lo studente scrive la risposta invece di sceglierla. Le `<Risposta>` restano nascoste:
+   * servono a riconoscere le risposte previste, maiuscole, spazi e punteggiatura a parte.
+   */
+  libera?: boolean;
+}
+
+const { libera = false } = Astro.props;
+const testi = {
+  emptyChoice: t('lesson.predict.emptyChoice'),
+  emptyText: t('lesson.predict.emptyText'),
+  right: t('lesson.predict.right'),
+  wrong: t('lesson.predict.wrong'),
+  yours: t('lesson.predict.yours'),
+  outcome: t('lesson.predict.outcome'),
+  markYours: t('lesson.predict.markYours'),
+  markOutcome: t('lesson.predict.markOutcome'),
+};
+---
+
+<form
+  class="group my-8 rounded-lg border border-border bg-surface px-5 py-4 font-sans text-base"
+  data-previsione
+  data-libera={libera ? '' : undefined}
+  data-testi={JSON.stringify(testi)}
+  novalidate
+>
+  <fieldset class="m-0 min-w-0 border-0 p-0">
+    <legend class="mb-2 p-0 text-sm font-semibold tracking-wide text-accent uppercase">
+      {t('lesson.predict.title')}
+    </legend>
+    <div class="[&>p]:mb-2">
+      <slot />
+    </div>
+    {libera && (
+      <label class="mt-3 flex flex-col gap-1">
+        <span class="text-sm text-text-muted">{t('lesson.predict.input')}</span>
+        <input
+          type="text"
+          name="previsione"
+          autocomplete="off"
+          autocapitalize="characters"
+          spellcheck="false"
+          class="min-h-11 max-w-xs rounded-md border border-border bg-bg px-3 font-mono text-lg read-only:bg-surface-muted"
+        />
+      </label>
+    )}
+  </fieldset>
+  <div class="mt-4 flex flex-wrap gap-2">
+    <button type="submit" class="min-h-11 rounded-md bg-accent px-4 py-2 font-semibold text-accent-contrast">
+      {t('lesson.predict.check')}
+    </button>
+    <button
+      type="button"
+      data-ricomincia
+      hidden
+      class="min-h-11 rounded-md border border-border px-3 py-2 hover:border-accent"
+    >
+      {t('lesson.predict.restart')}
+    </button>
+  </div>
+  <p data-verdetto aria-live="polite" class="mt-3 mb-0"></p>
+  {/* Commento della risposta data ed esito, spostati qui dallo script: si leggono dopo il verdetto. */}
+  <div data-spiegazione></div>
+</form>
+
+<script>
+  interface Testi {
+    emptyChoice: string;
+    emptyText: string;
+    right: string;
+    wrong: string;
+    yours: string;
+    outcome: string;
+    markYours: string;
+    markOutcome: string;
+  }
+
+  /** Maiuscole, spazi e punteggiatura non contano: «b f x» vale «BFX», «16 900» vale «16900». */
+  const normalize = (text: string) =>
+    text
+      .normalize('NFKD')
+      .replace(/[^\p{L}\p{N}]/gu, '')
+      .toUpperCase();
+
+  function setup(form: HTMLFormElement) {
+    const testi = JSON.parse(form.dataset['testi'] ?? '{}') as Testi;
+    const libera = form.hasAttribute('data-libera');
+    const risposte = [...form.querySelectorAll<HTMLElement>('[data-risposta]')];
+    const corretta = risposte.find((r) => r.hasAttribute('data-corretta'));
+    const esito = form.querySelector<HTMLElement>('[data-esito]');
+    const verdetto = form.querySelector<HTMLElement>('[data-verdetto]');
+    const testo = form.querySelector<HTMLInputElement>('input[name="previsione"]');
+    const radios = [...form.querySelectorAll<HTMLInputElement>('input[name="scelta"]')];
+    const controlla = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const ricomincia = form.querySelector<HTMLButtonElement>('[data-ricomincia]');
+    const spiegazione = form.querySelector<HTMLElement>('[data-spiegazione]');
+    if (!corretta || !verdetto || !controlla || !ricomincia || !spiegazione) return;
+    if (esito) spiegazione.append(esito);
+
+    const segno = (risposta: HTMLElement | undefined, text: string, accent = false) => {
+      const mark = risposta?.querySelector('[data-segno]');
+      if (!mark) return;
+      mark.textContent = mark.textContent ? `${mark.textContent} · ${text}` : text;
+      if (accent) mark.classList.add('text-accent');
+    };
+    const commento = (risposta: HTMLElement | undefined) => {
+      const box = risposta?.querySelector<HTMLElement>('[data-commento]');
+      if (!box?.textContent?.trim()) return;
+      spiegazione.prepend(box);
+      box.hidden = false;
+    };
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      let answer: string;
+      let scelta: HTMLElement | undefined;
+      if (libera) {
+        answer = testo?.value.trim() ?? '';
+        scelta = risposte.find((r) => normalize(r.dataset['testo'] ?? '') === normalize(answer));
+      } else {
+        scelta = radios.find((r) => r.checked)?.closest<HTMLElement>('[data-risposta]') ?? undefined;
+        answer = scelta?.dataset['testo'] ?? '';
+      }
+      if (!normalize(answer)) {
+        verdetto.textContent = libera ? testi.emptyText : testi.emptyChoice;
+        return;
+      }
+
+      const giusta = scelta === corretta;
+      const outcome = corretta.dataset['testo'] ?? '';
+      verdetto.textContent = [
+        giusta ? testi.right : testi.wrong,
+        testi.yours.replace('{answer}', answer),
+        giusta ? '' : testi.outcome.replace('{answer}', outcome),
+      ]
+        .filter(Boolean)
+        .join(' ');
+
+      for (const radio of radios) radio.disabled = true;
+      if (testo) testo.readOnly = true;
+      if (!libera) {
+        segno(scelta, testi.markYours);
+        segno(corretta, testi.markOutcome, true);
+      }
+      commento(scelta);
+      if (esito) esito.hidden = false;
+      controlla.hidden = true;
+      ricomincia.hidden = false;
+      ricomincia.focus();
+    });
+
+    ricomincia.addEventListener('click', () => {
+      form.reset();
+      for (const radio of radios) radio.disabled = false;
+      if (testo) testo.readOnly = false;
+      for (const risposta of risposte) {
+        const mark = risposta.querySelector('[data-segno]');
+        if (!mark) continue;
+        mark.textContent = '';
+        mark.classList.remove('text-accent');
+      }
+      // Il commento mostrato torna nella sua risposta.
+      for (const box of spiegazione.querySelectorAll<HTMLElement>('[data-commento]')) {
+        box.hidden = true;
+        risposte.find((r) => r.dataset['testo'] === box.dataset['testo'])?.append(box);
+      }
+      if (esito) esito.hidden = true;
+      verdetto.textContent = '';
+      ricomincia.hidden = true;
+      controlla.hidden = false;
+      (testo ?? radios[0])?.focus();
+    });
+  }
+
+  for (const form of document.querySelectorAll<HTMLFormElement>('form[data-previsione]')) setup(form);
+</script>

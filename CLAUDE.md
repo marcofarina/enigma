@@ -38,3 +38,20 @@ Node ≥ 22.23.4 (vedi `.nvmrc`), pnpm 10.
 - Le lezioni nuove nascono con `stato: bozza`; solo l’autore le porta a `rivista`.
 - Ogni immagine di terzi ha una voce in `src/content/immagini.yaml`; sono ammesse solo licenze PD, CC0, CC BY e CC BY-SA.
 - Ogni fatto storico nei testi rimanda a una voce di `src/content/fonti.yaml`.
+
+## Lo scheletro della lezione
+
+Decisione D3 di `docs/piano-aggiornamento.md`: le lezioni di «Come funziona» hanno lo scheletro
+completo di `scrittura-didattica.md` §7; quelle di Storia solo obiettivi e riepilogo. I componenti
+stanno in `src/components/lesson/` e si importano nell’MDX come gli altri.
+
+| Componente | Dove va | Quando si usa |
+| --- | --- | --- |
+| `<Citazione fonte="id" pagina="12">` | subito dopo gli import, prima dell’aggancio | citazione d’apertura, oppure citazione breve nel testo. `fonte` è un id di `fonti.yaml` (senza voce la build si ferma); `autore` solo se chi parla non è l’autore della fonte; `tradotta` se la traduzione è nostra; `lingua="de"` per un testo non italiano. La citazione d’apertura la sceglie Marco fra tre proposte vere |
+| `<Prerequisiti>` | dopo l’aggancio | elenco di ciò che serve sapere, ogni voce con il link alla lezione che lo spiega. Solo «Come funziona» |
+| `<Obiettivi>` | dopo i prerequisiti (in Storia dopo l’aggancio) | elenco di ciò che lo studente sa fare alla fine, con verbi operativi; non anticipa l’esito di una previsione |
+| `<Previsione>` | prima del componente interattivo che la verifica | quando l’esito si può sbagliare: lo studente sceglie fra le `<Risposta testo="…">` (una `corretta`) o, con `libera`, scrive la risposta. Il corpo di una `Risposta` sbagliata dice quale idea porta a darla; `<Esito>` spiega o rimanda al componente. La prosa che segue non deve dare il risultato prima della domanda |
+| `<Riepilogo>` | in fondo alla lezione | per ogni obiettivo, il risultato a cui la lezione è arrivata, nello stesso ordine |
+
+La domanda, i commenti e l’esito di una `Previsione` stanno nel corpo, non negli attributi: così
+li controlla `pnpm lint:content`. Il `testo` di una `Risposta` è un’etichetta breve.

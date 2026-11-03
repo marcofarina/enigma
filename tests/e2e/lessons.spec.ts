@@ -67,6 +67,68 @@ test('l’animazione mostra il doppio passo da ADU', async ({ page }) => {
   await expect(animation.getByText('avanza sinistro, centrale, destro')).toBeVisible();
 });
 
+test('la lezione apre con citazione, prerequisiti e obiettivi e chiude con il riepilogo', async ({ page }) => {
+  await page.goto('come-funziona/il-passo-e-il-doppio-passo/');
+  const quote = page.locator('figure', { has: page.locator('blockquote') }).first();
+  await expect(quote.locator('figcaption')).toContainText('Crypto Museum');
+  await expect(quote.locator('figcaption')).toContainText('traduzione nostra');
+  for (const name of ['Prerequisiti', 'Obiettivi', 'Riepilogo']) {
+    await expect(page.getByRole('region', { name })).toBeVisible();
+  }
+  await expect(
+    page.getByRole('region', { name: 'Prerequisiti' }).getByRole('link', { name: 'I rotori' }),
+  ).toBeVisible();
+});
+
+test('la previsione libera confronta la risposta scritta con l’esito', async ({ page }) => {
+  await page.goto('come-funziona/il-passo-e-il-doppio-passo/');
+  const prediction = page.getByRole('group', { name: 'Previsione' }).first().locator('xpath=..');
+  const check = prediction.getByRole('button', { name: 'Confronta con l’esito' });
+  await check.click();
+  await expect(prediction.locator('[data-verdetto]')).toHaveText(
+    'Scrivi una previsione prima di confrontarla con l’esito.',
+  );
+
+  // Maiuscole e spazi non contano: «a e x» è la risposta prevista AEX, con il suo commento.
+  await prediction.getByRole('textbox', { name: 'La tua previsione' }).fill('a e x');
+  await check.click();
+  await expect(prediction.locator('[data-verdetto]')).toHaveText(
+    'Previsione sbagliata. La tua previsione: a e x. Esito: BFX.',
+  );
+  await expect(prediction.getByText('È la risposta del contachilometri')).toBeVisible();
+  await expect(prediction.getByText('Verificalo nell’animazione')).toBeVisible();
+  const restart = prediction.getByRole('button', { name: 'Ricomincia' });
+  await expect(restart).toBeFocused();
+
+  await restart.click();
+  await expect(prediction.getByText('È la risposta del contachilometri')).toBeHidden();
+  await prediction.getByRole('textbox', { name: 'La tua previsione' }).fill('BFX');
+  await check.click();
+  await expect(prediction.locator('[data-verdetto]')).toHaveText('Previsione giusta. La tua previsione: BFX.');
+});
+
+test('la previsione a scelta segna la risposta data e l’esito, anche in tema scuro', async ({ page }) => {
+  await page.goto('come-funziona/il-passo-e-il-doppio-passo/');
+  const prediction = page.getByRole('group', { name: 'Previsione' }).nth(1).locator('xpath=..');
+  await prediction.getByRole('radio', { name: 'uguale' }).check();
+  await prediction.getByRole('button', { name: 'Confronta con l’esito' }).click();
+  await expect(prediction.locator('[data-verdetto]')).toHaveText(
+    'Previsione sbagliata. La tua previsione: uguale. Esito: più corto.',
+  );
+  await expect(prediction.getByText('Sarebbe così con un contachilometri')).toBeVisible();
+  await expect(prediction.getByRole('radio', { name: /più corto/ })).toBeDisabled();
+  await expect(prediction.locator('[data-corretta] [data-segno]')).toHaveText('esito');
+  // Lo stato rivelato (scelte bloccate, segni, commento) deve restare accessibile.
+  for (const scheme of ['light', 'dark'] as const) {
+    await page.emulateMedia({ colorScheme: scheme });
+    const results = await new AxeBuilder({ page })
+      .include('form[data-previsione]')
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
+      .analyze();
+    expect(results.violations).toEqual([]);
+  }
+});
+
 test('il mini simulatore usa la tastiera fisica solo quando ha il focus', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Tastiera fisica solo su desktop.');
   const mini = await island(page, 'come-funziona/il-riflettore/');

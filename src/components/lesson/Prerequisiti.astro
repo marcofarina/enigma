@@ -1,0 +1,10 @@
+---
+import Riquadro from '@/components/lesson/Riquadro.astro';
+import { t } from '@/i18n';
+
+/** Che cosa serve sapere prima della lezione: un elenco, ogni voce con il link alla lezione che la spiega. */
+---
+
+<Riquadro id="prerequisiti" titolo={t('lesson.prereq')}>
+  <slot />
+</Riquadro>

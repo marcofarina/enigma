@@ -1,0 +1,47 @@
+---
+/**
+ * Riquadro con titolo dello scheletro della lezione: lo usano `Prerequisiti`, `Obiettivi` e
+ * `Riepilogo`, non le lezioni. Il titolo è un `h2`, così chi usa un lettore di schermo trova i
+ * riquadri scorrendo i titoli della pagina.
+ */
+interface Props {
+  /** Identificativo del titolo: ogni riquadro compare al più una volta per lezione. */
+  id: string;
+  titolo: string;
+  /** Il riepilogo chiude la lezione e ha il fondo pieno; i riquadri d’apertura no. */
+  chiusura?: boolean;
+}
+
+const { id, titolo, chiusura = false } = Astro.props;
+---
+
+<section
+  aria-labelledby={id}
+  class:list={[
+    'riquadro my-6 rounded-lg border border-border px-5 py-4 font-sans text-base',
+    chiusura ? 'mt-12 bg-surface-muted' : 'bg-surface',
+  ]}
+>
+  <h2 id={id} class="mt-0 mb-2 text-sm font-semibold tracking-wide text-text-muted uppercase">
+    {titolo}
+  </h2>
+  <div class="[&>:last-child]:mb-0">
+    <slot />
+  </div>
+</section>
+
+<style>
+  /* Prerequisiti e obiettivi uno sotto l’altro formano un riquadro solo. */
+  .riquadro:has(+ .riquadro) {
+    margin-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .riquadro + .riquadro {
+    margin-top: 0;
+    border-top-style: dashed;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+</style>

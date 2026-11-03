@@ -1,0 +1,52 @@
+---
+import { getEntry } from 'astro:content';
+import { t, tf } from '@/i18n';
+
+/**
+ * Citazione con la sua fonte. La `fonte` deve avere una voce in `src/content/fonti.yaml`,
+ * altrimenti la build si ferma: nessuna citazione arriva al lettore senza provenienza.
+ * In testa a una lezione fa da citazione d’apertura; nel testo regge una citazione breve.
+ */
+interface Props {
+  fonte: string;
+  /** Chi ha scritto la frase, se non è l’autore della fonte: la didascalia dice allora «citato in». */
+  autore?: string;
+  /** Pagina dell’edizione indicata in `fonti.yaml`; un intervallo come `12–13` diventa «pp.». */
+  pagina?: string | number;
+  /** La citazione è tradotta da chi scrive la lezione. */
+  tradotta?: boolean;
+  /** Lingua del testo citato, se non è l’italiano (per esempio `de`), per i lettori di schermo. */
+  lingua?: string;
+}
+
+const { fonte, autore, pagina, tradotta = false, lingua } = Astro.props;
+const entry = await getEntry('fonti', fonte);
+if (!entry) throw new Error(`Citazione senza fonte: ${fonte}. Aggiungi una voce in src/content/fonti.yaml.`);
+const { data } = entry;
+const page =
+  pagina === undefined
+    ? undefined
+    : /[–-]/.test(String(pagina))
+      ? tf('lesson.quote.pages', { pages: String(pagina).replace('-', '–') })
+      : tf('lesson.quote.page', { page: pagina });
+---
+
+<figure class="my-8">
+  <blockquote lang={lingua} class="m-0 border-s-4 border-accent ps-5 text-xl leading-relaxed [&>p:last-child]:mb-0">
+    <slot />
+  </blockquote>
+  <figcaption class="mt-2 ps-6 font-sans text-sm text-text-muted">
+    {autore && `${autore}, ${t('lesson.quote.citedIn')} `}
+    {data.autori},{' '}
+    {data.url ? (
+      <a href={data.url} class="underline">
+        <cite>{data.titolo}</cite>
+      </a>
+    ) : (
+      <cite>{data.titolo}</cite>
+    )}
+    {data.anno && ` (${data.anno})`}
+    {page && `, ${page}`}
+    {tradotta && ` (${t('lesson.quote.translated')})`}
+  </figcaption>
+</figure>
