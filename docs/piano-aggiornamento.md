@@ -16,7 +16,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | D3 | Le lezioni di Enigma adottano lo scheletro di `scrittura-didattica.md` §7 (citazione d’apertura, prerequisiti, obiettivi, riepilogo) e le domande di previsione prima dei componenti? | Sì per «Come funziona»; per la Storia solo obiettivi e riepilogo | D, E1–E3 | raccomandazione accettata (2026-11-03) |
 | D4 | La lezione 7 si divide in «Il pannello a spine» e «L’Uhr»? | Sì: sono due tesi | E2 | raccomandazione accettata (2026-11-03) |
 | D5 | Crittoanalisi e Docenti escono dal menu finché sono vuote? | Sì; restano raggiungibili dall’indirizzo | F | raccomandazione accettata (2026-11-03) |
-| D6 | Design: correggere solo i difetti e tenere il tema neutro, o fare ora l’identità visiva di Rainbow Bits? | Correggere i difetti ora, identità in un piano separato quando esiste un riferimento | G | raccomandazione accettata (2026-11-03) |
+| D6 | Design: correggere solo i difetti e tenere il tema neutro, o fare ora l’identità visiva di Rainbow Bits? | Correggere i difetti ora, identità in un piano separato quando esiste un riferimento | G0–G4 | 2026-11-03, rivista: identità ora. La home diventa il simulatore, tutto in una schermata a partire da 1280×720 senza scorrere; su mobile una versione ridotta che rimanda al desktop. La direzione si sceglie fra tre proposte sul canvas di Claude Design. I difetti del §5 della revisione si correggono dentro il nuovo design system |
 | D7 | Quali libri delle fonti hai in copia (Singh, Batey, Rejewski, Kozaczuk, Welchman, Bauer, Hamer)? | Le fonti non consultate escono dal frontmatter finché non le verifichi | B | 2026-11-03: Marco ha solo Singh e procurerà i testi degli altri, da usare nella fase V. Fino ad allora escono dal frontmatter le fonti non consultate |
 | D8 | La revisione viene prima della fase 4 del piano originale? | Sì: la fase 4 scrive molta prosa nuova, conviene farla con norme e linter a posto | I | raccomandazione accettata (2026-11-03) |
 
@@ -32,15 +32,21 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | E2 | Riscrittura «Come funziona» 5–8 | Opus | high | 2,5 h | B, C, D, D4 | fatta |
 | E3 | Riscrittura Storia 1–4 e glossario | Opus | high | 2 h | B, C, D | fatta |
 | F | Interfaccia e i18n | Sonnet | high | 1 h | A, C, D5 | fatta |
-| G | Design | Opus | high | 3 h | F, D6 | da fare |
+| G0 | Direzione visiva sul canvas | Opus | high | 2 h | F, D6 | da fare |
+| G1 | Design system nel codice | Opus | high | 2,5 h | G0, H | da fare |
+| G2 | Il simulatore a schermata unica come home | Opus | high | 3 h | G1 | da fare |
+| G3 | Il simulatore su mobile | Sonnet | high | 1,5 h | G2 | da fare |
+| G4 | Il resto del sito nel nuovo linguaggio | Sonnet | high | 2 h | G1 | da fare |
 | H | Pulizia del codice | Sonnet | high | 1 h | A | da fare |
 | V | Verifiche sui testi delle fonti | Opus | high | 2 h per gruppo di libri | B, testi forniti da Marco | da fare |
 | I | Riscrittura delle fasi 4–5 di `docs/piano.md` nel formato dei piani | Opus | high | 1 h | E1–E3, D8 | da fare |
 
-Totale stimato: circa 17 ore di sessione, più la fase V. Dopo A, le fasi B, C, F e H non si
+Totale stimato: circa 25 ore di sessione, più la fase V. Dopo A, le fasi B, C, F e H non si
 toccano a vicenda e si possono fare in qualunque ordine. E1, E2 ed E3 toccano file diversi e sono
 indipendenti fra loro. V tocca le stesse lezioni delle fasi E: non va eseguita insieme a una di
-esse.
+esse. H tocca componenti del simulatore e gli indici delle sezioni, gli stessi file di G2 e G4: va
+fatta prima di G1. G4 non tocca `src/components/simulator/` né `src/pages/index.astro` e può
+andare in parallelo a G2 e G3.
 
 ## Regole comuni a tutte le fasi
 
@@ -520,9 +526,34 @@ pnpm lint:content && pnpm verify && pnpm test:e2e
 
 ## Fase G — Design
 
-**Modello: Opus · Effort: high · Durata: 3 h · Dipende da: F, D6**
+D6 rivista il 2026-11-03: l’identità visiva si fa ora. La fase G si divide in cinque sottofasi.
+G0 decide la forma su un canvas di Claude Design; G1 e G2 la costruiscono; G3 e G4 la estendono a
+mobile e al resto del sito.
 
-**Obiettivo.** Nessun difetto visibile nelle pagine; la home non ha più la forma da modello.
+Vincoli decisi da Marco il 2026-11-03, validi per tutte le sottofasi:
+
+- la home del sito è il simulatore: si apre il sito e la macchina è pronta a cifrare, senza
+  passaggi intermedi;
+- a partire da 1280×720 (LIM e portatili dell’aula) tutto il simulatore sta nella schermata,
+  senza scorrere la pagina;
+- su mobile una versione ridotta, con un avviso che rimanda al desktop per l’esperienza completa;
+- animazioni che accompagnano ogni tasto, mai a costo della velocità: digitare in fretta non
+  perde lettere e non accumula ritardo;
+- nessun ornamento da modello generico (bordi colorati a sinistra delle schede, gradienti di
+  riempimento, schede tutte uguali): ogni scelta visiva nasce da Enigma e dalla didattica.
+
+Riferimento: il simulatore originale (`marcofarina/EnigmaMachine`) sta in una schermata. Fatto
+verificato il 2026-11-03: `/simulatore/` oggi è alto 2704 px a 1024×768, tre schermate e mezza.
+
+---
+
+## Fase G0 — Direzione visiva sul canvas
+
+**Modello: Opus · Effort: high · Durata: 2 h · Dipende da: F, D6**
+
+**Obiettivo.** Marco ha scelto una direzione visiva guardando tre proposte della schermata del
+simulatore; la direzione è descritta in `docs/design.md` con abbastanza precisione da costruirla
+senza riaprire il canvas.
 
 **Prompt di apertura**
 
@@ -530,21 +561,79 @@ pnpm lint:content && pnpm verify && pnpm test:e2e
 Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
 dimmelo senza fare altro.
 
-Esegui la fase G di docs/piano-aggiornamento.md, secondo la decisione D6. I rilievi sono nel §5
-di docs/revisione-2026-11-03.md. Carica la skill frontend-design prima di progettare. Avvia il
-sito con il server «astro-dev» di .claude/launch.json e verifica ogni modifica nel browser, a
-desktop e a 375 px, in tema chiaro e scuro.
+Esegui la fase G0 di docs/piano-aggiornamento.md. Carica la skill frontend-design prima di
+progettare. Avvia il sito con il server «astro-dev» di .claude/launch.json per gli screenshot
+«prima».
 ```
 
 **Passi**
 
-1. Stile delle tabelle in `.prose-it`, solo con i token.
-2. Blocchi di codice: tema di Shiki chiaro e scuro legato a `data-theme`, margini e padding.
-3. Intestazione su mobile: menu che non si comprime a destra, bersagli di almeno 44 px.
-4. Home: progetta una prima schermata che mostri la macchina (per esempio il simulatore ridotto)
-   invece di occhiello, titolo e tre schede uguali.
-5. Se D6 = identità ora: font e palette nei token, nessun colore fuori da `tokens.css`.
-6. Screenshot prima e dopo di home, lezione 5, lezione 8, simulatore, salvati in `docs/screenshot/`.
+1. Salva gli screenshot «prima» in `docs/screenshot/prima/`: home, `/simulatore/`, lezione 5
+   (`il-passo-e-il-doppio-passo`), lezione 8 (`la-matematica-di-enigma`), ciascuna a 1280×720 e a
+   375 px, in tema chiaro; home e simulatore anche in scuro.
+2. Fai l’inventario del simulatore attuale: ogni pezzo di `Simulator.tsx` (configurazione,
+   finestre, lampade, tastiera, nastro, traccia, schema, testo da digitare, link condivisibile,
+   modalità LIM, avvisi) con la sua funzione didattica. Nessun pezzo sparisce senza una decisione
+   di Marco scritta in `docs/design.md`.
+3. Crea un canvas di Claude Design (Artifact di tipo «Design») con tre direzioni della stessa
+   schermata a 1280×720, ognuna con la sua artboard a 375 px. Spunti di partenza, da superare:
+   la macchina come oggetto materiale; il circuito come protagonista; un linguaggio editoriale da
+   libro. Ogni direzione mostra almeno tre animazioni: tasto → lampada, scatto dei rotori, percorso
+   del segnale. Usa lettere e configurazioni vere, non testo segnaposto.
+4. Fai scegliere Marco (una direzione, o una combinazione dichiarata). Itera sul canvas finché
+   non approva.
+5. Scrivi `docs/design.md`: link al canvas; principi della direzione scelta; palette chiara,
+   scura e LIM come valori pronti per `tokens.css`; font con licenza OFL e pesi usati; scala
+   tipografica; griglia della schermata a 1280×720 e a 1920×1080 con la posizione di ogni pezzo
+   dell’inventario; catalogo delle animazioni con durata, curva e comportamento con
+   `prefers-reduced-motion`; regole per tabelle, blocchi di codice, intestazione e pagine di
+   lezione.
+
+**Criteri di accettazione**
+
+```bash
+ls docs/screenshot/prima/*.png | wc -l
+```
+almeno `12`.
+
+```bash
+grep -cE '^## ' docs/design.md && grep -c 'claude.ai/' docs/design.md
+```
+il primo almeno `7`, il secondo almeno `1`.
+
+La riga «Esito» di G0 dice quale direzione ha scelto Marco e in che data.
+
+---
+
+## Fase G1 — Design system nel codice
+
+**Modello: Opus · Effort: high · Durata: 2,5 h · Dipende da: G0, H**
+
+**Obiettivo.** Token, font e stili globali del sito seguono `docs/design.md`; i difetti del §5
+della revisione sono corretti.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase G1 di docs/piano-aggiornamento.md. La direzione visiva è in docs/design.md, i
+difetti nel §5 di docs/revisione-2026-11-03.md. Carica la skill frontend-design. Avvia il sito con
+il server «astro-dev» di .claude/launch.json e verifica ogni modifica nel browser, a desktop e a
+375 px, in tema chiaro e scuro.
+```
+
+**Passi**
+
+1. `tokens.css`: palette chiara, scura e LIM, famiglie di font, scala tipografica, durate e curve
+   delle animazioni come custom property. Font in locale (`woff2` in `public/fonts/`) con la
+   licenza accanto; nessuna richiesta a server esterni.
+2. `global.css`: tabelle in `.prose-it`, blocchi di codice con il tema di Shiki chiaro e scuro
+   legato a `data-theme`, margini e padding; numeri a gruppi che non si spezzano a fine riga.
+3. `SiteHeader.astro`, `SiteFooter.astro`, `ThemeToggle.astro` nel nuovo linguaggio; a 375 px
+   l’intestazione sta su una riga e ogni bersaglio misura almeno 44 px.
+4. Nessun colore letterale fuori da `tokens.css` e `print.css`.
 
 **Criteri di accettazione**
 
@@ -554,11 +643,150 @@ grep -c 'table' src/styles/global.css
 almeno `1`.
 
 ```bash
+grep -rnoE "#[0-9a-fA-F]{3,8}\b|rgba?\(|oklch\(" src --include='*.css' --include='*.tsx' --include='*.astro' | grep -vE 'tokens\.css|print\.css' | wc -l
+```
+`0`.
+
+```bash
 pnpm verify && pnpm test:e2e
 ```
 
-Controllo visivo nel browser: la tabella della lezione 5 si legge come tabella; i blocchi di
-codice della lezione 8 hanno margini; a 375 px l’intestazione non va su tre righe.
+Controllo visivo: la tabella della lezione 5 si legge come tabella; i blocchi di codice della
+lezione 8 hanno margini e seguono il tema; a 375 px l’intestazione sta su una riga.
+
+---
+
+## Fase G2 — Il simulatore a schermata unica come home
+
+**Modello: Opus · Effort: high · Durata: 3 h · Dipende da: G1**
+
+**Obiettivo.** La home è il simulatore. A 1280×720, 1440×900 e 1920×1080 tutto sta nella
+schermata senza scorrere; le animazioni del catalogo di `docs/design.md` accompagnano ogni tasto
+senza rallentare la digitazione.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase G2 di docs/piano-aggiornamento.md. La griglia e il catalogo delle animazioni sono
+in docs/design.md. Carica la skill frontend-design. Avvia il sito con il server «astro-dev» di
+.claude/launch.json e verifica ogni modifica nel browser a 1280×720, 1440×900 e 1920×1080, in tema
+chiaro e scuro.
+```
+
+**Passi**
+
+1. `src/pages/index.astro` monta il simulatore a tutta finestra; il percorso didattico si
+   raggiunge dalla barra prevista da `docs/design.md`.
+2. `/simulatore/` porta alla home conservando la query: i link condivisi già distribuiti
+   continuano ad aprire la stessa configurazione. `ShareLink.tsx` genera i link nuovi verso la
+   home.
+3. Riorganizza `Simulator.tsx` sulla griglia di `docs/design.md`. Ogni pezzo dell’inventario di G0
+   resta raggiungibile senza scorrere la pagina.
+4. Animazioni nel catalogo: solo `transform` e `opacity`, guidate dallo stato dello store e non da
+   timer che si accodano; con `prefers-reduced-motion` gli stati cambiano senza movimento.
+5. Ripensa la modalità LIM per la nuova schermata (secondo `docs/design.md`).
+6. Test Playwright in `tests/e2e/simulator.spec.ts`: altezza della pagina non maggiore della
+   finestra alle tre risoluzioni; un vecchio link `/simulatore/?…` apre la stessa configurazione;
+   50 lettere digitate in fretta danno il testo cifrato atteso.
+
+**Criteri di accettazione**
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+con i tre test nuovi del passo 6 fra quelli eseguiti:
+
+```bash
+grep -cE '1280|1440|1920' tests/e2e/simulator.spec.ts
+```
+almeno `3`.
+
+---
+
+## Fase G3 — Il simulatore su mobile
+
+**Modello: Sonnet · Effort: high · Durata: 1,5 h · Dipende da: G2**
+
+**Obiettivo.** A 375 px la home mostra la versione ridotta disegnata nella artboard mobile di
+G0, con l’avviso che rimanda al desktop.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Sonnet con effort high. Se non stai girando su Sonnet,
+fermati e dimmelo senza fare altro.
+
+Esegui la fase G3 di docs/piano-aggiornamento.md, secondo la versione mobile descritta in
+docs/design.md. Avvia il sito con il server «astro-dev» di .claude/launch.json e verifica ogni
+modifica nel browser a 375 px e a 768 px, in tema chiaro e scuro.
+```
+
+**Passi**
+
+1. Sotto la soglia di `docs/design.md`, la home mostra solo i pezzi della versione ridotta.
+2. L’avviso per il desktop sta in `src/i18n/it.json` e passa da `pnpm lint:content`.
+3. Bersagli di almeno 44 px; la tastiera della macchina non fa aprire quella del telefono.
+4. Test Playwright a 375 px: nessuno scorrimento orizzontale, avviso visibile, axe senza
+   violazioni.
+
+**Criteri di accettazione**
+
+```bash
+grep -c '375' tests/e2e/simulator.spec.ts
+```
+almeno `1`.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+---
+
+## Fase G4 — Il resto del sito nel nuovo linguaggio
+
+**Modello: Sonnet · Effort: high · Durata: 2 h · Dipende da: G1**
+
+Non tocca `src/components/simulator/` né `src/pages/index.astro`: può andare in parallelo a G2 e
+G3.
+
+**Obiettivo.** Lezioni, indici delle sezioni, glossario, galleria, esercizi e schede seguono
+`docs/design.md`.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Sonnet con effort high. Se non stai girando su Sonnet,
+fermati e dimmelo senza fare altro.
+
+Esegui la fase G4 di docs/piano-aggiornamento.md, secondo le regole per le pagine in
+docs/design.md. Avvia il sito con il server «astro-dev» di .claude/launch.json e verifica ogni
+modifica nel browser, a desktop e a 375 px, in tema chiaro e scuro.
+```
+
+**Passi**
+
+1. Pagine di lezione e componenti di `src/components/lesson/` (citazione, prerequisiti,
+   obiettivi, previsione, riepilogo) nel nuovo linguaggio.
+2. Indici di «Come funziona» e Storia, glossario, galleria, esercizi, schede.
+3. I componenti interattivi delle lezioni (`MiniSimulatore`, `AnimazionePasso`, viste) usano
+   token e animazioni del catalogo.
+4. Screenshot «dopo» in `docs/screenshot/dopo/`, con gli stessi nomi di quelli «prima». Quelli
+   della home e del simulatore si fanno solo con G3 fatta; se G3 non lo è, la riga «Esito» lo
+   dice e chi chiude G3 li aggiunge.
+
+**Criteri di accettazione**
+
+```bash
+diff <(ls docs/screenshot/prima) <(ls docs/screenshot/dopo)
+```
+nessuna differenza.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
 
 ---
 
