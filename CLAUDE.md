@@ -34,7 +34,7 @@ Node ≥ 22.23.4 (vedi `.nvmrc`), pnpm 10.
 - `src/engine/` è TypeScript puro: nessuna dipendenza, nessun accesso a DOM, React o Astro (lo impone ESLint).
 - I link interni passano da `url()` in `src/lib/url.ts`, per rispettare `base`.
 - I colori e i font si usano solo tramite i design token di `src/styles/tokens.css`.
-- I testi in `src/content/` seguono le regole tipografiche italiane controllate da `pnpm lint:content`: virgolette « » per le citazioni e “ ” per quelle interne a una citazione (l’eccezione dei caporali vale solo per Python Doesn’t Byte), apostrofo ’, trattino lungo — per gli incisi, titoli con maiuscola solo iniziale, acronimi senza punti, numeri fino a dieci in lettere.
+- I testi in `src/content/` seguono le regole tipografiche italiane controllate da `pnpm lint:content`: virgolette « » per le citazioni e “ ” per quelle interne a una citazione (l’eccezione dei caporali vale solo per Python Doesn’t Byte), apostrofo ’, trattino lungo — per gli incisi, titoli con maiuscola solo iniziale, acronimi senza punti, `…` e non tre punti, numeri fino a dieci in lettere, cifre a gruppi di tre con lo spazio non separabile, matematica in `<Formula>`, mai «sennò» né «qual’è». I nomi propri ammessi nei titoli e dopo i due punti si elencano in `scripts/nomi-propri.txt`.
 - Le lezioni nuove nascono con `stato: bozza`; solo l’autore le porta a `rivista`.
 - Ogni immagine di terzi ha una voce in `src/content/immagini.yaml`; sono ammesse solo licenze PD, CC0, CC BY e CC BY-SA.
 - Ogni fatto storico nei testi rimanda a una voce di `src/content/fonti.yaml`.

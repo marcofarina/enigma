@@ -1,0 +1,77 @@
+# Nomi propri ammessi con la maiuscola nei titoli e dopo i due punti (letti da lint-content.ts).
+# Una voce per riga; le righe vuote e quelle che iniziano con # sono ignorate.
+# Un nome di più parole si scrive per intero («Bletchley Park»): vale solo se compare intero.
+
+# Persone
+Alberti
+Leon Battista Alberti
+Arthur Scherbius
+Scherbius
+Arvid Damm
+Edward Hebern
+Hugo Koch
+Theo van Hengel
+Rudolf Spengler
+Marian Rejewski
+Rejewski
+Dilly Knox
+Knox
+Mavis Lever
+Lever
+Mavis Batey
+Batey
+Hugh Foss
+Foss
+William Bodsworth
+Willi Korn
+Willy Korn
+Korn
+David Hamer
+Alan Turing
+Turing
+Welchman
+Kerckhoffs
+Heimsoeth
+Rinke
+Giulio Cesare
+Cesare
+Svetonio
+Kindi
+Franco
+
+# Luoghi
+Berlino
+Bletchley Park
+Capo Matapan
+Matapan
+Germania
+Italia
+Paesi Bassi
+Spagna
+Stati Uniti
+Svezia
+
+# Organizzazioni e opere
+Abwehr
+Biuro Szyfrów
+Crypto Museum
+Government Code and Cypher School
+Luftwaffe
+Regia Marina
+Reichswehr
+Wehrmacht
+
+# Macchine e termini tedeschi che si scrivono con la maiuscola
+Bombe
+Enigma
+Grundstellung
+Handelsmaschine
+Kenngruppen
+Kenngruppenbuch
+Ringstellung
+Steckerbrett
+Steckeruhr
+Umkehrwalze
+Uhr
+Walzenlage
+Zählwerk Enigma
