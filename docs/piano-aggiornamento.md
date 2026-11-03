@@ -24,7 +24,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 
 | Fase | Contenuto | Modello | Effort | Durata | Dipende da | Stato |
 |---|---|---|---|---|---|---|
-| A | Norme in sessione e documenti operativi | Sonnet | high | 0,5 h | D1, D2 | da fare |
+| A | Norme in sessione e documenti operativi | Sonnet | high | 0,5 h | D1, D2 | fatta |
 | B | Errori di fatto e incoerenze | Sonnet | high | 1 h | A, D7 | da fare |
 | C | Linter dei contenuti | Sonnet | high | 1,5 h | A, D2 | da fare |
 | D | Componenti dello scheletro della lezione | Opus | high | 1,5 h | A, D3 | da fare |
@@ -49,7 +49,10 @@ esse.
   stesura fai la passata di `.claude/norms/scrittura-umana.md` e di `scrittura-parlata.md` §1.
 - Le lezioni restano `stato: bozza`: solo Marco le porta a `rivista`.
 - Chiusura di ogni fase: spunta la riga nella tabella «Stato», aggiungi sotto la fase le righe
-  «Esito» (che cosa è cambiato, che cosa resta, comandi eseguiti), fai commit e apri la PR.
+  «Esito» (che cosa è cambiato, che cosa resta, comandi eseguiti) e fai commit. Niente PR: lavori
+  da solo, la revisione è la passata sul diff di Claude. Con `pnpm verify && pnpm test:e2e` verdi
+  fondi il branch in `main` in locale; il push su `main` pubblica il sito, quindi si fa dopo
+  conferma di Marco.
 
 ---
 
@@ -105,6 +108,13 @@ deve dare `0`.
 ```bash
 pnpm verify && pnpm test:e2e
 ```
+
+**Esito (2026-11-03)**
+
+- Fatto: symlink `.claude/norms` (ignorato da git insieme a `.claude/launch.json`, D1); sezione «Norme di contenuto condivise» in `CLAUDE.md`, con l’import di `contenuto.md`, la tabella delle norme di scrittura e l’avviso che i testi si scrivono solo in locale; regola delle virgolette secondo D2 (« » per le citazioni, “ ” per quelle interne); `README.md` con le fasi 0–3 «fatta» e senza «agli inizi»; `docs/stato.md` diviso in «In locale» e «Solo nel cloud».
+- Test: al primo giro quattro e2e fallivano per `networkidle` su due lezioni (dettagli in `docs/stato.md`, «Esito dei test in locale»). Corretta l’attesa in `tests/e2e/lessons.spec.ts`: ogni isola viene portata in vista e si aspetta che si idrati.
+- Comandi: `pnpm verify` exit 0 (170 test, 34 pagine); `pnpm test:e2e` exit 0 (99 passati, 3 saltati).
+- Resta: le lezioni esistenti usano ancora “ ” per le citazioni; il linter e il testo si allineano alla D2 nelle fasi C ed E.
 
 ---
 
@@ -458,7 +468,7 @@ desktop e a 375 px, in tema chiaro e scuro.
 4. Home: progetta una prima schermata che mostri la macchina (per esempio il simulatore ridotto)
    invece di occhiello, titolo e tre schede uguali.
 5. Se D6 = identità ora: font e palette nei token, nessun colore fuori da `tokens.css`.
-6. Screenshot prima e dopo di home, lezione 5, lezione 8, simulatore, allegati alla PR.
+6. Screenshot prima e dopo di home, lezione 5, lezione 8, simulatore, salvati in `docs/screenshot/`.
 
 **Criteri di accettazione**
 

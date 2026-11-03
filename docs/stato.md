@@ -59,10 +59,22 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
 
 ## Note operative
 
-- **Node**: Astro 7 richiede Node ≥ 22.23.4. Nel container c’è Node 24 in `/opt/node24/bin` (`export PATH=/opt/node24/bin:$PATH`); pnpm 10 è quello di sistema. In un container nuovo va riscaricato da nodejs.org (`node-v24.x-linux-x64.tar.xz`).
+### In locale
+
+- **Norme**: `.claude/norms` è un symlink a `../../norms` (`ln -s ../../norms .claude/norms`), ignorato da git. Senza, la sessione non riceve le norme di contenuto.
+- **Node**: Astro 7 richiede Node ≥ 22.23.4 (vedi `.nvmrc`); pnpm 10.
+- **Browser per i test e2e**: la prima volta, `pnpm exec playwright install chromium`.
 - **Preview**: `astro preview` in Astro 7 usa un file di lock e può restare attivo in background. Usare `astro preview --ignore-lock` (già nel `playwright.config.ts`) e `pnpm exec astro preview stop` per fermarlo.
-- **Playwright**: nel container c’è la 1.63.0 con i browser in `/opt/pw-browsers`; tenere `@playwright/test@1.63.0` finché l’ambiente non cambia.
 - **Rete**: `cryptomuseum.com`, `cryptocellar.org`, `codesandciphers.org.uk` e Wikimedia sono raggiungibili con `curl` (non con WebFetch). L’API di Commons (`w/api.php`) risponde spesso 429: funzionano meglio `https://commons.wikimedia.org/wiki/File:<nome>?action=raw` per autore e licenza e `Special:FilePath/<nome>?width=1200` per il file, con uno User-Agent descrittivo e qualche secondo di pausa tra le richieste.
+
+- **Esito dei test in locale (2026-11-03, macOS, Node 25.9.0, Playwright 1.63.0)**: `pnpm verify` passa (170 test, 34 pagine). `pnpm test:e2e`: al primo giro 95 passati, 3 saltati, 4 falliti: in `tests/e2e/lessons.spec.ts`, desktop e mobile, le lezioni `come-funziona/la-matematica-di-enigma` e `storia/scherbius-e-le-macchine-commerciali` scadevano su `page.waitForLoadState('networkidle')` (30 s). Non era un difetto delle pagine: tutte le richieste finivano in circa 2 s e `load` scattava, ma l’attesa di Playwright non si risolveva. L’attesa è stata sostituita: il test porta in vista ogni `astro-island` e aspetta che perda l’attributo `ssr`. Dopo la correzione: 99 passati, 3 saltati, nessun fallito.
+
+### Solo nel cloud
+
+Valgono solo nel container delle sessioni cloud, dove le norme non sono raggiungibili e quindi la prosa non si scrive.
+
+- **Node**: nel container c’è Node 24 in `/opt/node24/bin` (`export PATH=/opt/node24/bin:$PATH`). In un container nuovo va riscaricato da nodejs.org (`node-v24.x-linux-x64.tar.xz`).
+- **Playwright**: nel container c’è la 1.63.0 con i browser in `/opt/pw-browsers`; tenere `@playwright/test@1.63.0` finché l’ambiente non cambia.
 - **Simulatore originale**: clonato in `/home/user/EnigmaMachine`. I vettori di confronto si rigenerano con `node scripts/legacy/generate-vectors.cjs /home/user/EnigmaMachine/enigma.js <numero per modello> <file di uscita>`.
 
 ## Da verificare
