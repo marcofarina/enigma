@@ -40,21 +40,27 @@ const lettere = [...new Set(voci.map(({ data }) => initial(data.termine)))];
             <div id={id} class="scroll-mt-4">
               <dt class="text-lg font-semibold">{data.termine}</dt>
               <dd class="flex flex-col gap-1">
-                <p class="text-sm text-text-muted">
-                  <span lang="de">
-                    <abbr title={t('glossary.german')} class="no-underline">
-                      DE
-                    </abbr>{' '}
-                    {data.tedesco}
-                  </span>
-                  {' · '}
-                  <span lang="en">
-                    <abbr title={t('glossary.english')} class="no-underline">
-                      EN
-                    </abbr>{' '}
-                    {data.inglese}
-                  </span>
-                </p>
+                {(data.tedesco || data.inglese) && (
+                  <p class="text-sm text-text-muted">
+                    {data.tedesco && (
+                      <span lang="de">
+                        <abbr title={t('glossary.german')} class="no-underline">
+                          DE
+                        </abbr>{' '}
+                        {data.tedesco}
+                      </span>
+                    )}
+                    {data.tedesco && data.inglese && ' · '}
+                    {data.inglese && (
+                      <span lang="en">
+                        <abbr title={t('glossary.english')} class="no-underline">
+                          EN
+                        </abbr>{' '}
+                        {data.inglese}
+                      </span>
+                    )}
+                  </p>
+                )}
                 <p>{data.definizione}</p>
                 {data.vedi && (
                   <p class="text-sm">

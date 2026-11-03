@@ -31,7 +31,7 @@ test('un esercizio corregge la risposta e ricorda le varianti risolte', async ({
   const cipher = solution?.replace('Il testo cifrato è ', '').replace('.', '') ?? '';
   await answer.fill(cipher.toLowerCase());
   await page.getByRole('button', { name: 'Verifica' }).click();
-  await expect(page.getByRole('status').filter({ hasText: 'Corretto!' })).toBeVisible();
+  await expect(page.getByRole('status').filter({ hasText: 'Corretto.' })).toBeVisible();
   await expect(page.getByText('Varianti risolte: 1')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Rivedi nel simulatore' })).toHaveAttribute('href', /simulatore\/\?v=1/);
 
@@ -78,7 +78,7 @@ test('gli esercizi di matematica accettano numeri grandi con i separatori', asyn
   const answer = /= ([\d\s\u00a0]+) modi/.exec(total ?? '')?.[1]?.trim() ?? '';
   await page.getByLabel('Risultato (un numero intero)').fill(answer.replace(/\u00a0/g, ' '));
   await page.getByRole('button', { name: 'Verifica' }).click();
-  await expect(page.getByRole('status').filter({ hasText: 'Corretto!' })).toBeVisible();
+  await expect(page.getByRole('status').filter({ hasText: 'Corretto.' })).toBeVisible();
   await axe(page);
 });
 

@@ -1,16 +1,17 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { t } from '@/i18n';
 import { licenseLabel } from '@/lib/images';
 
 const fonti = (await getCollection('fonti')).sort((a, b) => a.data.autori.localeCompare(b.data.autori, 'it'));
 const immagini = await getCollection('immagini');
 ---
 
-<BaseLayout title="Fonti e crediti">
+<BaseLayout title={t('sources.title')}>
   <section class="prose-it">
-    <h1>Fonti e crediti</h1>
-    <h2>Bibliografia</h2>
+    <h1>{t('sources.title')}</h1>
+    <h2>{t('sources.bibliography')}</h2>
     <ul>
       {fonti.map(({ data }) => (
         <li>
@@ -20,14 +21,14 @@ const immagini = await getCollection('immagini');
         </li>
       ))}
     </ul>
-    <h2>Crediti delle immagini</h2>
+    <h2>{t('sources.imageCredits')}</h2>
     {immagini.length === 0 ? (
-      <p>Non sono ancora presenti immagini di terzi.</p>
+      <p>{t('sources.noImages')}</p>
     ) : (
       <ul>
         {immagini.map(({ data }) => (
           <li>
-            {data.titolo}: {data.attribuzione} (<a href={data.fonte}>fonte</a>,{' '}
+            {data.titolo}: {data.attribuzione} (<a href={data.fonte}>{t('sources.source')}</a>,{' '}
             {data.urlLicenza ? <a href={data.urlLicenza}>{licenseLabel(data.licenza)}</a> : licenseLabel(data.licenza)}
             ).
           </li>

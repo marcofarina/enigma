@@ -31,7 +31,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | E1 | Riscrittura «Come funziona» 1–4 | Opus | high | 2 h | B, C, D | fatta |
 | E2 | Riscrittura «Come funziona» 5–8 | Opus | high | 2,5 h | B, C, D, D4 | fatta |
 | E3 | Riscrittura Storia 1–4 e glossario | Opus | high | 2 h | B, C, D | fatta |
-| F | Interfaccia e i18n | Sonnet | high | 1 h | A, C, D5 | da fare |
+| F | Interfaccia e i18n | Sonnet | high | 1 h | A, C, D5 | fatta |
 | G | Design | Opus | high | 3 h | F, D6 | da fare |
 | H | Pulizia del codice | Sonnet | high | 1 h | A | da fare |
 | V | Verifiche sui testi delle fonti | Opus | high | 2 h per gruppo di libri | B, testi forniti da Marco | da fare |
@@ -508,6 +508,13 @@ non deve trovare nulla.
 ```bash
 pnpm lint:content && pnpm verify && pnpm test:e2e
 ```
+
+**Esito (2026-11-03)**
+
+- Fatto: stringhe del §4 corrette in `it.json` («dieci cavi», «multiple di quattro», «una lettera», «un cavo», «Corretto.», `ex.intro` e `sheet.intro` senza la formula ripetuta, `ex.sheetsLink` senza la domanda retorica). Testi di `index`, `come-funziona/index`, `crittoanalisi`, `docenti` e `fonti` spostati in `it.json` e letti con `t()`; il `grep` di accettazione non trova nulla. Home riscritta: titolo «La macchina Enigma», descrizione di 15 modelli e dei tre percorsi, quattro schede senza verbi da pulsante (Simulatore, Come funziona, Storia, Esercizi). Menu: via Crittoanalisi e Docenti (D5; le pagine restano raggiungibili dall’indirizzo), dentro Glossario. Glossario: `tedesco` e `inglese` sono opzionali nello schema, tolti i «—» da `glossario.yaml`, la riga «DE · EN» compare solo con almeno un termine.
+- Unico tocco al layout della home: la griglia passa da tre a due colonne perché le schede sono quattro; il resto è della fase G. L’occhiello resta in maiuscolo con la classe `uppercase`, e il testo in `it.json` è in minuscolo normale.
+- Comandi: `pnpm lint:content` 0 errori, 4 avvisi; `pnpm verify` exit 0; `pnpm test:e2e` exit 0 (113 passati, 3 saltati). Negli e2e `Corretto!` diventa `Corretto.`.
+- Resta: i quattro avvisi di `lint:content` su `it.json` (“ ” attorno al testo del messaggio in `ex.solution.plain` e `sheet.solutions.message`; `×` nelle soluzioni di `ex.spazio.*`): sono segnaposto con testo generato e non si possono scrivere con `<Formula>` in una stringa JSON, da decidere. Il messaggio di errore dell’engine in `src/engine/config.ts:146` dice ancora «esattamente 10 cavi» ed è controllato da un e2e: non è in `it.json`, non l’ho toccato. Le chiavi `nav.cryptanalysis` e `nav.teachers` non sono più usate dal menu e servono quando le due pagine avranno contenuto.
 
 ---
 

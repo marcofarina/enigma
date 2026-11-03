@@ -1,11 +1,9 @@
 ---
 import ComingSoon from '@/components/content/ComingSoon.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { t } from '@/i18n';
 ---
 
-<BaseLayout title="Guida per i docenti">
-  <ComingSoon
-    title="Guida per i docenti"
-    intro="Indicazioni per usare il sito in classe: modalità LIM, link condivisibili, schede stampabili e collegamenti con il curricolo."
-  />
+<BaseLayout title={t('teachers.title')}>
+  <ComingSoon title={t('teachers.title')} intro={t('teachers.intro')} />
 </BaseLayout>

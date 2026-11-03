@@ -71,8 +71,8 @@ const glossario = defineCollection({
   loader: file('./src/content/glossario.yaml'),
   schema: z.object({
     termine: z.string(),
-    tedesco: z.string().default('—'),
-    inglese: z.string().default('—'),
+    tedesco: z.string().optional(),
+    inglese: z.string().optional(),
     definizione: z.string(),
     /** Pagina del sito da cui approfondire, senza `base` (per esempio `come-funziona/i-rotori/`). */
     vedi: z
