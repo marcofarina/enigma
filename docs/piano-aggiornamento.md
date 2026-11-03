@@ -49,7 +49,10 @@ esse.
   stesura fai la passata di `.claude/norms/scrittura-umana.md` e di `scrittura-parlata.md` §1.
 - Le lezioni restano `stato: bozza`: solo Marco le porta a `rivista`.
 - Chiusura di ogni fase: spunta la riga nella tabella «Stato», aggiungi sotto la fase le righe
-  «Esito» (che cosa è cambiato, che cosa resta, comandi eseguiti), fai commit e apri la PR.
+  «Esito» (che cosa è cambiato, che cosa resta, comandi eseguiti) e fai commit. Niente PR: lavori
+  da solo, la revisione è la passata sul diff di Claude. Con `pnpm verify && pnpm test:e2e` verdi
+  fondi il branch in `main` in locale; il push su `main` pubblica il sito, quindi si fa dopo
+  conferma di Marco.
 
 ---
 
@@ -465,7 +468,7 @@ desktop e a 375 px, in tema chiaro e scuro.
 4. Home: progetta una prima schermata che mostri la macchina (per esempio il simulatore ridotto)
    invece di occhiello, titolo e tre schede uguali.
 5. Se D6 = identità ora: font e palette nei token, nessun colore fuori da `tokens.css`.
-6. Screenshot prima e dopo di home, lezione 5, lezione 8, simulatore, allegati alla PR.
+6. Screenshot prima e dopo di home, lezione 5, lezione 8, simulatore, salvati in `docs/screenshot/`.
 
 **Criteri di accettazione**
 
