@@ -30,7 +30,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | D | Componenti dello scheletro della lezione | Opus | high | 1,5 h | A, D3 | fatta |
 | E1 | Riscrittura «Come funziona» 1–4 | Opus | high | 2 h | B, C, D | fatta |
 | E2 | Riscrittura «Come funziona» 5–8 | Opus | high | 2,5 h | B, C, D, D4 | fatta |
-| E3 | Riscrittura Storia 1–4 e glossario | Opus | high | 2 h | B, C, D | da fare |
+| E3 | Riscrittura Storia 1–4 e glossario | Opus | high | 2 h | B, C, D | fatta |
 | F | Interfaccia e i18n | Sonnet | high | 1 h | A, C, D5 | da fare |
 | G | Design | Opus | high | 3 h | F, D6 | da fare |
 | H | Pulizia del codice | Sonnet | high | 1 h | A | da fare |
@@ -455,6 +455,18 @@ deve dare `1`.
 ```bash
 pnpm verify && pnpm test:e2e
 ```
+
+**Esito (2026-11-03)**
+
+- Tesi: ogni lezione di storia ha la tesi didattica in cinque righe in un commento MDX in testa al file; nessuna ha richiesto una divisione. Scheletro secondo D3: obiettivi dopo l’aggancio e riepilogo in fondo, niente citazione d’apertura né prerequisiti.
+- Storia 1: l’apertura afferma il fatto (Enigma era un prodotto in catalogo) invece della negazione-vetrina; l’antitesi «comodità… regalo» è diventata il rimando concreto alla lezione sul riflettore (scartare le posizioni di una parola sospetta). Tolta la `Nota` sul pannello, che ripeteva didascalia e prosa: il fatto sta ora nella prosa. Tolte la massima «Una macchina in vendita si può comprare, e quindi studiare» e «come vedremo». «Leve» diventa «nottolini». Il paragrafo sugli inventori resta qui (E1 l’ha tolto dalla lezione 2).
+- Storia 2: sezioni in ordine cronologico (i rotori IV e V vengono prima di «tre su otto», che prima li anticipava); il titolo-slogan è diventato «Da tre a otto rotori», con i conti 6, 60 e 336 in `<Formula>`. «Una novità che ne cambiava la sicurezza» sostituito dal fatto. Il rimando alla crittoanalisi su Shark è sostituito da ciò che dice Crypto Museum: nove mesi, fino alla cattura di nuovi fogli chiave.
+- Storia 3: tolta la massima d’apertura, «la stessa identica sequenza» e il frammento «Più sotto, un avvertimento». L’approfondimento non rimanda più alla sezione che manca: dice che cosa davano le coppie di lettere dell’indicatore doppio (tre permutazioni senza conoscere il testo) e rimanda alla lezione 9, che spiega perché i loro cicli non dipendono dal pannello. La lezione 9, a sua volta, rimanda alla crittoanalisi per come Rejewski costruì quelle permutazioni: storia 3 ora ne dà l’origine. Aggiunta `rejewski-1980` al frontmatter, consultata in E2. Traduzioni dal tedesco tra « ».
+- Storia 4: tolti «grazie a un dettaglio», «esattamente» e il frammento «un punto debole evidente». Il simulatore è preceduto dall’istruzione (premi la L una ventina di volte) e seguito dall’esito, con il rimando alla lezione sul riflettore; la didascalia descrive la macchina e avverte che i rotori della Regia Marina avevano un altro cablaggio. Tolto il «ma non…» in apertura.
+- Glossario: forma unica, scritta in testa al file (prima frase da vocabolario senza articolo, poi frasi intere con il soggetto). Corrette le voci che cominciavano con l’articolo o non avevano verbo («chiave», «chiave del giorno», «cillies», «ordine dei rotori», «posizione iniziale», «testo cifrato», «testo in chiaro»). «Leva» diventa «nottolino» in «doppio passo» e «tacca». Voci nuove: le cinque del piano (nottolino, deviatore, coniugio, principio di Kerckhoffs, Kenngruppenbuch) e i termini definiti in grassetto nelle lezioni che mancavano (analisi delle frequenze, carcassa, ciclo, cifrario polialfabetico, periodo, punto fisso, reciprocità, sostituzione monoalfabetica, spazio delle chiavi). Ogni voce nuova riprende la definizione della lezione a cui rimanda. Restano fuori di proposito «scambiatore» (solo il modello della lezione 3), «composizione», «inversa» e «identità» (matematica generale).
+- Verifiche su Crypto Museum (pagina della M4), annotate in `docs/stato.md`: *Kenngruppenbuch* del 1941 di 120 pagine, M4 del 1° febbraio 1942, Shark illeggibile per nove mesi.
+- Comandi: il `grep` del primo criterio non trova nulla; il secondo dà `1`; `pnpm verify` exit 0 (188 test, `lint:content` 0 errori e 5 avvisi, tutti in `it.json`, per la fase F); `pnpm test:e2e` exit 0 (113 passati, 3 saltati).
+- Restano: le voci del glossario senza termine tedesco scrivono ancora «—», che la fase F deve nascondere; quasi tutti i fatti della storia 4 (Mavis Lever, Matapan, biografia di Knox) poggiano su Crypto Museum in attesa di `batey-dilly` (fase V). Gli inglesi «changeover switch» (deviatore) e «pawl» (nottolino) sono traduzioni tecniche, non termini trovati in una fonte su Enigma.
 
 ---
 

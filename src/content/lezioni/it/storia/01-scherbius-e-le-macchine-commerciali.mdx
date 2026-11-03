@@ -1,6 +1,6 @@
 ---
 title: Scherbius e le macchine commerciali
-description: Dall’invenzione della macchina a rotori alle Enigma vendute ad aziende e governi.
+description: Dall’invenzione della macchina a rotori alle Enigma vendute ad aziende e governi, e al primo attacco britannico contro una macchina comprata sul mercato.
 sezione: storia
 ordine: 1
 stato: bozza
@@ -9,15 +9,30 @@ fonti:
   - crypto-museum-enigma-k
 ---
 
+{/*
+Tesi didattica.
+Chi conosce Enigma dai racconti della seconda guerra mondiale la immagina come un’invenzione militare segreta.
+La lezione mostra che negli anni Venti era un prodotto in catalogo, che ogni modello commerciale aggiunse un pezzo della macchina militare (lampade, riflettore, tastiera QWERTZ) tranne il pannello a spine, e che i britannici poterono comprarla e studiarla già nel 1927 perché era in vendita.
+Alla fine lo studente sa ordinare i modelli commerciali e dire che cosa introdusse ciascuno, e sa spiegare perché vendere la macchina aprì la strada al primo attacco.
+Esempio: l’Enigma D comprata dalla GC&CS e analizzata da Hugh Foss.
+*/}
+
 import Figura from '@/components/lesson/Figura.astro';
 import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
-import Nota from '@/components/lesson/Nota.astro';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
 
-Enigma non nacque come arma. Negli anni Venti era un prodotto in catalogo, pensato per aziende e uffici che volevano proteggere le proprie comunicazioni. Solo più tardi le forze armate tedesche la trasformarono nella macchina che conosciamo dai libri sulla seconda guerra mondiale.
+Negli anni Venti Enigma era un prodotto in catalogo: una ditta di Berlino la vendeva ad aziende e uffici che volevano proteggere le proprie comunicazioni. Le forze armate tedesche la adottarono e la modificarono a partire dal 1926, come racconta la lezione [L’adozione militare](../l-adozione-militare/).
 
-## Un’idea venuta a molti
+<Obiettivi>
+- Ordinare i modelli commerciali di Enigma, dalla *Handelsmaschine* all’Enigma K, e dire che cosa introdusse ciascuno.
+- Dire quale parte della macchina militare mancava a tutte le Enigma commerciali.
+- Spiegare perché il fatto che Enigma fosse in vendita permise ai britannici di studiarla già nel 1927.
+</Obiettivi>
 
-L’idea di cifrare facendo passare la corrente attraverso dischi cablati che ruotano — la *macchina a rotori* — comparve quasi nello stesso momento in diversi paesi. Tra il 1917 e il 1919 la svilupparono Edward Hebern negli Stati Uniti, Arvid Damm in Svezia, Hugo Koch nei Paesi Bassi e Arthur Scherbius in Germania. Due ufficiali della marina olandese, Theo van Hengel e Rudolf Spengler, avevano costruito macchine a rotori funzionanti già nel 1915, per il ministero della guerra del loro paese.
+## Le prime macchine a rotori
+
+La *macchina a rotori* cifra facendo passare la corrente attraverso dischi cablati che ruotano. L’idea comparve quasi nello stesso momento in diversi paesi: tra il 1917 e il 1919 la svilupparono Edward Hebern negli Stati Uniti, Arvid Damm in Svezia, Hugo Koch nei Paesi Bassi e Arthur Scherbius in Germania. Due ufficiali della marina olandese, Theo van Hengel e Rudolf Spengler, avevano costruito macchine a rotori funzionanti già nel 1915, per il ministero della guerra del loro paese.
 
 Scherbius costruì un primo prototipo nel 1917 e lo brevettò il 23 febbraio 1918. In seguito acquistò anche il brevetto di Koch per un dispositivo simile, depositato il 7 ottobre 1919.
 
@@ -25,26 +40,30 @@ Scherbius costruì un primo prototipo nel 1917 e lo brevettò il 23 febbraio 191
 
 ## La macchina per il commercio
 
-Il nome Enigma comparve per la prima volta nel 1923, in un articolo tecnico dello stesso Scherbius che presentava la *Handelsmaschine*, la “macchina per il commercio”. Era un apparecchio grande e pesante, simile a una macchina da scrivere, che stampava il testo cifrato direttamente su un foglio. La vendeva la ditta Scherbius & Ritter di Berlino. Per quanto se ne sa, nessun esemplare è arrivato fino a noi.
+Il nome Enigma comparve per la prima volta nel 1923, in un articolo tecnico dello stesso Scherbius che presentava la *Handelsmaschine*, la «macchina per il commercio». Era un apparecchio grande e pesante, simile a una macchina da scrivere, che stampava il testo cifrato direttamente su un foglio. La vendeva la ditta Scherbius & Ritter di Berlino. Per quanto se ne sa, nessun esemplare è arrivato fino a noi.
 
-Le macchine che stampavano si rivelarono costose e poco affidabili. Nel 1924 Scherbius riprese allora il suo prototipo e ne ricavò l’Enigma A, la *Glühlampenmaschine*: invece di stampare, accendeva una lampadina con la lettera cifrata, e l’operatore la trascriveva a mano. Costava circa un ottavo della macchina che stampava. Seguirono rapidamente l’Enigma B e l’Enigma C, del 1925, con tre rotori, 26 tasti e 26 lampade.
+Le macchine che stampavano si rivelarono costose e poco affidabili. Nel 1924 Scherbius riprese allora il suo prototipo e ne ricavò l’Enigma A, la *Glühlampenmaschine*: invece di stampare, accendeva una lampadina con la lettera cifrata, e l’operatore la trascriveva a mano. L’Enigma A costava circa un ottavo della macchina che stampava. Seguirono l’Enigma B e l’Enigma C, del 1925, con tre rotori, 26 tasti e 26 lampade.
 
 ## Il riflettore e la tastiera QWERTZ
 
-Le macchine a lampade avevano un componente nuovo, il **riflettore**, un’idea di Willy Korn, collaboratore di Scherbius. Il riflettore rimanda indietro la corrente attraverso i rotori e rende la macchina reciproca: con le stesse impostazioni, la stessa macchina cifra e decifra. Per chi la usava era una grande comodità; per chi l’attaccava, come si vede nella lezione sul [riflettore](../../come-funziona/il-riflettore/), fu un regalo.
+Le macchine a lampade avevano un componente nuovo, il **riflettore**, un’idea di Willy Korn, collaboratore di Scherbius. Il riflettore rimanda indietro la corrente attraverso i rotori e rende la macchina reciproca: con le stesse impostazioni, la stessa macchina cifra e decifra. Il riflettore fa anche sì che nessuna lettera si cifri in sé stessa, e la lezione [Il riflettore](../../come-funziona/il-riflettore/) mostra come chi intercettava i messaggi usasse questa regola per scartare le posizioni di una parola sospetta sotto il testo cifrato.
 
-Nel 1926 arrivò l’Enigma D, che introdusse la tastiera tedesca QWERTZ e un riflettore impostabile a mano su 26 posizioni, montato a sinistra dei rotori. Divenne la base di quasi tutti i modelli successivi. Nel 1927 le succedette l’Enigma K, in cui la tacca che fa avanzare il rotore vicino era fissata all’anello delle lettere invece che al corpo del rotore. L’Enigma K fu la principale macchina commerciale: la comprarono le ferrovie tedesche, l’esercito svizzero e, come vedremo, la marina italiana.
+Nel 1926 arrivò l’Enigma D, che introdusse la tastiera tedesca QWERTZ e un riflettore impostabile a mano su 26 posizioni, montato a sinistra dei rotori. L’Enigma D divenne la base di quasi tutti i modelli successivi. Nel 1927 le succedette l’Enigma K, in cui la tacca che fa avanzare il rotore vicino era fissata all’anello delle lettere invece che al corpo del rotore. L’Enigma K fu la principale macchina commerciale: la comprarono le ferrovie tedesche, l’esercito svizzero e la marina italiana.
 
-<MiniSimulatore client:visible config="v=1&m=K&w=I-II-III&r=AAA&p=AAA&u=UKW" didascalia="Enigma K con i rotori commerciali I, II e III in posizione AAA. Non ha il pannello a spine." />
+Nessuna delle macchine commerciali aveva il pannello a spine. Il pannello fu un’aggiunta dei militari, e la ditta non lo vendette mai ai clienti civili.
 
-<Nota titolo="Niente pannello a spine">
-Le macchine commerciali non avevano il pannello a spine. Fu un’aggiunta dei militari e non venne mai venduta ai clienti civili.
-</Nota>
+<MiniSimulatore client:visible config="v=1&m=K&w=I-II-III&r=AAA&p=AAA&u=UKW" didascalia="Enigma K con i rotori commerciali I, II e III in posizione AAA, senza pannello a spine." />
 
 ## Contatori e passi irregolari
 
-Nel 1927 cominciò anche lo sviluppo di una famiglia più sofisticata, la *Zählwerk Enigma* (Enigma con contatore), che mostrava quante lettere erano state digitate. Il primo modello, l’A28, del 1928, aveva un meccanismo a ingranaggi invece che a leve, che si poteva anche riavvolgere per correggere gli errori, e rotori con molte tacche — 17, 15 e 11 — che li facevano avanzare in modo irregolare. Anche il riflettore avanzava durante la cifratura. Una versione più piccola, la G31 del 1931, divenne nota come Enigma G o Enigma dell’Abwehr, il servizio informazioni militare tedesco. Nel [simulatore](../../simulatore/) si possono provare sia l’Enigma G sia un esemplare con contatore.
+Nel 1927 cominciò anche lo sviluppo della *Zählwerk Enigma*, l’Enigma con contatore, che mostrava quante lettere erano state battute. Il primo modello, l’A28, del 1928, muoveva i rotori con un meccanismo a ingranaggi invece che con i nottolini, e l’operatore poteva farlo girare all’indietro per correggere un errore di battitura. I rotori dell’A28 avevano molte tacche, 17, 15 e 11, che li facevano avanzare in modo irregolare, e anche il riflettore avanzava durante la cifratura. Una versione più piccola, la G31 del 1931, divenne nota come Enigma G o Enigma dell’Abwehr, il servizio informazioni militare tedesco. Nel [simulatore](../../simulatore/) puoi provare sia l’Enigma G sia un esemplare con contatore.
 
-## Il primo attacco
+## Il primo attacco britannico
 
-Una macchina in vendita si può comprare, e quindi studiare. Tra la fine del 1926 e l’inizio del 1927 il servizio crittografico britannico, la Government Code and Cypher School (GC&CS), acquistò un’Enigma D e la affidò a Hugh Foss. Nel suo rapporto del 1927 Foss dimostrò che, con circa 180 lettere di testo in chiaro noto, si poteva ricostruire il cablaggio dei due rotori di destra; noti i cablaggi, per trovare le impostazioni bastavano una quindicina di lettere. Dilly Knox, collega di Foss, perfezionò poi questi metodi — e dieci anni dopo li usò contro le Enigma K della guerra civile spagnola, come racconta la lezione su [Enigma e l’Italia](../enigma-e-l-italia/).
+Tra la fine del 1926 e l’inizio del 1927 il servizio crittografico britannico, la Government Code and Cypher School (GC&CS), acquistò sul mercato un’Enigma D e la affidò a Hugh Foss. Nel suo rapporto del 1927 Foss dimostrò che, con circa 180 lettere di testo in chiaro noto, si poteva ricostruire il cablaggio dei due rotori di destra; noti i cablaggi, per trovare le impostazioni bastavano una quindicina di lettere. Dilly Knox, collega di Foss, perfezionò poi questi metodi, e dieci anni dopo li usò contro le Enigma K della guerra civile spagnola, come racconta la lezione [Enigma e l’Italia](../enigma-e-l-italia/).
+
+<Riepilogo>
+- La *Handelsmaschine* del 1923 stampava il cifrato; l’Enigma A del 1924 accendeva invece una lampada, e con le macchine a lampade arrivò il riflettore; la D del 1926 portò la tastiera QWERTZ e il riflettore impostabile; la K del 1927 fissò la tacca all’anello.
+- Nessuna Enigma commerciale aveva il pannello a spine: lo aggiunsero i militari.
+- La GC&CS comprò un’Enigma D sul mercato, e nel 1927 Hugh Foss mostrò che bastavano circa 180 lettere di testo in chiaro noto per ricostruire il cablaggio di due rotori.
+</Riepilogo>
