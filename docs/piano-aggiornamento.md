@@ -1,0 +1,553 @@
+# Piano di aggiornamento: allineare Enigma alle norme del workspace
+
+Corregge quanto elencato in `docs/revisione-2026-11-03.md` (d’ora in poi «la revisione»). Ogni fase
+si esegue in una sessione Claude Code separata, aperta in `enigma/` **in locale**: nel cloud le
+norme non sono raggiungibili.
+
+## Decisioni da prendere prima di cominciare
+
+Le fasi segnate con la decisione cambiano forma a seconda della risposta. Le raccomandazioni sono
+mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che ne dipendono.
+
+| # | Decisione | Raccomandazione | Fasi coinvolte | Risposta |
+|---|---|---|---|---|
+| D1 | Il symlink `.claude/norms` va tracciato in git o resta solo locale? | Solo locale (in `.gitignore`): nel cloud sarebbe comunque rotto | A | raccomandazione accettata (2026-11-03) |
+| D2 | Virgolette: « » per le citazioni come vogliono le norme, o “ ” come prescrive oggi `CLAUDE.md`? | « »: l’eccezione dei caporali vale solo per Python Doesn’t Byte | A, C, E1–E3 | raccomandazione accettata (2026-11-03) |
+| D3 | Le lezioni di Enigma adottano lo scheletro di `scrittura-didattica.md` §7 (citazione d’apertura, prerequisiti, obiettivi, riepilogo) e le domande di previsione prima dei componenti? | Sì per «Come funziona»; per la Storia solo obiettivi e riepilogo | D, E1–E3 | raccomandazione accettata (2026-11-03) |
+| D4 | La lezione 7 si divide in «Il pannello a spine» e «L’Uhr»? | Sì: sono due tesi | E2 | raccomandazione accettata (2026-11-03) |
+| D5 | Crittoanalisi e Docenti escono dal menu finché sono vuote? | Sì; restano raggiungibili dall’indirizzo | F | raccomandazione accettata (2026-11-03) |
+| D6 | Design: correggere solo i difetti e tenere il tema neutro, o fare ora l’identità visiva di Rainbow Bits? | Correggere i difetti ora, identità in un piano separato quando esiste un riferimento | G | raccomandazione accettata (2026-11-03) |
+| D7 | Quali libri delle fonti hai in copia (Singh, Batey, Rejewski, Kozaczuk, Welchman, Bauer, Hamer)? | Le fonti non consultate escono dal frontmatter finché non le verifichi | B | raccomandazione accettata (2026-11-03): escono tutte le fonti non consultate; Marco segnala i libri man mano che li verifica |
+| D8 | La revisione viene prima della fase 4 del piano originale? | Sì: la fase 4 scrive molta prosa nuova, conviene farla con norme e linter a posto | I | raccomandazione accettata (2026-11-03) |
+
+## Stato
+
+| Fase | Contenuto | Modello | Effort | Durata | Dipende da | Stato |
+|---|---|---|---|---|---|---|
+| A | Norme in sessione e documenti operativi | Sonnet | high | 0,5 h | D1, D2 | da fare |
+| B | Errori di fatto e incoerenze | Sonnet | high | 1 h | A, D7 | da fare |
+| C | Linter dei contenuti | Sonnet | high | 1,5 h | A, D2 | da fare |
+| D | Componenti dello scheletro della lezione | Opus | high | 1,5 h | A, D3 | da fare |
+| E1 | Riscrittura «Come funziona» 1–4 | Opus | high | 2 h | B, C, D | da fare |
+| E2 | Riscrittura «Come funziona» 5–8 | Opus | high | 2,5 h | B, C, D, D4 | da fare |
+| E3 | Riscrittura Storia 1–4 e glossario | Opus | high | 2 h | B, C, D | da fare |
+| F | Interfaccia e i18n | Sonnet | high | 1 h | A, C, D5 | da fare |
+| G | Design | Opus | high | 3 h | F, D6 | da fare |
+| H | Pulizia del codice | Sonnet | high | 1 h | A | da fare |
+| I | Riscrittura delle fasi 4–5 di `docs/piano.md` nel formato dei piani | Opus | high | 1 h | E1–E3, D8 | da fare |
+
+Totale stimato: circa 17 ore di sessione. Dopo A, le fasi B, C, F e H non si toccano a vicenda
+e si possono fare in qualunque ordine. E1, E2 ed E3 toccano file diversi e sono indipendenti fra
+loro.
+
+## Regole comuni a tutte le fasi
+
+- Lavora su un branch `revisione/<lettera della fase>` creato da `main` aggiornato.
+- Prima di scrivere o riscrivere prosa leggi `.claude/norms/scrittura-didattica.md`; a fine
+  stesura fai la passata di `.claude/norms/scrittura-umana.md` e di `scrittura-parlata.md` §1.
+- Le lezioni restano `stato: bozza`: solo Marco le porta a `rivista`.
+- Chiusura di ogni fase: spunta la riga nella tabella «Stato», aggiungi sotto la fase le righe
+  «Esito» (che cosa è cambiato, che cosa resta, comandi eseguiti), fai commit e apri la PR.
+
+---
+
+## Fase A — Norme in sessione e documenti operativi
+
+**Modello: Sonnet · Effort: high · Durata: 0,5 h · Dipende da: D1, D2**
+
+**Obiettivo.** Ogni sessione locale aperta in `enigma/` riceve le norme di Marco; i documenti
+operativi descrivono il progetto com’è oggi.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Sonnet con effort high. Se non stai girando su Sonnet,
+fermati e dimmelo senza fare altro.
+
+Esegui la fase A di docs/piano-aggiornamento.md. Leggi prima la fase, le decisioni D1 e D2 nella
+tabella in alto e il §1 di docs/revisione-2026-11-03.md. Come modello di CLAUDE.md usa
+../python-doesnt-byte/CLAUDE.md (sezione «Norme di contenuto condivise»).
+```
+
+**Passi**
+
+1. Crea il symlink: `ln -s ../../norms .claude/norms`. Se D1 = solo locale, aggiungi
+   `.claude/norms` e `.claude/launch.json` a `.gitignore`.
+2. In `CLAUDE.md` aggiungi in testa la sezione delle norme sul modello di Python Doesn’t Byte:
+   importa `@.claude/norms/contenuto.md`; elenca in tabella le altre norme da leggere quando
+   servono (`scrittura-didattica.md` prima di scrivere una lezione, `scrittura-tecnica.md` prima di
+   un piano o di un README, `scrittura-umana.md` e `scrittura-parlata.md` §1 a fine stesura).
+   Aggiungi che il lavoro sui testi si fa solo in locale.
+3. Applica D2 alla riga sulle virgolette di `CLAUDE.md`.
+4. Aggiorna `README.md`: tabella «Stato» con le fasi 0–3 fatte; togli «Il progetto è agli inizi».
+5. In `docs/stato.md` sposta le note sul container cloud in una sezione «Solo nel cloud» e
+   aggiungi le note per il locale (Node ≥ 22.23.4, `pnpm exec playwright install chromium`).
+6. Esegui i test e2e in locale e annota l’esito in `stato.md`.
+
+**Criteri di accettazione**
+
+```bash
+test -f .claude/norms/contenuto.md && echo ok
+```
+
+```bash
+grep -c '@.claude/norms/contenuto.md' CLAUDE.md
+```
+deve dare `1`.
+
+```bash
+grep -c 'agli inizi' README.md
+```
+deve dare `0`.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+---
+
+## Fase B — Errori di fatto e incoerenze
+
+**Modello: Sonnet · Effort: high · Durata: 1 h · Dipende da: A, D7**
+
+**Obiettivo.** Nessuna pagina contraddice un’altra pagina o i numeri che riporta; le fonti nel
+frontmatter sono solo quelle consultate davvero.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Sonnet con effort high. Se non stai girando su Sonnet,
+fermati e dimmelo senza fare altro.
+
+Esegui la fase B di docs/piano-aggiornamento.md. L'elenco esatto delle correzioni è la tabella del
+§2 di docs/revisione-2026-11-03.md. Per le fonti segui la risposta a D7. Non riscrivere lo stile
+delle frasi che tocchi: lo fanno le fasi E.
+```
+
+**Passi**
+
+1. Correggi ogni riga della tabella del §2 della revisione, nell’ordine.
+2. Per «Willi/Willy Korn» e per l’attribuzione dell’UKW-D controlla Crypto Museum con `curl`
+   (pagine `hist.htm` e `ukwd/index.htm`) e annota in `stato.md` data e pagina consultata.
+3. Togli dal frontmatter le fonti non consultate secondo D7; elencale in `stato.md` sotto
+   «Da verificare», con la lezione e il fatto a cui servono.
+4. Allinea `period` dell’Enigma I in `src/engine/models.ts`.
+
+**Criteri di accettazione**
+
+```bash
+grep -rn 'milioni di miliardi' src/content
+```
+non deve trovare nulla.
+
+```bash
+grep -rhoE 'Will[iy] Korn' src/content | sort -u | wc -l
+```
+deve dare `1`.
+
+```bash
+grep -n 'quindi lo è anche' src/content/glossario.yaml
+```
+non deve trovare nulla.
+
+```bash
+grep -rn 'funzione `step`' src/content
+```
+non deve trovare nulla.
+
+```bash
+pnpm verify
+```
+
+---
+
+## Fase C — Linter dei contenuti
+
+**Modello: Sonnet · Effort: high · Durata: 1,5 h · Dipende da: A, D2**
+
+**Obiettivo.** `pnpm lint:content` controlla le norme meccanizzabili e non produce falsi positivi.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Sonnet con effort high. Se non stai girando su Sonnet,
+fermati e dimmelo senza fare altro.
+
+Esegui la fase C di docs/piano-aggiornamento.md. Il punto 6 del §1 di
+docs/revisione-2026-11-03.md elenca che cosa manca al linter. Le regole sono in
+.claude/norms/contenuto.md e ../paideia-os/templates/scrittura-italiana.md.
+```
+
+**Passi**
+
+1. Aggiungi a `scripts/content-rules.ts` le regole: `...` invece di `…`; «sennò»; «qual’è» e
+   «qual'è»; caratteri matematici in prosa fuori da `<Formula>` (`⁻`, apici e pedici Unicode,
+   `×` fra due numeri); separatore delle migliaia diverso dallo spazio non separabile; virgolette
+   secondo D2. Ogni regola con il suo test in `scripts/content-rules.test.ts`.
+2. Elimina i falsi positivi attuali: un elenco di nomi propri ammessi nei titoli e dopo i due
+   punti, in un file di dati che si aggiorna senza toccare il codice; «all’1» come data.
+3. Estendi il controllo a `src/i18n/it.json` (valori delle chiavi).
+4. Correggi in questa fase solo i casi meccanici (puntini, spazi non separabili nei numeri). Le
+   regole che il testo attuale viola in modo non meccanico entrano come avvisi: diventano errori
+   alla fine delle fasi E.
+
+**Criteri di accettazione**
+
+```bash
+pnpm lint:content
+```
+nessun errore, e nessun avviso su nomi propri o date.
+
+```bash
+pnpm test
+```
+
+---
+
+## Fase D — Componenti dello scheletro della lezione
+
+**Modello: Opus · Effort: high · Durata: 1,5 h · Dipende da: A, D3**
+
+Se D3 = no, la fase si riduce al componente `Citazione` del piano originale (30 minuti, Sonnet).
+
+**Obiettivo.** Le lezioni hanno i mattoni per lo scheletro di `scrittura-didattica.md` §7 e per
+la domanda di previsione prima di un componente interattivo.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase D di docs/piano-aggiornamento.md, secondo la decisione D3. Leggi
+.claude/norms/scrittura-didattica.md §6–7 e, come repertorio, i callout di Python Doesn't Byte
+(../python-doesnt-byte, cerca :::learn e :::nutshell) e
+../paideia-os/templates/lezione-docusaurus.md. Adatta, non copiare: qui i componenti sono Astro e
+React, con i token di src/styles/tokens.css.
+```
+
+**Passi**
+
+1. Progetta e scrivi i componenti: apertura con citazione (`Citazione` con fonte e pagina, già
+   prevista dal piano originale), prerequisiti e obiettivi, riepilogo, previsione (lo studente
+   scrive o sceglie la risposta, poi il componente la confronta con l’esito).
+2. Usa i componenti in una lezione sola, la 5, come prova; il resto lo fanno le fasi E.
+3. Aggiungi i test e2e con axe per i nuovi componenti.
+4. Documenta in `CLAUDE.md` quando si usa ciascun componente.
+
+**Criteri di accettazione**
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+```bash
+grep -c '<Previsione' src/content/lezioni/it/05-il-passo-e-il-doppio-passo.mdx
+```
+almeno `1`.
+
+---
+
+## Fase E1 — Riscrittura «Come funziona» 1–4
+
+**Modello: Opus · Effort: high · Durata: 2 h · Dipende da: B, C, D**
+
+**Obiettivo.** Le lezioni 1–4 rispettano le norme di scrittura e hanno ciascuna una tesi
+didattica.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase E1 di docs/piano-aggiornamento.md. Leggi .claude/norms/scrittura-didattica.md
+prima di scrivere; i rilievi per lezione sono nel §3 di docs/revisione-2026-11-03.md. Voce di
+riferimento: i campioni in .claude/norms/campioni/.
+```
+
+**Passi**
+
+1. Per ogni lezione scrivi la tesi didattica in cinque righe (didattica §1) in un commento MDX in
+   testa al file; se non sta in cinque righe, proponi a Marco una divisione invece di scriverla.
+2. Riscrivi applicando i rilievi del §3 della revisione e i pattern ricorrenti (rimandi alla
+   crittoanalisi, «dettaglio», intensificatori, matematica con `<Formula>`).
+3. Dove c’è un componente interattivo, metti la previsione prima del risultato (fase D).
+4. Togli la ripetizione fra lezione 2 e storia 1: il paragrafo sugli inventori resta in storia 1.
+5. Rimandi alla crittoanalisi: tienili solo dove dicono che cosa arriverà e lo dicono una volta.
+6. Fai la passata finale di `scrittura-umana.md` e `scrittura-parlata.md` frase per frase.
+
+**Criteri di accettazione**
+
+```bash
+grep -rnE 'dettaglio|esattamente|fondamental|geniale' src/content/lezioni/it/0[1-4]-*.mdx
+```
+non deve trovare nulla.
+
+```bash
+grep -rn '[⁰¹²³⁴⁵⁶⁷⁸⁹⁻ᵏⁿ]' src/content/lezioni/it/0[1-4]-*.mdx
+```
+non deve trovare nulla.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+---
+
+## Fase E2 — Riscrittura «Come funziona» 5–8
+
+**Modello: Opus · Effort: high · Durata: 2,5 h · Dipende da: B, C, D, D4**
+
+**Obiettivo.** Come E1, per le lezioni 5–8; se D4 = sì, la lezione 7 diventa due lezioni e la 8
+scala di numero.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase E2 di docs/piano-aggiornamento.md, secondo la decisione D4. Leggi
+.claude/norms/scrittura-didattica.md prima di scrivere; i rilievi per lezione sono nel §3 di
+docs/revisione-2026-11-03.md.
+```
+
+**Passi**
+
+1. Gli stessi passi 1, 2, 3, 5 e 6 di E1.
+2. Se D4 = sì, dividi la lezione 7, rinumera `ordine` e aggiorna i link interni; il crawler
+   `tests/e2e/links.spec.ts` deve restare verde.
+3. Lezione 8: definisci il principio di Kerckhoffs dove compare; aggiungi la spiegazione delle
+   cifre diverse per lo spazio delle chiavi promessa dal piano originale, solo con fonti
+   consultate (D7).
+4. Lezione 7: trova la fonte della misconcezione «l’Uhr rende Enigma non reciproca» o togli il
+   «si legge a volte».
+
+**Criteri di accettazione**
+
+```bash
+grep -rnE 'dettaglio|esattamente|curiosamente|proprio' src/content/lezioni/it/0[5-9]-*.mdx
+```
+non deve trovare nulla.
+
+```bash
+grep -rn '[⁰¹²³⁴⁵⁶⁷⁸⁹⁻ᵏⁿ]' src/content/lezioni/it/0[5-9]-*.mdx
+```
+non deve trovare nulla.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+---
+
+## Fase E3 — Riscrittura Storia 1–4 e glossario
+
+**Modello: Opus · Effort: high · Durata: 2 h · Dipende da: B, C, D**
+
+**Obiettivo.** Le lezioni di storia e il glossario rispettano le norme; il glossario copre i
+termini usati nelle lezioni.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase E3 di docs/piano-aggiornamento.md. Leggi .claude/norms/scrittura-didattica.md
+prima di scrivere; i rilievi sono nel §3 di docs/revisione-2026-11-03.md, sezioni «Storia» e
+«Glossario».
+```
+
+**Passi**
+
+1. Riscrivi le lezioni di storia applicando i rilievi del §3 (aperture a massima, antitesi in coda,
+   titoli-slogan, «dettaglio», rimandi alla crittoanalisi).
+2. Storia 4: didascalia del simulatore descrittiva, istruzione nella prosa.
+3. Glossario: aggiungi nottolino, deviatore, coniugio, principio di Kerckhoffs, Kenngruppenbuch;
+   usa «nottolino» ovunque al posto di «leva»; scegli una forma per le definizioni e tienila per
+   tutte le voci.
+4. Passata finale come in E1.
+
+**Criteri di accettazione**
+
+```bash
+grep -rnE 'dettaglio|esattamente|Più rotori, più chiavi' src/content/lezioni/it/storia
+```
+non deve trovare nulla.
+
+```bash
+grep -c 'id: nottolino' src/content/glossario.yaml
+```
+deve dare `1`.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+---
+
+## Fase F — Interfaccia e i18n
+
+**Modello: Sonnet · Effort: high · Durata: 1 h · Dipende da: A, C, D5**
+
+**Obiettivo.** Tutti i testi dell’interfaccia stanno in `it.json` e rispettano le norme; il menu
+porta solo a pagine con contenuto.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Sonnet con effort high. Se non stai girando su Sonnet,
+fermati e dimmelo senza fare altro.
+
+Esegui la fase F di docs/piano-aggiornamento.md. I rilievi sono nel §4 di
+docs/revisione-2026-11-03.md. Non cambiare il layout della home: lo fa la fase G; qui sposti e
+correggi i testi.
+```
+
+**Passi**
+
+1. Correggi le stringhe della tabella del §4 della revisione.
+2. Sposta in `it.json` i testi scritti nelle pagine (`index.astro`, `come-funziona/index.astro`,
+   `crittoanalisi`, `docenti`, `fonti`) e usa `t()`.
+3. Riscrivi i testi della home: niente verbi da pulsante, niente «fedele» senza oggetto, aggiungi
+   la Storia.
+4. Applica D5 al menu; aggiungi il Glossario al menu.
+5. Glossario: non mostrare «DE —» per le voci senza termine tedesco.
+
+**Criteri di accettazione**
+
+```bash
+grep -nE "title: '|text: '|intro=\"" src/pages/index.astro src/pages/*/index.astro
+```
+non deve trovare nulla.
+
+```bash
+pnpm lint:content && pnpm verify && pnpm test:e2e
+```
+
+---
+
+## Fase G — Design
+
+**Modello: Opus · Effort: high · Durata: 3 h · Dipende da: F, D6**
+
+**Obiettivo.** Nessun difetto visibile nelle pagine; la home non ha più la forma da modello.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase G di docs/piano-aggiornamento.md, secondo la decisione D6. I rilievi sono nel §5
+di docs/revisione-2026-11-03.md. Carica la skill frontend-design prima di progettare. Avvia il
+sito con il server «astro-dev» di .claude/launch.json e verifica ogni modifica nel browser, a
+desktop e a 375 px, in tema chiaro e scuro.
+```
+
+**Passi**
+
+1. Stile delle tabelle in `.prose-it`, solo con i token.
+2. Blocchi di codice: tema di Shiki chiaro e scuro legato a `data-theme`, margini e padding.
+3. Intestazione su mobile: menu che non si comprime a destra, bersagli di almeno 44 px.
+4. Home: progetta una prima schermata che mostri la macchina (per esempio il simulatore ridotto)
+   invece di occhiello, titolo e tre schede uguali.
+5. Se D6 = identità ora: font e palette nei token, nessun colore fuori da `tokens.css`.
+6. Screenshot prima e dopo di home, lezione 5, lezione 8, simulatore, allegati alla PR.
+
+**Criteri di accettazione**
+
+```bash
+grep -c 'table' src/styles/global.css
+```
+almeno `1`.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+Controllo visivo nel browser: la tabella della lezione 5 si legge come tabella; i blocchi di
+codice della lezione 8 hanno margini; a 375 px l’intestazione non va su tre righe.
+
+---
+
+## Fase H — Pulizia del codice
+
+**Modello: Sonnet · Effort: high · Durata: 1 h · Dipende da: A**
+
+**Obiettivo.** Nessuna regola di accessibilità silenziata senza motivo; nessun markup duplicato
+fra gli indici delle sezioni.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Sonnet con effort high. Se non stai girando su Sonnet,
+fermati e dimmelo senza fare altro.
+
+Esegui la fase H di docs/piano-aggiornamento.md. I rilievi sono nel §6 di
+docs/revisione-2026-11-03.md.
+```
+
+**Passi**
+
+1. Per ogni `eslint-disable` di `jsx-a11y`: dai al contenitore un ruolo e un nome accessibile
+   (per esempio `role="group"` con `aria-label`) o sposta il gestore su un elemento interattivo.
+   Lascia il commento di disattivazione solo dove la regola sbaglia, con il motivo.
+2. `AnimazionePasso.tsx`: togli i due `exhaustive-deps` silenziati (memo dei nomi dei rotori,
+   `advance` in `useCallback`).
+3. Estrai un componente per l’elenco delle lezioni, usato da `come-funziona/index.astro` e
+   `storia/index.astro`.
+
+**Criteri di accettazione**
+
+```bash
+grep -rn 'eslint-disable' src | wc -l
+```
+minore di `8`, e ogni riga rimasta ha un commento con il motivo.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+---
+
+## Fase I — Le fasi 4–5 di `docs/piano.md` nel formato dei piani
+
+**Modello: Opus · Effort: high · Durata: 1 h · Dipende da: E1–E3, D8**
+
+**Obiettivo.** Il lavoro rimasto del piano originale è diviso in fasi eseguibili ciascuna in una
+sessione, con modello, effort, prompt, criteri verificabili e durata.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase I di docs/piano-aggiornamento.md. Leggi docs/piano.md, docs/stato.md, il §7 di
+docs/revisione-2026-11-03.md e .claude/norms/scrittura-tecnica.md. Prima di scrivere, fai a Marco
+le domande sulle decisioni che cambiano intere fasi (per esempio: missioni storiche prima o dopo la
+crittoanalisi; vista 2.5D disegnata a mano o generata dai dati).
+```
+
+**Passi**
+
+1. Intervista Marco sulle decisioni aperte della fase 4.
+2. Riscrivi la sezione «Fasi» di `docs/piano.md` per il lavoro rimasto: lezione «Modelli a
+   confronto», rinviati della 1b, crittoanalisi (racconto e animazioni), vista 2.5D, missioni
+   storiche, guida per i docenti (con `scrittura-istituzionale.md`), accessibilità e Lighthouse,
+   vista 3D.
+3. Sposta in `docs/piano.md` la tabella delle decisioni prese in questa revisione.
+
+**Criteri di accettazione**
+
+```bash
+grep -c '^\*\*Modello:' docs/piano.md
+```
+uguale al numero di fasi rimaste.
+
+```bash
+pnpm format:check
+```
