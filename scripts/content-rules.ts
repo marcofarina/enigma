@@ -175,6 +175,7 @@ export function lintContent(source: string, properNames: readonly string[] = [])
   const issues: Issue[] = [];
   const lines = source.split('\n');
   let inFence = false;
+  let inQuote = false;
   let inFrontmatter = lines[0]?.trim() === '---';
 
   lines.forEach((raw, index) => {
@@ -196,9 +197,13 @@ export function lintContent(source: string, properNames: readonly string[] = [])
       inFence = !inFence;
       return;
     }
+    // Il corpo di <Citazione> è già una citazione: il componente fa da caporali, e dentro valgono “ ”.
+    if (/^\s*<Citazione[\s>]/.test(raw)) inQuote = !/<\/Citazione>/.test(raw);
+    else if (/^\s*<\/Citazione>/.test(raw)) inQuote = false;
     if (inFence || /^\s*(import|export)\s/.test(raw) || /^\s*<\/?[A-Za-z]/.test(raw)) return;
 
-    for (const issue of proseIssues(stripNonProse(raw), mask)) issues.push({ line, ...issue });
+    const prose = stripNonProse(raw);
+    for (const issue of proseIssues(inQuote ? `«${prose}»` : prose, mask)) issues.push({ line, ...issue });
     const heading = /^#{1,6}\s+(.*)$/.exec(raw);
     if (heading?.[1]) {
       const words = checkHeading(mask(stripNonProse(heading[1])));

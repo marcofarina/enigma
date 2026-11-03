@@ -11,6 +11,7 @@ async function island(page: Page, path: string, index = 0): Promise<Locator> {
 }
 
 const lessons = [
+  'come-funziona/che-cos-e-enigma',
   'come-funziona/dalla-sostituzione-al-rotore',
   'come-funziona/tastiera-lampade-e-circuito',
   'come-funziona/i-rotori',
