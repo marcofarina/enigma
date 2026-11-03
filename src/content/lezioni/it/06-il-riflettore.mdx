@@ -1,42 +1,107 @@
 ---
 title: Il riflettore
-description: Il componente che rimanda indietro la corrente, rende la macchina reciproca e le impedisce di cifrare una lettera in sé stessa.
+description: Il disco che rimanda la corrente indietro attraverso i rotori. Perché la macchina scambia le lettere a coppie anche se i rotori non lo fanno, perché le coppie cambiano a ogni tasto e che cosa ne ricava chi intercetta i messaggi.
 sezione: come-funziona
 ordine: 6
 stato: bozza
 fonti:
-  - crypto-museum
+  - crypto-museum-funzionamento
   - crypto-museum-ukw-d
+  - rejewski-1980
 ---
 
-import Approfondimento from '@/components/lesson/Approfondimento.astro';
+{/*
+Tesi didattica.
+Nella lezione sul circuito la reciprocità veniva da uno scambiatore che collega le lettere a coppie, ma un rotore non lo fa: il rotore I manda la A in E e la E in L. Lo studente non vede come resti reciproca la macchina vera, o crede che le sue coppie siano quelle del riflettore.
+La lezione mostra che il riflettore rimanda la corrente indietro attraverso gli stessi rotori: la macchina scambia ancora le lettere a coppie, ma non sono le coppie del riflettore, e cambiano a ogni tasto.
+Alla fine lo studente sa seguire nello schema l’andata e il ritorno di una lettera, e sa usare l’assenza di punti fissi per scartare le posizioni di una parola probabile sotto un cifrato.
+Esempio: la A dalla posizione AAA, che il riflettore B non manda in Y e che accende la B; poi WETTER fatta scorrere sotto BQRERRHYDRVTHBO.
+*/}
+
+import Citazione from '@/components/lesson/Citazione.astro';
+import Esito from '@/components/lesson/Esito.astro';
 import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
-import Nota from '@/components/lesson/Nota.astro';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Prerequisiti from '@/components/lesson/Prerequisiti.astro';
+import Previsione from '@/components/lesson/Previsione.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
+import Risposta from '@/components/lesson/Risposta.astro';
 
-A sinistra dei rotori c’è un disco con contatti su una sola faccia: il **riflettore**, in tedesco *Umkehrwalze* (“ruota d’inversione”), abbreviato UKW. Al suo interno 13 fili collegano le 26 lettere a coppie. La corrente che arriva dai rotori entra in un contatto, esce da quello accoppiato e viene rimandata indietro attraverso i rotori, per una strada diversa, fino alla ruota d’ingresso e alle lampade.
+<Citazione fonte="rejewski-1980" pagina="3" tradotta>
+La macchina Enigma serve quindi sia a trasformare il testo in chiaro in testo cifrato sia alla trasformazione inversa, senza bisogno di altre manovre.
+</Citazione>
 
-L’idea del riflettore si deve a Willy Korn, collaboratore di Arthur Scherbius e in seguito alla guida dell’azienda che produceva Enigma. Nelle macchine commerciali, a partire dalla Enigma D del 1926, il riflettore si poteva impostare a mano su 26 posizioni; nell’Enigma I dell’esercito era fisso.
+Nella lezione [Tastiera, lampade e circuito](../tastiera-lampade-e-circuito/) lo scambiatore del modello collegava le lettere a coppie, e da lì venivano le due proprietà della macchina: è reciproca, e nessuna lettera si cifra in sé stessa. Un rotore, invece, non collega le lettere a coppie: il rotore I manda la A in E, ma la E in L. Nella macchina vera le coppie le fa il **riflettore**, in tedesco *Umkehrwalze* («ruota d’inversione»), abbreviato UKW. È un disco a sinistra dei rotori, con i contatti su una faccia sola; al suo interno 13 fili collegano le 26 lettere a coppie.
 
-## Cifrare e decifrare sono la stessa cosa
+<Prerequisiti>
+- Dalla lezione [Tastiera, lampade e circuito](../tastiera-lampade-e-circuito/): se i fili sono collegati a coppie, il deviatore sotto il tasto rende la macchina reciproca e impedisce che una lettera si cifri in sé stessa. Il rotore di destra scatta prima che passi la corrente.
+- Dalla lezione [I rotori](../i-rotori/): un rotore fermo in una posizione è una sostituzione, e la corrente lo attraversa entrando e uscendo da contatti fissi della carcassa.
+</Prerequisiti>
 
-Il riflettore rende Enigma **reciproca**: se, con una certa posizione dei rotori, la A si cifra in Q, con la stessa posizione la Q si cifra in A. Ne segue una comodità enorme per gli operatori: per decifrare basta impostare la macchina come il mittente e digitare il testo cifrato, e sulle lampade compare il testo in chiaro. Non serve una procedura separata, né una seconda macchina.
+<Obiettivi>
+- Seguire nello schema la corrente di un tasto fino al riflettore e indietro fino alla lampada.
+- Spiegare perché la macchina scambia le lettere a coppie anche se i rotori non lo fanno, e perché le coppie cambiano a ogni tasto.
+- Usare l’assenza di punti fissi per scartare le posizioni in cui una parola non può stare sotto un testo cifrato.
+</Obiettivi>
+
+## Andata e ritorno
+
+Dalla ruota d’ingresso la corrente attraversa i rotori da destra a sinistra, entra nel riflettore da un contatto ed esce da quello accoppiato. Poi torna indietro da sinistra a destra attraverso gli stessi rotori, nella stessa posizione, ma su fili diversi, fino alla ruota d’ingresso e alle lampade.
+
+<Previsione>
+Il riflettore B, quello dell’Enigma I, collega la A con la Y. Nel simulatore qui sotto la macchina parte da AAA. Premendo la A, quale lampada si accende?
+
+<Risposta testo="la Y">
+La A e la Y sono una coppia del riflettore, ma la corrente del tasto A non arriva al riflettore sul contatto A: prima attraversa i tre rotori, che la portano su un’altra lettera.
+</Risposta>
+<Risposta testo="la A">
+Con il tasto A premuto il deviatore stacca la lampada A, come nel modello a quattro lettere: la lampada del tasto premuto non si accende mai.
+</Risposta>
+<Risposta testo="un’altra lettera, che dipende dai rotori" corretta />
+
+<Esito>
+Verificalo nel simulatore: premi la A e segui nello schema la strada della corrente, colonna per colonna.
+</Esito>
+</Previsione>
 
 <MiniSimulatore client:visible config="v=1&m=I&w=I-II-III&r=AAA&p=AAA&u=B" schema didascalia="Enigma I con i rotori I, II e III in posizione AAA e riflettore B." />
 
-Prova a digitare una parola, poi premi “Ricomincia” per riportare i rotori ad AAA e digita le lettere accese: riappare la parola di partenza. Nello schema si vede perché: andata e ritorno percorrono la stessa strada in versi opposti.
+Si accende la B. Il rotore III scatta prima che passi la corrente, e le finestrelle mostrano AAB. All’andata la A diventa C nel rotore III, D nel rotore II e F nel rotore I; il riflettore manda la F nella S, e al ritorno i tre rotori portano la S in S, in E e infine in B. Premendo la B dalla stessa posizione, la corrente rifarebbe la stessa strada al contrario e accenderebbe la A: il riflettore e i rotori, insieme, fanno il lavoro dello scambiatore del modello.
+
+## Le coppie cambiano a ogni tasto
+
+In ogni posizione, quindi, tasti e lampade sono collegati a coppie: 13 coppie, come i fili del riflettore. Ma le coppie della macchina non sono quelle del riflettore. Queste sono le coppie nelle due posizioni dopo AAA:
+
+```
+AAB  AB CQ DM EF GX HI JS KW LP NY OT RV UZ
+AAC  AD BJ CR EL FK GW HP IO MY NQ SX TZ UV
+```
+
+In AAB la A è in coppia con la B, in AAC con la D, e la coppia AY del riflettore non compare in nessuna delle due righe. Le coppie della macchina sono le coppie del riflettore viste attraverso i rotori: quando il rotore veloce scatta, cambiano tutte. Per questo la reciprocità vale solo con la macchina nella stessa posizione, come aveva mostrato nella lezione [Che cos’è Enigma](../che-cos-e-enigma/) il testo cifrato battuto partendo da AAB invece che da AAA. La lezione [La matematica di Enigma](../la-matematica-di-enigma/) scrive questo legame fra le coppie del riflettore e quelle della macchina con le permutazioni.
 
 ## Nessuna lettera in sé stessa
 
-Il riflettore non collega mai una lettera con sé stessa, e la corrente torna sempre indietro su un contatto diverso da quello da cui è arrivata. Insieme al deviatore sotto ogni tasto, che stacca la lampada del tasto premuto, questo produce una regola senza eccezioni: **in Enigma nessuna lettera può essere cifrata in sé stessa**. Digita quante A vuoi nel simulatore qui sopra: non si accenderà mai la lampada A.
+Nessun filo del riflettore collega un contatto con sé stesso. La corrente torna quindi su un filo diverso da quello da cui è arrivata, e attraverso i rotori raggiunge un contatto della ruota d’ingresso diverso da quello del tasto premuto, dove il deviatore di un tasto a riposo la porta alla sua lampada. In nessuna posizione e con nessun ordine dei rotori una lettera si cifra in sé stessa.
 
-Sembra un dettaglio, ma fu una delle debolezze più sfruttate dai crittoanalisti alleati. Se si sospetta che un messaggio contenga una certa parola, per esempio un saluto o una previsione del tempo, la si può far scorrere sotto il testo cifrato: ogni posizione in cui una lettera della parola coincide con la lettera cifrata che le sta sotto è impossibile, e va scartata. Ne parleremo nella sezione sulla crittoanalisi.
+Chi intercettava i messaggi conosceva questa regola e la usava. Supponiamo di avere intercettato il cifrato BQRERRHYDRVTHBO e di sospettare che contenga la parola WETTER, «tempo» nel senso delle previsioni meteorologiche. Facciamo scorrere WETTER sotto il cifrato, una lettera alla volta: ogni posizione in cui una lettera della parola sta sotto la stessa lettera del cifrato è impossibile.
 
-<Nota titolo="Un compromesso di progetto">
-Il riflettore raddoppia il numero di passaggi attraverso i rotori senza aggiungere rotori, e semplifica la vita degli operatori. Il prezzo è proprio la reciprocità senza punti fissi, che restringe le sostituzioni possibili e offre un appiglio a chi attacca la cifra.
-</Nota>
+```
+BQRERRHYDRVTHBO
+WETTER           la R sotto la R: impossibile
+ WETTER
+  WETTER         la E sotto la E: impossibile
+   WETTER
+    WETTER       la R sotto la R: impossibile
+```
 
-<Approfondimento titolo="Perché la macchina intera è reciproca">
-Il riflettore è una permutazione U che scambia le lettere a coppie: applicata due volte riporta ogni lettera al suo posto (U = U⁻¹) e non lascia nessuna lettera ferma. Una permutazione con queste proprietà si chiama **involuzione senza punti fissi**. Se R è la permutazione prodotta dai rotori all’andata, al ritorno la corrente attraversa gli stessi fili in senso inverso, cioè R⁻¹. La lettera accesa è quindi data da R⁻¹ U R, una permutazione che “trasporta” U con R: ha la stessa struttura di U, quindi è anch’essa un’involuzione senza punti fissi. Lo stesso vale aggiungendo il pannello a spine P, che compare all’inizio e alla fine: E = P⁻¹ R⁻¹ U R P.
-</Approfondimento>
+Delle dieci posizioni in cui WETTER può stare sotto un cifrato di 15 lettere, cinque si scartano così; la parola sta nella quarta, perché il testo in chiaro è ANXWETTERXREGEN. A Bletchley Park una parola probabile come questa si chiamava *crib*. Il modo in cui un crib portava alla chiave del giorno sarà l’argomento della sezione sulla crittoanalisi.
 
-Nel gennaio 1944 la Luftwaffe introdusse un riflettore ricablabile, l’UKW-D, il cui cablaggio veniva cambiato ogni dieci giorni secondo le tabelle delle chiavi; nel simulatore lo trovi tra i riflettori dell’Enigma I e della M4.
+## Il riflettore nei diversi modelli
+
+L’idea del riflettore si deve a Willy Korn, collaboratore di Arthur Scherbius e in seguito alla guida dell’azienda che produceva Enigma. Nelle macchine commerciali, a partire dalla Enigma D del 1926, il riflettore si poteva impostare a mano su 26 posizioni; nell’Enigma I dell’esercito era fisso. Nel gennaio 1944 la Luftwaffe introdusse un riflettore ricablabile, l’UKW-D, e i suoi operatori ne cambiavano il cablaggio ogni dieci giorni secondo le tabelle delle chiavi. Nel simulatore l’UKW-D si trova tra i riflettori dell’Enigma I e della M4.
+
+<Riepilogo>
+- Il riflettore collega le 26 lettere a coppie con 13 fili e rimanda la corrente indietro attraverso gli stessi rotori: da AAA, la A arriva al riflettore come F, torna come S e accende la B.
+- La macchina scambia le lettere a coppie anche se i rotori non lo fanno, ma le coppie non sono quelle del riflettore e cambiano a ogni tasto: in AAB la A è in coppia con la B, in AAC con la D.
+- Il riflettore non collega nessun contatto con sé stesso, quindi nessuna lettera si cifra in sé stessa: facendo scorrere WETTER sotto BQRERRHYDRVTHBO si scartano cinque posizioni su dieci.
+</Riepilogo>

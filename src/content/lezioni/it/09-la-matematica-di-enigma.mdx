@@ -1,0 +1,134 @@
+---
+title: La matematica di Enigma
+description: Permutazioni, cicli, composizione, coniugio e involuzioni. Perché Enigma è reciproca e non cifra mai una lettera in sé stessa con qualunque rotore, pannello o Uhr.
+sezione: come-funziona
+ordine: 9
+stato: bozza
+fonti:
+  - rejewski-1980
+  - singh-code-book-ragazzi
+---
+
+{/*
+Tesi didattica.
+Le lezioni sul circuito e sul riflettore hanno mostrato reciprocità e assenza di punti fissi su un modello e su un esempio, e lo studente non sa se valgono con altri rotori, con il pannello o con l’Uhr.
+La lezione mostra che ogni componente è una permutazione e che la macchina è E = P^-1 R^-1 U R P, una coniugata del riflettore. Le coniugate hanno la stessa struttura in cicli, quindi le due proprietà valgono con qualunque cablaggio e qualunque sostituzione al posto del pannello.
+Alla fine lo studente sa scomporre una permutazione in cicli, sa dire che cosa fa ai cicli la rotazione di un rotore e sa dimostrare le due proprietà dalla formula della macchina.
+Esempio: il rotore I, con il ciclo (AELTPHQXRU) che in posizione B diventa (DKSOGPWQTZ), e il riflettore B.
+*/}
+
+import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import CicliRotore from '@/components/lesson/CicliRotore.tsx';
+import Citazione from '@/components/lesson/Citazione.astro';
+import Esito from '@/components/lesson/Esito.astro';
+import Formula from '@/components/lesson/Formula.astro';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Prerequisiti from '@/components/lesson/Prerequisiti.astro';
+import Previsione from '@/components/lesson/Previsione.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
+import Risposta from '@/components/lesson/Risposta.astro';
+
+<Citazione fonte="rejewski-1980" pagina="1" tradotta>
+L’applicazione [della teoria delle permutazioni] da parte dei crittologi polacchi permise, fra il 1932 e il 1933, di rompere la cifra tedesca Enigma.
+</Citazione>
+
+Ogni componente di Enigma fa la stessa cosa: riceve una lettera e ne restituisce un’altra, senza mai mandare due lettere diverse nella stessa. In matematica una regola di questo tipo si chiama **permutazione** dell’alfabeto. Con poche idee sulle permutazioni si dimostrano, una volta per tutte, le due proprietà che le lezioni precedenti hanno visto su un modello e su qualche esempio: Enigma è reciproca, e non cifra mai una lettera in sé stessa. Sono le idee con cui Marian Rejewski, matematico del servizio cifra polacco, alla fine del 1932 ricostruì il cablaggio dei rotori militari.
+
+<Prerequisiti>
+- Dalla lezione [I rotori](../i-rotori/): in posizione B la corrente entra nel contatto del cablaggio spostato di un posto, segue il filo ed esce un posto più indietro.
+- Dalla lezione [Il riflettore](../il-riflettore/): in ogni posizione la macchina scambia le lettere a coppie, ma le coppie non sono quelle del riflettore e cambiano a ogni tasto.
+- Dalla lezione [L’Uhr](../l-uhr/): la corrente attraversa il pannello, o l’Uhr, all’andata in un verso e al ritorno nel verso opposto.
+</Prerequisiti>
+
+<Obiettivi>
+- Scrivere una permutazione come tabella e scomporla in cicli.
+- Dire che cosa succede ai cicli di un rotore quando il rotore gira.
+- Dimostrare dalla formula della macchina che Enigma è reciproca e non cifra mai una lettera in sé stessa, con qualunque cablaggio.
+</Obiettivi>
+
+## Le permutazioni
+
+Una permutazione si può scrivere come una tabella a due righe: sopra le lettere che entrano, sotto quelle che escono. Per il rotore I in posizione A:
+
+```
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+EKMFLGDQVZNTOWYHXUSPAIBRCJ
+```
+
+La A va in E, la B in K, la C in M, e così via. Le permutazioni possibili delle 26 lettere sono <Formula tex="26! = 26 \times 25 \times \cdots \times 1" dopo="," /> circa <Formula tex="4{,}03 \times 10^{26}" dopo="." />
+
+C’è un modo più compatto di scriverle. Si parte da una lettera e la si segue: nel rotore I la A va in E, la E in L, la L in T, e dopo dieci passi si torna alla A. Si ottiene un **ciclo**, che si scrive fra parentesi. Ogni permutazione si scompone in cicli che non hanno lettere in comune; per il rotore I:
+
+```
+(AELTPHQXRU) (BKNW) (CMOY) (DFG) (IV) (JZ) (S)
+```
+
+La S forma un ciclo da sola: è un **punto fisso**, una lettera che il rotore lascia com’è. Le lunghezze dei cicli, qui dieci, quattro, quattro, tre, due, due e uno, formano la **struttura in cicli** della permutazione.
+
+## Composizione e inversa
+
+Il segnale attraversa i componenti uno dopo l’altro, quindi la sostituzione complessiva è la **composizione** delle singole permutazioni. La scriviamo come le funzioni, da destra a sinistra: <Formula tex="YX" /> vuol dire «prima <Formula tex="X" dopo="," /> poi <Formula tex="Y" />». L’ordine conta. Se <Formula tex="X" /> scambia la A con la B e <Formula tex="Y" /> manda la A in B, la B in C e la C in A, allora con <Formula tex="YX" /> la A va in C, mentre con <Formula tex="XY" /> la A torna in A.
+
+L’**inversa** <Formula tex="X^{-1}" /> è la permutazione che annulla <Formula tex="X" dopo=":" /> si ottiene leggendo la tabella dal basso verso l’alto, e <Formula tex="X^{-1}X" /> lascia ogni lettera al suo posto. È l’**identità**, che indichiamo con <Formula tex="\mathrm{id}" dopo="." /> Al ritorno dal riflettore la corrente attraversa i rotori nel verso opposto, quindi subisce le loro inverse.
+
+## Il rotore che gira: il coniugio
+
+Quando un rotore avanza, il cablaggio resta lo stesso ma si sposta rispetto alla carcassa, e con lui si spostano i cicli.
+
+<Previsione>
+In posizione A il rotore I ha il ciclo (AELTPHQXRU). Visto dai contatti fissi della carcassa, che cosa diventa questo ciclo con il rotore in posizione B?
+
+<Risposta testo="resta (AELTPHQXRU)">
+Il cablaggio è lo stesso, ma si è spostato: dai contatti della carcassa la corrente incontra fili diversi, e le lettere dei cicli cambiano.
+</Risposta>
+<Risposta testo="ogni lettera va un posto avanti: (BFMUQIRYSV)">
+Il rotore avanza di un passo, ed è naturale spostare le lettere nello stesso verso. Ma lo spostamento si somma all’ingresso e si toglie all’uscita, come nella lezione sui rotori: guardato dalla carcassa, il ciclo va nel verso opposto.
+</Risposta>
+<Risposta testo="ogni lettera va un posto indietro: (DKSOGPWQTZ)" corretta />
+
+<Esito>
+Verificalo qui sotto: porta il rotore I in posizione B e cerca il ciclo lungo dieci lettere. Poi prova un’altra posizione e un altro rotore, e guarda le lunghezze dei cicli.
+</Esito>
+</Previsione>
+
+<CicliRotore client:visible />
+
+Il ciclo (AELTPHQXRU) diventa (DKSOGPWQTZ), cioè (ZDKSOGPWQT) scritto a partire da un’altra lettera: ogni lettera è andata un posto indietro, e la lunghezza è rimasta dieci. Lo stesso vale per tutti i cicli e in tutte le posizioni: le lettere cambiano, le lunghezze restano dieci, quattro, quattro, tre, due, due e uno.
+
+Chiamiamo <Formula tex="\rho" /> lo spostamento di un posto, che manda la A in B, la B in C e la Z in A. Un rotore con cablaggio <Formula tex="R" dopo="," /> spostato di <Formula tex="k" /> posti, opera la permutazione
+
+<Formula blocco tex="\rho^{-k}\, R\, \rho^{k}" />
+
+cioè prima sposta i contatti di <Formula tex="k" /> posti, poi attraversa il cablaggio, infine torna indietro di <Formula tex="k" dopo="." /> Una permutazione della forma <Formula tex="T^{-1} X T" /> si dice **coniugata** di <Formula tex="X" dopo="," /> e le coniugate hanno sempre la stessa struttura in cicli: <Formula tex="T" /> cambia il nome delle lettere, non la lunghezza dei cicli. Nel rotore che gira <Formula tex="T = \rho^{k}" dopo="," /> e il nuovo nome di ogni lettera è la lettera <Formula tex="k" /> posti più indietro.
+
+Rejewski si servì di questa proprietà per separare i rotori dal pannello a spine. Dai messaggi di un giorno ricavava permutazioni i cui cicli avevano lunghezze che dipendevano dalla posizione dei rotori e non dai cavi del pannello, che cambiavano solo i nomi delle lettere. Come costruì quelle permutazioni lo racconterà la sezione sulla crittoanalisi.
+
+<Approfondimento titolo="Perché la coniugata ha la stessa struttura">
+Se <Formula tex="X" /> manda <Formula tex="a" /> in <Formula tex="b" dopo="," /> allora <Formula tex="T^{-1} X T" /> manda <Formula tex="T^{-1}(a)" /> in <Formula tex="T^{-1}(b)" dopo="." /> Ogni ciclo <Formula tex="(a\,b\,c \ldots)" /> di <Formula tex="X" /> diventa il ciclo <Formula tex="(T^{-1}(a)\;T^{-1}(b)\;T^{-1}(c) \ldots)" /> della coniugata: stesse lunghezze, lettere rinominate. Vale anche il viceversa: due permutazioni con la stessa struttura in cicli sono sempre coniugate.
+</Approfondimento>
+
+## Involuzioni e reciprocità
+
+Il riflettore scambia le lettere a coppie, quindi applicarlo due volte riporta ogni lettera al suo posto: <Formula tex="U^2 = \mathrm{id}" dopo="," /> cioè <Formula tex="U = U^{-1}" dopo="." /> Una permutazione così si chiama **involuzione**. Il riflettore B è fatto di 13 cicli di lunghezza due, senza punti fissi:
+
+```
+(AY) (BR) (CU) (DH) (EQ) (FS) (GL) (IP) (JX) (KN) (MO) (TZ) (VW)
+```
+
+Anche il pannello a spine con i cavi normali è un’involuzione, ma con punti fissi: le lettere senza cavo.
+
+Chiamiamo <Formula tex="P" /> il pannello e <Formula tex="R" /> il tratto che va dalla ruota d’ingresso al riflettore, rotori compresi. Con la macchina ferma in una certa posizione, la lettera accesa è data da
+
+<Formula blocco tex="E = P^{-1} R^{-1}\, U\, R\, P" />
+
+cioè <Formula tex="E" /> è coniugata di <Formula tex="U" /> con <Formula tex="T = RP" dopo="." /> Le coppie della macchina, nella lezione sul riflettore, erano le coppie del riflettore viste attraverso i rotori: ora sono le coppie di <Formula tex="U" /> rinominate da <Formula tex="RP" dopo="." /> Ne seguono le due proprietà. La prima è la reciprocità:
+
+<Formula blocco tex="E^2 = P^{-1} R^{-1} U R P \, P^{-1} R^{-1} U R P = P^{-1} R^{-1} U^2 R P = \mathrm{id}" />
+
+La seconda è che nessuna lettera si cifra in sé stessa: <Formula tex="E" /> ha la stessa struttura in cicli di <Formula tex="U" dopo="," /> quindi 13 scambi e nessun punto fisso. I due ragionamenti non usano il cablaggio dei rotori, e nemmeno il fatto che <Formula tex="P" /> sia un’involuzione: valgono anche con l’Uhr, che all’andata opera una permutazione e al ritorno la sua inversa.
+
+<Riepilogo>
+- Ogni componente di Enigma è una permutazione delle 26 lettere, che si scrive come tabella o come prodotto di cicli; il rotore I in posizione A ha cicli lunghi dieci, quattro, quattro, tre, due, due e uno.
+- Un rotore spostato di <Formula tex="k" /> posti opera la coniugata <Formula tex="\rho^{-k} R \rho^{k}" dopo=":" /> ogni lettera dei cicli va <Formula tex="k" /> posti indietro, e le lunghezze dei cicli restano le stesse. In posizione B il ciclo (AELTPHQXRU) diventa (DKSOGPWQTZ).
+- La macchina è <Formula tex="E = P^{-1} R^{-1} U R P" dopo="," /> coniugata del riflettore: per questo <Formula tex="E^2 = \mathrm{id}" /> e <Formula tex="E" /> non ha punti fissi, con qualunque cablaggio e anche con l’Uhr al posto del pannello.
+</Riepilogo>
