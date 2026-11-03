@@ -17,7 +17,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | D4 | La lezione 7 si divide in «Il pannello a spine» e «L’Uhr»? | Sì: sono due tesi | E2 | raccomandazione accettata (2026-11-03) |
 | D5 | Crittoanalisi e Docenti escono dal menu finché sono vuote? | Sì; restano raggiungibili dall’indirizzo | F | raccomandazione accettata (2026-11-03) |
 | D6 | Design: correggere solo i difetti e tenere il tema neutro, o fare ora l’identità visiva di Rainbow Bits? | Correggere i difetti ora, identità in un piano separato quando esiste un riferimento | G | raccomandazione accettata (2026-11-03) |
-| D7 | Quali libri delle fonti hai in copia (Singh, Batey, Rejewski, Kozaczuk, Welchman, Bauer, Hamer)? | Le fonti non consultate escono dal frontmatter finché non le verifichi | B | raccomandazione accettata (2026-11-03): escono tutte le fonti non consultate; Marco segnala i libri man mano che li verifica |
+| D7 | Quali libri delle fonti hai in copia (Singh, Batey, Rejewski, Kozaczuk, Welchman, Bauer, Hamer)? | Le fonti non consultate escono dal frontmatter finché non le verifichi | B | 2026-11-03: Marco ha solo Singh e procurerà i testi degli altri, da usare nella fase V. Fino ad allora escono dal frontmatter le fonti non consultate |
 | D8 | La revisione viene prima della fase 4 del piano originale? | Sì: la fase 4 scrive molta prosa nuova, conviene farla con norme e linter a posto | I | raccomandazione accettata (2026-11-03) |
 
 ## Stato
@@ -34,11 +34,13 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | F | Interfaccia e i18n | Sonnet | high | 1 h | A, C, D5 | da fare |
 | G | Design | Opus | high | 3 h | F, D6 | da fare |
 | H | Pulizia del codice | Sonnet | high | 1 h | A | da fare |
+| V | Verifiche sui testi delle fonti | Opus | high | 2 h per gruppo di libri | B, testi forniti da Marco | da fare |
 | I | Riscrittura delle fasi 4–5 di `docs/piano.md` nel formato dei piani | Opus | high | 1 h | E1–E3, D8 | da fare |
 
-Totale stimato: circa 17 ore di sessione. Dopo A, le fasi B, C, F e H non si toccano a vicenda
-e si possono fare in qualunque ordine. E1, E2 ed E3 toccano file diversi e sono indipendenti fra
-loro.
+Totale stimato: circa 17 ore di sessione, più la fase V. Dopo A, le fasi B, C, F e H non si
+toccano a vicenda e si possono fare in qualunque ordine. E1, E2 ed E3 toccano file diversi e sono
+indipendenti fra loro. V tocca le stesse lezioni delle fasi E: non va eseguita insieme a una di
+esse.
 
 ## Regole comuni a tutte le fasi
 
@@ -129,8 +131,9 @@ delle frasi che tocchi: lo fanno le fasi E.
 1. Correggi ogni riga della tabella del §2 della revisione, nell’ordine.
 2. Per «Willi/Willy Korn» e per l’attribuzione dell’UKW-D controlla Crypto Museum con `curl`
    (pagine `hist.htm` e `ukwd/index.htm`) e annota in `stato.md` data e pagina consultata.
-3. Togli dal frontmatter le fonti non consultate secondo D7; elencale in `stato.md` sotto
-   «Da verificare», con la lezione e il fatto a cui servono.
+3. Togli dal frontmatter le fonti non consultate secondo D7, compreso Singh: la copia c’è, ma
+   nessuno ha ancora controllato i fatti su di essa. Elencale in `stato.md` sotto
+   «Da verificare», con la lezione e il fatto a cui servono: la fase V le rimette.
 4. Allinea `period` dell’Enigma I in `src/engine/models.ts`.
 
 **Criteri di accettazione**
@@ -509,6 +512,69 @@ minore di `8`, e ogni riga rimasta ha un commento con il motivo.
 
 ```bash
 pnpm verify && pnpm test:e2e
+```
+
+---
+
+## Fase V — Verifiche sui testi delle fonti
+
+**Modello: Opus · Effort: high · Durata: 2 h per gruppo di libri · Dipende da: B, testi forniti
+da Marco**
+
+**Obiettivo.** Ogni fatto storico delle lezioni rimanda a una fonte effettivamente consultata,
+con la pagina; l’elenco «Da verificare» di `docs/stato.md` si svuota.
+
+**Come Marco fornisce i testi.** Fuori dal repo, che è pubblico: nella cartella
+`~/Developer/github/enigma-fonti/`, un file per libro, chiamato con l’`id` di
+`src/content/fonti.yaml` (per esempio `singh-codici-segreti.pdf`). Formati utili, in ordine: PDF
+con testo selezionabile, EPUB, PDF scansionato. Una scansione senza testo si legge pagina per
+pagina, quindi costa molto di più. I numeri di pagina valgono per l’edizione del file: se non è
+quella di `fonti.yaml`, la sessione aggiorna la voce.
+
+**Ordine dei libri**, secondo quanti fatti aperti verificano:
+
+| Libro | Che cosa verifica | Serve per |
+|---|---|---|
+| Singh, *Codici & segreti* (già in casa) | Alberti e la data del trattato, al-Kindi, cifra dello spazio delle chiavi, pagine delle citazioni | lezioni 2 e 8 |
+| Batey, *Dilly* | Mavis Lever, il messaggio di prova, Matapan, ruolo della sezione di Knox | storia 4 |
+| Kozaczuk, *Enigma*, o Rejewski 1980 | procedura dell’indicatore 1938–1940, numero di cavi nel tempo, data dei rotori IV e V | storia 2 e 3, lezione 7 |
+| Hamer 1997 | solo il numero del volume di Cryptologia | voce di `fonti.yaml` |
+| Welchman, Sebag-Montefiore, Hinsley | diagonal board, Shark, U-110 e U-559, dibattito su Ultra | fase 4 (crittoanalisi), non le lezioni attuali |
+
+Prima di comprare un testo, la fase cerca una versione liberamente accessibile: articoli come
+Rejewski 1980 potrebbero esserlo.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase V di docs/piano-aggiornamento.md per i libri presenti in
+~/Developer/github/enigma-fonti/. L'elenco dei fatti da controllare è la sezione «Da verificare»
+di docs/stato.md. Non copiare brani dei libri nel repo: nelle lezioni solo citazioni brevi, con la
+pagina, come prevede docs/piano.md (art. 70 LdA).
+```
+
+**Passi**
+
+1. Per ogni fatto della sezione «Da verificare» coperto dai libri presenti: cerca il passo, annota
+   in `stato.md` libro, edizione e pagina, e se il libro contraddice la lezione correggi la
+   lezione.
+2. Rimetti la fonte nel frontmatter delle lezioni che usano quel fatto.
+3. Dove Singh diverge dagli specialisti, la lezione lo dice (`docs/piano.md`, «Bibliografia di
+   base»).
+4. Sposta i fatti verificati da «Da verificare» a una sezione «Verificato», con la data.
+
+**Criteri di accettazione**
+
+```bash
+grep -c 'p\. [0-9]' docs/stato.md
+```
+almeno uno per ogni fatto verificato.
+
+```bash
+pnpm verify
 ```
 
 ---
