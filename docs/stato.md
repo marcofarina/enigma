@@ -117,3 +117,8 @@ Le frasi che nominano Hamer (lezione 5) e Rejewski (glossario) restano nel testo
 - `cryptomuseum.com/crypto/enigma/hist.htm`: scrive «Willy Korn» (non «Willi»), collega di Scherbius e poi alla guida dell’azienda, a cui si deve l’idea del riflettore. Le lezioni usano «Willy».
 - `cryptomuseum.com/crypto/enigma/ukwd/index.htm`: l’UKW-D fu introdotto nel gennaio 1944 dalla Luftwaffe; esisteva anche una variante per la marina (M3 e M4). Le lezioni lo attribuiscono alla Luftwaffe. Il cablaggio cambiava ogni dieci giorni circa, secondo i fogli chiave.
 - Date di adozione armonizzate sulla ricostruzione di Crypto Museum (lezione di storia 2): marina nel 1926 (Funkschlüssel C), Enigma I dell’esercito pronta nel 1927 e in servizio dal 1° giugno 1930. `period` dell’Enigma I è ora «1930–1945».
+
+### Consultato in fase D (2026-11-03, `curl`)
+
+- `cryptomuseum.com/crypto/enigma/working.htm`, sezione «Enigma stepping»: «Rotor movement is much like the odometer in a car.» È la citazione d’apertura della lezione 5, tradotta da noi; voce `crypto-museum-funzionamento` di `fonti.yaml`.
+- Scartata come citazione d’apertura, ma utilizzabile: il rapporto 6812 (`us-6812-bombe-report`), p. 3 della trascrizione di Tony Sale, descrive il nottolino che deve «cadere nell’incavo» del rotore precedente per farlo avanzare.

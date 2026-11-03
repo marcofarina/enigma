@@ -1,0 +1,10 @@
+---
+import Riquadro from '@/components/lesson/Riquadro.astro';
+import { t } from '@/i18n';
+
+/** Che cosa lo studente sa fare alla fine della lezione: un elenco che il `Riepilogo` riprende voce per voce. */
+---
+
+<Riquadro id="obiettivi" titolo={t('lesson.goals')}>
+  <slot />
+</Riquadro>

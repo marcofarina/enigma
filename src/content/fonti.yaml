@@ -67,6 +67,11 @@
   anno: 1944
   url: https://cryptocellar.org/enigma/e-keys/luftwaffen-mschluessel-nr619.pdf
   note: Foglio chiave originale, pubblicato da CryptoCellar. Modello delle schede stampabili. Anno da verificare.
+- id: crypto-museum-funzionamento
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — How does an Enigma machine work?
+  url: https://www.cryptomuseum.com/crypto/enigma/working.htm
+  note: Sezione «Enigma stepping», consultata il 3 novembre 2026. Fonte della citazione d’apertura della lezione 5.
 - id: crypto-museum-storia
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — History of the Enigma

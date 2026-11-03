@@ -27,7 +27,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | A | Norme in sessione e documenti operativi | Sonnet | high | 0,5 h | D1, D2 | fatta |
 | B | Errori di fatto e incoerenze | Sonnet | high | 1 h | A, D7 | fatta |
 | C | Linter dei contenuti | Sonnet | high | 1,5 h | A, D2 | fatta |
-| D | Componenti dello scheletro della lezione | Opus | high | 1,5 h | A, D3 | da fare |
+| D | Componenti dello scheletro della lezione | Opus | high | 1,5 h | A, D3 | fatta |
 | E1 | Riscrittura «Come funziona» 1–4 | Opus | high | 2 h | B, C, D | da fare |
 | E2 | Riscrittura «Come funziona» 5–8 | Opus | high | 2,5 h | B, C, D, D4 | da fare |
 | E3 | Riscrittura Storia 1–4 e glossario | Opus | high | 2 h | B, C, D | da fare |
@@ -276,6 +276,15 @@ pnpm verify && pnpm test:e2e
 grep -c '<Previsione' src/content/lezioni/it/05-il-passo-e-il-doppio-passo.mdx
 ```
 almeno `1`.
+
+**Esito (2026-11-03)**
+
+- Fatto: in `src/components/lesson/` i componenti `Citazione` (fonte obbligatoria da `fonti.yaml`, pagina, `autore` per il «citato in», `tradotta`, `lingua`), `Prerequisiti`, `Obiettivi` e `Riepilogo` (riquadri con un `h2`, sul `Riquadro` comune; prerequisiti e obiettivi di seguito formano un riquadro solo), `Previsione` con `Risposta` ed `Esito`. La previsione è un componente Astro con uno script senza dipendenze, non un’isola React: domanda, commenti ed esito stanno nel corpo MDX e passano dal linter dei contenuti. A scelta o libera (`libera`: maiuscole, spazi e punteggiatura non contano); dopo il confronto blocca la risposta, dice «La tua previsione» ed «Esito», mostra il commento della risposta data e l’`Esito`; «Ricomincia» rimette tutto com’era. Stringhe in `it.json` (`lesson.prereq`, `lesson.goals`, `lesson.summary`, `lesson.quote.*`, `lesson.predict.*`).
+- Lezione 5 come prova: citazione d’apertura scelta da Marco (Crypto Museum, il contachilometri, nuova voce `crypto-museum-funzionamento`), prerequisiti, obiettivi, riepilogo e due previsioni: lettere nelle finestrelle dopo tre tasti da ADU (libera, prima dell’animazione, con i commenti alle risposte AEX, BEX, AFX) e lunghezza del ciclo (a scelta). La spiegazione del doppio passo ora viene dopo l’animazione; tolto «C’è però un dettaglio.»; le due formule del periodo toccate sono passate a `<Formula>`. Il resto dello stile della lezione resta alla fase E2.
+- Test: tre e2e nuovi in `tests/e2e/lessons.spec.ts` (scheletro della lezione, previsione libera, previsione a scelta con axe sullo stato rivelato, in tema chiaro e scuro). Verificato anche nel browser a desktop e a 375 px.
+- Documentazione: sezione «Lo scheletro della lezione» in `CLAUDE.md`, con quando si usa ciascun componente.
+- Comandi: `pnpm verify` exit 0 (187 test, `lint:content` 0 errori e 24 avvisi, uno in meno di prima); `pnpm test:e2e` exit 0 (105 passati, 3 saltati); `grep -c '<Previsione' …05-il-passo-e-il-doppio-passo.mdx` dà 2.
+- Per le fasi E: la citazione d’apertura di ogni lezione la sceglie Marco fra tre proposte vere, con la fonte consultata; conviene raccoglierle tutte all’inizio della sessione. Le previsioni vanno prima della spiegazione, non dopo: nella lezione 5 la sezione «Il doppio passo» è stata spostata sotto l’animazione per questo.
 
 ---
 

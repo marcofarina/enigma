@@ -10,10 +10,32 @@ fonti:
 
 import AnimazionePasso from '@/components/lesson/AnimazionePasso.tsx';
 import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import Citazione from '@/components/lesson/Citazione.astro';
+import Esito from '@/components/lesson/Esito.astro';
+import Formula from '@/components/lesson/Formula.astro';
 import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
 import Nota from '@/components/lesson/Nota.astro';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Prerequisiti from '@/components/lesson/Prerequisiti.astro';
+import Previsione from '@/components/lesson/Previsione.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
+import Risposta from '@/components/lesson/Risposta.astro';
+
+<Citazione fonte="crypto-museum-funzionamento" tradotta>
+Il movimento dei rotori somiglia molto a quello del contachilometri di un’auto.
+</Citazione>
 
 Un rotore solo torna al punto di partenza dopo 26 lettere. Enigma ne monta tre (quattro sulla M4 della marina), e li fa avanzare come le ruote di un contachilometri: il rotore di destra, detto **veloce**, scatta di un passo a ogni tasto; quando completa il giro trascina di un passo il rotore centrale, che a sua volta, dopo un giro intero, trascina quello di sinistra.
+
+<Prerequisiti>
+- Dalla lezione [I rotori](../i-rotori/): ogni posizione di un rotore dà una sostituzione diversa, e la lettera nella finestrella dice in quale posizione si trova.
+</Prerequisiti>
+
+<Obiettivi>
+- Spiegare come tacche e nottolini fanno avanzare i rotori.
+- Prevedere le lettere nelle finestrelle dopo qualche tasto, anche quando il rotore centrale fa il doppio passo.
+- Dire come il doppio passo cambia la lunghezza del ciclo dei rotori.
+</Obiettivi>
 
 ## Tacche e nottolini
 
@@ -27,13 +49,32 @@ Ogni rotore ha la tacca in un punto diverso. Sui cinque rotori dell’Enigma I i
 
 Per esempio, con il rotore III a destra il rotore centrale avanza nel passaggio da V a W.
 
-## Il doppio passo
+<Previsione libera>
+Nell’animazione qui sotto i rotori sono I, II e III, da sinistra a destra, e le finestrelle partono da ADU. Il rotore centrale, il II, ha la tacca in E; quello veloce, il III, in V. Dopo tre tasti, che lettere compaiono nelle finestrelle?
 
-C’è però un dettaglio. Il nottolino che si infila nella tacca del rotore centrale spinge **due rotori insieme**: quello di sinistra, ma anche lo stesso rotore centrale, perché è proprio la sua tacca che sta spingendo. Il rotore centrale avanza quindi due volte di seguito: una volta trascinato dal rotore veloce, e subito dopo, alla pressione successiva, insieme al rotore di sinistra. È il **doppio passo**, descritto in dettaglio dal crittologo David Hamer nel 1997.
+<Risposta testo="BFX" corretta />
+<Risposta testo="AEX">
+È la risposta del contachilometri: il rotore centrale arriva sulla E e aspetta un giro intero del rotore veloce prima di trascinare quello di sinistra. Il nottolino, invece, entra nella tacca del centrale al tasto successivo.
+</Risposta>
+<Risposta testo="BEX">
+Il rotore di sinistra avanza, ed è giusto. Ma il nottolino che lo spinge è infilato nella tacca del rotore centrale, e spinge anche quello.
+</Risposta>
+<Risposta testo="AFX">
+Il secondo passo del rotore centrale è giusto. Ma a spingerlo è lo stesso nottolino che spinge il rotore di sinistra: i due avanzano insieme.
+</Risposta>
+
+<Esito>
+Verificalo nell’animazione: premi il tasto tre volte e guarda quali rotori avanzano a ogni pressione.
+</Esito>
+</Previsione>
 
 <AnimazionePasso client:visible rotori="I-II-III" inizio="ADU" />
 
-Premi il tasto tre volte. Da ADU si passa ad ADV; poi il rotore III è sulla tacca e il centrale avanza (AEW); ora è il rotore II a trovarsi sulla sua tacca, la E, e alla pressione successiva avanzano sia il centrale sia quello di sinistra: BFX. Il rotore centrale è passato da D a F in due tasti consecutivi.
+## Il doppio passo
+
+Il nottolino che si infila nella tacca del rotore centrale spinge **due rotori insieme**: quello di sinistra, ma anche lo stesso rotore centrale, perché è proprio la sua tacca che sta spingendo. Il rotore centrale avanza quindi due volte di seguito: una volta trascinato dal rotore veloce, e subito dopo, alla pressione successiva, insieme al rotore di sinistra. È il **doppio passo**, descritto in dettaglio dal crittologo David Hamer nel 1997.
+
+Nell’animazione, da ADU si passa ad ADV; poi il rotore III è sulla tacca e il centrale avanza (AEW); ora è il rotore II a trovarsi sulla sua tacca, la E, e alla pressione successiva avanzano sia il centrale sia quello di sinistra: BFX. Il rotore centrale è passato da D a F in due tasti consecutivi.
 
 <Nota titolo="Una differenza dal contachilometri">
 Un contachilometri vero non ha il doppio passo: la cifra delle decine resta ferma per un intero giro delle unità. Lo stesso valeva per le Enigma con trascinamento a ingranaggi, come il modello G, che si potevano anche riavvolgere con una manovella in caso di errore. Le Enigma a nottolini, invece, potevano solo avanzare.
@@ -41,7 +82,21 @@ Un contachilometri vero non ha il doppio passo: la cifra delle decine resta ferm
 
 ## Il periodo
 
-Con un movimento da contachilometri, tre rotori attraverserebbero tutte le 26 × 26 × 26 = 17 576 combinazioni prima di ripetersi. Il doppio passo salta alcune combinazioni, e il ciclo si riduce a 26 × 25 × 26 = **16 900** posizioni: dopo 16 900 lettere la sequenza delle sostituzioni ricomincia da capo. Per i messaggi militari, lunghi di solito poche centinaia di lettere, il ciclo non si chiudeva mai.
+Con un movimento da contachilometri, tre rotori attraverserebbero tutte le <Formula tex="26 \times 26 \times 26 = 17\,576" /> combinazioni prima di ripetersi.
+
+<Previsione>
+Con il doppio passo, il ciclo dei tre rotori è più lungo, uguale o più corto di 17 576 posizioni?
+
+<Risposta testo="più lungo">
+Il doppio passo non crea posizioni nuove: quelle possibili restano 17 576, e il ciclo non può contenerne di più.
+</Risposta>
+<Risposta testo="uguale">
+Sarebbe così con un contachilometri, dove il rotore centrale resta su ogni lettera per un giro intero del rotore veloce. Sulla lettera della sua tacca, invece, il centrale resta per un tasto solo.
+</Risposta>
+<Risposta testo="più corto" corretta />
+</Previsione>
+
+Il doppio passo salta alcune combinazioni, e il ciclo si riduce a <Formula tex="26 \times 25 \times 26 = 16\,900" /> posizioni: dopo 16 900 lettere la sequenza delle sostituzioni ricomincia da capo. Per i messaggi militari, lunghi di solito poche centinaia di lettere, il ciclo non si chiudeva mai.
 
 <Approfondimento titolo="Quali posizioni mancano">
 Facendo girare il simulatore a partire da AAA con i rotori I, II e III, le posizioni che non compaiono mai nel ciclo sono 676 = 26 × 26. Sono le 650 in cui il rotore centrale è fermo sulla sua tacca (la E) mentre il rotore veloce non è appena scattato oltre la propria, più 26 posizioni del tipo AFW, in cui il centrale ha appena superato la tacca mentre il veloce è appena scattato oltre la sua. Da una di queste posizioni la macchina può partire, ma dopo una o due lettere entra nel ciclo e non ci torna più.
@@ -52,3 +107,9 @@ Crypto Museum riporta 16 926, ottenuto come 17 576 − 650. È un’altra gran
 Nel simulatore completo puoi osservare il doppio passo digitando una lettera alla volta da una posizione come ADU.
 
 <MiniSimulatore client:visible config="v=1&m=I&w=I-II-III&r=AAA&p=ADU&u=B" nastro={false} didascalia="Enigma I con i rotori I, II e III in posizione ADU." />
+
+<Riepilogo>
+- Il rotore veloce avanza a ogni tasto. Un nottolino che trova la tacca del rotore alla sua destra si infila e spinge in avanti anche il rotore alla sua sinistra.
+- Il nottolino che entra nella tacca del rotore centrale spinge due rotori, quello di sinistra e il centrale stesso: per questo il centrale avanza in due tasti di fila, come da ADU a BFX.
+- Il doppio passo fa saltare alcune posizioni: il ciclo dei tre rotori scende da 17 576 a 16 900 posizioni.
+</Riepilogo>
