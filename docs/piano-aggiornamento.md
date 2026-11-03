@@ -26,7 +26,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 |---|---|---|---|---|---|---|
 | A | Norme in sessione e documenti operativi | Sonnet | high | 0,5 h | D1, D2 | fatta |
 | B | Errori di fatto e incoerenze | Sonnet | high | 1 h | A, D7 | fatta |
-| C | Linter dei contenuti | Sonnet | high | 1,5 h | A, D2 | da fare |
+| C | Linter dei contenuti | Sonnet | high | 1,5 h | A, D2 | fatta |
 | D | Componenti dello scheletro della lezione | Opus | high | 1,5 h | A, D3 | da fare |
 | E1 | Riscrittura «Come funziona» 1–4 | Opus | high | 2 h | B, C, D | da fare |
 | E2 | Riscrittura «Come funziona» 5–8 | Opus | high | 2,5 h | B, C, D, D4 | da fare |
@@ -222,6 +222,16 @@ nessun errore, e nessun avviso su nomi propri o date.
 ```bash
 pnpm test
 ```
+
+**Esito (2026-11-03)**
+
+- Fatto: in `scripts/content-rules.ts` le regole `puntini-sospensione`, `parola-vietata` («sennò»), `qual-e`, `migliaia-non-separabili`, `caporali-annidati` (errori) e `virgolette-fuori-caporali`, `matematica-unicode` (avvisi), ciascuna con il suo test in `scripts/content-rules.test.ts`. Il controllo copre anche i valori di `src/i18n/it.json` (`lintJson`).
+- Falsi positivi: i nomi propri ammessi stanno in `scripts/nomi-propri.txt` (una voce per riga, anche di più parole, `#` per i commenti), si aggiornano senza toccare il codice e valgono per `maiuscole-titolo` e `maiuscola-dopo-due-punti`. Un numero dopo un articolo elisso («dal 31 all’1») non è più una quantità.
+- Corretti i soli casi meccanici: 17 spazi normali diventati spazi non separabili (U+00A0) in cinque file di `src/content/`. Puntini, «sennò» e «qual’è» non comparivano.
+- Scelte da conoscere: in `it.json` `numero-in-cifre` si applica solo alle frasi (stringhe con un punto), perché le etichette brevi come «1 lettera» o «Spine da 1 a 5» sono contatori e restano in cifre. `virgolette-fuori-caporali` segnala ogni “ ” fuori da « »: non distingue una citazione da un termine o da un’etichetta dell’interfaccia, perciò resta un avviso.
+- Avvisi che restano (25), da risolvere nelle fasi E e F, poi da promuovere a errori: 14 `virgolette-fuori-caporali` (lezioni 2, 4, 6, 7, 8, storia 1 e 3, due stringhe di `it.json`), 10 `matematica-unicode` (lezioni 4–7, storia 2, due stringhe di `it.json`), 1 `numero-in-cifre` (`it.json:55`, «10 cavi»). Nessun avviso su nomi propri o date.
+- Non coperto: `src/lib/format.ts` produce a runtime «1,07 × 10²³» (esponenti Unicode), fuori dalla portata del linter; è un caso per la fase F.
+- Comandi: `pnpm lint:content` 0 errori, 25 avvisi; `pnpm verify` exit 0 (187 test, 34 pagine); `pnpm test:e2e` exit 0.
 
 ---
 
