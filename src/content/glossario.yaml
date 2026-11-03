@@ -56,9 +56,8 @@
   termine: doppio passo
   tedesco: —
   inglese: double stepping
-  definizione: Anomalia del meccanismo a leve per cui il rotore centrale, quando raggiunge la propria tacca, avanza per due tasti di seguito insieme al rotore di sinistra.
+  definizione: Anomalia del meccanismo a leve per cui il rotore centrale, quando raggiunge la propria tacca, avanza due volte di seguito, prima trascinato dal rotore veloce e poi insieme al rotore di sinistra.
   vedi: come-funziona/il-passo-e-il-doppio-passo/
-  fonti: [hamer-1997]
 - id: foglio-chiave
   termine: foglio chiave
   tedesco: Schlüsseltafel, Maschinenschlüssel
@@ -84,7 +83,7 @@
   termine: involuzione
   tedesco: —
   inglese: involution
-  definizione: Permutazione che, applicata due volte, riporta ogni elemento al punto di partenza. Il riflettore e il pannello a spine sono involuzioni, e quindi lo è anche la sostituzione di Enigma in ogni posizione.
+  definizione: Permutazione che, applicata due volte, riporta ogni elemento al punto di partenza. Il riflettore e il pannello a spine sono involuzioni. Lo è anche la sostituzione di Enigma in ogni posizione, ma non per il solo fatto di comporre involuzioni. Lo è perché è una coniugata del riflettore, e la coniugata di un’involuzione è un’involuzione.
   vedi: come-funziona/la-matematica-di-enigma/
 - id: ordine-dei-rotori
   termine: ordine dei rotori
@@ -106,7 +105,6 @@
   inglese: permutation
   definizione: Corrispondenza biunivoca di un insieme in sé stesso; per Enigma, un modo di sostituire ciascuna delle 26 lettere con una lettera diversa per ognuna. Rejewski descrisse la macchina come composizione di permutazioni.
   vedi: come-funziona/la-matematica-di-enigma/
-  fonti: [rejewski-1980]
 - id: posizione-iniziale
   termine: posizione iniziale
   tedesco: Grundstellung

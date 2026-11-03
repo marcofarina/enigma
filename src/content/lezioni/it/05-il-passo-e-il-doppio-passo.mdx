@@ -6,7 +6,6 @@ ordine: 5
 stato: bozza
 fonti:
   - crypto-museum
-  - hamer-1997
 ---
 
 import AnimazionePasso from '@/components/lesson/AnimazionePasso.tsx';
@@ -47,7 +46,7 @@ Con un movimento da contachilometri, tre rotori attraverserebbero tutte le 26 ×
 <Approfondimento titolo="Quali posizioni mancano">
 Facendo girare il simulatore a partire da AAA con i rotori I, II e III, le posizioni che non compaiono mai nel ciclo sono 676 = 26 × 26. Sono le 650 in cui il rotore centrale è fermo sulla sua tacca (la E) mentre il rotore veloce non è appena scattato oltre la propria, più 26 posizioni del tipo AFW, in cui il centrale ha appena superato la tacca mentre il veloce è appena scattato oltre la sua. Da una di queste posizioni la macchina può partire, ma dopo una o due lettere entra nel ciclo e non ci torna più.
 
-Crypto Museum riporta un periodo di 16 926 posizioni, ottenuto come 17 576 − 650. Il conteggio del simulatore dà 16 900: la differenza sono proprio le 26 posizioni del secondo tipo. Chi vuole può verificarlo con la funzione `step` del motore, contando i passi necessari per tornare ad AAA.
+Crypto Museum riporta 16 926, ottenuto come 17 576 − 650. È un’altra grandezza rispetto al periodo: sono le posizioni iniziali distinte, cioè le 16 900 del ciclo più le 26 posizioni del secondo tipo, da cui si può partire una volta sola. Il periodo, la lunghezza del ciclo, resta 16 900. La lezione sulla [matematica di Enigma](../la-matematica-di-enigma/) usa il 16 926 per contare le chiavi, perché lì interessano le posizioni da cui si parte.
 </Approfondimento>
 
 Nel simulatore completo puoi osservare il doppio passo digitando una lettera alla volta da una posizione come ADU.

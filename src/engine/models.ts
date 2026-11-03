@@ -121,7 +121,7 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   I: {
     id: 'I',
     label: 'Enigma I',
-    period: '1932–1945',
+    period: '1930–1945',
     users: 'Esercito (Heer) e aviazione (Luftwaffe)',
     featured: true,
     stepping: 'lever',

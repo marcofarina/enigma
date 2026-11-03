@@ -6,7 +6,7 @@ ordine: 6
 stato: bozza
 fonti:
   - crypto-museum
-  - bauer-decrypted-secrets
+  - crypto-museum-ukw-d
 ---
 
 import Approfondimento from '@/components/lesson/Approfondimento.astro';
@@ -15,7 +15,7 @@ import Nota from '@/components/lesson/Nota.astro';
 
 A sinistra dei rotori c’è un disco con contatti su una sola faccia: il **riflettore**, in tedesco *Umkehrwalze* (“ruota d’inversione”), abbreviato UKW. Al suo interno 13 fili collegano le 26 lettere a coppie. La corrente che arriva dai rotori entra in un contatto, esce da quello accoppiato e viene rimandata indietro attraverso i rotori, per una strada diversa, fino alla ruota d’ingresso e alle lampade.
 
-L’idea del riflettore si deve a Willi Korn, collaboratore di Arthur Scherbius e in seguito alla guida dell’azienda che produceva Enigma. Nelle macchine commerciali, a partire dalla Enigma D del 1926, il riflettore si poteva impostare a mano su 26 posizioni; nell’Enigma I dell’esercito era fisso.
+L’idea del riflettore si deve a Willy Korn, collaboratore di Arthur Scherbius e in seguito alla guida dell’azienda che produceva Enigma. Nelle macchine commerciali, a partire dalla Enigma D del 1926, il riflettore si poteva impostare a mano su 26 posizioni; nell’Enigma I dell’esercito era fisso.
 
 ## Cifrare e decifrare sono la stessa cosa
 
@@ -39,4 +39,4 @@ Il riflettore raddoppia il numero di passaggi attraverso i rotori senza aggiunge
 Il riflettore è una permutazione U che scambia le lettere a coppie: applicata due volte riporta ogni lettera al suo posto (U = U⁻¹) e non lascia nessuna lettera ferma. Una permutazione con queste proprietà si chiama **involuzione senza punti fissi**. Se R è la permutazione prodotta dai rotori all’andata, al ritorno la corrente attraversa gli stessi fili in senso inverso, cioè R⁻¹. La lettera accesa è quindi data da R⁻¹ U R, una permutazione che “trasporta” U con R: ha la stessa struttura di U, quindi è anch’essa un’involuzione senza punti fissi. Lo stesso vale aggiungendo il pannello a spine P, che compare all’inizio e alla fine: E = P⁻¹ R⁻¹ U R P.
 </Approfondimento>
 
-Nel gennaio 1944 le forze armate tedesche introdussero un riflettore ricablabile, l’UKW-D, il cui cablaggio veniva cambiato ogni dieci giorni secondo le tabelle delle chiavi; nel simulatore lo trovi tra i riflettori dell’Enigma I e della M4.
+Nel gennaio 1944 la Luftwaffe introdusse un riflettore ricablabile, l’UKW-D, il cui cablaggio veniva cambiato ogni dieci giorni secondo le tabelle delle chiavi; nel simulatore lo trovi tra i riflettori dell’Enigma I e della M4.

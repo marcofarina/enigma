@@ -25,7 +25,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | Fase | Contenuto | Modello | Effort | Durata | Dipende da | Stato |
 |---|---|---|---|---|---|---|
 | A | Norme in sessione e documenti operativi | Sonnet | high | 0,5 h | D1, D2 | fatta |
-| B | Errori di fatto e incoerenze | Sonnet | high | 1 h | A, D7 | da fare |
+| B | Errori di fatto e incoerenze | Sonnet | high | 1 h | A, D7 | fatta |
 | C | Linter dei contenuti | Sonnet | high | 1,5 h | A, D2 | da fare |
 | D | Componenti dello scheletro della lezione | Opus | high | 1,5 h | A, D3 | da fare |
 | E1 | Riscrittura «Come funziona» 1–4 | Opus | high | 2 h | B, C, D | da fare |
@@ -171,6 +171,14 @@ non deve trovare nulla.
 ```bash
 pnpm verify
 ```
+
+**Esito (2026-11-03)**
+
+- Fatto: tutte le righe della tabella del §2 della revisione. Lezione 7: «circa 150 000 miliardi». Lezione 1 allineata alla storia 2 (marina 1926 con la versione dell’Enigma C, Enigma I dell’esercito in servizio nel 1930). Glossario: «involuzione» rimanda alla coniugata, «doppio passo» descrive i due avanzamenti del rotore centrale. Lezione 5 e lezione 8: una frase ciascuna distingue il periodo (16 900) dalle posizioni iniziali distinte (16 926); tolta la nota sulla funzione `step`. Storia 4: didascalia descrittiva, istruzione nella prosa. `period` dell’Enigma I: 1930–1945.
+- Verifiche su Crypto Museum (`hist.htm` e `ukwd/index.htm`, 2026-11-03, dettagli in `docs/stato.md`): la pagina scrive «Willy Korn», non «Willi» come ipotizzava la revisione, quindi la grafia unica è «Willy»; l’UKW-D è della Luftwaffe (gennaio 1944), con una variante per la marina. La lezione 6 ora lo attribuisce alla Luftwaffe e cita `crypto-museum-ukw-d`.
+- Fonti (D7): tolte dal frontmatter `singh-codici-segreti`, `bauer-decrypted-secrets`, `rejewski-1980`, `hamer-1997`, `batey-dilly`, e dal glossario `hamer-1997` e `rejewski-1980`. Elencate in `docs/stato.md`, «Fonti tolte dal frontmatter», per la fase V.
+- Comandi: `pnpm verify` exit 0; `pnpm test:e2e` exit 0 (99 passati, 3 saltati).
+- Resta: lo stile delle frasi toccate non è stato riscritto (fasi E). Le frasi che nominano Hamer e Rejewski restano nel testo senza fonte in vista.
 
 ---
 
