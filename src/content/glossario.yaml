@@ -24,7 +24,7 @@
   tedesco: Schlüssel
   inglese: key
   definizione: L’insieme delle impostazioni che, insieme al cablaggio della macchina, determinano la cifratura. Per Enigma comprende ordine dei rotori, anelli, collegamenti del pannello a spine e posizione iniziale dei rotori.
-  vedi: come-funziona/la-matematica-di-enigma/
+  vedi: come-funziona/quante-chiavi/
   fonti: [crypto-museum]
 - id: chiave-del-giorno
   termine: chiave del giorno
@@ -97,7 +97,7 @@
   tedesco: Steckerbrett
   inglese: plugboard
   definizione: Pannello sul fronte delle macchine militari, con una presa per lettera. Un cavo tra due prese scambia le due lettere prima e dopo il passaggio nei rotori. Non c’era sulle macchine commerciali.
-  vedi: come-funziona/il-pannello-a-spine-e-l-uhr/
+  vedi: come-funziona/il-pannello-a-spine/
   fonti: [crypto-museum]
 - id: permutazione
   termine: permutazione
@@ -167,7 +167,7 @@
   tedesco: Enigma-Uhr
   inglese: Enigma Uhr
   definizione: Accessorio della Luftwaffe, in uso dal luglio 1944, che si collegava al pannello a spine al posto dei cavi. Con un selettore a 40 posizioni rendeva la sostituzione del pannello non reciproca nella maggior parte delle posizioni.
-  vedi: come-funziona/il-pannello-a-spine-e-l-uhr/
+  vedi: come-funziona/l-uhr/
   fonti: [crypto-museum]
 - id: ultra
   termine: Ultra

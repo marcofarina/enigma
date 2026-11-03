@@ -10,6 +10,8 @@
   titolo: An Application of the Theory of Permutations in Breaking the Enigma Cipher
   editore: Applicationes Mathematicae 16 (4)
   anno: 1980
+  url: https://cryptocellar.org/enigma/files/rew80.pdf
+  note: Consultata la traduzione inglese pubblicata da CryptoCellar il 3 novembre 2026; le pagine sono quelle della trascrizione. Fonte delle citazioni d’apertura delle lezioni 6 (p. 3) e 9 (p. 1).
 - id: welchman-hut-six
   autori: Gordon Welchman
   titolo: The Hut Six Story. Breaking the Enigma Codes
@@ -71,7 +73,7 @@
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — How does an Enigma machine work?
   url: https://www.cryptomuseum.com/crypto/enigma/working.htm
-  note: Consultata il 3 novembre 2026. Fonte delle citazioni d’apertura della lezione 4 (sezione «Rotor wiring») e della lezione 5 (sezione «Enigma stepping»).
+  note: Consultata il 3 novembre 2026. Fonte delle citazioni d’apertura delle lezioni 4 (sezione «Rotor wiring»), 5 («Enigma stepping»), 7 («The Steckerbrett») e 10 («Cipher strength»).
 - id: crypto-museum-storia
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — History of the Enigma
@@ -93,6 +95,16 @@
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — Enigma M1, M2 e M3
   url: https://www.cryptomuseum.com/crypto/enigma/m3/index.htm
+- id: crypto-museum-steckerbrett
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Enigma Steckerbrett
+  url: https://www.cryptomuseum.com/crypto/enigma/i/sb.htm
+  note: Storia del pannello a spine. Consultata il 3 novembre 2026 per il brevetto della Reichswehr, la prova del pannello a 26 cavi del 14 febbraio 1928 e il limite pratico di dieci cavi noto a Heimsoeth und Rinke.
+- id: crypto-museum-uhr
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Enigma Uhr
+  url: https://www.cryptomuseum.com/crypto/enigma/uhr/index.htm
+  note: Consultata il 3 novembre 2026. Fonte della lezione 8 e della sua citazione d’apertura (introduzione della pagina).
 - id: turing-treatise
   autori: Alan M. Turing
   titolo: Treatise on the Enigma, capitolo 1
@@ -105,9 +117,15 @@
   editore: Journal des sciences militaires, vol. IX
   anno: 1883
   url: https://www.petitcolas.net/kerckhoffs/crypto_militaire_1.pdf
-  note: Prima parte, gennaio 1883, pp. 5–38, nella riproduzione di Fabien Petitcolas. Consultato il 3 novembre 2026; fonte della citazione d’apertura della lezione 2 (p. 24).
+  note: Prima parte, gennaio 1883, pp. 5–38, nella riproduzione di Fabien Petitcolas. Consultato il 3 novembre 2026; fonte della citazione d’apertura della lezione 2 (p. 24) e del secondo requisito, il principio di Kerckhoffs, citato nella lezione 10 (p. 12).
 - id: svetonio-divus-iulius
   autori: Svetonio
   titolo: De vita Caesarum, Divus Iulius
   url: https://www.thelatinlibrary.com/suetonius/suet.caesar.html
   note: Il cifrario di Cesare è descritto al capitolo 56. Testo latino consultato il 3 novembre 2026.
+- id: singh-code-book-ragazzi
+  autori: Simon Singh
+  titolo: 'The Code Book: How to Make It, Break It, Hack It, Crack It'
+  editore: Delacorte Press
+  anno: 2003
+  note: Edizione ridotta per ragazzi di «The Code Book» (1999), ISBN 9780385730624, consultata in epub il 3 novembre 2026; l’epub non ha numeri di pagina. Il capitolo 3, «The Mechanization of Secrecy», contiene il conto delle chiavi, circa 10 milioni di miliardi con tre rotori e sei cavi e senza contare gli anelli, e le catene di Rejewski, la cui lunghezza non dipende dal pannello.

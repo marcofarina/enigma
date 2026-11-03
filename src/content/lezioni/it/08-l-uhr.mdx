@@ -1,0 +1,90 @@
+---
+title: L’Uhr
+description: L’accessorio con cui la Luftwaffe rese non reciproco il pannello a spine nel 1944. Che cosa cambiava nella cifratura, se la macchina restava reciproca e come Bletchley Park lo ruppe in pochi giorni.
+sezione: come-funziona
+ordine: 8
+stato: bozza
+fonti:
+  - crypto-museum-uhr
+---
+
+{/*
+Tesi didattica.
+L’Uhr rende il pannello a spine non reciproco: in posizione 03 la A va in C, ma la C va in K. Lo studente ne conclude che anche la macchina smette di essere reciproca, e che per decifrare serve un’altra procedura.
+La lezione mostra che la corrente attraversa l’Uhr all’andata in un verso e al ritorno nel verso opposto, e che le coppie della macchina vengono dal riflettore: la reciprocità resta. L’Uhr toglieva invece ai crittoanalisti la diagonal board, e cadde per una procedura.
+Alla fine lo studente sa dire che cosa l’Uhr cambia nella cifratura e che cosa no, e perché fu rotta pochi giorni dopo l’introduzione.
+Esempio: WETTER cifrata da AAA con l’Uhr in posizione 03 diventa CLSXQB, e CLSXQB battuta da AAA torna WETTER.
+*/}
+
+import Citazione from '@/components/lesson/Citazione.astro';
+import Esito from '@/components/lesson/Esito.astro';
+import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Prerequisiti from '@/components/lesson/Prerequisiti.astro';
+import Previsione from '@/components/lesson/Previsione.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
+import Risposta from '@/components/lesson/Risposta.astro';
+import UhrSelettore from '@/components/lesson/UhrSelettore.tsx';
+
+<Citazione fonte="crypto-museum-uhr" tradotta>
+Fu subito chiaro che quel nonsenso rappresentava un codice dentro il codice.
+</Citazione>
+
+Il 10 luglio 1944 arrivarono a Bletchley Park messaggi della Luftwaffe che cominciavano tutti con un numero scritto per esteso, per esempio *dreineun* per 39; dopo il numero il testo decifrato con la chiave del giorno diventava incomprensibile. Il numero cambiava da un messaggio all’altro, e il più alto era 39. La Luftwaffe aveva introdotto quel mese, senza nessun preavviso, un accessorio per il pannello a spine: l’**Uhr** («orologio»), chiamato anche *Steckeruhr*. Il numero all’inizio del messaggio era la posizione del suo selettore.
+
+<Prerequisiti>
+- Dalla lezione [Il pannello a spine](../il-pannello-a-spine/): la corrente attraversa il pannello due volte, prima e dopo i rotori, e con i cavi normali le lettere si scambiano a coppie.
+- Dalla lezione [Il riflettore](../il-riflettore/): in ogni posizione la macchina scambia le lettere a coppie, e le coppie vengono dal riflettore, visto attraverso i rotori.
+</Prerequisiti>
+
+<Obiettivi>
+- Descrivere come l’Uhr prende il posto dei dieci cavi e che cosa cambia girando il suo selettore.
+- Spiegare perché la macchina resta reciproca anche nelle posizioni in cui l’Uhr non lo è.
+- Dire che cosa l’Uhr tolse ai crittoanalisti di Bletchley Park e perché fu rotta pochi giorni dopo l’introduzione.
+</Obiettivi>
+
+## Venti spine e un selettore
+
+L’Uhr era una cassetta di legno da fissare sul fianco destro della macchina. Al posto dei dieci cavi normali aveva 20 cavi lunghi, con una spina ciascuno: dieci spine rosse, marcate da 1a a 10a, e dieci nere, da 1b a 10b. L’operatore le inseriva seguendo il foglio delle chiavi: per la prima coppia la spina 1a nella prima lettera e la 1b nella seconda, e così via. Con le coppie AZ BN GI KL PC ED QT HV MF JR, la 1a andava nella A, la 1b nella Z, la 2a nella B e la 2b nella N.
+
+Dentro l’Uhr un disco con 80 contatti collegava le spine rosse a quelle nere secondo un cablaggio fisso. Una grande manopola al centro girava il disco su 40 posizioni, numerate da 00 a 39, e a ogni posizione i collegamenti cambiavano. Nella posizione 00 l’Uhr si comportava come i dieci cavi normali, e chi l’aveva poteva comunicare anche con chi non l’aveva.
+
+<UhrSelettore client:visible />
+
+Porta il selettore sulla posizione 03: la A va in C, ma la C non torna in A, va in K. Prova poi le posizioni 04, 08 e 12. Le lettere si scambiano a coppie solo in una posizione su quattro, a partire da 00: in 30 posizioni su 40 l’Uhr non è reciproca. Le sei lettere senza spina, invece, passano sempre diritte.
+
+## La macchina resta reciproca
+
+<Previsione>
+Nel simulatore qui sotto l’Uhr è in posizione 03, dove non scambia le lettere a coppie. Se cifri una parola partendo da AAA, poi riporti i rotori ad AAA e batti il testo cifrato, torna la parola di partenza?
+
+<Risposta testo="no, perché l’Uhr in posizione 03 non è reciproca">
+Sembra la conseguenza diretta: se il pannello non scambia più le lettere a coppie, non lo fa nemmeno la macchina. Ma le coppie della macchina non sono mai venute dal pannello.
+</Risposta>
+<Risposta testo="sì, ma solo con l’Uhr in una posizione multipla di quattro">
+Le posizioni multiple di quattro sono quelle in cui l’Uhr, da sola, scambia le lettere a coppie. La reciprocità della macchina non dipende da questo.
+</Risposta>
+<Risposta testo="sì, in qualunque posizione dell’Uhr" corretta />
+
+<Esito>
+Verificalo nel simulatore: batti una parola, per esempio WETTER, premi «Ricomincia» e batti le lettere accese.
+</Esito>
+</Previsione>
+
+<MiniSimulatore client:visible config="v=1&m=I&w=I-II-III&r=AAA&p=AAA&u=B&s=AZ.BN.GI.KL.PC.ED.QT.HV.MF.JR&uhr=3" schema didascalia="Enigma I con i rotori I, II e III in posizione AAA, riflettore B e l’Uhr in posizione 03 al posto dei dieci cavi AZ BN GI KL PC ED QT HV MF JR." />
+
+WETTER diventa CLSXQB, e CLSXQB torna WETTER. All’andata la corrente entra nell’Uhr dalle prese della tastiera; al ritorno la attraversa nel verso opposto, dal lato della ruota d’ingresso, e subisce la sostituzione inversa. Segui la prima lettera. Premendo la W, l’Uhr porta la corrente su una lettera che chiamiamo x; rotori e riflettore scambiano la x con un’altra lettera, y; al ritorno l’Uhr porta la y nella lampada C. Premendo la C dalla stessa posizione, la corrente fa la strada del ritorno al contrario: l’Uhr la porta sulla y, rotori e riflettore scambiano la y con la x, e al ritorno l’Uhr porta la x nella lampada W.
+
+Per decifrare, quindi, l’operatore impostava la macchina e l’Uhr come il mittente e batteva il testo cifrato, come con i cavi normali. La lezione [La matematica di Enigma](../la-matematica-di-enigma/) dimostra lo stesso fatto con le permutazioni, per qualunque sostituzione al posto del pannello.
+
+## Come Bletchley Park la ruppe
+
+I crittoanalisti capirono presto che il nuovo dispositivo era collegato al pannello e che agiva solo sulle 20 lettere collegate: le sei lettere libere restavano le stesse. Alcuni operatori, non ancora informati della nuova procedura, ritrasmisero messaggi già cifrati con l’Uhr usando la sola chiave di base, e da quei messaggi venne la prima rottura, pochi giorni dopo l’introduzione. Ricostruita una posizione del selettore, i crittoanalisti riuscirono a prevedere l’effetto di tutte le altre.
+
+L’Uhr aveva però tolto loro un aiuto: la *diagonal board* di Welchman, che sfruttava la reciprocità del pannello, non serviva più. Le *Bombe* restavano utilizzabili, a patto di avere *crib* più lunghi. A rendere l’Uhr poco efficace fu soprattutto la procedura: per comunicare anche con le unità che non l’avevano, i tedeschi mescolavano messaggi con e senza Uhr cifrati con la stessa chiave di base, e chi conosceva la chiave di base aveva già fatto gran parte del lavoro.
+
+<Riepilogo>
+- L’Uhr prende il posto dei dieci cavi: le 20 spine vanno nelle prese indicate dal foglio chiave, e il selettore a 40 posizioni cambia il modo in cui sono collegate. In posizione 03 la A va in C, ma la C va in K; solo una posizione su quattro è reciproca.
+- La corrente attraversa l’Uhr all’andata in un verso e al ritorno nel verso opposto, e le coppie della macchina vengono dal riflettore: con l’Uhr in posizione 03, da AAA, WETTER diventa CLSXQB e CLSXQB torna WETTER.
+- L’Uhr tolse a Bletchley Park la diagonal board, che sfruttava la reciprocità del pannello, ma fu rotta pochi giorni dopo l’introduzione, grazie a operatori che ritrasmisero gli stessi messaggi con la sola chiave di base.
+</Riepilogo>

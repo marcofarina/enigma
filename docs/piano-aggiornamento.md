@@ -29,7 +29,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | C | Linter dei contenuti | Sonnet | high | 1,5 h | A, D2 | fatta |
 | D | Componenti dello scheletro della lezione | Opus | high | 1,5 h | A, D3 | fatta |
 | E1 | Riscrittura «Come funziona» 1–4 | Opus | high | 2 h | B, C, D | fatta |
-| E2 | Riscrittura «Come funziona» 5–8 | Opus | high | 2,5 h | B, C, D, D4 | da fare |
+| E2 | Riscrittura «Come funziona» 5–8 | Opus | high | 2,5 h | B, C, D, D4 | fatta |
 | E3 | Riscrittura Storia 1–4 e glossario | Opus | high | 2 h | B, C, D | da fare |
 | F | Interfaccia e i18n | Sonnet | high | 1 h | A, C, D5 | da fare |
 | G | Design | Opus | high | 3 h | F, D6 | da fare |
@@ -394,6 +394,21 @@ non deve trovare nulla.
 ```bash
 pnpm verify && pnpm test:e2e
 ```
+
+**Esito (2026-11-03)**
+
+- Divisioni: secondo D4 la lezione 7 è diventata «Il pannello a spine» (7) e «L’Uhr» (8). Anche la tesi della vecchia lezione 8 non stava in cinque righe; su proposta accettata da Marco è diventata «La matematica di Enigma» (9: permutazioni, cicli, coniugio, involuzioni) e «Quante chiavi» (10: principio di Kerckhoffs, fattori, cifre diverse, chiavi e sicurezza). Ogni lezione ha la tesi in cinque righe in un commento MDX in testa al file.
+- Scheletro: citazioni d’apertura scelte da Marco fra tre proposte con la fonte aperta (6: Rejewski 1980, p. 3 della trascrizione di CryptoCellar; 7: Crypto Museum, «The Steckerbrett»; 8: Crypto Museum, pagina dell’Uhr; 9: Rejewski 1980, p. 1; 10: Crypto Museum, «Cipher strength»). Prerequisiti, obiettivi e riepilogo in tutte; la 5 aveva già lo scheletro dalla fase D.
+- Previsioni nuove, cinque, ciascuna su un errore che qualcuno fa davvero: lezione 6, la A da AAA non accende la Y del riflettore ma la B; lezione 7, il massimo delle configurazioni è a 11 cavi, non a 13; lezione 8, la macchina resta reciproca con l’Uhr in 03 (WETTER → CLSXQB → WETTER); lezione 9, in posizione B il ciclo (AELTPHQXRU) diventa (DKSOGPWQTZ), un posto indietro e non avanti; lezione 10, Singh e Crypto Museum non sbagliano, partono da ipotesi diverse. Esiti calcolati con il motore.
+- Lezione 5: tolti «proprio» e «in dettaglio», matematica dell’approfondimento in `<Formula>`, il 16 926 rimanda ora a «Quante chiavi».
+- Lezione 6: riprende reciprocità e assenza di punti fissi dalla lezione 3 come fatti noti e spiega il ruolo del riflettore: le coppie della macchina sono quelle del riflettore viste attraverso i rotori, e cambiano a ogni tasto (tabella delle coppie in AAB e AAC). La debolezza non è più annunciata: WETTER fatta scorrere sotto un cifrato vero scarta cinque posizioni su dieci. Tolti «Sembra un dettaglio», «comodità enorme», l’elenco di negazioni, la `Nota` e l’approfondimento con la matematica in Unicode, che ripetevano la lezione 9.
+- Lezione 7: il percorso della A con i dieci cavi (A → Z, Z → U in AAB, lampada U), il conteggio con `<Formula>` nel testo invece che nell’approfondimento. Verificati su Crypto Museum (nuova voce `crypto-museum-steckerbrett`) il brevetto della Reichswehr, la prova del 14 febbraio 1928 e il limite pratico di dieci cavi. Tolti «proprio», «curiosamente», «Ecco la stessa macchina», il conteggio che «dice».
+- Lezione 8: il «si legge a volte» è sostituito dalla previsione sulla reciprocità, perché la misconcezione nasce dalla lezione stessa (l’Uhr in 03 non scambia a coppie). Crypto Museum la registra («It is sometimes suggested…») senza dire chi la sostiene. Spine con la notazione del componente (1a, 1b), non a1 come Crypto Museum. Nuova voce `crypto-museum-uhr`.
+- Lezione 9: tolti «che sembra un dettaglio» e la chiusa da articolo; i numeri puri non sono più in `<Formula>`; al posto del rimando vuoto, che cosa Rejewski ricavò dalla struttura in cicli (le lunghezze non dipendono dal pannello), con Rejewski e Singh.
+- Lezione 10: principio di Kerckhoffs definito dove compare, con la citazione a p. 12. Le cifre diverse: Singh (edizione per ragazzi di «The Code Book», Delacorte 2003, cap. 3, dall’epub di Marco) conta tre rotori, sei cavi e niente anelli, circa 10¹⁶; Crypto Museum cinque rotori, dieci cavi e due anelli, circa 1,07 × 10²³; lo studio NSA di Miller, citato da Crypto Museum, suppone ignoti i cablaggi. Il calcolatore riproduce le prime due.
+- Link e fonti: aggiornati glossario (`chiave` → quante-chiavi, `pannello a spine`, `Uhr`), storia 2 e test e2e. `rejewski-1980` ha ora l’URL della traduzione consultata; nuove voci `crypto-museum-steckerbrett`, `crypto-museum-uhr`, `singh-code-book-ragazzi`. Nuovo test e2e sulla reciprocità con l’Uhr.
+- Comandi: i due `grep` dei criteri, estesi a `10-*.mdx`, non trovano nulla; `pnpm verify` exit 0 (188 test, `lint:content` 0 errori e 9 avvisi, nessuno nelle lezioni 5–10); `pnpm test:e2e` exit 0 (113 passati, 3 saltati).
+- Restano: il vecchio indirizzo `come-funziona/il-pannello-a-spine-e-l-uhr/` non ha un redirect. In Crypto Museum, sezione «Key space», 685 518 560 è un refuso per 686 518 560: la lezione non usa quel numero. Per V: Singh è citato dall’edizione per ragazzi senza pagina; se Marco preferisce l’edizione Rizzoli già in `fonti.yaml`, il conto va ritrovato lì.
 
 ---
 

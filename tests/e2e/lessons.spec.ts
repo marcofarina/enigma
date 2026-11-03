@@ -17,8 +17,10 @@ const lessons = [
   'come-funziona/i-rotori',
   'come-funziona/il-passo-e-il-doppio-passo',
   'come-funziona/il-riflettore',
-  'come-funziona/il-pannello-a-spine-e-l-uhr',
+  'come-funziona/il-pannello-a-spine',
+  'come-funziona/l-uhr',
   'come-funziona/la-matematica-di-enigma',
+  'come-funziona/quante-chiavi',
   'storia/scherbius-e-le-macchine-commerciali',
   'storia/l-adozione-militare',
   'storia/fogli-chiave-e-procedure',
@@ -141,20 +143,34 @@ test('il mini simulatore usa la tastiera fisica solo quando ha il focus', async 
 });
 
 test('il pannello a spine conta le configurazioni dei cavi collegati', async ({ page }) => {
-  const board = await island(page, 'come-funziona/il-pannello-a-spine-e-l-uhr/');
+  const board = await island(page, 'come-funziona/il-pannello-a-spine/', 1);
   await expect(board.locator('p[aria-live]').last()).toContainText('3 cavi');
   await board.getByRole('textbox').fill('AZ BN GI KL PC ED QT HV MF JR');
   await expect(board.locator('p[aria-live]').last()).toContainText('150\u00a0738\u00a0274\u00a0937\u00a0250');
 });
 
 test('l’Uhr è reciproca solo nelle posizioni multiple di quattro', async ({ page }) => {
-  const uhr = await island(page, 'come-funziona/il-pannello-a-spine-e-l-uhr/', 2);
+  const uhr = await island(page, 'come-funziona/l-uhr/');
   const status = uhr.locator('p[aria-live]');
   await expect(status).toContainText('Posizione 00: la sostituzione è reciproca');
   await uhr.getByRole('combobox', { name: 'Posizione del selettore' }).selectOption('3');
   await expect(status).toContainText('La A va in C, ma la C non torna in A: va in K.');
   await uhr.getByRole('button', { name: 'Posizione successiva' }).click();
   await expect(status).toContainText('Posizione 04: la sostituzione è reciproca');
+});
+
+test('con l’Uhr in posizione 03 la macchina resta reciproca', async ({ page }) => {
+  const mini = await island(page, 'come-funziona/l-uhr/', 1);
+  const keyboard = mini.getByRole('region', { name: 'Tastiera' });
+  const output = mini.locator('[data-tape="output"]');
+  const type = async (text: string) => {
+    for (const letter of text) await keyboard.getByRole('button', { name: letter, exact: true }).click();
+  };
+  await type('WETTER');
+  await expect(output).toHaveText(/^C\s*L\s*S\s*X\s*Q\s*B$/);
+  await mini.getByRole('button', { name: 'Ricomincia' }).click();
+  await type('CLSXQB');
+  await expect(output).toHaveText(/^W\s*E\s*T\s*T\s*E\s*R$/);
 });
 
 test('i cicli del rotore cambiano lettere ma non lunghezze', async ({ page }) => {
@@ -168,7 +184,7 @@ test('i cicli del rotore cambiano lettere ma non lunghezze', async ({ page }) =>
 });
 
 test('il calcolatore dà le impostazioni dell’Enigma I e della M4', async ({ page }) => {
-  const calculator = await island(page, 'come-funziona/la-matematica-di-enigma/', 1);
+  const calculator = await island(page, 'come-funziona/quante-chiavi/');
   const summary = calculator.locator('p[aria-live]');
   await expect(summary).toHaveText('Circa 1,07 × 10²³ impostazioni, cioè una chiave di circa 76,5 bit.');
   await calculator.getByRole('button', { name: 'Enigma M4' }).click();
