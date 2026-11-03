@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { t } from '@/i18n';
 import { isLessonIn, lessonSlug } from '@/lib/lessons';
 import { url } from '@/lib/url';
 
@@ -9,10 +10,10 @@ const lezioni = (await getCollection('lezioni', (lezione) => isLessonIn(lezione,
 );
 ---
 
-<BaseLayout title="Come funziona">
+<BaseLayout title={t('howItWorks.title')} description={t('howItWorks.intro')}>
   <section class="prose-it">
-    <h1>Come funziona</h1>
-    <p>Un percorso in più tappe, dal cifrario a sostituzione fino alla macchina completa.</p>
+    <h1>{t('howItWorks.title')}</h1>
+    <p>{t('howItWorks.intro')}</p>
   </section>
   <ol class="mt-6 grid max-w-3xl gap-3">
     {lezioni.map((lezione) => (
