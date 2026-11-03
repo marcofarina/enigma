@@ -79,7 +79,6 @@ Valgono solo nel container delle sessioni cloud, dove le norme non sono raggiung
 
 ## Da verificare
 
-- Storia: date di adozione. Crypto Museum scrive che esercito e aviazione adottarono Enigma nel 1927 e che l’Enigma I definitiva entrò in servizio il 1° giugno 1930; la lezione 1 di “Come funziona” dice “marina nel 1926, esercito nel 1928”. Va armonizzata (la lezione di storia 2 spiega la differenza).
 - Storia: data dei rotori IV e V (Crypto Museum: “intorno” al 15 settembre 1938; altre ricostruzioni danno il dicembre 1938).
 - Storia: procedura dell’indicatore tra il 15 settembre 1938 e il 1° maggio 1940 (posizione scelta dall’operatore e trasmessa in chiaro, chiave cifrata due volte) e motivo della doppia cifratura (errori di trasmissione): da controllare su Rejewski o Kozaczuk.
 - Italia: Crypto Museum parla di un messaggio di prova mandato da un operatore “tedesco”; nella lezione si scrive solo “l’operatore”. Controllare su Batey, *Dilly*, anche la data (marzo 1941) e il ruolo delle decifrazioni a Matapan. Crypto Museum colloca la rottura “a ISK”, che però nacque solo nell’ottobre 1941: la lezione parla della sezione di Knox.
@@ -88,7 +87,6 @@ Valgono solo nel container delle sessioni cloud, dove le norme non sono raggiung
 - Galleria: il foglio chiave della Luftwaffe n. 649 su Commons è marcato solo “PD-US-no notice”; non è stato usato. Il ritratto di Rejewski (CC BY-SA 2.5, archivio della figlia) è piccolo, 200 × 274 pixel.
 - Anno del Luftwaffen-Maschinenschlüssel Nr. 619 (1944 per analogia con il 649 di Commons).
 
-- Lezione 1: adozione da parte della marina (1926) e dell’esercito (1928). Crypto Museum data l’entrata in servizio dell’Enigma I al 1° giugno 1930; anche `period` dell’Enigma I in `models.ts` (1932) va riallineato.
 - Lezione 2: data del trattato di Alberti (intorno al 1467) e attribuzione ad al-Kindi, da controllare su Singh.
 - Volume di Cryptologia dell’articolo di Hamer (21 secondo la numerazione della rivista).
 
@@ -99,3 +97,23 @@ Valgono solo nel container delle sessioni cloud, dove le norme non sono raggiung
 - Numeri di pagina delle citazioni da *Codici & segreti* di Singh (sulla copia dell’autore).
 - Crypto Museum, pagina “How does an Enigma machine work?”: i totali con la correzione del doppio passo sono sbagliati. Per l’Enigma I scrive 685 518 560 invece di 60 × 676 × 16 926 = 686 518 560; per la M4 toglie 650 posizioni una volta sola invece che per ciascuna delle 26 posizioni del rotore sottile (440 076 posizioni distinte, verificato con il motore). Con i rotori navali a due tacche nel mezzo la riduzione è diversa. La lezione 8 usa i valori ricalcolati.
 - Esercizio sulla procedura dell’indicatore: descrive l’indicatore cifrato due volte con la Grundstellung del giorno, senza date. Prima di aggiungerle (e di scrivere la lezione sulle procedure) vanno verificati periodi e varianti della procedura per esercito, aviazione e marina.
+
+### Fonti tolte dal frontmatter (fase B, D7, 2026-11-03)
+
+Nessuno ha ancora controllato i fatti sui libri, quindi le lezioni non li mostrano come fonti. La fase V le rimette dopo la verifica.
+
+| Fonte | Lezioni | Che cosa serve verificare |
+|---|---|---|
+| `singh-codici-segreti` | 1, 2 | lezione 1: contesto generale (brevetto, adozione militare); lezione 2: Alberti e la data del trattato, al-Kindi, cifrario di Cesare, pagine delle citazioni |
+| `bauer-decrypted-secrets` | 2, 4, 6 | il frontmatter non diceva quale fatto: cifrari a disco, struttura del rotore, riflettore; la fase V lo ricava rileggendo il testo delle tre lezioni |
+| `rejewski-1980` | 4, 8, voce «permutazione» del glossario | la macchina descritta come composizione di permutazioni |
+| `hamer-1997` | 5, voce «doppio passo» del glossario | descrizione del doppio passo; volume di *Cryptologia* |
+| `batey-dilly` | storia 4 | Mavis Lever e il messaggio di prova senza la L, marzo 1941, ruolo a Capo Matapan, biografia di Knox |
+
+Le frasi che nominano Hamer (lezione 5) e Rejewski (glossario) restano nel testo: si appoggiano a Crypto Museum, ma l’attribuzione va confermata sui testi originali.
+
+### Consultato in fase B (2026-11-03, `curl`)
+
+- `cryptomuseum.com/crypto/enigma/hist.htm`: scrive «Willy Korn» (non «Willi»), collega di Scherbius e poi alla guida dell’azienda, a cui si deve l’idea del riflettore. Le lezioni usano «Willy».
+- `cryptomuseum.com/crypto/enigma/ukwd/index.htm`: l’UKW-D fu introdotto nel gennaio 1944 dalla Luftwaffe; esisteva anche una variante per la marina (M3 e M4). Le lezioni lo attribuiscono alla Luftwaffe. Il cablaggio cambiava ogni dieci giorni circa, secondo i fogli chiave.
+- Date di adozione armonizzate sulla ricostruzione di Crypto Museum (lezione di storia 2): marina nel 1926 (Funkschlüssel C), Enigma I dell’esercito pronta nel 1927 e in servizio dal 1° giugno 1930. `period` dell’Enigma I è ora «1930–1945».
