@@ -9,28 +9,46 @@ fonti:
   - crypto-museum-storia
 ---
 
+{/*
+Tesi didattica.
+Chi associa Enigma alla Germania non sa che anche le forze armate italiane la usarono, e in una versione più debole: l’Enigma K commerciale, senza pannello a spine.
+La lezione mostra che cosa comprò l’Italia, perché senza il pannello i metodi britannici a carta e matita bastavano, e come nel 1941 un cifrato senza nessuna L rivelò il testo in chiaro.
+Alla fine lo studente sa dire in che cosa l’Enigma italiana differiva da quella tedesca, sa spiegare con l’assenza di punti fissi perché un cifrato senza L rivelava il testo e sa dire da quale parte vengono le fonti di questa storia.
+Esempio: la L premuta più volte di seguito sull’Enigma K del simulatore.
+*/}
+
 import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
 import Nota from '@/components/lesson/Nota.astro';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
 
-Anche l’Italia usò Enigma, ma non la macchina militare tedesca con il pannello a spine. Le forze armate italiane comprarono l’Enigma K, il modello commerciale, e la marina la impiegò per tutta la seconda guerra mondiale.
+Anche le forze armate italiane usarono Enigma, nella versione commerciale: comprarono l’Enigma K, senza il pannello a spine delle macchine militari tedesche, e la marina la impiegò per tutta la seconda guerra mondiale.
+
+<Obiettivi>
+- Dire quali Enigma usarono le forze armate italiane e in che cosa differivano dall’Enigma I dell’esercito tedesco.
+- Spiegare perché un testo cifrato senza nessuna L rivelava il testo in chiaro.
+- Dire da quale parte vengono quasi tutte le fonti sull’Enigma italiana, e che cosa resta da verificare.
+</Obiettivi>
 
 ## Le Enigma K italiane
 
 Secondo il censimento di Crypto Museum, l’Enigma K fu usata dalla marina, dall’esercito e dall’aeronautica italiani. Le macchine della marina e dell’esercito avevano rotori con un cablaggio speciale, indicato come schema D, fissato in un disegno tecnico del 9 settembre 1936 e usato anche per le macchine dell’addetto navale spagnolo; quelle dell’aeronautica avevano il cablaggio commerciale normale. La ruota d’ingresso e il riflettore restavano quelli commerciali. La marina riceveva sei rotori, ma finora ne sono stati ritrovati solo tre. Ai clienti italiani andarono, tra gli altri, gli esemplari numerati da K233 a K282.
 
-Rispetto alla macchina dell’esercito tedesco, l’Enigma K aveva un punto debole evidente: niente pannello a spine. Senza il pannello, chi conosce il cablaggio dei rotori deve trovare solo il loro ordine, gli anelli e le posizioni di rotori e riflettore — un lavoro alla portata dei metodi a carta e matita che i britannici avevano messo a punto negli anni Venti e Trenta.
+All’Enigma K mancava il pannello a spine dell’Enigma I tedesca. Senza il pannello, chi conosce il cablaggio dei rotori deve trovare solo il loro ordine, gli anelli e le posizioni di rotori e riflettore: un lavoro alla portata dei metodi a carta e matita che i britannici avevano messo a punto negli anni Venti e Trenta.
 
 ## La guerra di Spagna
 
-Durante la guerra civile spagnola, nel 1937, Dilly Knox e William Bodsworth della GC&CS britannica riuscirono a leggere il traffico Enigma tra la marina del generale Franco e quella italiana. Il primo successo di Knox contro un’Enigma K di Franco risale al 4 aprile 1937. Il metodo discendeva dall’analisi dell’Enigma D che Hugh Foss aveva scritto dieci anni prima, perfezionata da Knox con una tecnica che chiamava *rodding*.
+Durante la guerra civile spagnola, nel 1937, Dilly Knox e William Bodsworth della GC&CS britannica riuscirono a leggere il traffico Enigma tra la marina del generale Franco e quella italiana. Il primo successo di Knox contro un’Enigma K di Franco risale al 4 aprile 1937. Il metodo discendeva dall’analisi dell’Enigma D che Hugh Foss aveva scritto dieci anni prima, perfezionata da Knox con una tecnica a carta e matita che chiamava *rodding*.
 
 ## La lettera che mancava
 
-Nel frattempo il traffico della marina italiana era tornato illeggibile. A Bletchley Park Knox guidava un piccolo gruppo di crittoanaliste, ricordate come *Dilly’s girls*. Una di loro, Mavis Lever, allora diciannovenne, riaprì la strada nel marzo 1941 grazie a un dettaglio.
+Nel frattempo il traffico della marina italiana era tornato illeggibile. A Bletchley Park Knox guidava un piccolo gruppo di crittoanaliste, ricordate come *Dilly’s girls*. Nel marzo 1941 una di loro, Mavis Lever, allora diciannovenne, notò un messaggio di prova in cui non compariva nemmeno una L.
 
-Un messaggio di prova non conteneva nemmeno una L. Mavis Lever sapeva che Enigma non cifra mai una lettera in sé stessa e capì che cosa poteva significare quell’assenza: l’operatore aveva premuto più volte lo stesso tasto, la L, che sulla tastiera di Enigma sta in basso a destra. Nel simulatore qui sotto puoi ripetere la prova: premi la L più volte di seguito. Un testo in chiaro noto, anche se fatto di una lettera sola ripetuta, era esattamente ciò che serviva per ricostruire cablaggio e impostazioni.
+Il simulatore qui sotto riproduce un’Enigma K. Premi la L una ventina di volte di seguito, come l’operatore di quel messaggio, e guarda quali lampade si accendono.
 
-<MiniSimulatore client:visible config="v=1&m=K&w=I-II-III&r=AAA&p=AAA&u=UKW" didascalia="Enigma K con i rotori I, II e III in posizione AAA. Premendo la L più volte di seguito, le lettere che si accendono cambiano a ogni tasto, ma la L non compare mai." />
+<MiniSimulatore client:visible config="v=1&m=K&w=I-II-III&r=AAA&p=AAA&u=UKW" didascalia="Enigma K con i rotori commerciali I, II e III in posizione AAA. Le macchine della Regia Marina avevano rotori con un cablaggio diverso." />
+
+Le lampade cambiano a ogni tasto, ma la L non si accende: Enigma non cifra mai una lettera in sé stessa, come dimostra la lezione [Il riflettore](../../come-funziona/il-riflettore/). Mavis Lever ne dedusse che l’operatore aveva battuto soltanto la L, il tasto in basso a destra della tastiera. Con un testo in chiaro noto, anche fatto di una lettera sola ripetuta, il gruppo di Knox poteva ricostruire cablaggio e impostazioni.
 
 Le decifrazioni che ne seguirono contribuirono alla vittoria britannica nella battaglia di Capo Matapan, il 28 marzo 1941; Crypto Museum le considera decisive.
 
@@ -41,3 +59,9 @@ Quasi tutto ciò che sappiamo dell’Enigma italiana viene da fonti britanniche,
 ## Dopo Matapan
 
 Mavis Lever restò nel gruppo di Knox, che dal 1941 lavorò sull’Enigma G dell’Abwehr; molti anni dopo, con il cognome da sposata, Batey, scrisse una biografia di Knox, *Dilly*, pubblicata nel 2009. Knox, già malato all’inizio della guerra, morì nel febbraio 1943.
+
+<Riepilogo>
+- Marina, esercito e aeronautica italiani usarono l’Enigma K commerciale, senza pannello a spine; le macchine della marina e dell’esercito avevano rotori con il cablaggio speciale dello schema D.
+- Una lettera non si cifra mai in sé stessa: un cifrato lungo senza nessuna L indicava un testo in chiaro fatto solo di L, e un testo in chiaro noto bastava al gruppo di Knox per ricostruire cablaggio e impostazioni.
+- Quasi tutte le fonti vengono da chi attaccava la macchina; il peso delle decifrazioni nella vittoria di Capo Matapan va valutato anche con fonti italiane.
+</Riepilogo>

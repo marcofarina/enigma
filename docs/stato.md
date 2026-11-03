@@ -122,3 +122,7 @@ Le frasi che nominano Hamer (lezione 5) e Rejewski (glossario) restano nel testo
 
 - `cryptomuseum.com/crypto/enigma/working.htm`, sezione «Enigma stepping»: «Rotor movement is much like the odometer in a car.» È la citazione d’apertura della lezione 5, tradotta da noi; voce `crypto-museum-funzionamento` di `fonti.yaml`.
 - Scartata come citazione d’apertura, ma utilizzabile: il rapporto 6812 (`us-6812-bombe-report`), p. 3 della trascrizione di Tony Sale, descrive il nottolino che deve «cadere nell’incavo» del rotore precedente per farlo avanzare.
+
+### Consultato in fase E3 (2026-11-03, WebFetch)
+
+- `cryptomuseum.com/crypto/enigma/m4/index.htm`: il *Kenngruppenbuch* («K. Buch») è un libro A4 di 120 pagine; la versione mostrata è stata stampata a Berlino nel 1941 (M. Dv. Nr. 98). L’operatore ne sceglieva due trigrammi, che formavano l’indicatore prima della conversione con le tabelle dei bigrammi. La M4 fu introdotta «unexpectedly» il 1° febbraio 1942; il traffico degli U-Boot cifrato con la M4 si chiamava SHARK e restò illeggibile per nove mesi, «until new key sheets were captured». Sono la fonte della voce `kenngruppenbuch` del glossario e della chiusa della storia 2.
