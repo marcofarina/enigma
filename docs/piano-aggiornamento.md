@@ -24,7 +24,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 
 | Fase | Contenuto | Modello | Effort | Durata | Dipende da | Stato |
 |---|---|---|---|---|---|---|
-| A | Norme in sessione e documenti operativi | Sonnet | high | 0,5 h | D1, D2 | fatta, con 4 e2e falliti (vedi esito) |
+| A | Norme in sessione e documenti operativi | Sonnet | high | 0,5 h | D1, D2 | fatta |
 | B | Errori di fatto e incoerenze | Sonnet | high | 1 h | A, D7 | da fare |
 | C | Linter dei contenuti | Sonnet | high | 1,5 h | A, D2 | da fare |
 | D | Componenti dello scheletro della lezione | Opus | high | 1,5 h | A, D3 | da fare |
@@ -109,8 +109,9 @@ pnpm verify && pnpm test:e2e
 **Esito (2026-11-03)**
 
 - Fatto: symlink `.claude/norms` (ignorato da git insieme a `.claude/launch.json`, D1); sezione «Norme di contenuto condivise» in `CLAUDE.md`, con l’import di `contenuto.md`, la tabella delle norme di scrittura e l’avviso che i testi si scrivono solo in locale; regola delle virgolette secondo D2 (« » per le citazioni, “ ” per quelle interne); `README.md` con le fasi 0–3 «fatta» e senza «agli inizi»; `docs/stato.md` diviso in «In locale» e «Solo nel cloud».
-- Comandi: `pnpm verify` exit 0 (170 test, 34 pagine). `pnpm test:e2e`: 95 passati, 3 saltati, **4 falliti**, tutti per `networkidle` su due lezioni (dettagli in `docs/stato.md`, «Esito dei test in locale»). Il criterio `pnpm verify && pnpm test:e2e` non è quindi soddisfatto.
-- Resta: correggere l’attesa in `tests/e2e/lessons.spec.ts` (non toccato: fuori dal perimetro della fase A). Le lezioni esistenti usano ancora “ ” per le citazioni; il linter e il testo si allineano alla D2 nelle fasi C ed E.
+- Test: al primo giro quattro e2e fallivano per `networkidle` su due lezioni (dettagli in `docs/stato.md`, «Esito dei test in locale»). Corretta l’attesa in `tests/e2e/lessons.spec.ts`: ogni isola viene portata in vista e si aspetta che si idrati.
+- Comandi: `pnpm verify` exit 0 (170 test, 34 pagine); `pnpm test:e2e` exit 0 (99 passati, 3 saltati).
+- Resta: le lezioni esistenti usano ancora “ ” per le citazioni; il linter e il testo si allineano alla D2 nelle fasi C ed E.
 
 ---
 

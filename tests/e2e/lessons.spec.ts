@@ -29,9 +29,14 @@ for (const path of lessons) {
     await page.goto(`${path}/`);
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.getByRole('navigation', { name: 'Navigazione tra le lezioni' })).toBeVisible();
-    // Le isole React si idratano quando entrano nello schermo.
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await page.waitForLoadState('networkidle');
+    // Le isole React si idratano quando entrano nello schermo: le porto tutte in vista una
+    // per una e aspetto che perdano l’attributo `ssr`. `networkidle` non serviva allo scopo e
+    // in locale non si risolveva su alcune pagine.
+    const islands = page.locator('astro-island');
+    for (let i = 0; i < (await islands.count()); i++) {
+      await islands.nth(i).scrollIntoViewIfNeeded();
+      await expect(islands.nth(i)).not.toHaveAttribute('ssr');
+    }
     for (const scheme of ['light', 'dark'] as const) {
       await page.emulateMedia({ colorScheme: scheme });
       const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
