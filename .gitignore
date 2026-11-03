@@ -8,3 +8,5 @@ playwright-report/
 *.log
 .env
 .env.*
+.claude/norms
+.claude/launch.json

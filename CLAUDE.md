@@ -1,5 +1,24 @@
 # Convenzioni del progetto
 
+## Norme di contenuto condivise (workspace)
+
+Le norme di contenuto di Marco (tono, tipografia, lessico, numeri) sono importate dal workspace tramite symlink interno (`.claude/norms -> ../../norms`):
+
+@.claude/norms/contenuto.md
+
+Le norme di **scrittura** non si importano: pesano sul contesto di ogni sessione, comprese quelle che non scrivono una riga di prosa. Si leggono quando servono, dal percorso `.claude/norms/`:
+
+| Quando                                              | Norma                                                                     |
+| --------------------------------------------------- | ------------------------------------------------------------------------- |
+| prima di scrivere una lezione o un esercizio        | `scrittura-didattica.md`                                                  |
+| prima di scrivere un piano, una procedura, un README | `scrittura-tecnica.md`                                                    |
+| a fine stesura, come passata di verifica            | `scrittura-umana.md` (norma madre anti-slop)                              |
+| a fine stesura, dopo l’anti-slop                    | `scrittura-parlata.md` §1: soggetti e referenti espliciti                 |
+
+Il symlink esiste solo in locale (è in `.gitignore`): nel cloud `norms/` non è raggiungibile. **Il lavoro sui testi si fa solo in locale**; una sessione cloud può toccare il codice, non la prosa.
+
+## Il progetto
+
 Sito Astro + React + TypeScript (Tailwind, MDX), pubblicato su GitHub Pages sotto `/enigma/`. Il piano completo è in `docs/piano.md`.
 
 ## Comandi
@@ -15,7 +34,7 @@ Node ≥ 22.23.4 (vedi `.nvmrc`), pnpm 10.
 - `src/engine/` è TypeScript puro: nessuna dipendenza, nessun accesso a DOM, React o Astro (lo impone ESLint).
 - I link interni passano da `url()` in `src/lib/url.ts`, per rispettare `base`.
 - I colori e i font si usano solo tramite i design token di `src/styles/tokens.css`.
-- I testi in `src/content/` seguono le regole tipografiche italiane controllate da `pnpm lint:content`: virgolette “curve”, apostrofo ’, trattino lungo — per gli incisi, titoli con maiuscola solo iniziale, acronimi senza punti, numeri fino a dieci in lettere.
+- I testi in `src/content/` seguono le regole tipografiche italiane controllate da `pnpm lint:content`: virgolette « » per le citazioni e “ ” per quelle interne a una citazione (l’eccezione dei caporali vale solo per Python Doesn’t Byte), apostrofo ’, trattino lungo — per gli incisi, titoli con maiuscola solo iniziale, acronimi senza punti, numeri fino a dieci in lettere.
 - Le lezioni nuove nascono con `stato: bozza`; solo l’autore le porta a `rivista`.
 - Ogni immagine di terzi ha una voce in `src/content/immagini.yaml`; sono ammesse solo licenze PD, CC0, CC BY e CC BY-SA.
 - Ogni fatto storico nei testi rimanda a una voce di `src/content/fonti.yaml`.
