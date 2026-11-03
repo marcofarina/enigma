@@ -1,6 +1,6 @@
 ---
 title: Che cos’è Enigma
-description: Una macchina elettromeccanica che cifra ogni lettera con un alfabeto diverso.
+description: La stessa lettera, battuta più volte, accende ogni volta una lampada diversa, e il messaggio torna in chiaro solo su una macchina impostata come quella di chi l’ha cifrato.
 sezione: come-funziona
 ordine: 1
 stato: bozza
@@ -8,8 +8,96 @@ fonti:
   - crypto-museum
 ---
 
+{/*
+Tesi didattica.
+Chi arriva immagina Enigma come una tabella segreta che trasforma ogni lettera sempre nella stessa altra lettera.
+La lezione mostra che la stessa lettera, battuta dieci volte, accende dieci lampade diverse, e che il cifrato torna in chiaro solo su una macchina che parte dalla stessa posizione.
+Alla fine lo studente cifra e decifra una parola nel simulatore e sa dire che cosa mittente e destinatario devono avere in comune: la chiave.
+Esempio: dieci A di fila, poi ENIGMA cifrata partendo da AAA e il cifrato battuto di nuovo partendo da AAA e da AAB.
+*/}
+
+import Citazione from '@/components/lesson/Citazione.astro';
+import Esito from '@/components/lesson/Esito.astro';
+import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Previsione from '@/components/lesson/Previsione.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
+import Risposta from '@/components/lesson/Risposta.astro';
+
+<Citazione fonte="turing-treatise" pagina="1" tradotta>
+Quando si preme un tasto, i rotori si muovono in un certo modo e una corrente scorre attraverso i rotori fino a una delle lampadine.
+</Citazione>
+
 Enigma è una macchina cifrante elettromeccanica brevettata dall’ingegnere tedesco Arthur Scherbius nel 1918 e messa in vendita come prodotto commerciale nei primi anni Venti. Dalla seconda metà del decennio la adottarono le forze armate tedesche — prima la marina, che nel 1926 acquistò una versione dell’Enigma C, poi l’esercito, la cui Enigma I entrò in servizio nel 1930 — che la usarono fino alla fine della seconda guerra mondiale.
 
-A prima vista assomiglia a una macchina da scrivere: l’operatore preme un tasto e, invece di stampare un carattere, si accende una lampadina con un’altra lettera. Il segreto sta in ciò che accade tra il tasto e la lampadina: la corrente attraversa una serie di **rotori**, dischi cablati che a ogni pressione cambiano posizione. Per questo la stessa lettera, digitata due volte di seguito, produce quasi sempre due lettere cifrate diverse.
+A prima vista assomiglia a una macchina da scrivere. L’operatore preme un tasto, ma sul foglio non compare nulla: sopra la tastiera si accende una lampadina con un’altra lettera, e l’operatore la trascrive a mano. Fra il tasto e la lampadina la corrente attraversa i **rotori**, dischi con 26 fili all’interno che cambiano posizione a ogni tasto premuto.
 
-Nelle prossime tappe smonteremo la macchina pezzo per pezzo: la tastiera e le lampade, i rotori e il loro movimento, il riflettore e il pannello a spine. Alla fine sarà chiaro perché Enigma sembrava inviolabile — e quali scelte di progetto la resero invece vulnerabile.
+<Obiettivi>
+- Prevedere che cosa si accende quando si batte più volte la stessa lettera, e dire perché.
+- Cifrare una parola nel simulatore e decifrarla.
+- Dire che cos’è la chiave e che cosa legge un destinatario che parte da una posizione diversa da quella del mittente.
+</Obiettivi>
+
+## La stessa lettera dieci volte
+
+Il simulatore qui sotto è un’Enigma I. Le tre lettere nelle finestrelle, sopra le lampade, indicano la posizione dei tre rotori: all’inizio sono AAA.
+
+<Previsione>
+Con le finestrelle su AAA, premi dieci volte il tasto A. Che cosa si accende?
+
+<Risposta testo="dieci volte la stessa lettera">
+È ciò che farebbe una tabella segreta che associa a ogni lettera sempre la stessa altra lettera. In Enigma il rotore di destra scatta di un passo a ogni tasto, e la tabella cambia con lui.
+</Risposta>
+<Risposta testo="B, poi C, poi D, e così via">
+Il rotore avanza di un passo, ma la lettera accesa non avanza con lui: dentro il rotore i fili rimescolano l’alfabeto, e un passo del rotore manda la corrente su un filo che arriva in tutt’altro punto.
+</Risposta>
+<Risposta testo="lettere diverse, senza un ordine" corretta />
+
+<Esito>
+Verificalo nel simulatore: le lettere accese compaiono sul nastro, sotto la tastiera.
+</Esito>
+</Previsione>
+
+<MiniSimulatore client:visible config="v=1&m=I&w=I-II-III&r=AAA&p=AAA&u=B" didascalia="Enigma I con i rotori I, II e III in posizione AAA." />
+
+Le dieci A accendono BDZGOWCXLT. A ogni pressione il rotore di destra scatta prima che passi la corrente, e nella nuova posizione i suoi fili collegano i contatti in un altro modo: ogni lettera del messaggio è cifrata con un alfabeto diverso. Un cifrario a tabella fissa si rompe contando quante volte compare ogni lettera del cifrato, come mostra la lezione [Dalla sostituzione al rotore](../dalla-sostituzione-al-rotore/); con un alfabeto diverso a ogni lettera, quel conteggio non porta più alla tabella.
+
+## Cifrare e decifrare
+
+Il destinatario riceve le lettere cifrate e ha un’Enigma dello stesso modello. Per leggere il messaggio imposta la sua macchina come quella del mittente e batte il testo cifrato: sulle lampade si accende il testo in chiaro.
+
+Prova nel simulatore qui sopra. Premi «Ricomincia», che riporta i rotori su AAA e svuota il nastro, e batti ENIGMA: si accendono FQGAHW. Premi di nuovo «Ricomincia» e batti FQGAHW.
+
+La stessa operazione cifra e decifra, e infatti Enigma non ha un comando per passare dall’una all’altra. Il motivo sta nel circuito fra tasti e lampade, ed è l’argomento della lezione [Tastiera, lampade e circuito](../tastiera-lampade-e-circuito/).
+
+## La chiave
+
+Nella prova precedente mittente e destinatario partivano entrambi da AAA.
+
+<Previsione>
+Il mittente ha cifrato ENIGMA partendo da AAA e ha trasmesso FQGAHW. Il destinatario ha la stessa macchina, ma le sue finestrelle sono su AAB: il rotore di destra è un passo più avanti. Che cosa si accende quando batte FQGAHW?
+
+<Risposta testo="ENIGMA">
+La macchina del destinatario non sa da dove è partito il mittente. Ogni lettera di FQGAHW attraversa i rotori in una posizione diversa da quella in cui era stata cifrata, e la sostituzione è un’altra.
+</Risposta>
+<Risposta testo="ENIGMA sfasata di una lettera">
+Uno scarto di un passo non sposta il messaggio di una lettera: cambia la sostituzione che la macchina applica a ogni lettera.
+</Risposta>
+<Risposta testo="sei lettere senza senso" corretta />
+
+<Esito>
+Verificalo nel simulatore qui sotto, che parte da AAB: batti FQGAHW.
+</Esito>
+</Previsione>
+
+<MiniSimulatore client:visible config="v=1&m=I&w=I-II-III&r=AAA&p=AAB&u=B" didascalia="La macchina del destinatario: Enigma I con i rotori I, II e III in posizione AAB." />
+
+Da AAB, FQGAHW accende KVAOJQ. Per leggere il messaggio il destinatario deve conoscere le impostazioni con cui il mittente ha cominciato, e l’insieme di queste impostazioni si chiama **chiave**. Sull’Enigma I dell’esercito la chiave stabilisce quali rotori montare e in che ordine, la posizione dell’anello di ciascun rotore, i collegamenti del pannello a spine e la posizione di partenza nelle finestrelle; le prossime lezioni spiegano queste impostazioni una per una.
+
+Una macchina poteva finire in mano al nemico; la chiave, invece, si poteva cambiare. Chi catturava un’Enigma senza conoscere la chiave si trovava nella situazione del destinatario con le finestrelle su AAB.
+
+<Riepilogo>
+- Battuta dieci volte, la A accende dieci lettere diverse: il rotore di destra scatta a ogni tasto, prima che passi la corrente, e ogni lettera è cifrata con un alfabeto diverso.
+- Per decifrare si batte il testo cifrato su una macchina impostata come quella del mittente: partendo da AAA, ENIGMA diventa FQGAHW e FQGAHW torna ENIGMA.
+- La chiave è l’insieme delle impostazioni di partenza. Partendo da AAB invece che da AAA, FQGAHW accende KVAOJQ.
+</Riepilogo>

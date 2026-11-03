@@ -90,6 +90,15 @@ describe('virgolette (D2)', () => {
     expect(rulesOf('Lo chiamò «la macchina “quasi” perfetta».')).toEqual([]);
   });
 
+  it('tratta il corpo di <Citazione> come una citazione', () => {
+    const source = ['<Citazione fonte="x">', 'Il cablaggio “traduce” la lettera.', '</Citazione>'];
+    expect(rulesOf(source.join('\n'))).toEqual([]);
+    expect(rulesOf(['<Citazione fonte="x">', 'Disse «ciao».', '</Citazione>'].join('\n'))).toEqual([
+      'caporali-annidati',
+    ]);
+    expect(rulesOf([...source, 'Premi “Ricomincia”.'].join('\n'))).toEqual(['virgolette-fuori-caporali']);
+  });
+
   it('applica i caporali anche a title e description, ma non gli avvisi', () => {
     const source = ['---', 'title: Il «Cifrario «nuovo»»', 'description: Premi “Ricomincia”', '---'].join('\n');
     expect(rulesOf(source)).toEqual(['caporali-annidati']);

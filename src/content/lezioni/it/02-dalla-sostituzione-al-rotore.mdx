@@ -1,49 +1,101 @@
 ---
 title: Dalla sostituzione al rotore
-description: Dal cifrario di Cesare al disco di Alberti, fino all’idea che sta dentro ogni rotore di Enigma.
+description: Una sostituzione fissa lascia passare le frequenze delle lettere; un disco che cambia alfabeto a ogni lettera le confonde, ed è l’idea del rotore.
 sezione: come-funziona
 ordine: 2
 stato: bozza
 fonti:
   - crypto-museum
+  - svetonio-divus-iulius
 ---
 
-import Approfondimento from '@/components/lesson/Approfondimento.astro';
-import DiscoCifrante from '@/components/lesson/DiscoCifrante.tsx';
-import Nota from '@/components/lesson/Nota.astro';
+{/*
+Tesi didattica.
+Chi comincia pensa che un alfabeto segreto ben mescolato basti a nascondere un messaggio, perché le tabelle possibili sono troppe da provare.
+La lezione mostra che ogni sostituzione fissa, quella di Cesare come una mescolata, conserva le frequenze delle lettere, e che il rimedio è cambiare alfabeto durante il messaggio.
+Alla fine lo studente sa spiegare perché l’analisi delle frequenze rompe la sostituzione monoalfabetica e prevede che cosa produce un disco mescolato che avanza a ogni lettera.
+Esempio: il disco cifrante, prima con lo spostamento di Cesare, poi con il cablaggio del rotore I e sei A in chiaro.
+*/}
 
-Per capire che cosa fa un rotore conviene partire da molto più lontano, dal più semplice dei cifrari: la **sostituzione monoalfabetica**. Ogni lettera del messaggio viene sostituita da un’altra, sempre la stessa, secondo una tabella fissata in anticipo. Chi conosce la tabella decifra ripercorrendola al contrario; chi non la conosce vede soltanto una sequenza di lettere senza senso.
+import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import Citazione from '@/components/lesson/Citazione.astro';
+import DiscoCifrante from '@/components/lesson/DiscoCifrante.tsx';
+import Esito from '@/components/lesson/Esito.astro';
+import Nota from '@/components/lesson/Nota.astro';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Prerequisiti from '@/components/lesson/Prerequisiti.astro';
+import Previsione from '@/components/lesson/Previsione.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
+import Risposta from '@/components/lesson/Risposta.astro';
+
+<Citazione fonte="kerckhoffs-1883" pagina="24" tradotta>
+In generale, per decifrare un crittogramma basta conoscere il carattere che rappresenta la lettera E per essere sicuri di trovare, con il calcolo o per tentativi, il significato di tutti gli altri.
+</Citazione>
+
+Enigma cifra ogni lettera con un alfabeto diverso. Il motivo sta nel difetto del cifrario più semplice, la **sostituzione monoalfabetica**, in cui ogni lettera del messaggio è sostituita da un’altra, sempre la stessa, secondo una tabella fissata in anticipo. Chi conosce la tabella decifra leggendola al contrario; chi non la conosce vede una sequenza di lettere senza senso, ma può contarle.
+
+<Prerequisiti>
+- Dalla lezione [Che cos’è Enigma](../che-cos-e-enigma/): battuta più volte, la stessa lettera accende ogni volta una lampada diversa.
+</Prerequisiti>
+
+<Obiettivi>
+- Cifrare con il disco di Cesare e dire quante chiavi ha.
+- Spiegare perché una sostituzione fissa, anche con l’alfabeto mescolato, si rompe contando le lettere del cifrato.
+- Prevedere che cosa produce un disco con l’alfabeto mescolato che avanza di un passo a ogni lettera.
+</Obiettivi>
 
 ## Il cifrario di Cesare
 
-Secondo il biografo Svetonio, Giulio Cesare scriveva i messaggi riservati spostando ogni lettera di tre posizioni nell’alfabeto: la A diventava D, la B diventava E, e così via, ricominciando dall’inizio dopo la Z. È la sostituzione più semplice che si possa immaginare, ed è comodo rappresentarla con due dischi concentrici: quello esterno porta l’alfabeto in chiaro, quello interno lo stesso alfabeto ruotato.
+Secondo il biografo Svetonio, Giulio Cesare scriveva i messaggi riservati spostando ogni lettera di tre posizioni nell’alfabeto: la A diventava D, la B diventava E, e così via, ricominciando dall’inizio dopo la Z. Questa sostituzione si rappresenta con due dischi concentrici: quello esterno porta l’alfabeto in chiaro, quello interno lo stesso alfabeto ruotato.
 
 <DiscoCifrante client:visible />
 
-Prova a ruotare il disco interno: ogni posizione è una chiave diversa. Le chiavi però sono soltanto 25 — la ventiseiesima riporta ogni lettera su sé stessa — e chi intercetta il messaggio può provarle tutte in pochi minuti.
+Ruota il disco interno: ogni posizione è una chiave diversa, e la chiave di Cesare è lo spostamento di tre. Le chiavi sono 25, perché la ventiseiesima riporta ogni lettera su sé stessa, e chi intercetta il messaggio può provarle tutte in pochi minuti.
 
-## Un punto debole: le frequenze
+## Le frequenze
 
-Anche senza limitarsi agli spostamenti, cioè ammettendo qualunque rimescolamento dell’alfabeto, la sostituzione monoalfabetica ha un difetto di fondo: la stessa lettera in chiaro produce sempre la stessa lettera cifrata. In un testo italiano le vocali E, A, I e O sono molto più frequenti della Z o della Q, e queste proporzioni sopravvivono alla cifratura. Contando quante volte compare ogni simbolo, un crittoanalista può ricostruire la tabella pezzo per pezzo. Il metodo, l’**analisi delle frequenze**, era descritto già nel IX secolo dal filosofo arabo al-Kindi.
+Se il disco interno porta un alfabeto mescolato invece di quello ordinato, le tabelle possibili diventano troppe per provarle una per una. La sostituzione resta però fragile, perché la stessa lettera in chiaro produce sempre la stessa lettera cifrata. In un testo italiano le vocali E, A, I e O sono molto più frequenti della Z o della Q, e queste proporzioni passano intatte nel cifrato: il simbolo che compare più spesso è con buona probabilità la E. Nel passo citato in apertura, del 1883, il crittografo Auguste Kerckhoffs osservava che, trovata la E, il resto della tabella si ricostruisce per calcolo o per tentativi. Il metodo si chiama **analisi delle frequenze**, ed era descritto già nel IX secolo dal filosofo arabo al-Kindi.
 
-## L’idea di Alberti: cambiare alfabeto
+## Cambiare alfabeto
 
-Nel Quattrocento l’architetto e umanista Leon Battista Alberti propose una contromossa geniale. Nel suo trattato sulle cifre, scritto intorno al 1467, descrisse un disco cifrante simile a quello qui sopra e suggerì di **ruotarlo durante il messaggio**, così da cifrare parti diverse del testo con alfabeti diversi. È il principio dei cifrari **polialfabetici**: la stessa lettera in chiaro non dà più sempre la stessa lettera cifrata, e le frequenze si confondono.
+Nel Quattrocento l’architetto e umanista Leon Battista Alberti propose un rimedio. Nel suo trattato sulle cifre, scritto intorno al 1467, descrisse un disco cifrante simile a quello qui sopra e suggerì di **ruotarlo durante il messaggio**, così da cifrare parti diverse del testo con alfabeti diversi. Un cifrario che usa più alfabeti nello stesso messaggio si dice **polialfabetico**: la stessa lettera in chiaro non dà più sempre la stessa lettera cifrata, e le frequenze del cifrato non corrispondono più a quelle della lingua.
 
-<Nota titolo="Una semplificazione">
-Il disco di Alberti non era identico a quello del simulatore: l’anello esterno portava le lettere dell’alfabeto latino e alcune cifre, quello interno un alfabeto mescolato. Il principio, però, è lo stesso.
+<Nota titolo="Il disco di Alberti">
+Il disco di Alberti era diverso da quello qui sopra: l’anello esterno portava le lettere dell’alfabeto latino e alcune cifre, quello interno un alfabeto mescolato.
 </Nota>
 
 ## Dal disco al rotore
 
-Facciamo due modifiche al disco. Al posto dell’alfabeto ordinato, sul disco interno scriviamo un alfabeto **mescolato**; poi stabiliamo che il disco avanzi di un passo **dopo ogni lettera**, in modo automatico. Il disco qui sotto usa proprio il cablaggio del rotore I di Enigma: attiva la rotazione e cifra un messaggio con molte lettere ripetute, per esempio “AAAAAA”.
+Facciamo due modifiche al disco. Sul disco interno scriviamo un alfabeto **mescolato**, quello del cablaggio del rotore I di Enigma, che comincia con EKMFLG; poi stabiliamo che il disco avanzi di un passo **dopo ogni lettera**, in modo automatico. In chiaro mettiamo sei A di fila. Senza rotazione, la A esterna resta sempre davanti alla E interna, e le sei A diventano sei E.
+
+<Previsione>
+Con la rotazione attiva, che cosa diventano le sei A?
+
+<Risposta testo="EEEEEE">
+È l’esito senza rotazione. Con la rotazione il disco avanza dopo ogni lettera, e davanti alla A esterna arriva ogni volta un’altra lettera del disco interno.
+</Risposta>
+<Risposta testo="EFGHIJ">
+Sarebbe così sul disco di Cesare, dove l’alfabeto interno è in ordine e un passo porta davanti alla A la lettera successiva dell’alfabeto. Sul disco mescolato, un passo porta davanti alla A la lettera successiva del cablaggio.
+</Risposta>
+<Risposta testo="EKMFLG" corretta />
+
+<Esito>
+Verificalo nel disco qui sotto: attiva «Ruota il disco di un passo dopo ogni lettera».
+</Esito>
+</Previsione>
 
 <DiscoCifrante client:visible interno="EKMFLGDQVZNTOWYHXUSPAIBRCJ" spostamento={0} testo="AAAAAA" rotazione />
 
-Senza rotazione le sei A diventano sei E; con la rotazione diventano sei lettere diverse. È esattamente ciò che fa un rotore di Enigma: un alfabeto mescolato che cambia posizione a ogni tasto premuto. Il rotore realizza il rimescolamento con 26 fili saldati tra due facce di contatti, invece che con due anelli di lettere, ma l’effetto è lo stesso.
+Le sei A diventano EKMFLG, le prime sei lettere del cablaggio: con la A ripetuta, il disco mostra il proprio alfabeto interno una lettera alla volta. Il disco cifra un testo qualunque con 26 alfabeti diversi, uno per ogni sua posizione, e una lettera frequente come la E non lascia più un unico simbolo frequente nel cifrato.
 
-Tra il 1917 e il 1919 l’idea della macchina a rotori venne in mente, in modo indipendente, a diversi inventori: Edward Hebern negli Stati Uniti, Arvid Damm in Svezia, Hugo Koch nei Paesi Bassi e Arthur Scherbius in Germania. Due ufficiali della marina olandese, Theo van Hengel e Rudolf Spengler, avevano costruito macchine a rotori già nel 1915.
+Un rotore di Enigma realizza questo disco con l’elettricità: 26 fili saldati fra due facce di contatti rimescolano l’alfabeto, e il rotore scatta di un passo a ogni tasto. Fra il disco e il rotore c’è una differenza. Il disco mostra la lettera cifrata sul disco stesso, che gira; dal rotore, invece, la corrente esce in un punto fisso della macchina, che non gira con il rotore. Per questo il rotore, con lo stesso cablaggio e lo stesso passo, accende lettere diverse da quelle del disco: il conto si fa nella lezione [I rotori](../i-rotori/). Chi costruì le prime macchine a rotori, e quando, lo racconta la lezione [Scherbius e le macchine commerciali](../../storia/scherbius-e-le-macchine-commerciali/).
 
 <Approfondimento titolo="Perché un solo rotore non basta">
-Un rotore che avanza di un passo a ogni lettera torna nella posizione di partenza dopo 26 lettere: da lì in poi la sequenza degli alfabeti si ripete. In un messaggio lungo, le lettere che si trovano a distanza di 26 l’una dall’altra sono cifrate con lo stesso alfabeto, e su ciascuno di questi gruppi l’analisi delle frequenze torna a funzionare. Per allungare il periodo, Enigma mette in fila più rotori che si trascinano l’un l’altro come le cifre di un contachilometri: ne parleremo nella lezione sul passo dei rotori.
+Un rotore che avanza di un passo a ogni lettera torna nella posizione di partenza dopo 26 lettere, e da lì la sequenza degli alfabeti si ripete. Il numero di lettere dopo cui la sequenza si ripete si chiama **periodo**. In un messaggio lungo, le lettere a distanza di 26 l’una dall’altra sono cifrate con lo stesso alfabeto, e su ciascuno di questi gruppi l’analisi delle frequenze torna a funzionare. Per allungare il periodo Enigma mette in fila più rotori, che si trascinano l’un l’altro come le cifre di un contachilometri: lo spiega la lezione [Il passo e il doppio passo](../il-passo-e-il-doppio-passo/).
 </Approfondimento>
+
+<Riepilogo>
+- Il cifrario di Cesare sposta ogni lettera di tre posizioni. Le chiavi sono 25, e chi intercetta il messaggio le prova tutte in pochi minuti.
+- Una sostituzione fissa, anche con l’alfabeto mescolato, manda sempre la stessa lettera nella stessa: contando i simboli del cifrato si trova la E, e da lì il resto della tabella.
+- Un disco con il cablaggio del rotore I che avanza a ogni lettera trasforma AAAAAA in EKMFLG: ogni lettera è cifrata con un alfabeto diverso, ed è l’idea del rotore.
+</Riepilogo>

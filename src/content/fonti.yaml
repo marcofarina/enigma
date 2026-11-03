@@ -71,7 +71,7 @@
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — How does an Enigma machine work?
   url: https://www.cryptomuseum.com/crypto/enigma/working.htm
-  note: Sezione «Enigma stepping», consultata il 3 novembre 2026. Fonte della citazione d’apertura della lezione 5.
+  note: Consultata il 3 novembre 2026. Fonte delle citazioni d’apertura della lezione 4 (sezione «Rotor wiring») e della lezione 5 (sezione «Enigma stepping»).
 - id: crypto-museum-storia
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — History of the Enigma
@@ -93,3 +93,21 @@
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — Enigma M1, M2 e M3
   url: https://www.cryptomuseum.com/crypto/enigma/m3/index.htm
+- id: turing-treatise
+  autori: Alan M. Turing
+  titolo: Treatise on the Enigma, capitolo 1
+  editore: a cura di Ralph Erskine, Philip Marks e Frode Weierud
+  url: https://cryptocellar.org/turing/turchap1.pdf
+  note: Scritto a Bletchley Park durante la guerra; trascrizione del 1999 dall’esemplare dei National Archives statunitensi (NARA, RG 457). Le pagine sono quelle dell’originale, tra parentesi quadre nella trascrizione. Consultato il 3 novembre 2026; fonte delle citazioni d’apertura delle lezioni 1 e 3.
+- id: kerckhoffs-1883
+  autori: Auguste Kerckhoffs
+  titolo: La cryptographie militaire
+  editore: Journal des sciences militaires, vol. IX
+  anno: 1883
+  url: https://www.petitcolas.net/kerckhoffs/crypto_militaire_1.pdf
+  note: Prima parte, gennaio 1883, pp. 5–38, nella riproduzione di Fabien Petitcolas. Consultato il 3 novembre 2026; fonte della citazione d’apertura della lezione 2 (p. 24).
+- id: svetonio-divus-iulius
+  autori: Svetonio
+  titolo: De vita Caesarum, Divus Iulius
+  url: https://www.thelatinlibrary.com/suetonius/suet.caesar.html
+  note: Il cifrario di Cesare è descritto al capitolo 56. Testo latino consultato il 3 novembre 2026.

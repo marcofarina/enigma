@@ -28,7 +28,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | B | Errori di fatto e incoerenze | Sonnet | high | 1 h | A, D7 | fatta |
 | C | Linter dei contenuti | Sonnet | high | 1,5 h | A, D2 | fatta |
 | D | Componenti dello scheletro della lezione | Opus | high | 1,5 h | A, D3 | fatta |
-| E1 | Riscrittura «Come funziona» 1–4 | Opus | high | 2 h | B, C, D | da fare |
+| E1 | Riscrittura «Come funziona» 1–4 | Opus | high | 2 h | B, C, D | fatta |
 | E2 | Riscrittura «Come funziona» 5–8 | Opus | high | 2,5 h | B, C, D, D4 | da fare |
 | E3 | Riscrittura Storia 1–4 e glossario | Opus | high | 2 h | B, C, D | da fare |
 | F | Interfaccia e i18n | Sonnet | high | 1 h | A, C, D5 | da fare |
@@ -332,6 +332,21 @@ non deve trovare nulla.
 ```bash
 pnpm verify && pnpm test:e2e
 ```
+
+**Esito (2026-11-03)**
+
+- Tesi: ogni lezione ha la tesi didattica in cinque righe in un commento MDX in testa al file; nessuna ha richiesto una divisione.
+- Scheletro: citazione d’apertura scelta da Marco fra tre proposte con la fonte aperta e la pagina controllata (lezione 1 e 3: Turing, *Treatise on the Enigma*, cap. 1, p. 1; lezione 2: Kerckhoffs 1883, p. 24; lezione 4: Crypto Museum, sezione «Rotor wiring», dove «questa lettera» è diventato «la lettera» per non lasciare un pronome senza referente). Obiettivi e riepilogo in tutte; prerequisiti dalla lezione 2 in poi (la 1 non ne ha).
+- Previsioni, sette in tutto, ciascuna su un errore che qualcuno fa davvero: lezione 1, dieci A da AAA (BDZGOWCXLT) e FQGAHW battuto da AAB (KVAOJQ, non ENIGMA); lezione 2, il disco mescolato che ruota (EKMFLG, non EFGHIJ); lezione 3, la lampada A che non può accendersi con nessun cablaggio, e la cifratura in AAB e non in AAA; lezione 4, il rotore I in posizione B (J, non la K del disco) e posizione e anello entrambi su B (E). Esiti calcolati con il motore e, per la lezione 1, controllati nel simulatore.
+- Lezione 1: era un’introduzione senza tesi; ora fa provare la cifratura e la decifratura in due mini simulatori e definisce la **chiave**. Tolte la telecronaca della struttura e la chiusa da trailer.
+- Lezione 2: tolto il paragrafo sugli inventori (resta in storia 1, con un rimando), con «geniale», «esattamente» e la chiusa della `Nota`. Il testo dice dove il disco differisce dal rotore e rimanda il conto alla lezione 4, che lo fa. Definiti «polialfabetico» e «periodo». Nuova fonte `svetonio-divus-iulius` per il cifrario di Cesare.
+- Lezione 3: tolta la `Nota` che ripeteva la prosa; «fondamentali» sostituito dalle due proprietà dimostrate con il deviatore; definita la ruota d’ingresso.
+- Lezione 4: tolti «il cuore di Enigma», la catena di «si», il titolo-domanda della `Nota` e il «coniugio» anticipato: l’approfondimento scrive il rotore con `<Formula>` e rimanda il nome alla lezione 8. Introdotta la carcassa come riferimento fisso, che spiega lo scarto fra disco e rotore.
+- Fonti nuove in `fonti.yaml`: `turing-treatise`, `kerckhoffs-1883`, `svetonio-divus-iulius`; aggiornata la nota di `crypto-museum-funzionamento`.
+- Linter: il corpo di `<Citazione>` conta come citazione, quindi le “ ” al suo interno non danno più l’avviso (un test nuovo in `scripts/content-rules.test.ts`). e2e: la lezione 1 entra nel giro di axe.
+- Comandi: i due `grep` dei criteri non trovano nulla; `pnpm verify` exit 0 (188 test, `lint:content` 0 errori e 21 avvisi, nessuno nelle lezioni 1–4); `pnpm test:e2e` exit 0 (107 passati, 3 saltati).
+- Per E2: la lezione 6 ripete l’esercizio di «Ricomincia» della lezione 1 e le due proprietà della lezione 3; conviene che le riprenda come fatti noti e spieghi solo il ruolo del riflettore. La lezione 8 è ora l’unica a definire il coniugio, e la lezione 4 le rimanda il nome. Il prerequisito della lezione 5 sulla lezione 4 usa «la lettera nella finestrella dice».
+- Per V: restano da verificare su un testo al-Kindi (IX secolo), la data e la forma del disco di Alberti e la batteria da 4,5 volt.
 
 ---
 

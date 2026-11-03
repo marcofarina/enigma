@@ -1,6 +1,6 @@
 ---
 title: Tastiera, lampade e circuito
-description: Che cosa succede, elettricamente, tra la pressione di un tasto e l’accensione di una lampada.
+description: Sotto ogni tasto c’è un deviatore, e il circuito si chiude solo attraverso la lampada di un’altra lettera. Per questo Enigma è reciproca e non cifra mai una lettera in sé stessa.
 sezione: come-funziona
 ordine: 3
 stato: bozza
@@ -8,35 +8,97 @@ fonti:
   - crypto-museum
 ---
 
+{/*
+Tesi didattica.
+Chi guarda Enigma immagina il tasto come un interruttore che manda la corrente alla lampada giusta.
+La lezione mostra, su un modello a quattro lettere, che sotto ogni tasto c’è un deviatore: il filo della lettera premuta passa alla batteria e la sua lampada si stacca. Ne seguono la reciprocità e l’impossibilità di cifrare una lettera in sé stessa.
+Alla fine lo studente sa seguire la corrente dal tasto alla lampada, nel modello e nella macchina vera, e sa che la lettera è cifrata con i rotori già scattati.
+Esempio: il modello con lo scambiatore che collega A con C e B con D, poi l’Enigma I da AAA.
+*/}
+
 import CircuitoTasto from '@/components/lesson/CircuitoTasto.tsx';
+import Citazione from '@/components/lesson/Citazione.astro';
+import Esito from '@/components/lesson/Esito.astro';
 import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
-import Nota from '@/components/lesson/Nota.astro';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Prerequisiti from '@/components/lesson/Prerequisiti.astro';
+import Previsione from '@/components/lesson/Previsione.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
+import Risposta from '@/components/lesson/Risposta.astro';
 
-Enigma non stampa nulla. Sul davanti c’è una tastiera di 26 tasti, sopra di essa un pannello di 26 lampadine con le stesse lettere, nello stesso ordine. L’Enigma I dell’esercito funzionava con una batteria da 4,5 volt, alloggiata in un vano accanto ai rotori. Quando l’operatore preme un tasto si chiude un circuito elettrico e si accende una sola lampada: la lettera cifrata.
+<Citazione fonte="turing-treatise" pagina="1" tradotta>
+La lettera che compare sopra la lampadina è il risultato della cifratura della lettera del tasto premuto, con i rotori nella posizione che hanno quando la lampadina si accende.
+</Citazione>
 
-La disposizione dei tasti non è quella alfabetica ma quella delle macchine da scrivere tedesche, che comincia con QWERTZ. Le prime Enigma commerciali avevano tasti e lampade in ordine alfabetico; la disposizione QWERTZ arrivò nel 1926, con il modello noto come Enigma D, da cui derivano quasi tutte le macchine successive.
+Sul davanti dell’Enigma I ci sono 26 tasti e, sopra di essi, 26 lampadine con le stesse lettere nello stesso ordine. La disposizione è quella delle macchine da scrivere tedesche, che comincia con QWERTZ; come ci si arrivò lo racconta la lezione [Scherbius e le macchine commerciali](../../storia/scherbius-e-le-macchine-commerciali/). La macchina funziona con una batteria da 4,5 volt, alloggiata in un vano accanto ai rotori. Quando l’operatore preme un tasto si accende una sola lampada, quella della lettera cifrata.
 
-## Un interruttore a due posizioni
+<Prerequisiti>
+- Dalla lezione [Che cos’è Enigma](../che-cos-e-enigma/): battendo il testo cifrato su una macchina impostata come quella del mittente si accende il testo in chiaro.
+- Dalla lezione [Dalla sostituzione al rotore](../dalla-sostituzione-al-rotore/): un rotore è un alfabeto mescolato che avanza di un passo a ogni lettera.
+</Prerequisiti>
 
-Sotto ogni tasto c’è un **deviatore**, un interruttore a due posizioni. A riposo collega il filo della sua lettera alla lampada corrispondente; quando il tasto è premuto fino in fondo, stacca la lampada e collega lo stesso filo alla batteria. Il modello qui sotto riduce la macchina a quattro lettere e sostituisce rotori e riflettore con uno **scambiatore** fisso, che collega A con C e B con D.
+<Obiettivi>
+- Seguire la corrente dal tasto premuto alla lampada, nel modello a quattro lettere e nella macchina vera.
+- Spiegare con il deviatore perché Enigma è reciproca e perché nessuna lettera si cifra in sé stessa.
+- Dire con quale posizione dei rotori la macchina cifra la lettera del tasto premuto.
+</Obiettivi>
+
+## Il deviatore
+
+Sotto ogni tasto c’è un **deviatore**, cioè un interruttore a due posizioni. A riposo il deviatore collega il filo della sua lettera alla lampada corrispondente; quando il tasto è premuto fino in fondo, stacca la lampada e collega lo stesso filo alla batteria. Il modello qui sotto riduce la macchina a quattro lettere e mette al posto di rotori e riflettore uno **scambiatore** fisso, che collega A con C e B con D.
 
 <CircuitoTasto client:visible />
 
-Premendo A la corrente parte dalla batteria, passa per il deviatore di A, attraversa lo scambiatore e torna sul filo di C. Il tasto C è a riposo, quindi il suo deviatore porta la corrente alla lampada C, e da lì di nuovo alla batteria. Il circuito si chiude soltanto attraverso la lampada di un’altra lettera.
+Premendo A, la corrente parte dalla batteria, passa per il deviatore di A, attraversa lo scambiatore e torna sul filo di C. Il tasto C è a riposo, quindi il suo deviatore porta la corrente alla lampada C, e da lì di nuovo alla batteria.
 
-Da questo semplice schema discendono due proprietà fondamentali di Enigma, su cui torneremo parlando del riflettore:
+<Previsione>
+Lo scambiatore del modello collega le lettere a coppie, ma potresti cablarlo come vuoi, anche facendo tornare un filo su sé stesso. Esiste un cablaggio con cui, premendo A, si accende la lampada A?
 
-- la macchina è **reciproca**: se premendo A si accende C, premendo C si accende A;
-- una lettera **non può mai cifrare sé stessa**, perché la lampada del tasto premuto è scollegata.
+<Risposta testo="sì, se lo scambiatore rimanda la corrente sul filo A">
+La corrente tornerebbe sul filo A, ma con il tasto premuto il deviatore di A collega quel filo alla batteria: sul percorso non c’è nessuna lampada.
+</Risposta>
+<Risposta testo="sì, ma solo con i rotori in certe posizioni">
+I rotori cambiano il filo su cui torna la corrente, non il deviatore. Finché il tasto A è premuto, la lampada A è staccata, in qualunque posizione dei rotori.
+</Risposta>
+<Risposta testo="no" corretta />
+
+<Esito>
+Premi A nel modello e guarda il deviatore di A: mentre il tasto è premuto, la lampada A non è collegata al circuito.
+</Esito>
+</Previsione>
+
+Il circuito si chiude soltanto attraverso la lampada di un’altra lettera. Da questo schema discendono due proprietà di Enigma:
+
+- la macchina è **reciproca**: lo scambiatore collega i fili a coppie, quindi se premendo A si accende C, premendo C si accende A;
+- **nessuna lettera può essere cifrata in sé stessa**, perché la lampada del tasto premuto è staccata.
+
+La reciprocità è il motivo per cui, nella lezione [Che cos’è Enigma](../che-cos-e-enigma/), battere FQGAHW sulla macchina partita da AAA riaccendeva ENIGMA. Nella macchina vera il posto dello scambiatore lo prendono i rotori e il riflettore, e la lezione [Il riflettore](../il-riflettore/) mostra perché anche lì i fili restano collegati a coppie.
 
 ## Il percorso completo
 
-Nella macchina vera, tra la tastiera e le lampade la corrente compie un viaggio molto più lungo. Dal tasto passa per il pannello a spine (nei modelli militari), entra nella **ruota d’ingresso**, attraversa i rotori da destra a sinistra, raggiunge il **riflettore**, che la rimanda indietro, ripercorre i rotori da sinistra a destra per un’altra strada, esce dalla ruota d’ingresso, attraversa di nuovo il pannello a spine e infine accende la lampada.
+Nella macchina vera, fra la tastiera e le lampade la corrente compie un percorso più lungo. Dal tasto passa per il pannello a spine, che c’è solo nei modelli militari, ed entra nella **ruota d’ingresso**, un disco fisso di contatti a destra dei rotori. Attraversa i rotori da destra a sinistra e raggiunge il **riflettore**, che la rimanda indietro; ripercorre i rotori da sinistra a destra per un’altra strada, esce dalla ruota d’ingresso, attraversa di nuovo il pannello a spine e infine accende la lampada.
+
+Il tasto, oltre a chiudere il circuito, fa scattare il rotore di destra di un passo. Nel simulatore qui sotto le finestrelle partono da AAA.
+
+<Previsione>
+Premi un tasto con le finestrelle su AAA: dopo la pressione mostrano AAB. La macchina ha cifrato la lettera con i rotori in AAA o in AAB?
+
+<Risposta testo="in AAA">
+È l’ordine che verrebbe naturale: prima la cifratura, poi lo scatto per la lettera successiva. Il tasto fa il contrario: nella prima parte della corsa spinge i rotori, e il deviatore scatta solo in fondo.
+</Risposta>
+<Risposta testo="in AAB" corretta />
+
+<Esito>
+Verificalo con i comandi della traccia, sopra lo schema: ripercorrono l’ultimo tasto un componente alla volta, dallo scatto dei rotori fino alla lampada.
+</Esito>
+</Previsione>
 
 <MiniSimulatore client:visible config="v=1&m=I&w=I-II-III&r=AAA&p=AAA&u=B" traccia schema didascalia="Enigma I con i rotori I, II e III, riflettore B, tutti in posizione A." />
 
-Premi un tasto e segui il percorso nello schema: la linea continua è l’andata, quella tratteggiata il ritorno. Prima di ogni lettera il rotore di destra avanza di un passo, e per questo lo stesso tasto, premuto due volte, segue due percorsi diversi. Con i comandi della traccia puoi rivedere il percorso dell’ultimo tasto un componente alla volta, dallo scatto dei rotori fino alla lampada.
+Il tasto comanda il movimento dei rotori nella prima parte della corsa, e il deviatore scatta solo quando il tasto è premuto fino in fondo: la macchina cifra la lettera con i rotori già nella nuova posizione, come scrive Alan Turing nella citazione d’apertura. Per questo lo stesso tasto, premuto due volte, segue due percorsi diversi. Nello schema la linea continua è l’andata, quella tratteggiata il ritorno.
 
-<Nota titolo="Prima si muove, poi si accende">
-Il tasto comanda anche il movimento dei rotori, che avviene nella prima parte della corsa. Il deviatore scatta solo quando il tasto è premuto fino in fondo: la lettera viene quindi cifrata con i rotori già nella nuova posizione.
-</Nota>
+<Riepilogo>
+- Premendo un tasto, la corrente va dalla batteria al filo della lettera, attraversa lo scambiatore (nella macchina vera il pannello a spine, i rotori e il riflettore) e torna sul filo di un’altra lettera, dove il deviatore a riposo la porta alla lampada.
+- Il deviatore stacca la lampada del tasto premuto, quindi nessuna lettera si cifra in sé stessa. I fili sono collegati a coppie, quindi se A accende C, C accende A.
+- Il tasto fa scattare i rotori prima di chiudere il circuito: con le finestrelle su AAA, la lettera è cifrata in AAB.
+</Riepilogo>
