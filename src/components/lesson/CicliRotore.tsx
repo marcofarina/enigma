@@ -29,11 +29,11 @@ export default function CicliRotore({ rotore = 'I' }: Props) {
   );
   const parts = cycles(map).sort((a, b) => b.length - a.length);
   const lengths = parts.map((cycle) => cycle.length).join(', ');
-  const select = 'rounded-md border border-border bg-surface px-2 py-2 font-mono';
+  const select = 'field field-mono';
 
   return (
     <figure className="my-8 font-sans text-base">
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4">
+      <div className="flex flex-col gap-4 figure-panel">
         <div className="flex flex-wrap gap-4">
           <label className="flex items-center gap-2">
             {t('lesson.cycles.rotor')}
@@ -58,7 +58,7 @@ export default function CicliRotore({ rotore = 'I' }: Props) {
         </div>
         <p className="flex flex-wrap gap-x-1 gap-y-2 font-mono text-lg">
           {parts.map((cycle) => (
-            <span key={cycle[0]} className="rounded-md bg-surface-muted px-1.5">
+            <span key={cycle[0]} className="figure-result !px-1.5 !py-0">
               ({cycle.map(toLetter).join('')})
             </span>
           ))}

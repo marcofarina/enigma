@@ -39,11 +39,11 @@ export default function RotoreSingolo({
   const core = mod(input + offset);
   const coreOut = toIndex(wiring[core] ?? 'A');
   const output = map(input);
-  const select = 'rounded-md border border-border bg-surface px-2 py-2 font-mono';
+  const select = 'field field-mono';
 
   return (
     <figure className="my-8 font-sans text-base">
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 sm:flex-row">
+      <div className="flex flex-col gap-4 figure-panel sm:flex-row">
         <svg
           viewBox={`0 0 300 ${TOP + 26 * ROW + 10}`}
           className="mx-auto w-full max-w-xs shrink-0"
@@ -167,7 +167,7 @@ export default function RotoreSingolo({
             <li>{tf('lesson.rotor.step2', { core: toLetter(core), coreOut: toLetter(coreOut), rotor: rotore })}</li>
             <li>{tf('lesson.rotor.step3', { coreOut: toLetter(coreOut), output: toLetter(output) })}</li>
           </ol>
-          <p className="rounded-md bg-surface-muted px-3 py-2 font-mono text-lg">
+          <p className="figure-result font-mono text-lg">
             {toLetter(input)} → {toLetter(output)}
           </p>
         </div>

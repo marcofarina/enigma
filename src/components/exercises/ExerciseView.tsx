@@ -60,7 +60,7 @@ export default function ExerciseView({ exerciseId }: { exerciseId: string }) {
     setSeedDraft('');
   };
 
-  const button = 'min-h-11 rounded-md border-2 border-border bg-surface px-4 font-semibold hover:border-accent';
+  const button = 'btn';
   const message: Record<Exclude<Feedback, null>, string> = {
     correct: t('ex.correct'),
     wrong: t('ex.wrong'),
@@ -70,17 +70,14 @@ export default function ExerciseView({ exerciseId }: { exerciseId: string }) {
 
   return (
     <div className="flex flex-col gap-8">
-      <section
-        aria-labelledby={`${id}-variant`}
-        className="flex flex-col gap-5 rounded-xl border border-border bg-surface p-4 sm:p-6"
-      >
+      <section aria-labelledby={`${id}-variant`} className="figure-panel flex flex-col gap-5 sm:!p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 id={`${id}-variant`} className="text-xl font-semibold">
+          <h2 id={`${id}-variant`} className="section-title !m-0">
             {tf('ex.variant', { seed })}
           </h2>
           <div className="flex flex-wrap items-center gap-2">
             <form onSubmit={openSeed} className="flex items-center gap-2">
-              <label htmlFor={`${id}-seed`} className="text-sm">
+              <label htmlFor={`${id}-seed`} className="text-ui">
                 {t('ex.seedLabel')}
               </label>
               <input
@@ -90,7 +87,7 @@ export default function ExerciseView({ exerciseId }: { exerciseId: string }) {
                 autoComplete="off"
                 value={seedDraft}
                 onChange={(e) => setSeedDraft(e.target.value)}
-                className="w-24 rounded-md border border-border bg-surface px-2 py-2 font-mono"
+                className="field field-mono w-24"
               />
               <button type="submit" className={button}>
                 {t('ex.goToSeed')}
@@ -115,9 +112,9 @@ export default function ExerciseView({ exerciseId }: { exerciseId: string }) {
               spellCheck={false}
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
-              className="min-w-0 flex-1 rounded-md border border-border bg-surface px-3 py-2 font-mono text-lg uppercase tracking-wider"
+              className="field field-mono min-w-0 flex-1 text-lg uppercase tracking-wider"
             />
-            <button type="submit" className={`${button} border-accent`}>
+            <button type="submit" className={`${button} btn-primary`}>
               {t('ex.check')}
             </button>
           </div>
@@ -125,17 +122,15 @@ export default function ExerciseView({ exerciseId }: { exerciseId: string }) {
             {feedback ? message[feedback] : solved.includes(seed) ? t('ex.solvedBefore') : ''}
           </p>
         </form>
-        <details className="rounded-lg border border-border bg-surface-muted px-4 py-3">
-          <summary className="cursor-pointer font-semibold">{t('ex.showSolution')}</summary>
+        <details className="border-y border-print-red-soft py-2">
+          <summary className="flex min-h-11 cursor-pointer items-center font-semibold">{t('ex.showSolution')}</summary>
           <div className="mt-2 flex flex-col gap-2">
             {variant.solution.map((line) => (
               <p key={line}>{line}</p>
             ))}
             {replay && (
               <p>
-                <a href={replay} className="underline">
-                  {t('ex.replay')}
-                </a>
+                <a href={replay}>{t('ex.replay')}</a>
               </p>
             )}
           </div>

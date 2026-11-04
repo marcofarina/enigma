@@ -92,10 +92,10 @@ function SheetView({ sheet, first }: { sheet: Sheet; first: boolean }) {
   return (
     <article
       aria-label={tf('sheet.title', { seed: sheet.seed })}
-      className={`sheet flex flex-col gap-5 rounded-xl border border-border bg-surface p-4 sm:p-6 ${first ? '' : 'page-break'}`}
+      className={`sheet flex flex-col gap-5 ${first ? '' : 'page-break'}`}
     >
       <header className="flex flex-col gap-2">
-        <h2 className="text-xl font-semibold">{tf('sheet.title', { seed: sheet.seed })}</h2>
+        <h2 className="text-section font-bold">{tf('sheet.title', { seed: sheet.seed })}</h2>
         <div className="grid gap-x-6 sm:grid-cols-3">
           <WriteLine label={t('sheet.name')} />
           <WriteLine label={t('sheet.class')} />
@@ -144,7 +144,7 @@ function SheetView({ sheet, first }: { sheet: Sheet; first: boolean }) {
 function Solutions({ sheets }: { sheets: Sheet[] }) {
   return (
     <section aria-labelledby="soluzioni" className="sheet page-break flex flex-col gap-4">
-      <h2 id="soluzioni" className="text-xl font-semibold">
+      <h2 id="soluzioni" className="text-section font-bold">
         {t('sheet.solutions')}
       </h2>
       {sheets.map((sheet) => (
@@ -196,14 +196,14 @@ export default function SheetGenerator() {
       current.includes(exerciseId) ? current.filter((x) => x !== exerciseId) : [...current, exerciseId],
     );
 
-  const field = 'rounded-md border border-border bg-surface px-2 py-2 font-mono';
-  const button = 'min-h-11 rounded-md border-2 border-border bg-surface px-4 font-semibold hover:border-accent';
+  const field = 'field field-mono';
+  const button = 'btn';
   const last = classSeeds(seed, copies).at(-1) ?? seed;
 
   return (
     <div className="flex flex-col gap-8">
       <form
-        className="no-print flex flex-col gap-4 rounded-xl border border-border bg-surface-muted p-4 sm:p-6"
+        className="no-print figure-panel flex flex-col gap-4 sm:!p-6"
         onSubmit={(event) => {
           event.preventDefault();
           window.print();
@@ -211,7 +211,7 @@ export default function SheetGenerator() {
       >
         <div className="flex flex-wrap items-end gap-4">
           <div className="flex flex-col gap-1">
-            <label htmlFor={`${id}-seed`} className="text-sm font-semibold">
+            <label htmlFor={`${id}-seed`} className="text-ui font-semibold">
               {t('sheet.form.seed')}
             </label>
             <input
@@ -229,7 +229,7 @@ export default function SheetGenerator() {
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label htmlFor={`${id}-copies`} className="text-sm font-semibold">
+            <label htmlFor={`${id}-copies`} className="text-ui font-semibold">
               {t('sheet.form.copies')}
             </label>
             <input
@@ -246,7 +246,7 @@ export default function SheetGenerator() {
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label htmlFor={`${id}-messages`} className="text-sm font-semibold">
+            <label htmlFor={`${id}-messages`} className="text-ui font-semibold">
               {t('sheet.form.messages')}
             </label>
             <select
@@ -275,12 +275,12 @@ export default function SheetGenerator() {
           <legend className="mb-1 text-sm font-semibold">{t('sheet.form.extras')}</legend>
           <div className="grid gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
             {EXERCISES.map((exercise) => (
-              <label key={exercise.id} className="flex min-h-8 items-start gap-2">
+              <label key={exercise.id} className="flex min-h-11 items-start gap-3 py-2">
                 <input
                   type="checkbox"
                   checked={extras.includes(exercise.id)}
                   onChange={() => toggle(exercise.id)}
-                  className="mt-0.5 size-5 shrink-0"
+                  className="casella"
                 />
                 <span>
                   {exercise.title} <span className="text-sm text-text-muted">· {t(`ex.level${exercise.level}`)}</span>
@@ -289,17 +289,17 @@ export default function SheetGenerator() {
             ))}
           </div>
         </fieldset>
-        <label className="flex min-h-8 items-center gap-2">
+        <label className="flex min-h-11 items-center gap-3">
           <input
             type="checkbox"
             checked={solutions}
             onChange={(e) => setSolutions(e.target.checked)}
-            className="size-5"
+            className="casella"
           />
           {t('sheet.form.solutions')}
         </label>
         <div>
-          <button type="submit" className={`${button} border-accent`}>
+          <button type="submit" className={`${button} btn-primary`}>
             {t('sheet.form.print')}
           </button>
         </div>

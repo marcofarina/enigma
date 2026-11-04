@@ -12,16 +12,13 @@ const lettere = [...new Set(voci.map(({ data }) => initial(data.termine)))];
 ---
 
 <BaseLayout title={t('glossary.title')} description={t('glossary.intro')}>
-  <h1 class="mb-2 text-3xl font-bold">{t('glossary.title')}</h1>
-  <p class="mb-6 max-w-3xl text-text-muted">{t('glossary.intro')}</p>
+  <h1 class="page-title">{t('glossary.title')}</h1>
+  <p class="page-lead">{t('glossary.intro')}</p>
   <nav aria-label={t('glossary.letters')} class="no-print mb-8">
-    <ul class="flex flex-wrap gap-2">
+    <ul class="flex max-w-[var(--content-width)] flex-wrap gap-2">
       {lettere.map((lettera) => (
         <li>
-          <a
-            href={`#lettera-${lettera}`}
-            class="inline-flex size-11 items-center justify-center rounded-md border border-border bg-surface font-mono font-semibold no-underline hover:border-accent"
-          >
+          <a href={`#lettera-${lettera}`} class="btn font-mono">
             {lettera}
           </a>
         </li>
@@ -29,8 +26,11 @@ const lettere = [...new Set(voci.map(({ data }) => initial(data.termine)))];
     </ul>
   </nav>
   {lettere.map((lettera) => (
-    <section aria-labelledby={`lettera-${lettera}`} class="mb-8 max-w-3xl">
-      <h2 id={`lettera-${lettera}`} class="mb-3 border-b border-border pb-1 font-mono text-2xl font-semibold">
+    <section aria-labelledby={`lettera-${lettera}`} class="mb-8 max-w-[var(--content-width)]">
+      <h2
+        id={`lettera-${lettera}`}
+        class="mb-3 scroll-mt-4 border-b-[1.5px] border-print-red pb-1 font-mono text-section font-bold text-print-red"
+      >
         {lettera}
       </h2>
       <dl class="flex flex-col gap-5">
@@ -38,13 +38,13 @@ const lettere = [...new Set(voci.map(({ data }) => initial(data.termine)))];
           .filter(({ data }) => initial(data.termine) === lettera)
           .map(({ id, data }) => (
             <div id={id} class="scroll-mt-4">
-              <dt class="text-lg font-semibold">{data.termine}</dt>
+              <dt class="text-lg font-semibold text-ink">{data.termine}</dt>
               <dd class="flex flex-col gap-1">
                 {(data.tedesco || data.inglese) && (
-                  <p class="text-sm text-text-muted">
+                  <p class="font-mono text-[0.8125rem] leading-[1.5] text-ink-muted">
                     {data.tedesco && (
                       <span lang="de">
-                        <abbr title={t('glossary.german')} class="no-underline">
+                        <abbr title={t('glossary.german')} class="font-bold no-underline">
                           DE
                         </abbr>{' '}
                         {data.tedesco}
@@ -53,7 +53,7 @@ const lettere = [...new Set(voci.map(({ data }) => initial(data.termine)))];
                     {data.tedesco && data.inglese && ' · '}
                     {data.inglese && (
                       <span lang="en">
-                        <abbr title={t('glossary.english')} class="no-underline">
+                        <abbr title={t('glossary.english')} class="font-bold no-underline">
                           EN
                         </abbr>{' '}
                         {data.inglese}
@@ -63,10 +63,8 @@ const lettere = [...new Set(voci.map(({ data }) => initial(data.termine)))];
                 )}
                 <p>{data.definizione}</p>
                 {data.vedi && (
-                  <p class="text-sm">
-                    <a href={url(data.vedi)} class="underline">
-                      {t('glossary.more')}
-                    </a>
+                  <p class="text-ui">
+                    <a href={url(data.vedi)}>{t('glossary.more')}</a>
                   </p>
                 )}
               </dd>

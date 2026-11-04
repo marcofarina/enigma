@@ -12,10 +12,7 @@ const { title, intro } = Astro.props;
 <section class="prose-it">
   <h1>{title}</h1>
   <p>{intro}</p>
-  <p
-    class="rounded-md border border-border bg-surface-muted px-4 py-3 font-sans text-base text-text-muted"
-    role="status"
-  >
+  <p class="border-y border-print-red-soft py-2 font-mono text-[0.8125rem] leading-[1.5] text-ink-muted" role="status">
     {t('status.comingSoon')}
   </p>
 </section>

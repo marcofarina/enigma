@@ -29,25 +29,17 @@ const image = imageFile(data.file);
     alt={data.alt}
     widths={[360, 720, Math.min(image.width, 1200)].filter((w) => w <= image.width)}
     sizes={`(max-width: ${larghezza}px) 100vw, ${larghezza}px`}
-    class="h-auto w-full rounded-md border border-border bg-surface-muted"
+    class="h-auto w-full rounded-[var(--radius-sheet)] border border-border bg-surface-muted"
     style={`max-width: min(${larghezza}px, ${image.width}px)`}
   />
-  <figcaption class="text-sm text-text-muted">
-    <span class="text-text">{didascalia ?? data.didascalia}</span>
+  <figcaption class="text-caption text-ink-muted">
+    <span class="text-ink">{didascalia ?? data.didascalia}</span>
     <span class="block">
       {data.attribuzione}
       {' · '}
-      <a href={data.fonte} class="underline">
-        fonte
-      </a>
+      <a href={data.fonte}>fonte</a>
       {' · '}
-      {data.urlLicenza ? (
-        <a href={data.urlLicenza} class="underline">
-          {licenseLabel(data.licenza)}
-        </a>
-      ) : (
-        licenseLabel(data.licenza)
-      )}
+      {data.urlLicenza ? <a href={data.urlLicenza}>{licenseLabel(data.licenza)}</a> : licenseLabel(data.licenza)}
     </span>
   </figcaption>
 </figure>

@@ -7,7 +7,7 @@ const ringNumber = (letter: string) => String(ALPHABET.indexOf(letter) + 1).padS
 
 function Scroll({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <ScrollRegion className="rounded-md border border-border" label={label}>
+    <ScrollRegion className="rounded-[var(--radius-sheet)] border border-border" label={label}>
       {children}
     </ScrollRegion>
   );
@@ -22,8 +22,11 @@ function KeySheetView({ sheet }: { sheet: KeySheet }) {
     [t('ex.key.reflector'), 'B'],
   ];
   return (
-    <section aria-label={t('ex.key.title')} className="rounded-lg border-2 border-border bg-surface-muted p-4">
-      <h3 className="mb-2 font-semibold">{t('ex.key.title')}</h3>
+    <section
+      aria-label={t('ex.key.title')}
+      className="rounded-[var(--radius-sheet)] border border-border border-t-[1.5px] border-t-print-red bg-surface p-4"
+    >
+      <h3 className="mb-2 font-semibold text-print-red">{t('ex.key.title')}</h3>
       <dl className="grid gap-x-4 gap-y-1 sm:grid-cols-[auto_1fr]">
         {rows.map(([label, value]) => (
           <div key={label} className="contents">
@@ -49,7 +52,7 @@ export default function Blocks({ blocks }: { blocks: readonly Block[] }) {
             return (
               <div key={i} className="flex flex-col gap-1">
                 <span className="text-sm font-semibold">{block.label}</span>
-                <p className="rounded-md bg-surface-muted px-3 py-2 font-mono text-lg tracking-wider">{block.text}</p>
+                <p className="figure-result font-mono text-lg tracking-wider">{block.text}</p>
               </div>
             );
           case 'wiring':

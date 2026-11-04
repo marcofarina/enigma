@@ -36,7 +36,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | G1 | Design system nel codice | Opus | high | 2,5 h | G0, H | fatta |
 | G2 | Il simulatore a schermata unica come home | Opus | high | 3 h | G1 | fatta |
 | G3 | Il simulatore su mobile | Sonnet | high | 1,5 h | G2 | fatta |
-| G4 | Il resto del sito nel nuovo linguaggio | Sonnet | high | 2 h | G1 | da fare |
+| G4 | Il resto del sito nel nuovo linguaggio | Sonnet | high | 2 h | G1 | fatta |
 | H | Pulizia del codice | Sonnet | high | 1 h | A | fatta |
 | V | Verifiche sui testi delle fonti | Opus | high | 2 h per gruppo di libri | B, testi forniti da Marco | da fare |
 | I | Riscrittura delle fasi 4–5 di `docs/piano.md` nel formato dei piani | Opus | high | 1 h | E1–E3, D8 | da fare |
@@ -936,6 +936,63 @@ nessuna differenza.
 ```bash
 pnpm verify && pnpm test:e2e
 ```
+
+
+**Esito** (2026-11-04)
+
+- Componenti della lezione nel linguaggio di `docs/design.md`. `Obiettivi`, `Riepilogo` e
+  `Prerequisiti` sono tavole (filetto rosso sopra e sotto, titolo rosso in Archivo, una riga per
+  voce); obiettivi e riepilogo hanno la numerazione `01 02 03` in Courier Prime, così la voce 2 del
+  riepilogo si legge accanto alla voce 2 degli obiettivi. `Riquadro.astro` ha ora le opzioni `chiusura`
+  e `numerata` e niente più box, fondo o bordo tratteggiato fra riquadri. `Previsione` è un modulo
+  (filetto rosso in alto, risposte come righe con una casella quadrata che si riempie quando è
+  scelta, campo libero come riga di modulo); il verdetto e l’esito compaiono con «Lettera nuova sul
+  foglio» del catalogo (160 ms, `--dur-ink`). `Citazione` in Archivo corsivo 20 px, fonte in Courier
+  Prime 13 px, un filetto rosso corto al posto del bordo a sinistra. Tolti anche il bordo a sinistra
+  di `Nota` (ora una lastra `--paper-deep`), i riquadri di `Approfondimento`, della bozza, di
+  `ComingSoon` e dei link alla lezione precedente e successiva (filetti e testo).
+- Stili condivisi in `global.css`: `.page-title`, `.page-lead`, `.section-title`, `.tavola` (indici),
+  `.btn` e `.btn-primary` (inchiostro su carta), `.field`, `.casella`, `.figure-panel` e
+  `.figure-result` (figure interattive), `.sheet` (la scheda per la classe è un foglio: nel tema
+  scuro ha la carta attenuata e gli inchiostri chiari, come il foglio del simulatore) e
+  `.machine-insert`. Quest’ultima sta fuori da `@layer` perché `.machine` di `tokens.css` non ha
+  layer e vincerebbe. Colori nuovi: nessuno; aggiunto solo `--color-field-border` al tema Tailwind.
+- Indici di «Come funziona», Storia ed esercizi: tavole a righe (numero, titolo, descrizione) al
+  posto delle schede una per voce; in «Esercizi» l’intera riga è il link. Glossario, galleria,
+  esercizi, schede e fonti usano i titoli di pagina comuni. Tutti i `text-3xl font-bold` delle
+  pagine sono spariti.
+- `MiniSimulatore` e il simulatore degli esercizi (lampade, tastiera, finestrelle) stanno su
+  vernice raggrinzita con i colori della macchina in entrambi i temi; nastro, traccia e schema
+  nel `MiniSimulatore` ereditano gli stessi colori. `AnimazionePasso` ha le finestrelle chiare con
+  la cornice scura e lo scatto del catalogo; il rotore che avanza ha un doppio anello d’inchiostro.
+  Le altre viste (`CircuitoTasto`, `RotoreSingolo`, `CicliRotore`, `DiscoCifrante`, `UhrSelettore`,
+  `CalcolatoreChiavi`, `PannelloASpine`) usano i nuovi pulsanti, campi e figure. In `UhrSelettore` la
+  cella `th` nascosta di ogni riga è diventata un `aria-label` della riga, perché in tabella a
+  larghezza piena occupava una colonna.
+- `Machine.tsx`, `Tape.tsx`, `TracePanel.tsx`, `ConfigPanel.tsx` e il resto di
+  `src/components/simulator/` non sono stati toccati: cambiano aspetto solo per i token. Cose
+  rimaste: i pulsanti di `Tape`, `TracePanel` e `ConfigPanel` hanno ancora i bordi arrotondati da
+  6 px e le etichette `text-xl font-semibold` del vecchio linguaggio; `ConfigPanel` negli esercizi
+  è su carta con i suoi `fieldset` a scheda. Si sistemano quando chi tocca `simulator/` ha finito.
+- Nella tabella del `CalcolatoreChiavi` a 375 px i numeri molto lunghi vanno a capo fra un gruppo
+  e l’altro (già così prima di G4).
+- Scelte prese qui: il pulsante primario è inchiostro pieno e non rosso (il rosso resta inchiostro
+  di stampa); il test della previsione in `lessons.spec.ts` ora attende la fine delle animazioni
+  prima di axe, come già `expectAccessible` in `simulator.spec.ts`; nel `.machine-insert`
+  `--color-surface-muted` è `--machine-well`, perché con `--machine-line` il testo secondario
+  del nastro scendeva a 4,33:1.
+- Screenshot «dopo» in `docs/screenshot/dopo/`, stessi nomi e stesso metodo di G0
+  (`pnpm exec playwright screenshot --full-page`, 1280×720 e 375×812, schema colore con
+  `--color-scheme`, sul server di sviluppo). Con G3 fatta ci sono anche quelli di home e simulatore.
+  `/simulatore/` rimanda alla home, quindi i quattro `simulatore-*` mostrano la home con la chiave
+  di Barbarossa e le lettere `EDPUD` battute (query `?v=1&m=I&w=II-IV-V&r=BUL&p=BLA&u=B&s=…&t=EDPUD`).
+  Le altezze di home e simulatore non coincidono con quelle «prima» perché le pagine sono cambiate.
+- Verificato nel browser (Playwright su Chromium e riquadro del browser) a 1280 px e a 375 px, in
+  chiaro e in scuro: lezioni 2, 3, 4, 5, 6, 7, 8, 9, 10 e storia 1, tre esercizi, indici,
+  glossario, galleria, schede, anche con previsione libera e a scelta già compilate.
+- Comandi: `diff <(ls docs/screenshot/prima) <(ls docs/screenshot/dopo)` → nessuna differenza;
+  il `grep` dei colori letterali → `0`; `pnpm verify` exit 0 (192 unit test, gli stessi 4 avvisi di
+  `lint:content` già presenti); `pnpm test:e2e` exit 0 (125 passati, 19 saltati).
 
 ---
 

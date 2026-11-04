@@ -17,7 +17,7 @@ export default function ExerciseSimulator() {
   return (
     <SimulatorContext value={store}>
       <section aria-labelledby="exercise-simulator" className="flex flex-col gap-3">
-        <h2 id="exercise-simulator" className="text-xl font-semibold">
+        <h2 id="exercise-simulator" className="text-section font-bold">
           {t('ex.simulator')}
         </h2>
         <p className="text-sm text-text-muted">{t('ex.simulatorHint')}</p>
@@ -25,7 +25,7 @@ export default function ExerciseSimulator() {
           <ConfigPanel />
           <div ref={keys} role="group" aria-label={t('ex.simulator')} className="flex min-w-0 flex-col gap-5">
             <Issues />
-            <div className="flex flex-col items-center gap-5 rounded-xl border border-border bg-surface px-2 py-5">
+            <div className="machine machine-paint machine-insert flex flex-col items-center gap-5 px-2 py-5">
               <Windows />
               <Lampboard />
               <Keyboard />

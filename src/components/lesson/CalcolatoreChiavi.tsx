@@ -51,12 +51,12 @@ export default function CalcolatoreChiavi() {
   const change = (patch: Partial<KeySpaceOptions>) => setOptions((current) => ({ ...current, ...patch }));
   const { factors, total } = keySpace(options);
   const bits = log2(total).toLocaleString('it-IT', { maximumFractionDigits: 1 });
-  const select = 'rounded-md border border-border bg-surface px-2 py-2';
+  const select = 'field';
   const isPreset = (preset: Preset) => JSON.stringify(PRESETS[preset]) === JSON.stringify(options);
 
   return (
     <figure className="my-8 font-sans text-base">
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4">
+      <div className="flex flex-col gap-4 figure-panel">
         <div role="group" aria-labelledby={`${id}-presets`} className="flex flex-wrap items-center gap-2">
           <span id={`${id}-presets`} className="font-semibold">
             {t('lesson.keyspace.presets')}
@@ -67,7 +67,7 @@ export default function CalcolatoreChiavi() {
               type="button"
               aria-pressed={isPreset(preset)}
               onClick={() => setOptions(PRESETS[preset])}
-              className="min-h-11 rounded-md border-2 border-border bg-surface px-3 hover:border-accent aria-pressed:border-accent aria-pressed:bg-surface-muted"
+              className="btn"
             >
               {t(preset === 'enigmaI' ? 'lesson.keyspace.enigmaI' : 'lesson.keyspace.m4')}
             </button>
@@ -141,7 +141,7 @@ export default function CalcolatoreChiavi() {
           <label className="flex items-center gap-2 sm:col-span-2">
             <input
               type="checkbox"
-              className="h-5 w-5"
+              className="casella"
               checked={options.doubleStep}
               onChange={(e) => change({ doubleStep: e.target.checked })}
             />
@@ -181,7 +181,7 @@ export default function CalcolatoreChiavi() {
             </tr>
           </tfoot>
         </table>
-        <p aria-live="polite" className="rounded-md bg-surface-muted px-3 py-2">
+        <p aria-live="polite" className="figure-result">
           {tf('lesson.keyspace.summary', { scientific: scientific(total), bits })}
         </p>
       </div>

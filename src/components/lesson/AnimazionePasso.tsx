@@ -63,23 +63,24 @@ export default function AnimazionePasso({ rotori = 'I-II-III', inizio = 'ADU' }:
 
   return (
     <figure className="my-8 font-sans text-base">
-      <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-surface p-4">
+      <div className="flex flex-col items-center gap-4 figure-panel">
         <div className="flex gap-4" role="group" aria-label={t('lesson.step.windows')}>
           {names.map((name, slot) => (
             <div key={slot} className="flex flex-col items-center gap-1">
-              <span className="text-xs text-text-muted">{t(SLOT_KEYS[slot] ?? 'lesson.step.right')}</span>
+              <span className="text-caption text-text-muted">{t(SLOT_KEYS[slot] ?? 'lesson.step.right')}</span>
               <span
                 key={`${history.length}-${slot}`}
                 className={[
-                  'flex h-16 w-14 items-center justify-center rounded-md border-2 font-mono text-3xl font-bold',
-                  current.moved[slot] ? 'animate-scatto border-signal-forward' : 'border-border',
-                  'bg-surface-muted',
+                  'flex h-16 w-14 items-center justify-center rounded-[var(--radius-sheet)] border-2 border-[var(--window-bezel)] bg-[var(--window)] font-mono text-3xl font-bold text-[var(--window-ink)]',
+                  current.moved[slot]
+                    ? 'animate-scatto shadow-[0_0_0_2px_var(--color-surface),0_0_0_4px_var(--ink)]'
+                    : '',
                 ].join(' ')}
               >
                 {toLetter(current.state.positions[slot] ?? 0)}
               </span>
               <span className="font-mono text-sm">{name}</span>
-              <span className={atNotch(slot) ? 'text-xs font-semibold text-accent' : 'text-xs text-text-muted'}>
+              <span className={atNotch(slot) ? 'text-xs font-bold text-ink' : 'text-xs text-text-muted'}>
                 {atNotch(slot) ? t('lesson.step.atNotch') : tf('lesson.step.notch', { letter: notches[slot] ?? '' })}
               </span>
             </div>
@@ -91,24 +92,15 @@ export default function AnimazionePasso({ rotori = 'I-II-III', inizio = 'ADU' }:
             : tf('lesson.step.moved', { count: history.length - 1, rotors: movedNames.join(', ') })}
         </p>
         <div className="flex flex-wrap justify-center gap-2">
-          <button
-            type="button"
-            className="rounded-md bg-accent px-4 py-2 font-semibold text-accent-contrast"
-            onClick={advance}
-          >
+          <button type="button" className="btn btn-primary" onClick={advance}>
             {t('lesson.step.press')}
           </button>
-          <button
-            type="button"
-            className="rounded-md border border-border px-3 py-2 hover:border-accent"
-            aria-pressed={playing}
-            onClick={() => setPlaying((p) => !p)}
-          >
+          <button type="button" className="btn" aria-pressed={playing} onClick={() => setPlaying((p) => !p)}>
             {playing ? t('lesson.step.pause') : t('lesson.step.play')}
           </button>
           <button
             type="button"
-            className="rounded-md border border-border px-3 py-2 hover:border-accent disabled:opacity-50"
+            className="btn"
             disabled={history.length === 1}
             onClick={() => setHistory((h) => (h.length > 1 ? h.slice(0, -1) : h))}
           >
@@ -116,7 +108,7 @@ export default function AnimazionePasso({ rotori = 'I-II-III', inizio = 'ADU' }:
           </button>
           <button
             type="button"
-            className="rounded-md border border-border px-3 py-2 hover:border-accent"
+            className="btn"
             onClick={() => {
               setPlaying(false);
               setHistory((h) => h.slice(0, 1));

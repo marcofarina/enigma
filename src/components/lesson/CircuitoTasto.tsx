@@ -28,7 +28,7 @@ export default function CircuitoTasto() {
 
   return (
     <figure className="my-8 font-sans text-base">
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4">
+      <div className="flex flex-col gap-4 figure-panel">
         <svg viewBox="0 0 400 360" className="mx-auto w-full max-w-md" role="img" aria-labelledby={`${id}-desc`}>
           <desc id={`${id}-desc`}>
             {pressed
@@ -191,7 +191,7 @@ export default function CircuitoTasto() {
               type="button"
               aria-pressed={pressed === letter}
               onClick={() => setPressed((current) => (current === letter ? null : letter))}
-              className="h-12 w-12 rounded-md border-2 border-border bg-surface font-mono text-lg font-bold hover:border-accent aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-accent-contrast"
+              className="btn !h-12 !w-12 !p-0 font-mono text-lg font-bold"
             >
               {letter}
             </button>

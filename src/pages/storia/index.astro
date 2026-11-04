@@ -11,9 +11,7 @@ import { url } from '@/lib/url';
     <p>{t('history.intro')}</p>
   </section>
   <ListaLezioni sezione="storia" />
-  <p class="mt-8 max-w-3xl">
-    <a href={url('glossario/')} class="underline">
-      {t('history.glossary')}
-    </a>
+  <p class="mt-8 max-w-[var(--content-width)]">
+    <a href={url('glossario/')}>{t('history.glossary')}</a>
   </p>
 </BaseLayout>

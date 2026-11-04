@@ -13,15 +13,15 @@ const { exercise } = Astro.props as { exercise: Exercise };
 ---
 
 <BaseLayout title={exercise.title} description={exercise.summary}>
-  <p class="mb-2 text-sm">
-    <a href={url('esercizi/')} class="underline">
+  <p class="mb-0">
+    <a href={url('esercizi/')} class="back-link">
       ← {t('ex.back')}
     </a>
-    <span class="text-text-muted"> · {t(`ex.level${exercise.level}`)}</span>
+    <span class="text-ui text-ink-muted"> · {t(`ex.level${exercise.level}`)}</span>
   </p>
-  <h1 class="mb-6 text-3xl font-bold">{exercise.title}</h1>
+  <h1 class="page-title !mb-6">{exercise.title}</h1>
   <ExerciseView client:only="react" exerciseId={exercise.id}>
-    <p slot="fallback" class="text-text-muted">
+    <p slot="fallback" class="text-ink-muted">
       {t('ex.loading')}
     </p>
   </ExerciseView>
