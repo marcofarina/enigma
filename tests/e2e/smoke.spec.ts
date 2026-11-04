@@ -3,7 +3,6 @@ import { expect, test } from '@playwright/test';
 
 const pages = [
   '',
-  'simulatore/',
   'come-funziona/',
   'come-funziona/che-cos-e-enigma/',
   'storia/',
@@ -26,7 +25,7 @@ for (const path of pages) {
 }
 
 test('il tema scuro si attiva e viene ricordato', async ({ page, isMobile }) => {
-  await page.goto('');
+  await page.goto('come-funziona/');
   await page.emulateMedia({ colorScheme: 'light' });
   // Sul telefono il pulsante del tema sta nel menu a foglio sotto la barra.
   if (isMobile) await page.getByRole('button', { name: 'Menu' }).click();

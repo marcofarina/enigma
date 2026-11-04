@@ -34,7 +34,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | F | Interfaccia e i18n | Sonnet | high | 1 h | A, C, D5 | fatta |
 | G0 | Direzione visiva sul canvas | Opus | high | 2 h | F, D6 | fatta |
 | G1 | Design system nel codice | Opus | high | 2,5 h | G0, H | fatta |
-| G2 | Il simulatore a schermata unica come home | Opus | high | 3 h | G1 | da fare |
+| G2 | Il simulatore a schermata unica come home | Opus | high | 3 h | G1 | fatta |
 | G3 | Il simulatore su mobile | Sonnet | high | 1,5 h | G2 | da fare |
 | G4 | Il resto del sito nel nuovo linguaggio | Sonnet | high | 2 h | G1 | da fare |
 | H | Pulizia del codice | Sonnet | high | 1 h | A | fatta |
@@ -763,6 +763,57 @@ con i tre test nuovi del passo 6 fra quelli eseguiti:
 grep -cE '1280|1440|1920' tests/e2e/simulator.spec.ts
 ```
 almeno `3`.
+
+**Esito** (2026-11-04)
+
+- La home è il simulatore: `src/pages/index.astro` monta `Simulator.tsx` a tutta finestra, senza
+  intestazione né piè di pagina del sito; la barra del simulatore porta a Come funziona, Storia,
+  Esercizi e Glossario. Finché l’isola non è pronta (e senza JavaScript) la stessa barra è già
+  nell’HTML, così i link restano raggiungibili. La testa comune delle pagine sta ora in
+  `src/components/layout/Head.astro`, usata anche da `BaseLayout.astro`.
+- `/simulatore/` rimanda alla home con `location.replace`, conservando query e frammento, e ha un
+  link per chi non ha JavaScript. Il pannello «Condividi» e «Rivedi nel simulatore» degli esercizi
+  generano link verso la home; nell’intestazione del sito «Simulatore» punta alla home ed è
+  corrente solo lì.
+- Il banco sta in `src/components/simulator/bench/`: `geometry.ts` (colonne, fili, percorso del
+  segnale, con test), `Header.tsx`, `Keyboard.tsx`, `Sheet.tsx`, `Well.tsx`, `Panel.tsx` e
+  `Panels.tsx` (spine con l’Uhr, cablaggio dell’UKW-D, opzioni del testo, condividi), `bench.css`
+  e `ui.ts` (pannello aperto, modalità del segnale). La griglia è quella di `docs/design.md` al
+  pixel: a 1280×720 il vano misura 794 × 642 in (466, 64), il foglio 430 × 352. Radice
+  `min(100vw / 80, 100vh / 45)` fra 12,8 e 24 px; a 1440×900 l’altezza in più va al foglio.
+- I vecchi componenti (`Machine.tsx`, `Tape.tsx`, `TracePanel.tsx`, `ConfigPanel.tsx`,
+  `SchematicView.tsx`) restano per lezioni ed esercizi; `ShareLink.tsx` e `TextInput` sono
+  usciti, con le chiavi `home.*` e quelle della vecchia modalità LIM.
+- Animazioni del catalogo, solo `transform`, `opacity`, `filter` e `stroke-dashoffset` (il
+  segnale con `pathLength="1"`). Le guida lo store: `pulse` cresce a ogni tasto e fa ripartire le
+  animazioni cambiando la chiave React (lampade, lettera nuova, percorso, fili) o alternando due
+  nomi di keyframe uguali dove rimontare toglierebbe il fuoco (tasti). Nessun timer per le
+  animazioni; l’unico timer è «Digita» (45 ms per lettera), nello store, che ogni altro comando
+  ferma. Con `prefers-reduced-motion` niente movimento e «Al rallentatore» diventa «Passo passo».
+- Modalità LIM: `data-lim` sul banco (contrasti di `tokens.css`) e schermo intero sul documento;
+  la griglia è la stessa, scalata.
+- Scelte prese qui, da rivedere con Marco se non vanno: le tre modalità del segnale («Normale»,
+  «Al rallentatore», «Passo passo») sono un menu «Segnale» e non tre pulsanti, perché nel piede
+  dello schema il testo del passo passo occupa due righe e non c’era spazio; il menu «Carica una
+  chiave» ha due chiavi di prova inventate (I II III senza cavi; III I V con dieci cavi), in
+  attesa delle chiavi storiche dopo la fase V; la nota sull’annullare resta come `title` del
+  pulsante Annulla e non è ancora stata spostata nella lezione 1 (punto 2 da confermare in
+  `docs/design.md`).
+- Sotto 1024×576 la pagina per ora scorre in orizzontale sul fondo della macchina: la versione
+  ridotta è della fase G3. Per questo i test di `simulator.spec.ts` saltano il progetto mobile, e
+  il test del tema in `smoke.spec.ts` parte da `come-funziona/`.
+- Test nuovi in `tests/e2e/simulator.spec.ts`: altezza e larghezza della pagina entro la finestra
+  a 1280×720, 1440×900 e 1920×1080, con ogni pezzo dell’inventario nella finestra; un vecchio
+  link `/simulatore/?…` apre la stessa configurazione; 50 lettere battute senza pause danno il
+  testo atteso (calcolato con il motore). Gli altri test del simulatore sono riscritti per la
+  nuova interfaccia (prese e Esc, Uhr, UKW-D, passo passo, «Digita», LIM, QR, axe in chiaro e in
+  scuro).
+- Verificato nel browser a 1280×720, 1440×900 e 1920×1080, in chiaro e in scuro: Enigma I con il
+  link di Barbarossa (decifra «AUFKL XABTE ILUNG»), M4 a quattro rotori, Enigma G con il
+  riflettore regolabile e la colonna «ingresso ETW», pannello a spine, passo passo, LIM.
+- Comandi: `grep -cE '1280|1440|1920' tests/e2e/simulator.spec.ts` → `3`; il `grep` dei colori
+  letterali → `0`; `pnpm verify` exit 0 (192 unit test); `pnpm test:e2e` exit 0 (111 passati,
+  19 saltati).
 
 ---
 

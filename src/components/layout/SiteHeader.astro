@@ -4,7 +4,7 @@ import { url } from '@/lib/url';
 import ThemeToggle from './ThemeToggle.astro';
 
 const links = [
-  { href: url('simulatore/'), label: t('nav.simulator') },
+  { href: url(), label: t('nav.simulator') },
   { href: url('come-funziona/'), label: t('nav.howItWorks') },
   { href: url('storia/'), label: t('nav.history') },
   { href: url('esercizi/'), label: t('nav.exercises') },
@@ -12,7 +12,8 @@ const links = [
 ];
 
 const currentPath = Astro.url.pathname;
-const isCurrent = (href: string) => currentPath.startsWith(href);
+// La home è il simulatore: conta come pagina corrente solo da sola, non come prefisso di tutto.
+const isCurrent = (href: string) => (href === url() ? currentPath === href : currentPath.startsWith(href));
 ---
 
 {/*

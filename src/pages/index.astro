@@ -1,34 +1,53 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
+import '@/styles/global.css';
+import '@/components/simulator/bench/bench.css';
+import Head from '@/components/layout/Head.astro';
+import Simulator from '@/components/simulator/Simulator.tsx';
 import { t } from '@/i18n';
 import { url } from '@/lib/url';
 
-const paths = [
-  { href: url('simulatore/'), title: t('home.simulator.title'), text: t('home.simulator.text') },
-  { href: url('come-funziona/'), title: t('home.howItWorks.title'), text: t('home.howItWorks.text') },
-  { href: url('storia/'), title: t('home.history.title'), text: t('home.history.text') },
-  { href: url('esercizi/'), title: t('home.exercises.title'), text: t('home.exercises.text') },
+const nav = [
+  { href: url('come-funziona/'), label: t('nav.howItWorks') },
+  { href: url('storia/'), label: t('nav.history') },
+  { href: url('esercizi/'), label: t('nav.exercises') },
+  { href: url('glossario/'), label: t('nav.glossary') },
 ];
+
+/*
+ * La home è il simulatore (docs/design.md): si apre il sito e la macchina è pronta a cifrare.
+ * Niente intestazione né piè di pagina del sito: la barra del simulatore porta al percorso.
+ */
 ---
 
-<BaseLayout>
-  <section class="mb-12 max-w-3xl">
-    <p class="mb-2 font-mono text-sm uppercase tracking-widest text-text-muted">{t('home.eyebrow')}</p>
-    <h1 class="mb-4 text-4xl font-bold leading-tight sm:text-5xl">{t('home.title')}</h1>
-    <p class="text-lg text-text-muted">{t('home.lead')}</p>
-  </section>
-
-  <ul class="grid gap-4 sm:grid-cols-2">
-    {paths.map((path) => (
-      <li>
-        <a
-          href={path.href}
-          class="block h-full rounded-lg border border-border bg-surface p-5 text-text no-underline transition-colors hover:border-accent"
-        >
-          <h2 class="mb-2 text-xl font-semibold">{path.title}</h2>
-          <p class="text-text-muted">{path.text}</p>
-        </a>
-      </li>
-    ))}
-  </ul>
-</BaseLayout>
+<!doctype html>
+<html lang="it" class="bench-root">
+  <head>
+    <Head description={t('site.description')} />
+  </head>
+  <body class="machine machine-paint">
+    <Simulator client:only="react">
+      {/* Finché la macchina non è pronta, e senza JavaScript, la barra porta comunque al percorso. */}
+      <div slot="fallback" class="bench">
+        <header class="bench-header">
+          <a href={url()} class="bench-brand">
+            {t('site.title')}
+          </a>
+          <nav aria-label={t('nav.label')} class="bench-nav">
+            {nav.map((link) => (
+              <a href={link.href}>{link.label}</a>
+            ))}
+          </nav>
+        </header>
+        <p class="bench-loading">{t('sim.loading')}</p>
+      </div>
+    </Simulator>
+    <noscript>
+      <style>
+        .bench-loading {
+          display: none;
+        }
+      </style>
+      <p class="bench-noscript">{t('sim.noscript')}</p>
+    </noscript>
+  </body>
+</html>

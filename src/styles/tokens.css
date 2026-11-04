@@ -152,6 +152,21 @@
   --wire: rgb(207 203 192 / 0.17);
   --focus-machine: #ffb938;
 
+  /* Pezzi della home (docs/design.md): finestrelle, rotelle, prese, pannelli, ombre. */
+  --window-bezel: #0f100d;
+  --knurl-light: #5d5b53;
+  --knurl-dark: #2c2c27;
+  --key-rim-hover: #e6e2d6;
+  --contact: #5b5a51;
+  --socket: #151612;
+  --socket-border: #55544b;
+  --machine-panel: #262722;
+  --machine-panel-line: #3a3a33;
+  --shadow-soft: rgb(0 0 0 / 0.5);
+  --shadow-deep: rgb(0 0 0 / 0.6);
+  --shadow-inset: rgb(0 0 0 / 0.45);
+  --shadow-sheet: rgb(0 0 0 / 0.55);
+
   /* ── Foglio, tema chiaro ──────────────────────────────────────────────────────────────────── */
   --paper: #fbfbf8;
   --paper-deep: #f1f0ea;
@@ -164,6 +179,20 @@
   --signal-forward-paper: #a34a00;
   --signal-return-paper: #1f6fb2;
   --focus-paper: #1f6fb2;
+
+  /*
+   * Foglio della home: inchiostri del tema chiaro anche nel tema scuro, dove la carta si attenua
+   * (docs/design.md, «Tema scuro»).
+   */
+  --sheet: #fbfbf8;
+  --sheet-field: #ffffff;
+  --sheet-hover: #f3e4e2;
+  --sheet-ink: #2a2a2a;
+  --sheet-ink-muted: #5f5f59;
+  --sheet-ink-faint: #6b6b66;
+  --sheet-red: #b3261e;
+  --sheet-red-soft: #e2b9b5;
+  --sheet-field-border: #c9c6bd;
 
   /* Blocchi di codice: Shiki usa queste variabili (tema «enigma» in astro.config.mjs). */
   --code-paper: var(--paper-deep);
@@ -243,6 +272,11 @@
   --signal-forward-paper: #ffa53d;
   --signal-return-paper: #7cc0ff;
 
+  --sheet: #e4e1d7;
+  --sheet-field: #f1eee6;
+  --sheet-hover: #e9d6d2;
+  --sheet-ink-faint: #5f5f59;
+
   --code-paper: var(--machine-well);
   --code-ink: var(--alu);
   --code-keyword: var(--signal-forward);
@@ -268,6 +302,11 @@
     --field-border: #4a4a42;
     --signal-forward-paper: #ffa53d;
     --signal-return-paper: #7cc0ff;
+
+    --sheet: #e4e1d7;
+    --sheet-field: #f1eee6;
+    --sheet-hover: #e9d6d2;
+    --sheet-ink-faint: #5f5f59;
 
     --code-paper: var(--machine-well);
     --code-ink: var(--alu);
@@ -304,6 +343,7 @@
   --ring-letter: #cfcbc0;
   --wire: rgb(207 203 192 / 0.28);
   --ink-faint: #4a4a46;
+  --sheet-ink-faint: #4a4a46;
   --machine-control-border: #8f8b80;
 
   /* --ink vale già per il tema attivo: basta una regola per entrambi. */
