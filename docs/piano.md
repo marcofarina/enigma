@@ -163,6 +163,16 @@ fare in qualunque ordine; 4d e 4e toccano file diversi e sono indipendenti fra l
 dopo la crittoanalisi per decisione di Marco (D12). 4h chiude la v1.0 e va fatta per ultima,
 perché misura le pagine nuove.
 
+### Fuori dalle fasi
+
+Due compiti piccoli rimasti dalla fase V di `docs/piano-aggiornamento.md` (2026-11-04). Non
+dipendono da nessuna fase; vanno chiusi prima della 4h.
+
+| Compito | Chi | Fatto quando |
+|---|---|---|
+| Rileggere storia 4 (`src/content/lezioni/it/storia/04-enigma-e-l-italia.mdx`), riscritta nella fase V sul racconto di Batey: il messaggio senza L non è più legato a Matapan | Marco | la lezione è `stato: rivista` |
+| Confrontare i rotori commerciali dell’Enigma D di `COMMERCIAL_ROTORS` (`src/engine/models.ts`) con CryptoCellar: Bauer, *Decrypted Secrets*, p. 124, dà cablaggi diversi (rotore I `HRWYIPCGVXL…`, tacca G). Sonnet, effort high, 0,5 h; se il motore cambia, servono vettori di test nuovi | sessione Claude | la voce «Motore» di «Da verificare» in `docs/stato.md` passa a «Verificato», con la fonte |
+
 ### Regole comuni a tutte le fasi
 
 - Lavora su un branch `fase/<numero della fase>` (per esempio `fase/4a`) creato da `main`
