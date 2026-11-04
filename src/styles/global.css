@@ -292,6 +292,23 @@
     text-wrap: balance;
   }
 
+  /*
+   * Segnaposto di un componente che si carica solo nel browser (`client:only`) e riempie la pagina:
+   * occupa una schermata intera, così il piè di pagina resta sotto la piega e, quando il componente
+   * compare, non scivola verso il basso (spostamento di layout, budget di Lighthouse).
+   * `fallback-schermo-stretto` lo fa solo sul telefono: lì anche gli esercizi senza simulatore,
+   * che a desktop stanno in una schermata, superano la piega.
+   */
+  .fallback-schermo {
+    min-height: 100svh;
+  }
+
+  @media (max-width: 47.99rem) {
+    .fallback-schermo-stretto {
+      min-height: 100svh;
+    }
+  }
+
   .page-lead {
     max-width: var(--content-width);
     margin: 0 0 1.5rem;

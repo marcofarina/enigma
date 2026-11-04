@@ -39,6 +39,13 @@ I test end-to-end (Playwright + axe) girano sulla build:
 pnpm build && pnpm test:e2e
 ```
 
+Il budget di prestazioni e accessibilità (Lighthouse: prestazioni ≥ 90, accessibilità 100, a desktop e a 375 px, sulle
+pagine di `scripts/pagine.ts`) si misura sulla stessa build:
+
+```bash
+pnpm build && pnpm test:lighthouse
+```
+
 ## Licenze
 
 - **Codice**: [MIT](LICENSE).
