@@ -1039,18 +1039,39 @@ da Marco**
 **Obiettivo.** Ogni fatto storico delle lezioni rimanda a una fonte effettivamente consultata,
 con la pagina; l’elenco «Da verificare» di `docs/stato.md` si svuota.
 
-**Come Marco fornisce i testi.** Fuori dal repo, che è pubblico: nella cartella
-`~/Developer/github/enigma-fonti/`, un file per libro, chiamato con l’`id` di
-`src/content/fonti.yaml` (per esempio `singh-codici-segreti.pdf`). Formati utili, in ordine: PDF
-con testo selezionabile, EPUB, PDF scansionato. Una scansione senza testo si legge pagina per
-pagina, quindi costa molto di più. I numeri di pagina valgono per l’edizione del file: se non è
-quella di `fonti.yaml`, la sessione aggiorna la voce.
+**Dove sono i testi.** In `docs/books/`, ignorata da git (2026-11-04): i libri sono coperti da
+copyright e non entrano mai nel repo, che è pubblico. I file hanno il nome originale, non l’`id`
+di `src/content/fonti.yaml`. Tutti hanno il testo estraibile, scansione di Kozaczuk compresa (ha
+il livello OCR), quindi non si leggono pagina per pagina: si cerca la parola chiave e si legge
+solo l’intorno.
+
+- PDF: `pdftotext -layout file.pdf - | grep -n …`, poi `pdftotext -f N -l N` per la pagina.
+  Il numero di pagina del PDF non è quello stampato: la pagina da citare è quella stampata.
+- EPUB: `unzip -p file.epub '*.html' '*.xhtml' | sed 's/<[^>]*>//g' | grep -n …`. Gli EPUB non hanno
+  pagine stampate: si cita il capitolo, oppure Marco manda lo screenshot della pagina del
+  cartaceo.
+- TXT (Welchman): `grep -n` direttamente.
+
+I numeri di pagina valgono per l’edizione del file: se non è quella di `fonti.yaml`, la sessione
+aggiorna la voce.
+
+| `id` previsto | File in `docs/books/` |
+|---|---|
+| `singh-codici-segreti` | `Codici & segreti … BUR …epub` (c’è anche *The Code Book*, in inglese) |
+| `batey-dilly` | `Dilly · The Man who broke Enigmas …epub` |
+| Kozaczuk, *Enigma* | `Enigma_ How the German Machine Cipher Was Broken …pdf` |
+| `bauer-decrypted-secrets` | `Decrypted Secrets_ … 4th …pdf` |
+| Welchman, *The Hut 6 Story* | `The Hut 6 Story …txt` |
+| Sebag-Montefiore, *Enigma* | `Enigma _ The Battle for the Code …epub` |
+| di appoggio, non nel piano | Craig Bauer, *Secret History* (2021); Stallings, *Cryptography and Network Security* (2022); Bernasconi, Ferragina, Luccio, *Elementi di crittografia* (2015) |
+
+Mancano Rejewski 1980, Hamer 1997 e Hinsley.
 
 **Ordine dei libri**, secondo quanti fatti aperti verificano:
 
 | Libro | Che cosa verifica | Serve per |
 |---|---|---|
-| Singh, *Codici & segreti* (già in casa) | Alberti e la data del trattato, al-Kindi, cifra dello spazio delle chiavi, pagine delle citazioni | lezioni 2 e 8 |
+| Singh, *Codici & segreti* | Alberti e la data del trattato, al-Kindi, cifra dello spazio delle chiavi, pagine delle citazioni | lezioni 2 e 8 |
 | Batey, *Dilly* | Mavis Lever, il messaggio di prova, Matapan, ruolo della sezione di Knox | storia 4 |
 | Kozaczuk, *Enigma*, o Rejewski 1980 | procedura dell’indicatore 1938–1940, numero di cavi nel tempo, data dei rotori IV e V | storia 2 e 3, lezione 7 |
 | Hamer 1997 | solo il numero del volume di Cryptologia | voce di `fonti.yaml` |
@@ -1065,10 +1086,12 @@ Rejewski 1980 potrebbero esserlo.
 Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
 dimmelo senza fare altro.
 
-Esegui la fase V di docs/piano-aggiornamento.md per i libri presenti in
-~/Developer/github/enigma-fonti/. L'elenco dei fatti da controllare è la sezione «Da verificare»
-di docs/stato.md. Non copiare brani dei libri nel repo: nelle lezioni solo citazioni brevi, con la
-pagina, come prevede docs/piano.md (art. 70 LdA).
+Esegui la fase V di docs/piano-aggiornamento.md per i libri presenti in docs/books/ (ignorata
+da git: la tabella della fase dice quale file corrisponde a quale fonte). Non leggere i libri
+interi: cerca le parole chiave con i comandi della fase e leggi solo l'intorno. L'elenco dei fatti
+da controllare è in docs/stato.md, «Fonti tolte dal frontmatter» e «Da verificare». Non copiare
+brani dei libri nel repo: nelle lezioni solo citazioni brevi, con la pagina, come prevede
+docs/piano.md (art. 70 LdA).
 ```
 
 **Passi**
