@@ -1,0 +1,108 @@
+---
+title: La M4 e Shark
+description: Perché l’Enigma della marina tedesca resistette più a lungo, che cosa diedero davvero le catture del 1941, come il quarto rotore della M4 lasciò Bletchley Park al buio per più di dieci mesi e come la cattura dell’U-559 e un’abitudine degli operatori riaprirono Shark il 13 dicembre 1942.
+sezione: crittoanalisi
+ordine: 5
+stato: bozza
+fonti:
+  - sebag-montefiore-enigma
+  - singh-codici-segreti
+---
+
+{/*
+Tesi didattica.
+Il racconto più diffuso della battaglia dell’Atlantico vuole che una cattura, di solito quella dell’U-110 nel maggio 1941, abbia consegnato agli alleati l’Enigma della marina.
+La lezione mostra, con Sebag-Montefiore, che nessuna cattura bastò una volta per tutte: ognuna diede un pezzo (impostazioni di un mese, tabelle dei bigrammi, libri dei messaggi brevi) che serviva finché i tedeschi non cambiavano qualcosa. La M4 del febbraio 1942 tolse alla Bombe le due cose di cui viveva, un numero di posizioni alla sua portata e i crib, e Shark tornò leggibile solo quando l’U-559 restituì i crib e un’abitudine degli operatori rese la M4 uguale a una macchina a tre rotori.
+Alla fine lo studente sa dire perché la marina era più difficile, che cosa diede ciascuna cattura, che cosa cambiò il quarto rotore e come fu ritrovata Shark.
+Esempio: la chiave M3 della lezione «Il crib e la Bombe», messa su una M4 con il rotore sottile Beta in A (verificato con il motore: WETTER dà OOHJSF in entrambe).
+*/}
+
+import Esito from '@/components/lesson/Esito.astro';
+import Formula from '@/components/lesson/Formula.astro';
+import MiniSimulatore from '@/components/lesson/MiniSimulatore.tsx';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Previsione from '@/components/lesson/Previsione.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
+import Risposta from '@/components/lesson/Risposta.astro';
+
+Il 9 maggio 1941, nell’Atlantico settentrionale, il sommergibile tedesco U-110 fu costretto a emergere dalle bombe di profondità di tre navi britanniche. L’equipaggio lo abbandonò credendo che affondasse; una squadra del cacciatorpediniere HMS Bulldog, guidata dal sottotenente David Balme, vi salì e ne portò via per un’ora e mezza libri, carte e la macchina Enigma. Quell’estate, consegnando le decorazioni, il re Giorgio VI definì l’operazione «forse il singolo evento più importante di tutta la guerra sul mare». Hugh Sebag-Montefiore, che ha ricostruito le catture anche sulle storie interne di Bletchley Park rese pubbliche nel 1999, scrive che probabilmente il re si sbagliava, e con lui molti libri e documentari.
+
+<Obiettivi>
+- Dire perché l’Enigma della marina tedesca era più difficile da rompere di quella dell’esercito.
+- Dire che cosa diedero le catture del 1941, e perché nessuna bastò una volta per tutte.
+- Spiegare che cosa cambiò il quarto rotore della M4 per la Bombe, e come Shark tornò leggibile il 13 dicembre 1942.
+</Obiettivi>
+
+## L’Enigma della marina
+
+La marina tedesca usava la macchina a tre rotori, la M3, ma con otto rotori fra cui scegliere invece di cinque: gli ordini possibili erano <Formula tex="8 \times 7 \times 6 = 336" />, contro i 60 dell’esercito. I suoi operatori, scrive Simon Singh, evitavano le formule fisse, e quindi lasciavano pochi crib. Anche l’indicatore era diverso. L’operatore prendeva da un libro, il *Kenngruppenbuch*, due gruppi di tre lettere; uno dei due, battuto sulla macchina dalla posizione del giorno, dava la chiave del messaggio, e tutti e due, trasformati con tabelle di bigrammi, formavano l’indicatore trasmesso in chiaro, come racconta la lezione [Fogli chiave e procedure](../../storia/fogli-chiave-e-procedure/).
+
+Per la Bombe le prime due differenze erano una questione di tempo. Una corsa su un ordine dei rotori, compresa la preparazione, durava una ventina di minuti; provare tutti i 336 ordini su un crib richiedeva 112 ore di Bombe, e le Bombe erano poche e servivano anche all’esercito e all’aviazione. Turing inventò un metodo statistico, il *Banburismus*, che confrontando coppie di messaggi riduceva gli ordini da provare. Ma il *Banburismus* aveva bisogno delle tabelle dei bigrammi, almeno in parte, per risalire dall’indicatore trasmesso alla chiave del messaggio, e quelle tabelle stavano a bordo delle navi tedesche.
+
+Singh aggiunge una terza differenza: nella macchina della marina il riflettore avrebbe potuto assumere 26 posizioni. Sebag-Montefiore e il motore di questo sito non danno alla M3 un riflettore regolabile; 26 posizioni in più arrivarono nel 1942, con il quarto rotore, e solo sulla rete degli U-Boot dell’Atlantico.
+
+## Le catture del 1941
+
+Fra marzo e giugno del 1941 la marina britannica salì a bordo di diverse navi tedesche per prenderne i documenti cifrati. Sebag-Montefiore elenca che cosa diede ciascuna:
+
+| Data | Nave | Che cosa diede |
+| --- | --- | --- |
+| 4 marzo | peschereccio *Krebs*, alle isole Lofoten | le impostazioni di febbraio, da cui Bletchley Park ricostruì le tabelle dei bigrammi entro la fine di marzo; dall’inizio di aprile si poté usare il *Banburismus* |
+| 7 maggio | nave meteorologica *München* | le impostazioni di giugno: a giugno i messaggi della marina si lessero per la prima volta mentre venivano trasmessi |
+| 9 maggio | sommergibile U-110 | le impostazioni speciali di giugno per i messaggi riservati agli ufficiali e il loro manuale, una serie di tabelle dei bigrammi, il libro dei messaggi brevi e quello dei bollettini meteorologici brevi |
+| 28 giugno | nave meteorologica *Lauenburg* | le impostazioni di luglio |
+
+L’U-110 non aveva le impostazioni di maggio né quelle di giugno. Prima che entrassero in vigore quelle della *München*, a Bletchley Park servivano in media dieci giorni o più per leggere un messaggio della marina; con quelle, sei ore. Le tabelle dei bigrammi dell’U-110, che un documentario televisivo presentava come decisive, servirono a colmare qualche lacuna: secondo la storia della Hut 8, la sezione della marina, scritta dopo la guerra, quelle ricostruite dopo la *Krebs* erano già quasi complete. Il 15 giugno i tedeschi cambiarono comunque le tabelle, e il 29 novembre di nuovo.
+
+Il materiale dell’U-110 servì più tardi: i libri dei messaggi brevi e dei bollettini meteorologici, scrive Sebag-Montefiore, avrebbero prodotto crib, e i crib sarebbero diventati indispensabili quando la Bombe divenne lo strumento principale contro la marina. Nessuna cattura, conclude, permise di rompere l’Enigma della marina una volta per tutte: ognuna insegnava a leggere i messaggi fino al cambiamento successivo.
+
+## Il quarto rotore
+
+Il 1° febbraio 1942 la rete degli U-Boot nell’Atlantico e nel Mediterraneo, che i tedeschi chiamavano *Triton* e Bletchley Park *Shark*, passò alla M4. Accanto ai tre rotori la macchina aveva un rotore sottile, con un riflettore sottile, nello spazio che nella M3 occupava il riflettore. L’operatore impostava a mano il rotore sottile su una delle 26 posizioni; il rotore sottile non avanzava mai e non si poteva scambiare con gli altri: gli ordini dei rotori restavano 336, invece dei 3 024 che si sarebbero avuti scegliendo quattro rotori su nove per quattro posti qualunque, ma per ogni ordine le posizioni da provare erano 26 volte tante.
+
+Il cablaggio dei pezzi nuovi non fu un problema. Già nel dicembre 1941 alcuni operatori avevano la M4, e fino all’ordine di passare alla macchina nuova dovevano usarla come una macchina a tre rotori, con il rotore sottile in una posizione fissa. Uno di loro trasmise un messaggio con il rotore sottile spostato di una lettera, e poi un secondo messaggio per avvertire che il primo si decifrava con quella posizione: errori come questo bastarono a ricostruire i cablaggi.
+
+Nel simulatore qui sotto c’è una M4 con il rotore sottile Beta e il riflettore B sottile. Gli altri tre rotori, gli anelli, la posizione e i cavi sono quelli della M3 della lezione [Il crib e la Bombe](../il-crib-e-la-bombe/), che partendo dalla posizione BLA cifra WETTER in OOHJSF. Il rotore Beta è in A, con l’anello in A.
+
+<Previsione>
+Che cosa dà la M4 qui sotto battendo WETTER?
+
+<Risposta testo="un testo diverso, perché la corrente attraversa un rotore in più">
+Il rotore sottile aggiunge davvero due attraversamenti, all’andata e al ritorno. Ma insieme al riflettore sottile forma un riflettore unico, e in una certa posizione quel riflettore collega le lettere come il riflettore B della M3.
+</Risposta>
+<Risposta testo="lo stesso testo per le prime lettere, poi un testo diverso quando il quarto rotore avanza">
+È l’idea che il rotore sottile si muova come gli altri, trascinato da quello alla sua destra. Ma il rotore sottile non avanza mai: resta nella posizione in cui l’operatore l’ha messo.
+</Risposta>
+<Risposta testo="OOHJSF, come la M3" corretta />
+
+<Esito>
+Verificalo: batti WETTER sulla tastiera qui sotto e leggi il nastro. Poi riparti con il rotore sottile in B e batti la stessa parola.
+</Esito>
+</Previsione>
+
+<MiniSimulatore client:visible config="v=1&m=M4&w=Beta-II-IV-V&r=ABUL&p=ABLA&u=B-thin&s=AV.BS.CG.DL.FU.HZ.IN.KM.OW.RX" didascalia="Enigma M4 con il rotore sottile Beta in A, i rotori II, IV e V, anelli ABUL, posizione ABLA, riflettore B sottile e dieci cavi." />
+
+Con il rotore sottile in A e l’anello in A, la M4 cifra come la M3 con il riflettore B. Il rotore sottile, che non si muove, forma con il riflettore sottile un riflettore unico, e in questa posizione neutra quel riflettore è il B. Con il rotore sottile in B la stessa parola diventa SPJWKV, e ciascuna delle 26 posizioni dà una macchina diversa.
+
+## Senza crib
+
+Le posizioni moltiplicate per 26 si sarebbero potute affrontare con più Bombe e più crib. Le Bombe a quattro rotori, però, non c’erano ancora, e i crib vennero meno nello stesso momento. Fino ad allora Bletchley Park li ricavava dai bollettini meteorologici degli U-Boot. Il sommergibile riduceva il bollettino a pochi gruppi di lettere con il libro dei bollettini brevi, li cifrava con la Enigma e li trasmetteva; a terra, una stazione meteorologica tedesca ritrasmetteva gli stessi dati in un cifrario che i britannici sapevano leggere. Con il libro dei bollettini brevi catturato nel maggio 1941 i crittoanalisti risalivano dal bollettino della stazione ai gruppi che il sommergibile aveva cifrato, e quindi a un crib. Il 20 gennaio 1942 i tedeschi sostituirono il libro con una versione nuova.
+
+Restavano i crib occasionali. Il 14 marzo 1942 Karl Dönitz, comandante degli U-Boot, annunciò alla flotta la sua promozione ad ammiraglio: dal crib ricavato da quel messaggio, sei Bombe a tre rotori impiegarono 17 giorni per trovare la chiave di una sola giornata. Il *Banburismus*, che in teoria funzionava anche con la M4, in pratica non serviva: con tante posizioni in più, i messaggi con posizioni vicine, di cui il metodo aveva bisogno, erano troppo pochi.
+
+Shark rimase illeggibile per dieci mesi e mezzo. Il rapporto settimanale sugli U-Boot del Centro di informazione operativa dell’Ammiragliato, il 9 febbraio, scriveva che il quadro delle posizioni nell’Atlantico era ormai «sfocato». Nei primi otto mesi del 1942 gli U-Boot affondarono più di quattro milioni di tonnellate di naviglio alleato. Sebag-Montefiore fa notare che nello stesso periodo pesarono altre due cose: gli attacchi lungo la costa degli Stati Uniti, dove le navi non viaggiavano ancora in convoglio, e la rottura, da parte tedesca, del cifrario navale con cui le marine alleate comunicavano nell’Atlantico.
+
+## L’U-559
+
+Il 30 ottobre 1942, nel Mediterraneo orientale, l’U-559 emerse dopo dieci ore di caccia da parte di cinque cacciatorpediniere britannici. Dal cacciatorpediniere HMS Petard salirono a bordo il tenente Tony Fasson, comandante in seconda, il marinaio Colin Grazier e poi Tommy Brown, un ragazzo di sedici anni addetto alla mensa. Fasson passò i libri a Brown, che li portò fuori in tre viaggi; l’U-559 affondò all’improvviso mentre Fasson e Grazier risalivano, e i due annegarono.
+
+Fra i documenti c’era la versione nuova del libro dei bollettini meteorologici brevi, che arrivò a Bletchley Park solo il 24 novembre. Il libro ridava i crib, ma con la M4 i crib non bastavano: servivano molte Bombe a tre rotori, o Bombe a quattro rotori più veloci, che non c’erano. La svolta venne il 13 dicembre, da un’abitudine degli operatori tedeschi. Quando un messaggio fu finalmente decifrato, si scoprì che per i messaggi brevi, compresi i bollettini meteorologici, gli U-Boot usavano la M4 con il rotore sottile in posizione neutra, cioè come una macchina a tre rotori. I crib dei bollettini si potevano quindi usare sulle Bombe a tre rotori che Bletchley Park già aveva, e trovati i tre rotori, la posizione del rotore sottile per gli altri messaggi era una sola fra 26.
+
+Quella sera il Primo Lord del Mare, Sir Dudley Pound, avvertì l’ammiraglio statunitense Ernest King che il traffico degli U-Boot di qualche giorno sarebbe diventato leggibile, e raccomandò di usare le informazioni con cautela, per non far sospettare ai tedeschi da dove venivano. Le Bombe a quattro rotori arrivarono più tardi: secondo Sebag-Montefiore gli ingegneri britannici non riuscirono a progettarne una affidabile, e le macchine della marina statunitense entrarono in servizio solo dopo il maggio 1943.
+
+<Riepilogo>
+- La marina sceglieva tre rotori fra otto, quindi 336 ordini invece di 60; i suoi operatori evitavano le formule fisse, e la chiave del messaggio passava per tabelle di bigrammi che stavano solo a bordo.
+- Le catture del 1941 diedero pezzi diversi: dalla *Krebs* le tabelle dei bigrammi ricostruite, dalla *München* le impostazioni di giugno, dall’U-110 le impostazioni per gli ufficiali e i libri dei messaggi brevi e dei bollettini meteorologici. Ognuna serviva fino al cambiamento successivo, e nessuna bastò una volta per tutte.
+- Il quarto rotore della M4, dal 1° febbraio 1942, moltiplicò per 26 le posizioni da provare per ogni ordine; con il libro dei bollettini brevi cambiato il 20 gennaio, Shark restò senza crib e illeggibile per dieci mesi e mezzo.
+- L’U-559, il 30 ottobre 1942, restituì i crib; il 13 dicembre si scoprì che per i messaggi brevi il rotore sottile stava in posizione neutra, come nella M4 con Beta in A che cifra come la M3, e le Bombe a tre rotori bastarono di nuovo.
+</Riepilogo>

@@ -1,0 +1,120 @@
+---
+title: Il crib e la Bombe
+description: Come la Bombe di Bletchley Park cercava la posizione dei rotori partendo da un pezzo di testo indovinato. Il menu del crib, gli anelli che il pannello a spine non cancella, la catena di deduzioni da un’ipotesi sul pannello e il diagonal board di Welchman.
+sezione: crittoanalisi
+ordine: 4
+stato: bozza
+fonti:
+  - welchman-hut-six
+  - sebag-montefiore-enigma
+  - turing-treatise
+  - singh-codici-segreti
+---
+
+{/*
+Tesi didattica.
+Chi sente parlare della Bombe pensa spesso a una macchina che prova tutte le chiavi una dopo l’altra, compresi i 150 milioni di milioni di collegamenti del pannello a spine.
+La lezione mostra che la Bombe provava soltanto ordini e posizioni dei rotori: per il pannello faceva un’ipotesi su una lettera e ne seguiva le conseguenze lungo il menu del crib, e una contraddizione scartava l’ipotesi. Gli anelli del menu non dipendono dal pannello; il diagonal board di Welchman moltiplica le deduzioni, fino a decidere in un colpo solo tutte le ipotesi su una lettera.
+Alla fine lo studente sa costruire il menu di un crib, sa dire perché un anello non dipende dal pannello, sa seguire un’ipotesi fino alla contraddizione e sa dire che cosa aggiunge il diagonal board e che cosa resta da fare dopo una fermata.
+Esempio: il crib WETTERVORHERSAGE nel messaggio e nella chiave M3 del componente MenuBombe; numeri calcolati con il motore (19 posizioni del crib su 33; 11 064 e 7 117 posizioni su 17 576 con uno e due anelli; una fermata contro 648 con e senza diagonal board).
+*/}
+
+import Citazione from '@/components/lesson/Citazione.astro';
+import Esito from '@/components/lesson/Esito.astro';
+import MenuBombe from '@/components/lesson/MenuBombe.tsx';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Previsione from '@/components/lesson/Previsione.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
+import Risposta from '@/components/lesson/Risposta.astro';
+
+Nel maggio del 1940 l’esercito e l’aviazione tedesca smisero di cifrare due volte la chiave del messaggio. A Bletchley Park, la sede della Government Code and Cypher School, i fogli di Zygalski, che i britannici avevano forato sul modello polacco, non servirono più: Gordon Welchman, che dirigeva la sezione dell’esercito e dell’aviazione, la Hut 6, scrive che il cambiamento li rese inutili di colpo. Con la procedura nuova gli indicatori non avevano più lettere ripetute, e i metodi delle lezioni precedenti non avevano più niente su cui lavorare. Restava il testo dei messaggi.
+
+<Obiettivi>
+- Costruire il menu di un crib e trovarne gli anelli.
+- Spiegare perché un anello del menu non dipende dal pannello a spine.
+- Seguire un’ipotesi sul pannello lungo il menu fino a una contraddizione, e dire che cosa aggiunge il diagonal board.
+- Dire che cosa resta da fare quando la Bombe si ferma.
+</Obiettivi>
+
+## Il crib
+
+Molti messaggi tedeschi avevano parti prevedibili. Welchman, studiando i primi messaggi decifrati, notò che indirizzi e firme si ripetevano con le stesse formule. Un **crib** è un pezzo di testo in chiaro che si suppone di conoscere, insieme al punto del testo cifrato da cui proviene. La parola viene dal gergo scolastico inglese, dove indica il bigliettino copiato all’esame.
+
+Il crib di questa lezione è WETTERVORHERSAGE, «previsioni del tempo», una parola da bollettino meteorologico. Il messaggio intercettato è lungo 48 lettere:
+
+```
+BOXGSIJMMPCVPQGSTFLFBSYAKCCWXSKWPCZHATVYMNSXVHME
+```
+
+Chi intercetta il messaggio non sa dove stia il crib. Nella lezione [Il riflettore](../../come-funziona/il-riflettore/) la parola WETTER, fatta scorrere sotto un testo cifrato, scartava le posizioni in cui una lettera cadeva sotto sé stessa. Turing lo scrive nel suo trattato sulla macchina:
+
+<Citazione fonte="turing-treatise" pagina="2" tradotta>
+il risultato della cifratura di G non può mai essere G.
+</Citazione>
+
+Le 16 lettere del crib possono stare in 33 posizioni di questo messaggio; la regola ne scarta 14, e ne restano 19. Una di queste posizioni comincia alla 26ª lettera del messaggio, ed è quella giusta: il messaggio comincia con KEINEBESONDERENEREIGNISSE, «nessun evento particolare», e il crib occupa le lettere dalla 26 alla 41. I crittoanalisti, che il testo in chiaro non lo conoscevano, dovevano provare le 19 posizioni una dopo l’altra.
+
+## Il menu
+
+Allineato il crib, ogni colonna dice che in una certa posizione della macchina una lettera è diventata un’altra: nella posizione 26 la W è diventata C, nella 27 la E è diventata C, nella 28 la T è diventata W, e così via per 16 posizioni. Welchman disegnava queste coppie come un grafo: le lettere sono i nodi, e ogni colonna è un collegamento fra due lettere, con il numero della posizione. A Bletchley Park il grafo si chiamava **menu**, perché diceva come preparare la macchina.
+
+Il menu del crib WETTERVORHERSAGE ha 17 lettere e 16 collegamenti. Tredici lettere formano un pezzo unico; la G con la Y e la O con la P restano isolate. Il pezzo grande contiene due **anelli**, cioè percorsi che tornano alla lettera da cui partono: T, S, E, C, W e di nuovo T, lungo le posizioni 38, 30, 27, 26 e 28; e A, R, C, W, V e di nuovo A, lungo le posizioni 37, 34, 26, 32 e 39.
+
+## Un anello e il pannello
+
+Un collegamento del menu riguarda la macchina intera, pannello a spine compreso: nella posizione 38 la S è diventata T, ma dentro la macchina la corrente è entrata nei rotori dalla compagna della S sul pannello ed è uscita dalla compagna della T. Le compagne della S e della T non sono note, e il pannello aveva circa 150 milioni di milioni di configurazioni.
+
+L’anello toglie di mezzo il pannello. Chiamiamo *t* la compagna della T. I rotori soli, senza pannello, nella posizione 38 mandano *t* nella compagna della S; nella posizione 30 la compagna della S nella compagna della E; e così via fino alla posizione 28, che porta la compagna della W di nuovo in *t*. Percorrendo l’anello con i soli rotori, *t* torna in sé stessa, qualunque sia il pannello. È la stessa ragione per cui nella lezione [Rejewski e la teoria dei cicli](../rejewski-e-la-teoria-dei-cicli/) il pannello non cambiava la lunghezza dei cicli: rinomina le lettere, e una lettera che torna in sé stessa resta una lettera che torna in sé stessa.
+
+Turing progettò su questo fatto una macchina con una serie di rotori senza pannello, uno per ogni collegamento dell’anello, ciascuno spostato rispetto al primo di quanto dice il numero del collegamento, e collegati in fila. La macchina li faceva girare insieme attraverso tutte le 17 576 posizioni, e in ognuna controllava se il giro dell’anello lasciava qualche lettera al suo posto. Nel componente più avanti, «Percorri l’anello» fa il giro con i rotori nella posizione giusta.
+
+Un anello solo, però, scarta poco. Con i rotori nella posizione giusta il giro dell’anello T, S, E, C, W lascia al loro posto tre lettere, la A, la B e la T: la compagna della T è una di loro, ed è la T stessa, che non ha cavo. Ma una permutazione presa a caso lascia almeno una lettera al suo posto quasi due volte su tre. Il motore di questo sito conta, su tutte le 17 576 posizioni dei rotori in quest’ordine, 11 064 posizioni in cui il primo anello lascia almeno una lettera al suo posto; con tutti e due gli anelli le posizioni che restano sono 7 117. Per questo, scrive Welchman, la macchina di Turing richiedeva menu con tre anelli, e quindi crib lunghi.
+
+## Un’ipotesi e le sue conseguenze
+
+Il menu contiene però più informazione dei suoi anelli. Il crittoanalista sceglie una lettera con molti collegamenti, in questo menu la E, e fa un’ipotesi: la E è collegata alla E, cioè non ha cavo. Con i rotori in una posizione fissata, ogni collegamento della E dà una conseguenza: nella posizione 27 i rotori mandano la E in una lettera, che dev’essere la compagna della C. Dalla compagna della C, i collegamenti della C danno le compagne della W e della R, e così via. Ogni passo è una **deduzione**: dall’ipotesi e dalla posizione dei rotori segue, per forza, che due lettere sono collegate sul pannello.
+
+Se una lettera riceve due compagne diverse, l’ipotesi è sbagliata, o è sbagliata la posizione dei rotori: sul pannello ogni lettera ha una compagna sola. Hugh Sebag-Montefiore ricostruisce le stesse deduzioni come le avrebbe fatte a mano un crittoanalista, battendo le lettere su una copia della macchina senza pannello; la Bombe faceva la stessa cosa più in fretta.
+
+<Previsione>
+Nel componente qui sotto i rotori sono nella posizione giusta e l’ipotesi è che la E non abbia cavo, come nella chiave vera. Che cosa succede se si collega la E a un’altra lettera, una qualunque, lasciando i rotori dove sono?
+
+<Risposta testo="l’ipotesi regge, perché i rotori sono giusti">
+È l’idea che la Bombe controllasse soltanto i rotori, e che il pannello venisse dopo. Ma ogni deduzione dipende anche dall’ipotesi sul pannello: con la compagna sbagliata la catena parte da una lettera sbagliata, e prima o poi arriva a una lettera che ha già un’altra compagna.
+</Risposta>
+<Risposta testo="dipende dalla lettera: qualcuna regge">
+Le configurazioni del pannello sono tante, e viene da pensare che qualcuna sia compatibile con il crib. Ma con i rotori fissati il menu decide la compagna della E: in questo menu le deduzioni sono abbastanza da escludere tutte le altre.
+</Risposta>
+<Risposta testo="si arriva sempre a una contraddizione" corretta />
+
+<Esito>
+Provalo qui sotto: scegli una compagna diversa dalla E e premi «Prossima deduzione» finché compare la contraddizione. Poi rimetti la E con la E e sposta i rotori di qualche passo.
+</Esito>
+</Previsione>
+
+<MenuBombe client:visible />
+
+Con i rotori nella posizione giusta, tutte le 25 compagne sbagliate della E arrivano a una contraddizione, al più tardi alla quattordicesima deduzione. L’ipotesi giusta regge: le sue 18 deduzioni non si contraddicono, e ritrovano sette dei dieci cavi del pannello, come la A con la V e la R con la X, e quattro lettere senza cavo. Con l’ipotesi giusta e i rotori spostati anche di un solo passo, la contraddizione arriva lo stesso. Una posizione dei rotori in cui una delle 26 ipotesi sulla E regge è una **fermata**: la posizione può essere quella giusta.
+
+## Il diagonal board
+
+Welchman ebbe la sua idea nell’autunno del 1939, quando la guerra non aveva ancora tre mesi. Sul pannello, se la E è collegata alla A, anche la A è collegata alla E. La macchina di Turing usava la deduzione «la C con la R» solo nel verso in cui era arrivata; Welchman propose di collegare i rotori in modo che ogni deduzione valesse anche al contrario, «la R con la C», e potesse ripartire da lì lungo i collegamenti della R. Il collegamento elettrico si chiamò **diagonal board**: una tavola di 26 righe e 26 colonne di contatti, in cui il contatto della riga E e della colonna A è collegato a quello della riga A e della colonna E. Il nome, secondo Welchman, lo diede l’ingegnere Harold «Doc» Keen della British Tabulating Machine Company, che progettava la Bombe. Turing, scrive Welchman, dapprima non ci credette, poi studiò lo schema e si convinse; con il suo appoggio Welchman convinse Edward Travis, vicedirettore di Bletchley Park, e Keen si mise al lavoro su due prototipi con il diagonal board.
+
+Nel componente il diagonal board si può spegnere. Senza, l’ipotesi giusta dà 13 deduzioni invece di 18: le stesse sette coppie, ma due sole lettere senza cavo. La differenza vera fra le due macchine si vede provando tutte le posizioni dei rotori. Il motore di questo sito, che a differenza della Bombe conosce gli anelli e quindi i punti in cui il rotore di mezzo avanza, prova le 26 ipotesi sulla E in ognuna delle 17 576 posizioni dei rotori in quest’ordine. Con il diagonal board le fermate sono una sola, la posizione giusta; senza, seguendo soltanto i collegamenti del menu, sono 648. Welchman ne ricava una conclusione sulla sicurezza dei sistemi cifrati: il numero delle configurazioni non la misura, se c’è un modo di esaminarle tutte insieme, e scrive che potrebbe succedere di nuovo.
+
+Il diagonal board permise anche menu più corti, e quindi crib più brevi. Un crib corto ha un vantaggio in più: in un tratto breve del messaggio è più probabile che il rotore di mezzo non scatti, e la Bombe, che non conosceva gli anelli, doveva supporre che non scattasse.
+
+## Una fermata non è la chiave
+
+Turing si accorse che con il diagonal board non serviva provare le 26 ipotesi sulla E una alla volta: la Bombe faceva entrare la corrente nella lettera dell’ipotesi e la lasciava propagare per tutto il menu. In una posizione sbagliata la corrente raggiungeva tutte le 26 lettere, perché ogni compagna possibile della E portava a una contraddizione; la macchina si fermava quando qualche lettera restava spenta. In quel caso, scrive Sebag-Montefiore, milioni di configurazioni del pannello venivano scartate insieme.
+
+Ogni Bombe, nel progetto di Keen, aveva dodici gruppi di tre tamburi, ognuno con il cablaggio di un rotore, collegati secondo il menu dalle operatrici del Women’s Royal Naval Service, le *Wrens*. Una corsa su un ordine dei rotori durava dai 12 ai 15 minuti, e un menu sui 60 ordini possibili teneva occupata una Bombe per 12–15 ore e anche di più. A ogni fermata l’operatrice annotava l’ordine e la posizione dei rotori e la compagna dedotta, e la corsa riprendeva. Una fermata non dava la chiave: gli anelli e il resto del pannello i crittoanalisti li ricavavano a mano, su una copia della macchina, e la fermata poteva anche rivelarsi falsa.
+
+Sulle date della prima Bombe le fonti non concordano. Simon Singh scrive che il primo esemplare, *Victory*, arrivò a Bletchley Park il 14 marzo 1940 e che il secondo, *Agnus Dei*, mise fine l’8 agosto all’interruzione cominciata il 10 maggio. Welchman ricorda l’arrivo delle prime Bombe non prima del settembre 1940, e riferisce che Francis Harry Hinsley, nella storia ufficiale dell’intelligence britannica, dà in un punto l’agosto e in un altro la fine di maggio. Scrive anche che le decifrazioni ripresero già il 20 maggio, grazie agli errori degli operatori tedeschi e non alle Bombe. Singh, inoltre, attribuisce il progetto al solo Turing e non nomina il diagonal board; Welchman scrive che la Bombe «non fu figlia di una sola persona», e che fu costruita a partire dalle idee polacche.
+
+<Riepilogo>
+- Il crib WETTERVORHERSAGE può stare in 19 delle 33 posizioni del messaggio; nella posizione giusta il suo menu ha 17 lettere, 16 collegamenti e due anelli.
+- Lungo un anello, con i soli rotori, la compagna sul pannello della prima lettera torna in sé stessa: il pannello non cancella questa proprietà. Un anello solo, però, lascia 11 064 posizioni su 17 576, due ne lasciano 7 117.
+- Da un’ipotesi sulla compagna della E, ogni collegamento del menu porta a una deduzione; due compagne per la stessa lettera scartano l’ipotesi. Con il diagonal board ogni deduzione vale anche al contrario: nell’esempio le fermate passano da 648 a una.
+- Una fermata dà l’ordine e la posizione dei rotori e una compagna; anelli e pannello si ricavano a mano su una copia della macchina, e la fermata può essere falsa.
+</Riepilogo>

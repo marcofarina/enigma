@@ -25,8 +25,9 @@
 - id: bombe
   termine: Bombe
   inglese: Bombe
-  definizione: Macchina elettromeccanica progettata a Bletchley Park da Alan Turing, con il miglioramento della diagonal board di Gordon Welchman. Partendo da un crib, la Bombe cercava le impostazioni compatibili con i cicli di lettere che il crib formava con il testo cifrato.
-  fonti: [crypto-museum, welchman-hut-six]
+  definizione: Macchina elettromeccanica di Bletchley Park che cercava l’ordine e la posizione dei rotori partendo da un crib. Turing la progettò a partire dalle idee polacche, Gordon Welchman aggiunse il diagonal board e Harold Keen della British Tabulating Machine Company la costruì. Per ogni posizione dei rotori la Bombe seguiva lungo il menu le conseguenze di un’ipotesi sul pannello a spine, e si fermava solo dove non tutte le ipotesi si contraddicevano.
+  vedi: crittoanalisi/il-crib-e-la-bombe/
+  fonti: [welchman-hut-six, sebag-montefiore-enigma]
 - id: carcassa
   termine: carcassa
   definizione: Struttura fissa della macchina, rispetto alla quale i rotori girano. I punti da cui la corrente entra in un rotore e quelli da cui ne esce sono fissi rispetto alla carcassa, quindi quando il rotore gira la corrente che arriva dallo stesso punto incontra un filo diverso.
@@ -76,13 +77,19 @@
   termine: crib
   inglese: crib
   definizione: Parte del testo in chiaro che si conosce o si sospetta, per esempio un bollettino meteorologico o una formula di saluto. Il crib era il punto di partenza per le ricerche della Bombe.
-  vedi: come-funziona/il-riflettore/
-  fonti: [crypto-museum, us-6812-bombe-report]
+  vedi: crittoanalisi/il-crib-e-la-bombe/
+  fonti: [crypto-museum, us-6812-bombe-report, welchman-hut-six]
 - id: deviatore
   termine: deviatore
   inglese: changeover switch
   definizione: Interruttore a due posizioni sotto ogni tasto. A riposo il deviatore collega il filo della lettera alla sua lampada; con il tasto premuto fino in fondo stacca la lampada e collega lo stesso filo alla batteria. Per questo la lampada del tasto premuto non si accende mai.
   vedi: come-funziona/tastiera-lampade-e-circuito/
+- id: diagonal-board
+  termine: diagonal board
+  inglese: diagonal board
+  definizione: Tavola di 26 righe e 26 colonne di contatti in cui il contatto della riga E e della colonna A è collegato a quello della riga A e della colonna E. Nella Bombe faceva valere ogni deduzione sul pannello a spine anche al contrario, perché se la E è collegata alla A anche la A è collegata alla E. L’idea fu di Gordon Welchman, nell’autunno del 1939.
+  vedi: crittoanalisi/il-crib-e-la-bombe/
+  fonti: [welchman-hut-six, sebag-montefiore-enigma]
 - id: doppio-passo
   termine: doppio passo
   inglese: double stepping
@@ -120,6 +127,12 @@
   definizione: Libro della marina tedesca da cui l’operatore sceglieva due gruppi di tre lettere per costruire l’indicatore del messaggio; l’indicatore si trasformava poi con tabelle di bigrammi che cambiavano ogni giorno. La versione del 1941 era un volume di 120 pagine.
   vedi: storia/fogli-chiave-e-procedure/
   fonti: [crypto-museum-m4, sebag-montefiore-enigma]
+- id: menu
+  termine: menu
+  inglese: menu
+  definizione: Grafo ricavato da un crib allineato al testo cifrato, in cui le lettere sono i nodi e ogni coppia di lettere allineate è un collegamento con il numero della sua posizione. Il menu diceva come collegare fra loro i rotori della Bombe, e i suoi anelli non dipendono dal pannello a spine.
+  vedi: crittoanalisi/il-crib-e-la-bombe/
+  fonti: [welchman-hut-six, sebag-montefiore-enigma]
 - id: nottolino
   termine: nottolino
   inglese: pawl
@@ -243,5 +256,6 @@
 - id: ultra
   termine: Ultra
   inglese: Ultra
-  definizione: Nome in codice delle informazioni ricavate dalla decifrazione dei messaggi tedeschi, protette da un livello di segretezza superiore a tutti gli altri.
-  fonti: [crypto-museum-storia]
+  definizione: Nome in codice delle informazioni ricavate dalla decifrazione dei messaggi tedeschi, protette da un livello di segretezza superiore a tutti gli altri. Il segreto su Ultra fu rivelato solo nel 1974.
+  vedi: crittoanalisi/quanto-conto-ultra/
+  fonti: [crypto-museum-storia, welchman-hut-six]

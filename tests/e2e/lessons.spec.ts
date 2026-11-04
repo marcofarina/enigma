@@ -28,6 +28,9 @@ const lessons = [
   'crittoanalisi/rejewski-e-la-teoria-dei-cicli',
   'crittoanalisi/il-ciclometro-e-il-catalogo',
   'crittoanalisi/la-bomba-e-i-fogli-di-zygalski',
+  'crittoanalisi/il-crib-e-la-bombe',
+  'crittoanalisi/la-m4-e-shark',
+  'crittoanalisi/quanto-conto-ultra',
 ];
 
 for (const path of lessons) {
