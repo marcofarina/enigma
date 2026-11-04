@@ -79,8 +79,8 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
 ## Prossimo passo
 
 - Revisione delle bozze delle lezioni da parte dell’autore.
-- Le fasi rimaste (5a, 5b) sono in `docs/piano.md`, sezione «Fasi», ognuna con il suo
-  prompt di apertura. La vista 2.5D e i rinviati della 1b sono usciti dal piano il 2026-11-04
+- Le fasi rimaste (dalla 4i alla 5e: modello 3D, pagina `/macchina/`, lezione animata) sono in
+  `docs/piano.md`, sezione «Fasi», ognuna con il suo prompt di apertura; le decisioni sono D14–D19. La vista 2.5D e i rinviati della 1b sono usciti dal piano il 2026-11-04
   (decisioni D9 e D11).
 
 ## Note operative
