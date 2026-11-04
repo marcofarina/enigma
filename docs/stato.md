@@ -59,6 +59,10 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
   Crittoanalisi (il crib e la Bombe, la M4 e Shark, quanto contò Ultra), voci nuove del glossario e
   pagina di prova delle animazioni tolta; dettagli in `docs/piano.md`, fase 4e, «Esito».
 
+- Fase 4f, branch `fase/4f`: missioni storiche. Il menu «Carica una chiave» della home ha i
+  messaggi di Barbarossa (due parti), U-264 e Scharnhorst da `src/content/missioni.yaml`, ognuno con
+  il pannello «Contesto»; dettagli in `docs/piano.md`, fase 4f, «Esito».
+
 ## Prossimo passo
 
 - Revisione delle bozze delle lezioni da parte dell’autore.
@@ -116,6 +120,30 @@ Valgono solo nel container delle sessioni cloud, dove le norme non sono raggiung
 - Hinsley, *British Intelligence in the Second World War*, resta non consultato. Le sue tesi su Ultra arrivano da Sebag-Montefiore (introduzione e note 3, 4, 7–10: autunno 1941, maggio 1943, sbarco al 1946 nella conferenza del 18 febbraio 1992) e da Singh (cap. 4: guerra finita nel 1948 invece che nel 1945); la lezione 6 di crittoanalisi le attribuisce a quei libri. Il periodo «between October and November 1941» di Sebag-Montefiore (vol. 2, p. 174) va confrontato con Hinsley.
 - Singh (cap. 4) dà al riflettore della macchina navale 26 posizioni; Sebag-Montefiore (cap. 19) e il motore no: le 26 posizioni in più vengono dal rotore sottile della M4, dal 1° febbraio 1942. La lezione 5 di crittoanalisi lo dice.
 - Numero di Bombe: Singh (cap. 4) 15 Bombe otto mesi dopo l’agosto 1940 e 49 alla fine del 1942; Welchman (cap. 13 e cap. 8) da otto a dodici alla fine del secondo anno e «some forty to forty-six» con Gayhurst. Le lezioni non danno numeri.
+
+- Missioni della home, traduzioni: sono nostre. In Barbarossa «Aufkl. Abteilung» è reso con
+  «reparto esplorante», «Fliegerstraße» resta in tedesco (nome di una strada, forse) e «röm. eins»
+  è letto come I battaglione; in U-264 «14 mb» è letto 1014 millibar come fa Krah.
+- Missione Scharnhorst: affondamento «una ventina di minuti dopo» e 36 superstiti vengono da
+  Beesley, *Very Special Intelligence*, p. 216, letto solo nel brano che riporta Weierud. L’ora
+  19:25 è il «T.O.O.» del modulo, senza fuso orario; il Duke of York la ricevette alle 18:32 Z.
+- Missione U-264: Erskine non dice che nave fosse HMS Hurricane; il testo la chiama «nave
+  britannica».
+
+## Verificato (fase 4f, 2026-11-04)
+
+Fonti consultate in rete il 4 novembre 2026 con `curl` (la pagina di Franklin Heath da Internet
+Archive, perché il sito rispondeva con un errore del database). Ogni chiave e ogni indicatore
+sono controllati anche dal motore: la build decifra ogni parte di `src/content/missioni.yaml`.
+
+| Fatto | Fonte | Dove |
+|---|---|---|
+| Barbarossa: messaggio n. 20 del 7 luglio 1941, da «SS-T Div Kdr» a «LVI AK», alle 19:25, due parti (RFUGZ, FNJAU); chiave del giorno B, II IV V, anelli BUL, spine AV … RX; indicatori WXC KCH → BLA e CRS YPJ → LSD | Ostwald e Weierud, pp. 1, 7–8 | missione Barbarossa |
+| Barbarossa: la seconda parte ha 150 lettere cifrate; la versione di Franklin Heath (e del simulatore di Summerside) si ferma a 135 e perde «KAMENEC X DIV X KDR X» | Ostwald e Weierud, p. 8; motore | missione e `historical.test.ts` |
+| Oltre 500 messaggi del 1941 e del 1945 dalle carte di Waldemar Werther, ufficiale del servizio d’ascolto della Luftwaffe; messaggi del 1941 dal gruppo d’armate Nord durante Barbarossa, tutti di unità SS o Waffen-SS; attacco al solo testo cifrato con metodi statistici | Sullivan e Weierud, pp. 193–195 | missione Barbarossa |
+| U-264: ricevuto alle 18:40 Z del 19 novembre 1942 (T.O.R. 1840/19Z), dall’appendice II al rapporto n. 110/S di HMS Hurricane del 25 novembre 1942; intercettato durante il blackout di Triton; pubblicato come sfida su Cryptologia nell’ottobre 1996 | Erskine 1996 | missione U-264; il nome del test in `historical.test.ts` diceva 25 novembre ed è stato corretto |
+| U-264: chiave (Beta II IV I, B sottile, anelli AAAV, chiave del messaggio VJNA), rotto il 20 febbraio 2006 dal progetto M4 con il calcolo distribuito; testo ritrovato da Dan Girard nel diario di guerra di U-264 (NARA T1022, bobina 2886); Looks Kapitänleutnant su U-264 | Krah, «First break» e pagina del progetto | missione U-264 |
+| Scharnhorst: intercettato da D. Rough sul Duke of York, 6475 kHz, la sera del 26 dicembre 1943; decifrato a Bletchley Park il 13 gennaio 1944 con la nota «ultima trasmissione»; modulo fra le carte di Edward Thomas; chiave (B, III VI VIII, anelli AHM, UZV) trovata dal progetto M4 il 28 maggio 2008 in meno di un giorno | Weierud, «Scharnhorst’s Last Message?» | missione Scharnhorst |
 
 ## Verificato (fase 4e, 2026-11-04)
 

@@ -1,6 +1,7 @@
 import { useId, useState } from 'react';
 import { MODELS, prepareText, UKW_D_FIXED_PAIR, groupLetters } from '@/engine';
 import { t, tf } from '@/i18n';
+import type { Mission } from '@/lib/missioni';
 import { url } from '@/lib/url';
 import QrCode from '@/components/ui/QrCode.tsx';
 import {
@@ -285,6 +286,46 @@ export function SharePanel() {
           </figure>
         )}
       </div>
+    </Panel>
+  );
+}
+
+/**
+ * Il contesto del messaggio storico caricato dal menu del foglio: chi lo trasmise, come se ne è
+ * ritrovata la chiave, che cosa notare battendolo, la traduzione e le fonti.
+ */
+export function MissionPanel({ missions }: { missions: readonly Mission[] }) {
+  const id = useBench((s) => s.mission);
+  const mission = missions.find((m) => m.id === id);
+  if (!mission) return null;
+  return (
+    <Panel id="mission" place="left" title={mission.titolo}>
+      <p className="panel-text">{mission.contesto}</p>
+      <p className="panel-hint">{t('bench.mission.hint')}</p>
+      <section className="panel-section">
+        <h3>{t('bench.mission.notes')}</h3>
+        <p className="panel-text">{mission.procedura}</p>
+      </section>
+      <details className="panel-section">
+        <summary>{t('bench.mission.translation')}</summary>
+        <p className="panel-text">{mission.traduzione}</p>
+        <p className="panel-hint">{t('bench.mission.translationNote')}</p>
+      </details>
+      <section className="panel-section">
+        <h3>{t('bench.mission.sources')}</h3>
+        <ul className="panel-list">
+          {mission.fonti.map((fonte) => (
+            <li key={fonte.titolo}>
+              {fonte.autori}, {fonte.url ? <a href={fonte.url}>{fonte.titolo}</a> : <cite>{fonte.titolo}</cite>}
+            </li>
+          ))}
+        </ul>
+        {mission.lezione && (
+          <p className="panel-text">
+            {t('bench.mission.lesson')}: <a href={mission.lezione.href}>{mission.lezione.titolo}</a>
+          </p>
+        )}
+      </section>
     </Panel>
   );
 }

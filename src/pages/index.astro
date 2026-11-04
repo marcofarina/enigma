@@ -3,7 +3,10 @@ import '@/styles/global.css';
 import '@/components/simulator/bench/bench.css';
 import Head from '@/components/layout/Head.astro';
 import Simulator from '@/components/simulator/Simulator.tsx';
+import { getCollection, getEntries } from 'astro:content';
 import { t } from '@/i18n';
+import { lessonSlug } from '@/lib/lessons';
+import type { Mission } from '@/lib/missioni';
 import { url } from '@/lib/url';
 
 const nav = [
@@ -13,6 +16,34 @@ const nav = [
   { href: url('esercizi/'), label: t('nav.exercises') },
   { href: url('glossario/'), label: t('nav.glossary') },
 ];
+
+// Messaggi storici del menu «Carica una chiave», in ordine di data, con fonti e lezione già risolte.
+const lezioni = await getCollection('lezioni');
+const missioni = (await getCollection('missioni')).sort((a, b) => a.data.data.getTime() - b.data.data.getTime());
+const missions: Mission[] = await Promise.all(
+  missioni.map(async ({ id, data }) => {
+    const fonti = await getEntries(data.fonti);
+    const lezione = data.lezione
+      ? lezioni.find((l) => `${l.data.sezione}/${lessonSlug(l)}/` === data.lezione)
+      : undefined;
+    if (data.lezione && !lezione) throw new Error(`Missione ${id}: la lezione ${data.lezione} non esiste.`);
+    return {
+      id,
+      titolo: data.titolo,
+      modello: data.modello,
+      riflettore: data.riflettore,
+      rotori: data.rotori,
+      anelli: data.anelli,
+      spine: data.spine,
+      parti: data.parti,
+      contesto: data.contesto,
+      procedura: data.procedura,
+      traduzione: data.traduzione,
+      fonti: fonti.map((f) => ({ titolo: f.data.titolo, autori: f.data.autori, url: f.data.url })),
+      lezione: lezione && data.lezione ? { titolo: lezione.data.title, href: url(data.lezione) } : undefined,
+    };
+  }),
+);
 
 /*
  * La home è il simulatore (docs/design.md): si apre il sito e la macchina è pronta a cifrare.
@@ -26,7 +57,7 @@ const nav = [
     <Head description={t('site.description')} />
   </head>
   <body class="machine machine-paint">
-    <Simulator client:only="react">
+    <Simulator client:only="react" missions={missions}>
       {/* Finché la macchina non è pronta, e senza JavaScript, la barra porta comunque al percorso. */}
       <div slot="fallback" class="bench bench-fallback">
         <header class="bench-header">
