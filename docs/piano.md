@@ -150,7 +150,7 @@ norme non sono raggiungibili, quindi niente prosa).
 | 4a | Lezione «Modelli a confronto» | Opus | high | 2 h | G4 | da fare |
 | 4b | Motore della crittoanalisi | Opus | high | 2,5 h | — | fatta (2026-11-04) |
 | 4c | Animazioni della crittoanalisi | Sonnet | high | 2,5 h | 4b, G4 | fatta (2026-11-04) |
-| 4d | Crittoanalisi polacca | Opus | high | 3 h | 4c | da fare |
+| 4d | Crittoanalisi polacca | Opus | high | 3 h | 4c | fatta (2026-11-04) |
 | 4e | Bletchley Park e la M4 | Opus | high | 3 h | 4c, V (Welchman, Sebag-Montefiore, Hinsley) | da fare |
 | 4f | Missioni storiche | Opus | high | 2 h | 4e, V (fonti delle chiavi) | da fare |
 | 4g | Guida per i docenti | Opus | high | 2 h | G4 | da fare |
@@ -426,6 +426,41 @@ almeno `1`.
 ```bash
 pnpm verify && pnpm test:e2e
 ```
+
+**Esito (2026-11-04)**
+
+- Kozaczuk non era in `~/Developer/github/enigma-fonti/` ma in `docs/books/`, con le appendici di
+  Rejewski: i fatti che solo lui conferma sono nel testo, con la pagina nei commenti di
+  `docs/stato.md` («Verificato», fase 4d). Rejewski 1980 riscaricato da CryptoCellar.
+- Tre lezioni in bozza in `src/content/lezioni/it/crittoanalisi/`, con obiettivi e riepilogo come
+  la Storia (D3) e una `Previsione` ciascuna:
+  - `01-rejewski-e-la-teoria-dei-cicli.mdx`: indicatori doppi, AD, BE e CF, teorema dei cicli a
+    coppie, esempio «jjj», chiavi francesi del 1932 e ruota d’ingresso. Usa `CicliIndicatori` e il
+    ritratto `marian-rejewski-1932`, finora solo in galleria.
+  - `02-il-ciclometro-e-il-catalogo.mdx`: griglia, caratteristica con e senza pannello (calcolata
+    con il motore sulla giornata di `CicliIndicatori`), ciclometro, catalogo, riflettore B, 15
+    settembre 1938.
+  - `03-la-bomba-e-i-fogli-di-zygalski.mdx`: femmine, bomba, fogli, rotori IV e V, riunione di Pyry
+    e il disaccordo fra Rejewski e Hinsley sul perché.
+- Numeri calcolati con il motore e scritti nelle lezioni: forme della caratteristica sulle 105 456
+  posizioni (20 680 forme, una posizione su dieci con forma unica, mediana 20 schede), posizioni
+  con punti fissi in AD (6 640 su 17 576, «circa il 40%» di Rejewski).
+- `src/pages/crittoanalisi/index.astro` elenca le lezioni con `ListaLezioni` al posto di
+  `ComingSoon`; nuova `src/pages/crittoanalisi/[...slug].astro`. «Crittoanalisi» torna nel menu
+  (D5) in `SiteHeader.astro`, nella home e nelle due barre del simulatore (`Header.tsx`,
+  `Compact.tsx`). Con sei voci, a 1024 px «Come funziona» andava a capo nella barra del
+  simulatore: `bench.css` ora tiene le voci su una riga e stringe lo spazio sotto i 1200 px.
+- Rimandi aggiornati nella lezione 9 e in storia 3; nomi nuovi in `scripts/nomi-propri.txt`.
+- `src/pages/prove/crittoanalisi.astro` resta: `MenuBombe` non è ancora in una lezione (fase 4e).
+- Test: le tre lezioni in `lessons.spec.ts` (axe in chiaro e in scuro), `crittoanalisi/` in
+  `smoke.spec.ts`. Verificato nel browser: menu del sito a 768 px, barra del simulatore a 1024 px,
+  lezione 1 a 375 px.
+- Comandi eseguiti: i due criteri (`3` lezioni, `1` occorrenza), `pnpm verify` (214 test, 0
+  errori, 40 pagine; i 4 avvisi di `lint:content` su `it.json` c’erano già), `pnpm test:e2e` (143
+  passati, 19 saltati).
+- Per Marco: le lezioni non hanno citazione d’apertura, come la Storia; se la vuole, servono tre
+  proposte. Da rileggere in particolare il paragrafo su Hinsley (lezione 3), che riporta Hinsley
+  solo attraverso la risposta di Rejewski in Kozaczuk.
 
 ---
 

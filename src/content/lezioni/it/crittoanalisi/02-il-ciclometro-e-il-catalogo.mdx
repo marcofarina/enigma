@@ -1,0 +1,93 @@
+---
+title: Il ciclometro e il catalogo
+description: Perché il pannello a spine non cambia le lunghezze dei cicli di AD, BE e CF, e come il Biuro Szyfrów ne fece un catalogo di 105 456 posizioni per trovare la chiave del giorno in pochi minuti.
+sezione: crittoanalisi
+ordine: 2
+stato: bozza
+fonti:
+  - rejewski-1980
+  - kozaczuk-enigma
+---
+
+{/*
+Tesi didattica.
+Chi ha contato le chiavi di Enigma pensa che il pannello a spine, con i suoi cento miliardi di collegamenti, rendesse impossibile una ricerca esaustiva.
+La lezione mostra che nella caratteristica il pannello cambia solo il nome delle lettere dei cicli, non le lunghezze: le lunghezze dipendono dall’ordine e dalla posizione dei rotori, cioè da 105 456 casi, che il Biuro Szyfrów misurò con il ciclometro e mise in un catalogo.
+Alla fine lo studente sa spiegare con un esempio perché il pannello non cambia la forma dei cicli, sa descrivere che cosa misurava il ciclometro e come una scheda del catalogo portava alla chiave, e sa dire quali cambiamenti tedeschi resero il catalogo da rifare e poi inutile.
+Esempio: la giornata della figura della lezione precedente (rotori II, I, III in posizione KUL, sei cavi), con e senza pannello, calcolata con il motore del sito.
+*/}
+
+import Esito from '@/components/lesson/Esito.astro';
+import Formula from '@/components/lesson/Formula.astro';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Previsione from '@/components/lesson/Previsione.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
+import Risposta from '@/components/lesson/Risposta.astro';
+
+Con la macchina ricostruita, all’inizio del 1933 il Biuro Szyfrów sapeva come era fatta Enigma, ma non come era impostata. La chiave del giorno cambiava ogni giorno, e andava ritrovata ogni giorno dai messaggi intercettati. Fino al 1935 Rejewski, Różycki e Zygalski la ritrovarono con metodi fatti a mano; dal 1936 i tedeschi cambiarono più spesso le impostazioni, e quei metodi non bastarono più.
+
+<Obiettivi>
+- Spiegare con un esempio perché il pannello a spine cambia le lettere dei cicli di AD, BE e CF ma non le loro lunghezze.
+- Descrivere che cosa misurava il ciclometro e come una scheda del catalogo portava all’ordine e alla posizione dei rotori e poi al pannello.
+- Dire quali cambiamenti tedeschi del 1937 e del 1938 resero il catalogo prima da rifare e poi inutile.
+</Obiettivi>
+
+## Il metodo della griglia e i suoi limiti
+
+Nei primi anni il pannello a spine aveva sei cavi, quindi scambiava dodici lettere e ne lasciava quattordici com’erano. Rejewski se ne servì nel **metodo della griglia**: scriveva su un foglio le permutazioni del rotore di destra in tutte le sue posizioni e vi faceva scorrere sopra un cartoncino con sei finestre, su cui erano scritte le permutazioni A, …, F della giornata. Nella posizione giusta le sei permutazioni, ripulite dei rotori, si somigliavano, perché il pannello non toccava la maggior parte delle lettere; da quelle somiglianze uscivano la posizione del rotore di destra e i cavi del pannello. Le posizioni degli altri due rotori le trovava provandole sulla macchina, e quelle degli anelli contando sul fatto che quasi tutti i messaggi cominciavano con ANX, «an» e la X che separava le parole.
+
+Era un lavoro lento ma regolare, finché l’ordine dei rotori cambiava solo ogni tre mesi. Dal 1° febbraio 1936 cambiò ogni mese, dal 1° ottobre 1936 ogni giorno; dalla stessa data i cavi del pannello non furono più sei, ma da cinque a otto, e con più lettere scambiate la griglia trovava sempre meno somiglianze. Intanto le reti crescevano: dal 1° agosto 1935 la Luftwaffe aveva le sue chiavi del giorno, e ogni rete nuova voleva dire un’altra chiave da ritrovare ogni giorno.
+
+## Che cosa fa il pannello alla caratteristica
+
+Rejewski cercò allora un’informazione che il pannello non toccasse. Riprendiamo la giornata della figura della lezione [Rejewski e la teoria dei cicli](../rejewski-e-la-teoria-dei-cicli/): Enigma I con i rotori II, I e III, posizione di base KUL e sei cavi, AM, FI, NV, PS, TU e WZ. Il motore di questo sito ne calcola la caratteristica completa:
+
+```
+AD = (AGMJLTESIVFXW) (BNYKPHUORCZDQ)
+BE = (AUOSEWMYVCKLT) (BPQHRXDGINFZJ)
+CF = (AQZPXBFT) (GSLIHVWU) (CJRM) (DOEN) (K) (Y)
+```
+
+<Previsione>
+Togliamo i sei cavi e lasciamo tutto il resto com’è: stessi rotori, stessa posizione di base. Che cosa diventa CF?
+
+<Risposta testo="cambiano anche le lunghezze dei cicli">
+Il pannello agisce su ogni lettera due volte, all’andata e al ritorno, e sembra rimescolare tutto. Ma in AD, BE e CF i suoi effetti si compensano fra la prima e la seconda permutazione del prodotto, e resta solo la sostituzione che fa alle due estremità.
+</Risposta>
+<Risposta testo="resta identica, lettere comprese">
+Fra A e D il pannello si attraversa due volte in versi opposti, e quei due passaggi si annullano. Ma restano il pannello all’ingresso di A e quello all’uscita di D, che non si annullano fra loro.
+</Risposta>
+<Risposta testo="stesse lunghezze, con le lettere scambiate dai cavi" corretta />
+
+<Esito>
+Senza cavi CF è (ACJR) (BIUMQWSX) (DOEV) (FHNZTGPL) (K) (Y): due cicli di otto lettere, due di quattro e due di una, come prima. Scambia in ogni ciclo le lettere collegate dai cavi, la A con la M, la F con la I e così via, e ritrovi i cicli con il pannello: (BIUMQWSX) diventa (BFTAQZPX), che è (AQZPXBFT) letto da un’altra lettera.
+</Esito>
+</Previsione>
+
+Lo stesso vale per AD e BE. Senza cavi AD è (AJLUEPFNIXZMG) (BVYKSHTORCWDQ): scambiando la A con la M, la T con la U, la F con la I e le altre coppie si ottiene (MJLTESIVFXWAG), cioè il primo ciclo con il pannello, letto dalla M.
+
+Il motivo è quello della lezione [La matematica di Enigma](../../come-funziona/la-matematica-di-enigma/). Ognuna delle permutazioni da A a F comincia con il pannello e finisce con il pannello: nel prodotto AD il pannello all’uscita di A e quello all’ingresso di D si annullano, e restano solo i due alle estremità. AD è quindi una coniugata del prodotto senza pannello, e le coniugate hanno la stessa struttura in cicli, con le lettere rinominate. Le lunghezze dei cicli di AD, BE e CF dipendono soltanto dall’ordine e dalla posizione dei rotori, e la **forma** della caratteristica, cioè l’elenco di quelle lunghezze, si poteva catalogare.
+
+## Il ciclometro
+
+I casi da catalogare erano <Formula tex="26^3 = 17\,576" /> posizioni per ognuno dei sei ordini dei tre rotori, 105 456 in tutto. Per misurare la forma della caratteristica in ognuna, Rejewski progettò un apparecchio, il **ciclometro**, che costruì la fabbrica AVA.
+
+Il ciclometro aveva due serie di rotori collegate fra loro, con il rotore di destra della seconda spostato di tre lettere rispetto a quello della prima: la prima serie operava come la permutazione A, la seconda come D, che viene tre tasti dopo. Fra le due c’erano 26 lampadine, ognuna con il suo interruttore. Chiudendo l’interruttore di una lampadina, la corrente passava avanti e indietro fra le due serie e tornava al punto di partenza dopo un certo numero di giri; nel frattempo si accendevano tutte le lampadine delle lettere che aveva toccato. Rejewski scrive che si accendevano insieme le lettere del ciclo e quelle del ciclo gemello della stessa lunghezza: il numero di lampadine accese era sempre pari, il doppio della lunghezza del ciclo. Accendendo poi una lampadina rimasta spenta si misurava la coppia di cicli successiva.
+
+Per ogni posizione dei rotori si annotavano su una scheda la posizione e le lunghezze dei cicli, e le schede si ordinavano per lunghezze. Il lavoro durò più di un anno, perché i tre lo facevano insieme al lavoro di ogni giorno con la griglia.
+
+Quanto fosse utile il catalogo lo si può misurare con il motore di questo sito, che ha il riflettore B, quello in uso dalla fine del 1937. Le 105 456 posizioni danno 20 680 forme diverse della caratteristica. Una posizione su dieci ha una forma che non compare in nessun’altra; per metà delle posizioni la forma rimanda al più a 20 schede.
+
+## Dalla scheda alla chiave
+
+Con il catalogo pronto, scrive Rejewski, trovare la chiave del giorno richiedeva di solito dai dieci ai venti minuti. Dagli indicatori si costruiva la caratteristica, se ne scriveva la forma e si cercavano le schede con la stessa forma. La scheda dava la posizione dei rotori, e la scatola da cui veniva la scheda dava l’ordine dei rotori. Il pannello si ricavava come nella previsione di questa lezione: si confrontavano le lettere dei cicli della giornata con quelle dei cicli che la macchina, senza cavi, dava in quella posizione, e le lettere che non coincidevano indicavano i cavi. Le posizioni degli anelli si trovavano poi con il metodo di ANX.
+
+Il primo colpo arrivò proprio quando il catalogo fu finito. All’inizio di novembre del 1937 i tedeschi sostituirono il riflettore, che chiamavano A, con un riflettore nuovo, il B: il Biuro Szyfrów dovette ricostruirne il cablaggio e rifare l’intero catalogo. All’inizio del 1938 una statistica di due settimane voluta dal capo del servizio informazioni, il colonnello Stefan Mayer, contò che si leggeva il 75 % dei messaggi Enigma intercettati.
+
+Il secondo colpo fu definitivo. Dal 15 settembre 1938 gli operatori non cifrarono più la chiave del messaggio da una posizione di base comune a tutta la rete: ognuno ne sceglieva una per ogni messaggio. Senza una posizione di base comune non c’erano più AD, BE e CF di una giornata, e il catalogo non serviva più. La lezione [La bomba e i fogli di Zygalski](../la-bomba-e-i-fogli-di-zygalski/) racconta che cosa prese il suo posto.
+
+<Riepilogo>
+- Nel prodotto AD il pannello si annulla fra A e D e resta solo alle estremità: AD è una coniugata del prodotto senza pannello. Nella giornata d’esempio CF ha cicli di otto, otto, quattro, quattro, uno e uno con e senza cavi, e i cavi cambiano solo le lettere, come la A in M.
+- Il ciclometro, due serie di rotori sfalsate di tre lettere, accendeva un numero di lampadine pari al doppio della lunghezza di un ciclo, e dava così la forma della caratteristica in ciascuna delle 105 456 posizioni. Nel catalogo la forma di una giornata portava all’ordine e alla posizione dei rotori; il confronto delle lettere dei cicli dava il pannello.
+- Il cambio del riflettore nel novembre 1937 costrinse a rifare il catalogo; la posizione di base scelta dall’operatore per ogni messaggio, dal 15 settembre 1938, lo rese inutile.
+</Riepilogo>

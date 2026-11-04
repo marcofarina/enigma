@@ -1,0 +1,111 @@
+---
+title: La bomba e i fogli di Zygalski
+description: Che cosa restava degli indicatori dopo il 15 settembre 1938, le due macchine polacche che lo sfruttarono, i rotori IV e V e la riunione di Pyry del luglio 1939, in cui la Polonia consegnò tutto agli alleati.
+sezione: crittoanalisi
+ordine: 3
+stato: bozza
+fonti:
+  - rejewski-1980
+  - kozaczuk-enigma
+---
+
+{/*
+Tesi didattica.
+Chi ha seguito la lezione sul ciclometro può pensare che, senza una posizione di base comune, gli indicatori doppi non servissero più a niente.
+La lezione mostra che una proprietà sopravviveva: un indicatore con la prima lettera uguale alla quarta (una «femmina») rivela un punto fisso di AD in una posizione nota a meno degli anelli, e il pannello non lo cancella. La bomba e i fogli di Zygalski la sfruttano in due modi diversi; i rotori IV e V moltiplicano per dieci il lavoro, oltre i mezzi del Biuro Szyfrów, che nel luglio 1939 consegna metodi e macchine a francesi e britannici; sul perché lo fece, Rejewski e Hinsley non concordano.
+Alla fine lo studente sa riconoscere una femmina e dire che cosa rivela, sa spiegare la differenza fra la bomba e i fogli, anche rispetto al pannello, e sa dire che cosa i polacchi consegnarono a Pyry e quali spiegazioni si danno della scelta.
+Esempio: gli indicatori PST PWA (Rejewski 1980, p. 16) e RTJ WAH WIK, HPL RAW KTW, DQX DWJ MWR (Kozaczuk, app. D, p. 266).
+*/}
+
+import Esito from '@/components/lesson/Esito.astro';
+import Formula from '@/components/lesson/Formula.astro';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Previsione from '@/components/lesson/Previsione.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
+import Risposta from '@/components/lesson/Risposta.astro';
+
+Dal 15 settembre 1938 un messaggio dell’esercito o dell’aviazione tedesca cominciava con tre gruppi di lettere, per esempio
+
+```
+SHP   CHV PZT
+```
+
+SHP era la posizione di base scelta dall’operatore e trasmessa in chiaro; CHV PZT era la chiave del messaggio cifrata due volte da quella posizione. Ogni messaggio aveva la sua posizione di base, e la caratteristica della giornata, su cui si reggeva il catalogo della lezione [Il ciclometro e il catalogo](../il-ciclometro-e-il-catalogo/), non esisteva più. Solo la rete del *Sicherheitsdienst*, il servizio di sicurezza delle SS, continuò con la vecchia procedura fino al 1° luglio 1939, e il Biuro Szyfrów la lesse come prima. Per le altre reti, scrive Rejewski, in una o due settimane i tre matematici ebbero due idee nuove, e trovarono il modo di realizzarle.
+
+<Obiettivi>
+- Riconoscere un indicatore con due lettere uguali a tre posti di distanza e dire che cosa rivela sulla permutazione della macchina.
+- Spiegare come la bomba e i fogli di Zygalski usavano questi indicatori, e perché la bomba dipendeva dal pannello a spine e i fogli no.
+- Dire che cosa cambiarono i rotori IV e V per il Biuro Szyfrów e che cosa consegnò a francesi e britannici nel luglio 1939.
+</Obiettivi>
+
+## Che cosa restava della chiave doppia
+
+La chiave del messaggio era ancora cifrata due volte, quindi la prima lettera dell’indicatore e la quarta erano ancora la cifratura della stessa lettera, a tre tasti di distanza. Rejewski fa l’esempio di un indicatore come PST PWA.
+
+<Previsione>
+Un messaggio ha la posizione di base in chiaro e l’indicatore PST PWA, con la prima lettera uguale alla quarta. Che cosa se ne ricava?
+
+<Risposta testo="nulla, ogni messaggio ha la sua posizione di base">
+Senza una posizione di base comune non si costruisce più la caratteristica della giornata. Ma la relazione fra la prima e la quarta lettera vale dentro ogni singolo indicatore, e la posizione di base di questo messaggio è scritta in chiaro.
+</Risposta>
+<Risposta testo="la chiave del messaggio comincia con P">
+La P compare due volte, e viene da pensare che sia la lettera battuta. Ma Enigma non cifra mai una lettera in sé stessa: la prima lettera della chiave è proprio l’unica che non può essere la P.
+</Risposta>
+<Risposta testo="nella posizione di quel messaggio AD ha un punto fisso, la P" corretta />
+
+<Esito>
+La permutazione A manda la P nella lettera della chiave, e D la riporta nella P: nel prodotto AD la P va in sé stessa. AD, calcolata dalla posizione di base di questo messaggio, ha quindi un ciclo di una sola lettera, e per il teorema dei cicli a coppie ne ha almeno un altro.
+</Esito>
+</Previsione>
+
+I polacchi chiamavano **femmine** (*samiczki*) gli indicatori di questo tipo, con la prima lettera uguale alla quarta, o la seconda alla quinta, o la terza alla sesta: rivelano un ciclo di una lettera in AD, in BE o in CF. Come le lunghezze dei cicli, anche la presenza di un ciclo di una lettera non dipende dal pannello: il pannello rinomina le lettere, e una lettera che va in sé stessa resta una lettera che va in sé stessa. Non tutte le posizioni dei rotori danno cicli di una lettera in AD: Rejewski scrive che succede in circa quattro casi su dieci, e il motore di questo sito, con i rotori I, II e III, ne conta 6 640 su 17 576. Una femmina, quindi, esclude circa sei posizioni su dieci.
+
+Restava un ostacolo: la posizione di base in chiaro indicava le lettere nelle finestrelle, e gli anelli, sconosciuti, spostavano i rotori rispetto a quelle lettere. Di due messaggi della stessa giornata, però, si conosceva la **differenza** fra le posizioni, perché gli anelli erano gli stessi per entrambi. Le due idee del Biuro Szyfrów cercavano la posizione dei rotori che spiega tutte le femmine di una giornata insieme, rispettando le differenze.
+
+## La bomba
+
+La prima idea fu di Rejewski. Supponiamo che in un giorno arrivino tre messaggi come questi:
+
+```
+RTJ   WAH WIK
+HPL   RAW KTW
+DQX   DWJ MWR
+```
+
+In tutti e tre la stessa lettera, la W, compare due volte a tre posti di distanza: nel primo in prima e quarta posizione, nel secondo in terza e sesta, nel terzo in seconda e quinta. Se il pannello e gli anelli non ci fossero, con i rotori in posizione RTJ il tasto W accenderebbe la stessa lampada due volte a tre tasti di distanza. Lo stesso succederebbe in HPN e in DQY, cioè due posizioni dopo HPL e una dopo DQX, perché nel secondo messaggio la W è in terza posizione e nel terzo in seconda. Gli anelli spostano tutte e tre le posizioni della stessa quantità sconosciuta; le differenze fra le tre restano note.
+
+La **bomba** era un apparecchio con le serie di rotori di sei Enigma, una coppia per ogni messaggio, mosse da un motore elettrico in modo da mantenere fra loro quelle differenze. In circa due ore passava per tutte le 17 576 posizioni e si fermava, accendendo una luce, quando in tutte e tre le coppie la W accendeva la stessa lampada. L’ordine dei rotori non si conosceva, e per questo le bombe erano sei, una per ogni ordine. La fabbrica AVA, diretta dall’ingegnere Antoni Palluth, le consegnò già nel novembre 1938. Il nome, scrive Rejewski, fu scelto «in mancanza di un’idea migliore».
+
+Il metodo si reggeva su un’ipotesi: che il pannello non toccasse la W. Se la W era collegata a un’altra lettera, la bomba cercava la lettera sbagliata e non si fermava nella posizione giusta. In quel periodo il pannello aveva da cinque a otto cavi, quindi scambiava circa metà delle lettere, e Rejewski calcolava che l’ipotesi fosse vera più o meno una volta su due.
+
+## I fogli di Zygalski
+
+La seconda idea, di Henryk Zygalski, usava le femmine senza scegliere una lettera, e per questo funzionava con qualunque numero di cavi. Bastava una decina di messaggi con una femmina, anche con lettere diverse e in posizioni diverse.
+
+Per ognuna delle 26 posizioni del rotore di sinistra si preparava un foglio di carta spessa di circa 60 centimetri di lato, con un quadrato diviso in <Formula tex="51 \times 51" /> caselle. Ai lati del quadrato le lettere dalla A alla Z e poi di nuovo dalla A alla Y indicavano le posizioni del rotore centrale e di quello di destra, ripetute in modo che un foglio si potesse sovrapporre a un altro anche spostato. Ogni casella corrispondeva a una posizione dei tre rotori, e dove in quella posizione AD aveva un ciclo di una lettera si praticava un foro. I fori erano circa mille per foglio, e ogni posizione con un ciclo di una lettera compariva fino a quattro volte nel quadrato, quindi andava forata fino a quattro volte.
+
+Si sovrapponevano i fogli secondo le femmine della giornata, ciascuno spostato di quanto la posizione di base di quel messaggio differiva da quella del primo. A ogni foglio aggiunto restavano aperti solo i fori che coincidevano in tutti, cioè le posizioni che spiegavano tutte le femmine viste fino a quel momento. Con abbastanza femmine alla fine restava un solo foro trasparente. Dalla serie di fogli usata si ricavava l’ordine dei rotori, dalla posizione del foro e dal foglio la posizione degli anelli, e confrontando le lettere degli indicatori con quelle della macchina il pannello: tutta la chiave del giorno.
+
+Una serie per un ordine dei rotori era di 26 fogli, e servivano sei serie. Il Biuro Szyfrów li forava a mano, insieme al lavoro di ogni giorno, e al 15 dicembre 1938 ne aveva finite due.
+
+## Cinque rotori
+
+Quel giorno i tedeschi aggiunsero due rotori nuovi, il IV e il V. Nella macchina ce n’erano sempre tre, ma scelti fra cinque: gli ordini possibili passavano da sei a 60. Il cablaggio dei rotori nuovi venne dalla rete del *Sicherheitsdienst*, che li aveva ricevuti lo stesso giorno ma cifrava ancora gli indicatori alla vecchia maniera: con la griglia si trovò una giornata in cui a destra c’era uno dei rotori noti, e fra la seconda metà di dicembre e i primi giorni di gennaio 1939 i matematici ricostruirono il IV e il V con lo stesso metodo del 1932. Dal 1° gennaio 1939 i cavi del pannello passarono da sette a dieci.
+
+Rejewski descrive il cambiamento come quantitativo, non qualitativo: i metodi funzionavano ancora, ma il lavoro era dieci volte tanto. Servivano altre 58 serie di fogli, e per le bombe 36 esemplari di ciascuno dei due rotori nuovi e operatori in più per farle girare giorno e notte. Kozaczuk stima che 60 bombe sarebbero costate circa un milione e mezzo di złoty, mentre il bilancio del Biuro Szyfrów per i progetti nuovi del 1937–38 non superava i 100 000. Senza quei mezzi, i messaggi militari si leggevano solo nei giorni in cui sulla macchina c’erano i tre rotori vecchi, in media uno su dieci; dal 1° luglio 1939 anche la rete del *Sicherheitsdienst* passò alla procedura nuova.
+
+## La riunione di Pyry
+
+Dal 1937 la sezione tedesca del Biuro Szyfrów lavorava in un edificio nascosto nei boschi vicino a Pyry, a sud di Varsavia. Lì, il 25 luglio 1939, su iniziativa polacca, si riunirono i rappresentanti dei servizi cifra di Polonia, Francia e Gran Bretagna: per la Francia il maggiore Gustave Bertrand e il capitano Henri Braquenié, per la Gran Bretagna il comandante Alastair Denniston e Dilly Knox. Rejewski, nel suo racconto, data la riunione al 25 e 26 luglio, Kozaczuk al 24 e 25, con l’arrivo degli ospiti il 24; tutti concordano sul 25.
+
+«Abbiamo detto tutto quello che sapevamo e mostrato tutto quello che avevamo», scrive Rejewski: la teoria e i metodi, le bombe e i fogli, e le copie dell’Enigma militare costruite dall’AVA. Ne diedero due a Bertrand, che il 16 agosto ne consegnò una ai britannici alla stazione Victoria di Londra. Secondo Rejewski la prima domanda di Knox fu quale fosse il cablaggio della ruota d’ingresso, l’ipotesi su cui nel 1932 si era fermato anche Rejewski. Degli ospiti Rejewski scrive che i polacchi non impararono nulla: né i britannici né i francesi avevano superato le prime difficoltà, e non avevano né il cablaggio dei rotori né un metodo.
+
+Sul perché i polacchi abbiano condiviso tutto proprio allora, le fonti non concordano. In una nota riportata da Kozaczuk, Rejewski risponde a Francis Harry Hinsley, curatore della storia ufficiale dell’intelligence britannica, *British Intelligence in the Second World War*, che legava la scelta alle difficoltà polacche dopo l’arrivo dei rotori nuovi. A decidere, scrive Rejewski, fu soltanto il peggiorare della situazione politica, e i polacchi avrebbero condiviso i loro risultati anche senza nessuna difficoltà.
+
+Cinque settimane dopo la Germania invase la Polonia. Prima di lasciare il paese il Biuro Szyfrów distrusse bombe, fogli e archivi; i tre matematici arrivarono in Francia passando per la Romania. Lì ricevettero dai britannici tutte le 60 serie di fogli di Zygalski, forate a Bletchley Park, e con quei fogli i due gruppi ripresero a trovare le chiavi del giorno e a scambiarsele: Rejewski scrive che su cento chiavi ritrovate 83 venivano dai britannici e 17 dai polacchi. Secondo Rejewski, a Bletchley Park già nel 1940 le bombe polacche furono modificate per le nuove esigenze, conservandone il nome. Come funzionava la *Bombe* britannica sarà l’argomento delle lezioni su Bletchley Park.
+
+<Riepilogo>
+- Un indicatore con due lettere uguali a tre posti di distanza, come PST PWA, è una femmina: rivela che AD, nella posizione di quel messaggio, ha un ciclo di una lettera, e il pannello non lo cancella. Succede in circa quattro posizioni su dieci, quindi ogni femmina ne scarta circa sei.
+- La bomba cercava, con sei serie di rotori sfalsate come le posizioni di base, la posizione che spiegava tre messaggi con la stessa lettera ripetuta, e funzionava solo se il pannello non toccava quella lettera. I fogli di Zygalski, sovrapposti secondo una decina di femmine qualunque, lasciavano un solo foro aperto, e non dipendevano dal pannello.
+- I rotori IV e V portarono gli ordini da sei a 60 e il lavoro a dieci volte tanto, oltre i mezzi del Biuro Szyfrów: senza altre bombe e altri fogli si leggeva un giorno su dieci. Il 25 luglio 1939, a Pyry, i polacchi consegnarono a francesi e britannici la teoria, i metodi e due copie della macchina; Hinsley lega la scelta alle loro difficoltà, Rejewski alla sola situazione politica.
+</Riepilogo>

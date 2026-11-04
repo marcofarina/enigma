@@ -44,6 +44,7 @@ function PanelButton({ panel, children }: { panel: PanelId; children: ReactNode 
 const NAV = [
   { href: 'come-funziona/', key: 'nav.howItWorks' },
   { href: 'storia/', key: 'nav.history' },
+  { href: 'crittoanalisi/', key: 'nav.cryptanalysis' },
   { href: 'esercizi/', key: 'nav.exercises' },
   { href: 'glossario/', key: 'nav.glossary' },
 ] as const;
