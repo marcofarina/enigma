@@ -12,29 +12,162 @@ const links = [
 ];
 
 const currentPath = Astro.url.pathname;
+const isCurrent = (href: string) => currentPath.startsWith(href);
 ---
 
-<header class="no-print border-b border-border bg-surface">
-  <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-    <a href={url()} class="flex items-baseline gap-2 font-bold text-text no-underline">
-      <span class="font-mono text-xl tracking-widest">ENIGMA</span>
-      <span class="text-sm font-normal text-text-muted">{t('site.project')}</span>
-    </a>
-    <nav aria-label={t('nav.label')} class="flex-1">
-      <ul class="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+{/*
+  La barra è un pezzo di macchina, vernice e alluminio in entrambi i temi (docs/design.md). Sul
+  telefono il menu si apre come un foglio sotto la barra.
+*/}
+<header class="site-header no-print relative z-40">
+  <div class="machine machine-paint border-b border-machine-line">
+    <div class="mx-auto flex h-[3.25rem] max-w-6xl items-center gap-4 px-4 md:px-5">
+      <a href={url()} class="me-auto inline-flex min-h-11 items-center gap-3 text-alu-bright no-underline md:me-0">
+        <span class="brand text-xl leading-none">{t('site.title')}</span>
+        <span class="hidden text-caption text-alu-muted lg:inline">{t('site.project')}</span>
+      </a>
+
+      <nav aria-label={t('nav.label')} class="ms-auto hidden md:block">
+        <ul class="flex items-center gap-1 text-ui">
+          {links.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="nav-link inline-flex min-h-11 items-center px-2 text-alu no-underline hover:text-alu-bright"
+                aria-current={isCurrent(link.href) ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="ms-3 hidden md:block">
+        <ThemeToggle />
+      </div>
+
+      <button
+        type="button"
+        class="menu-toggle inline-flex size-11 items-center justify-center rounded-[var(--radius)] text-alu-bright md:hidden"
+        aria-expanded="false"
+        aria-controls="menu-sito"
+      >
+        <span class="sr-only">{t('nav.menu')}</span>
+        <svg
+          aria-hidden="true"
+          class="icon-open"
+          width="22"
+          height="22"
+          viewBox="0 0 22 22"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+        >
+          <path d="M3 6h16M3 11h16M3 16h16"></path>
+        </svg>
+        <svg
+          aria-hidden="true"
+          class="icon-close hidden"
+          width="22"
+          height="22"
+          viewBox="0 0 22 22"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+        >
+          <path d="M5 5l12 12M17 5L5 17"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="menu-sito"
+    class="menu-sheet absolute inset-x-0 top-full border-b border-print-red bg-paper text-ink md:hidden"
+    hidden
+  >
+    <nav aria-label={t('nav.label')} class="px-4 pb-4 pt-2">
+      <ul class="text-body">
         {links.map((link) => (
-          <li>
+          <li class="border-b border-print-red-soft">
             <a
               href={link.href}
-              class="text-text no-underline hover:underline aria-[current=page]:font-semibold aria-[current=page]:text-accent"
-              aria-current={currentPath.startsWith(link.href) ? 'page' : undefined}
+              class="sheet-link flex min-h-12 items-center no-underline"
+              aria-current={isCurrent(link.href) ? 'page' : undefined}
             >
               {link.label}
             </a>
           </li>
         ))}
       </ul>
+      <ThemeToggle conTesto class="mt-4" />
     </nav>
-    <ThemeToggle />
   </div>
 </header>
+
+<style>
+  .brand {
+    font-weight: 800;
+    font-stretch: 125%;
+    letter-spacing: 0.02em;
+  }
+
+  /* La pagina corrente: alluminio chiaro con un filetto, come una targhetta incisa. */
+  .nav-link[aria-current='page'] {
+    color: var(--alu-bright);
+    text-decoration-line: underline;
+    text-decoration-color: var(--alu);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.5em;
+  }
+
+  .sheet-link[aria-current='page'] {
+    font-weight: 700;
+    color: var(--print-red);
+  }
+
+  .menu-sheet:not([hidden]) {
+    animation: foglio var(--dur-panel) var(--ease-snap) both;
+  }
+
+  @keyframes foglio {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  for (const header of document.querySelectorAll<HTMLElement>('.site-header')) {
+    const button = header.querySelector<HTMLButtonElement>('.menu-toggle');
+    const sheet = header.querySelector<HTMLElement>('.menu-sheet');
+    if (!button || !sheet) continue;
+
+    const setOpen = (open: boolean, restoreFocus = false) => {
+      sheet.hidden = !open;
+      button.setAttribute('aria-expanded', String(open));
+      button.querySelector('.icon-open')?.classList.toggle('hidden', open);
+      button.querySelector('.icon-close')?.classList.toggle('hidden', !open);
+      if (open) sheet.querySelector<HTMLElement>('a, button')?.focus();
+      else if (restoreFocus) button.focus();
+    };
+
+    button.addEventListener('click', () => setOpen(button.getAttribute('aria-expanded') !== 'true'));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !sheet.hidden) setOpen(false, true);
+    });
+    document.addEventListener('click', (event) => {
+      if (!sheet.hidden && event.target instanceof Node && !header.contains(event.target)) setOpen(false);
+    });
+    // Se la finestra si allarga oltre il telefono il menu a foglio non serve più.
+    window.matchMedia('(min-width: 48rem)').addEventListener('change', (event) => {
+      if (event.matches) setOpen(false);
+    });
+  }
+</script>

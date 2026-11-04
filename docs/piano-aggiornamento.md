@@ -33,7 +33,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | E3 | Riscrittura Storia 1–4 e glossario | Opus | high | 2 h | B, C, D | fatta |
 | F | Interfaccia e i18n | Sonnet | high | 1 h | A, C, D5 | fatta |
 | G0 | Direzione visiva sul canvas | Opus | high | 2 h | F, D6 | fatta |
-| G1 | Design system nel codice | Opus | high | 2,5 h | G0, H | da fare |
+| G1 | Design system nel codice | Opus | high | 2,5 h | G0, H | fatta |
 | G2 | Il simulatore a schermata unica come home | Opus | high | 3 h | G1 | da fare |
 | G3 | Il simulatore su mobile | Sonnet | high | 1,5 h | G2 | da fare |
 | G4 | Il resto del sito nel nuovo linguaggio | Sonnet | high | 2 h | G1 | da fare |
@@ -674,6 +674,45 @@ pnpm verify && pnpm test:e2e
 
 Controllo visivo: la tabella della lezione 5 si legge come tabella; i blocchi di codice della
 lezione 8 hanno margini e seguono il tema; a 375 px l’intestazione sta su una riga.
+
+**Esito** (2026-11-04)
+
+- `tokens.css`: i materiali di `docs/design.md` (macchina, foglio chiaro, foglio scuro, LIM), le
+  variabili `--code-*` dei blocchi di codice, la scala tipografica `--type-*` e il catalogo delle
+  animazioni (`--ease-snap`, `--dur-*`, `--delay-*`). I nomi semantici `--color-*` usati dai
+  componenti restano e puntano ai materiali: il simulatore e le pagine non ancora rifatti
+  prendono la nuova palette senza essere toccati. La classe `.machine` riporta i nomi semantici
+  sui colori della macchina (fuoco ambra), `.machine-paint` dà la vernice raggrinzita.
+- Font: Archivo variabile (`wght` e `wdth`, tondo e corsivo), Courier Prime 400 e 700, Saira
+  Stencil One, in `woff2` latino e latino esteso presi dai pacchetti Fontsource 5.3.0, con
+  `OFL.txt` accanto. Stanno in `src/assets/fonts/` e non in `public/fonts/` come diceva il passo
+  1: in un `url()` del CSS Vite non aggiunge `/enigma/` ai file di `public/`, e in sviluppo
+  davano 404. Importati dal CSS escono in `dist/_astro/` con l’hash e il prefisso giusto.
+- `global.css`: tabelle come tavola stampata (filetti in `--print-red`, intestazione a 13 px,
+  scorrimento orizzontale sugli schermi stretti); blocchi di codice con fondo, padding 16 × 20 e
+  margine 24, colori da un tema di Shiki fatto di sole variabili (`temaCodice` in
+  `astro.config.mjs`) che segue `data-theme`; `.katex` non va a capo. I link sono inchiostro con
+  la sottolineatura in rosso tenue, piena al passaggio.
+- Intestazione nel linguaggio della macchina in entrambi i temi. A 375 px marchio e pulsante
+  «Menu» da 44 px su una riga; il menu è un foglio sotto la barra con il pulsante del tema,
+  si chiude con Esc (il fuoco torna al pulsante), con un clic fuori o allargando la finestra.
+  Piè di pagina su foglio, link da 44 px. Chiavi nuove in `it.json`: `nav.menu`, `theme.label`.
+- Test: in `smoke.spec.ts` il test del tema apre il menu su mobile; nuovo test dell’intestazione
+  a 375 px (una riga, bersaglio da 44 px, fuoco nel menu, Esc).
+- Il §5 della revisione: tabelle, codice, numeri spezzati e intestazione a 375 px corretti. La
+  home resta della fase G2, i font sono fatti. Verificato nel browser a 1280×720 e a 375 px, in
+  chiaro e in scuro: lezione 5 (`il-passo-e-il-doppio-passo`), lezione 9
+  (`la-matematica-di-enigma`, che il controllo visivo chiama ancora «lezione 8» dalla numerazione
+  prima di E2), lezione 10 (nessuna formula oltre i 375 px), home e simulatore.
+- Resta per G4: i componenti della lezione hanno ancora la forma vecchia (bordo rosso a sinistra
+  di `Citazione`, etichette in maiuscolo di `Prerequisiti`, `Obiettivi`, `Previsione`, riquadro
+  della bozza). Da confermare con Marco: «Rainbow Bits» resta accanto al marchio solo da 1024 px
+  in su.
+- Comandi: `grep -c 'table' src/styles/global.css` → `1`; il `grep` dei colori letterali → `0`;
+  `pnpm verify` exit 0 (188 unit test); `pnpm test:e2e` exit 0 (115 passati, 3 saltati).
+  Fatto verificato il 2026-11-04: con la macchina sotto carico (un gioco al 74 % di CPU, load
+  oltre 20) i primi test degli esercizi scadono sui 5 s di `toBeVisible` anche su `main`, che nelle
+  stesse condizioni ne ha fatti fallire 35. Se succede, rilanciare a macchina scarica.
 
 ---
 

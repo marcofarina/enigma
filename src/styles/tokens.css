@@ -1,99 +1,312 @@
 /*
- * Design token del tema neutro.
- * L'identità visiva di Rainbow Bits sostituirà questi valori senza toccare i componenti:
- * ogni componente usa solo le variabili qui definite (direttamente o tramite le utility Tailwind in global.css).
+ * Design token di Enigma: direzione «Bachelite con il foglio» (docs/design.md).
+ *
+ * Due materiali. La macchina (vernice, alluminio, lampade, segnale) ha gli stessi colori in ogni
+ * tema, perché è un oggetto. Il foglio (pagine, lezioni, chiave e messaggio) cambia con il tema.
+ * I componenti usano i nomi semantici `--color-*` in fondo a ogni blocco, che puntano ai materiali;
+ * i pezzi nuovi della macchina usano direttamente i token di materiale.
+ *
+ * Nessun colore letterale fuori da questo file e da print.css.
  */
+
+/* Caratteri: tutti con licenza SIL OFL, serviti in locale da src/assets/fonts/ (licenza OFL accanto a ogni famiglia). */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url('../assets/fonts/archivo/archivo-latin-normal.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url('../assets/fonts/archivo/archivo-latin-ext-normal.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Archivo';
+  font-style: italic;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url('../assets/fonts/archivo/archivo-latin-italic.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Archivo';
+  font-style: italic;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url('../assets/fonts/archivo/archivo-latin-ext-italic.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Courier Prime';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/courier-prime/courier-prime-latin-400-normal.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Courier Prime';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/courier-prime/courier-prime-latin-ext-400-normal.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Courier Prime';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/courier-prime/courier-prime-latin-700-normal.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Courier Prime';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/courier-prime/courier-prime-latin-ext-700-normal.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Solo le lettere delle lampade: basta il latino di base. */
+@font-face {
+  font-family: 'Saira Stencil One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fonts/saira-stencil-one/saira-stencil-one-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF;
+}
+
 :root {
   color-scheme: light;
 
-  --color-bg: #f7f5f0;
-  --color-surface: #ffffff;
-  --color-surface-muted: #ece8df;
-  --color-border: #d6d0c4;
-  --color-text: #1f1d1a;
-  --color-text-muted: #5c574e;
-  --color-accent: #8a5a00;
-  --color-accent-contrast: #ffffff;
-  --color-focus: #1d5fd1;
+  /* ── Macchina: uguale in tutti i temi ─────────────────────────────────────────────────────── */
+  --machine-paint: #23241f;
+  --machine-well: #191a16;
+  --machine-line: #34352f;
+  --machine-control: #1a1b17;
+  --machine-control-border: #4a4a42;
+  --machine-control-border-hover: #8f8b80;
+  --machine-shadow: #0c0c0a;
+  /* Grana della vernice raggrinzita: due trame di puntini da 3 e 5 px sopra --machine-paint. */
+  --machine-grain-light: rgb(255 255 255 / 0.045);
+  --machine-grain-dark: rgb(0 0 0 / 0.25);
 
-  /* Colori del percorso del segnale: scelti per restare distinguibili anche con deficit cromatici. */
-  --color-signal-forward: #c26a00;
-  --color-signal-return: #1f6fb2;
-  --color-lamp-on: #ffcc4d;
-  --color-lamp-on-text: #1f1d1a;
+  --alu: #cfcbc0;
+  --alu-bright: #f2efe6;
+  --alu-muted: #9c998e;
+  --ring-letter: #9a978c;
+
+  --window: #ece8dc;
+  --window-ink: #15150f;
+
+  --lamp-off-center: #45443c;
+  --lamp-off-edge: #2a2a25;
+  --lamp-on-center: #fff6cf;
+  --lamp-on-mid: #ffc845;
+  --lamp-on-edge: #e58c00;
+  --lamp-on-ink: #3a2400;
+  --lamp-glow: rgb(255 185 56 / 0.5);
+
+  --key-cap-center: #2e2e29;
+  --key-cap-edge: #121210;
+  --key-rim: #bdb9ae;
+
+  --signal-forward: #ffa53d;
+  --signal-return: #7cc0ff;
+  --wire: rgb(207 203 192 / 0.17);
+  --focus-machine: #ffb938;
+
+  /* ── Foglio, tema chiaro ──────────────────────────────────────────────────────────────────── */
+  --paper: #fbfbf8;
+  --paper-deep: #f1f0ea;
+  --ink: #2a2a2a;
+  --ink-muted: #5f5f59;
+  --ink-faint: #6b6b66;
+  --print-red: #b3261e;
+  --print-red-soft: #e2b9b5;
+  --field-border: #c9c6bd;
+  --signal-forward-paper: #a34a00;
+  --signal-return-paper: #1f6fb2;
+  --focus-paper: #1f6fb2;
+
+  /* Blocchi di codice: Shiki usa queste variabili (tema «enigma» in astro.config.mjs). */
+  --code-paper: var(--paper-deep);
+  --code-ink: var(--ink);
+  --code-keyword: var(--print-red);
+  --code-string: var(--signal-return-paper);
+  --code-comment: var(--ink-muted);
+
+  /* ── Nomi semantici usati dai componenti ──────────────────────────────────────────────────── */
+  --color-bg: var(--paper);
+  --color-surface: var(--paper);
+  --color-surface-muted: var(--paper-deep);
+  --color-border: var(--field-border);
+  --color-text: var(--ink);
+  --color-text-muted: var(--ink-muted);
+  --color-accent: var(--print-red);
+  --color-accent-contrast: var(--paper);
+  --color-focus: var(--focus-paper);
+
+  --color-signal-forward: var(--signal-forward-paper);
+  --color-signal-return: var(--signal-return-paper);
+  --color-lamp-on: var(--lamp-on-mid);
+  --color-lamp-on-text: var(--lamp-on-ink);
   /* Spine rosse dell’Uhr (lato a). */
-  --color-plug-red: #b42318;
+  --color-plug-red: var(--print-red);
   /* Codici QR: scuro su chiaro in entrambi i temi, perché li leggano tutti i telefoni. */
   --color-qr-dark: #000000;
   --color-qr-light: #ffffff;
 
-  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
-  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Roboto Mono', Menlo, Consolas, monospace;
+  /* ── Caratteri e scala (px a 1280×720 con radice 16) ──────────────────────────────────────── */
+  --font-sans: 'Archivo', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Courier Prime', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-lamp: 'Saira Stencil One', 'Archivo', sans-serif;
 
-  --radius: 0.5rem;
-  --content-width: 72ch;
+  --type-micro: 0.6875rem; /* 11: lettere dell’anello, mai testo corrente */
+  --type-caption: 0.75rem; /* 12 / 1,4 */
+  --type-ui: 0.875rem; /* 14 / 1,4 */
+  --type-body: 1.0625rem; /* 17 / 1,6 */
+  --type-section: 1.25rem; /* 20 / 1,3 */
+  --type-page: 2.25rem; /* 36 / 1,15, wdth 112 */
+  --type-window: 1.8125rem; /* 29 / 1, wdth 90 */
+
+  --radius: 0.375rem;
+  --radius-sheet: 0.1875rem;
+  --radius-well: 0.625rem;
+  --content-width: 68ch;
+
+  /* ── Animazioni (catalogo in docs/design.md) ──────────────────────────────────────────────── */
+  --ease-snap: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-tick: 150ms;
+  --dur-ring: 190ms;
+  --dur-signal: 130ms;
+  --dur-signal-slow: 1400ms;
+  --dur-lamp: 180ms;
+  --delay-lamp: 240ms;
+  --delay-lamp-slow: 2800ms;
+  --dur-ink: 160ms;
+  --dur-key: 60ms;
+  --dur-panel: 140ms;
+  --dur-autotype: 45ms;
 }
 
+/*
+ * Tema scuro: le pagine prendono la vernice della macchina. Il blocco è ripetuto per la scelta
+ * esplicita e per la preferenza di sistema, perché CSS non permette di unire i due selettori.
+ */
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --color-bg: #141518;
-  --color-surface: #1c1e22;
-  --color-surface-muted: #262a30;
-  --color-border: #3a3f47;
-  --color-text: #ecebe7;
-  --color-text-muted: #a7a59f;
-  --color-accent: #f0b54a;
-  --color-accent-contrast: #141518;
-  --color-focus: #7fb0ff;
+  --paper: #23241f;
+  --paper-deep: #191a16;
+  --ink: #e9e5d9;
+  --ink-muted: #9c998e;
+  --print-red: #ff8a7e;
+  --print-red-soft: #5a3a36;
+  --field-border: #4a4a42;
+  --signal-forward-paper: #ffa53d;
+  --signal-return-paper: #7cc0ff;
 
-  --color-signal-forward: #f29b38;
-  --color-signal-return: #6cb4f0;
-  --color-lamp-on: #ffd66e;
-  --color-lamp-on-text: #1f1d1a;
-  --color-plug-red: #ff8a80;
+  --code-paper: var(--machine-well);
+  --code-ink: var(--alu);
+  --code-keyword: var(--signal-forward);
+  --code-string: var(--signal-return);
+  --code-comment: var(--alu-muted);
+
+  --color-surface: var(--machine-well);
+  --color-surface-muted: #2c2d27;
+  --color-accent-contrast: var(--machine-paint);
+  --color-focus: var(--focus-machine);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
 
-    --color-bg: #141518;
-    --color-surface: #1c1e22;
-    --color-surface-muted: #262a30;
-    --color-border: #3a3f47;
-    --color-text: #ecebe7;
-    --color-text-muted: #a7a59f;
-    --color-accent: #f0b54a;
-    --color-accent-contrast: #141518;
-    --color-focus: #7fb0ff;
+    --paper: #23241f;
+    --paper-deep: #191a16;
+    --ink: #e9e5d9;
+    --ink-muted: #9c998e;
+    --print-red: #ff8a7e;
+    --print-red-soft: #5a3a36;
+    --field-border: #4a4a42;
+    --signal-forward-paper: #ffa53d;
+    --signal-return-paper: #7cc0ff;
 
-    --color-signal-forward: #f29b38;
-    --color-signal-return: #6cb4f0;
-    --color-lamp-on: #ffd66e;
-    --color-lamp-on-text: #1f1d1a;
-    --color-plug-red: #ff8a80;
+    --code-paper: var(--machine-well);
+    --code-ink: var(--alu);
+    --code-keyword: var(--signal-forward);
+    --code-string: var(--signal-return);
+    --code-comment: var(--alu-muted);
+
+    --color-surface: var(--machine-well);
+    --color-surface-muted: #2c2d27;
+    --color-accent-contrast: var(--machine-paint);
+    --color-focus: var(--focus-machine);
   }
 }
 
 /*
- * Modalità LIM: alto contrasto. I testi secondari diventano pieni e i bordi più marcati, perché
- * sulla lavagna si legge da lontano e spesso con la luce della stanza accesa.
+ * Ogni superficie della macchina (intestazione, simulatore) riceve la classe `machine`: il fuoco
+ * diventa ambra e i nomi semantici puntano ai materiali della macchina.
+ */
+.machine {
+  --color-text: var(--alu);
+  --color-text-muted: var(--alu-muted);
+  --color-border: var(--machine-control-border);
+  --color-surface: var(--machine-control);
+  --color-surface-muted: var(--machine-line);
+  --color-focus: var(--focus-machine);
+}
+
+/*
+ * Modalità LIM: alto contrasto sopra il tema attivo. I testi secondari diventano pieni e i bordi
+ * più marcati, perché sulla lavagna si legge da lontano e spesso con la luce della stanza accesa.
  */
 [data-lim] {
-  --color-text-muted: #2e2b26;
-  --color-border: #8c8578;
-}
+  --alu-muted: #cfcbc0;
+  --ring-letter: #cfcbc0;
+  --wire: rgb(207 203 192 / 0.28);
+  --ink-faint: #4a4a46;
+  --machine-control-border: #8f8b80;
 
-:root[data-theme='dark'] [data-lim] {
-  --color-text-muted: #dcdad5;
-  --color-border: #737a85;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) [data-lim] {
-    --color-text-muted: #dcdad5;
-    --color-border: #737a85;
-  }
+  /* --ink vale già per il tema attivo: basta una regola per entrambi. */
+  --color-text-muted: var(--ink);
+  --color-border: #8f8b80;
 }

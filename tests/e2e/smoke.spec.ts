@@ -25,9 +25,11 @@ for (const path of pages) {
   });
 }
 
-test('il tema scuro si attiva e viene ricordato', async ({ page }) => {
+test('il tema scuro si attiva e viene ricordato', async ({ page, isMobile }) => {
   await page.goto('');
   await page.emulateMedia({ colorScheme: 'light' });
+  // Sul telefono il pulsante del tema sta nel menu a foglio sotto la barra.
+  if (isMobile) await page.getByRole('button', { name: 'Menu' }).click();
   await page.getByRole('button', { name: /tema/i }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.reload();
@@ -35,6 +37,25 @@ test('il tema scuro si attiva e viene ricordato', async ({ page }) => {
 
   const results = await new AxeBuilder({ page }).withTags(['wcag2aa']).analyze();
   expect(results.violations).toEqual([]);
+});
+
+test('a 375 px l’intestazione sta su una riga e il menu si apre e si chiude', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto('come-funziona/');
+  const brand = page.getByRole('link', { name: /^Enigma/ });
+  const menu = page.getByRole('button', { name: 'Menu' });
+  const [a, b] = [await brand.boundingBox(), await menu.boundingBox()];
+  expect(a && b && Math.abs(a.y - b.y)).toBeLessThan(1);
+  expect(b?.height).toBeGreaterThanOrEqual(44);
+  expect(b?.width).toBeGreaterThanOrEqual(44);
+
+  await menu.click();
+  await expect(menu).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByRole('link', { name: 'Simulatore' })).toBeFocused();
+  await expect(page.getByRole('link', { name: 'Come funziona' })).toHaveAttribute('aria-current', 'page');
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveAttribute('aria-expanded', 'false');
+  await expect(menu).toBeFocused();
 });
 
 test('il glossario è ordinato, collega le lezioni ed è accessibile', async ({ page }) => {
