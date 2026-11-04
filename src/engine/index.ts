@@ -1,6 +1,7 @@
 export * from './alphabet.ts';
 export * from './codec.ts';
 export * from './config.ts';
+export * from './cryptanalysis.ts';
 export * from './defaults.ts';
 export * from './keyspace.ts';
 export * from './machine.ts';

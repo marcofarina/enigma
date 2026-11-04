@@ -148,7 +148,7 @@ norme non sono raggiungibili, quindi niente prosa).
 | Fase | Contenuto | Modello | Effort | Durata | Dipende da | Stato |
 |---|---|---|---|---|---|---|
 | 4a | Lezione «Modelli a confronto» | Opus | high | 2 h | G4 | da fare |
-| 4b | Motore della crittoanalisi | Opus | high | 2,5 h | — | da fare |
+| 4b | Motore della crittoanalisi | Opus | high | 2,5 h | — | fatta (2026-11-04) |
 | 4c | Animazioni della crittoanalisi | Sonnet | high | 2,5 h | 4b, G4 | da fare |
 | 4d | Crittoanalisi polacca | Opus | high | 3 h | 4c | da fare |
 | 4e | Bletchley Park e la M4 | Opus | high | 3 h | 4c, V (Welchman, Sebag-Montefiore, Hinsley) | da fare |
@@ -281,6 +281,28 @@ grep -rnE "from '(react|astro)|document\.|window\." src/engine | wc -l
 ```bash
 pnpm verify
 ```
+
+**Esito (2026-11-04)**
+
+- Nuovo `src/engine/cryptanalysis.ts`, esportato da `src/engine/index.ts` e descritto in
+  `src/engine/README.md` (sezione «Crittoanalisi»). Per la fase 4c servono: `addIndicator` e
+  `chains` (un indicatore alla volta, cicli chiusi e catene aperte); `buildMenu`, `menuLoops`,
+  `menuCentre` e `testHypothesis`, le cui deduzioni ricordano da quale sono nate, così
+  l’animazione può ripercorrere la propagazione fino alla contraddizione.
+- In più rispetto ai passi: `transpositionsFromPair` e `secondFactorTranspositions` per l’esempio
+  «jjj» di Rejewski 1980, p. 10 (utile alla fase 4d), e `loopPermutation`, il punto fisso di un
+  anello su cui Turing costruì la Bombe.
+- I test usano come vettori fissi gli esempi di Rejewski 1980 (traduzione CryptoCellar): la
+  caratteristica (1) di p. 5, i frammenti dvpf, oumb, cqny di p. 6 e la deduzione di ppp e zzz da
+  jjj di p. 10. Tutti e tre tornano con il motore.
+- Sul menu di prova (crib WETTERVORHERSAGE, chiave M3 del README del motore), su 200 posizioni
+  sbagliate dei rotori × 26 ipotesi ne restano coerenti 7 senza diagonal board e nessuna con: il
+  test lo controlla.
+- Differenza dalla Bombe vera, scritta nel README: le permutazioni dei rotori seguono il passo
+  esatto della macchina, doppio passo compreso.
+- Comandi eseguiti: `pnpm exec vitest run src/engine/__tests__/cryptanalysis.test.ts` (22 test
+  verdi), il `grep` di purezza (`0`), `pnpm verify` (214 test, 0 errori; i 4 avvisi di
+  `lint:content` su `src/i18n/it.json` c’erano già), `pnpm test:e2e` (125 passati, 19 saltati).
 
 ---
 
