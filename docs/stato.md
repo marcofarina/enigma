@@ -53,9 +53,10 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
 
 ## Prossimo passo
 
-- Revisione delle bozze 1–7 e delle lezioni di storia 1–4 da parte dell’autore.
-- Fase 4 (v1.0): crittoanalisi, vista “Macchina” 2.5D, missioni storiche, guida per i docenti.
-- Rinviati dalla 1b: cavi trascinabili sul pannello, schema in verticale su mobile, notazione tedesca dell’UKW-D (da verificare prima di mostrarla).
+- Revisione delle bozze delle lezioni da parte dell’autore.
+- Le fasi rimaste (4a–4h, 5a, 5b) sono in `docs/piano.md`, sezione «Fasi», ognuna con il suo
+  prompt di apertura. La vista 2.5D e i rinviati della 1b sono usciti dal piano il 2026-11-04
+  (decisioni D9 e D11).
 
 ## Note operative
 

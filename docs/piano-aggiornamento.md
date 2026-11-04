@@ -4,21 +4,10 @@ Corregge quanto elencato in `docs/revisione-2026-11-03.md` (d’ora in poi «la 
 si esegue in una sessione Claude Code separata, aperta in `enigma/` **in locale**: nel cloud le
 norme non sono raggiungibili.
 
-## Decisioni da prendere prima di cominciare
+## Decisioni
 
-Le fasi segnate con la decisione cambiano forma a seconda della risposta. Le raccomandazioni sono
-mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che ne dipendono.
-
-| # | Decisione | Raccomandazione | Fasi coinvolte | Risposta |
-|---|---|---|---|---|
-| D1 | Il symlink `.claude/norms` va tracciato in git o resta solo locale? | Solo locale (in `.gitignore`): nel cloud sarebbe comunque rotto | A | raccomandazione accettata (2026-11-03) |
-| D2 | Virgolette: « » per le citazioni come vogliono le norme, o “ ” come prescrive oggi `CLAUDE.md`? | « »: l’eccezione dei caporali vale solo per Python Doesn’t Byte | A, C, E1–E3 | raccomandazione accettata (2026-11-03) |
-| D3 | Le lezioni di Enigma adottano lo scheletro di `scrittura-didattica.md` §7 (citazione d’apertura, prerequisiti, obiettivi, riepilogo) e le domande di previsione prima dei componenti? | Sì per «Come funziona»; per la Storia solo obiettivi e riepilogo | D, E1–E3 | raccomandazione accettata (2026-11-03) |
-| D4 | La lezione 7 si divide in «Il pannello a spine» e «L’Uhr»? | Sì: sono due tesi | E2 | raccomandazione accettata (2026-11-03) |
-| D5 | Crittoanalisi e Docenti escono dal menu finché sono vuote? | Sì; restano raggiungibili dall’indirizzo | F | raccomandazione accettata (2026-11-03) |
-| D6 | Design: correggere solo i difetti e tenere il tema neutro, o fare ora l’identità visiva di Rainbow Bits? | Correggere i difetti ora, identità in un piano separato quando esiste un riferimento | G0–G4 | 2026-11-03, rivista: identità ora. La home diventa il simulatore, tutto in una schermata a partire da 1280×720 senza scorrere; su mobile una versione ridotta che rimanda al desktop. La direzione si sceglie fra tre proposte sul canvas di Claude Design. I difetti del §5 della revisione si correggono dentro il nuovo design system |
-| D7 | Quali libri delle fonti hai in copia (Singh, Batey, Rejewski, Kozaczuk, Welchman, Bauer, Hamer)? | Le fonti non consultate escono dal frontmatter finché non le verifichi | B | 2026-11-03: Marco ha solo Singh e procurerà i testi degli altri, da usare nella fase V. Fino ad allora escono dal frontmatter le fonti non consultate |
-| D8 | La revisione viene prima della fase 4 del piano originale? | Sì: la fase 4 scrive molta prosa nuova, conviene farla con norme e linter a posto | I | raccomandazione accettata (2026-11-03) |
+Spostata in `docs/piano.md`, sezione «Decisioni della revisione» (fase I, 2026-11-04), con le
+decisioni prese dopo (D9–D14).
 
 ## Stato
 
@@ -39,7 +28,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | G4 | Il resto del sito nel nuovo linguaggio | Sonnet | high | 2 h | G1 | fatta |
 | H | Pulizia del codice | Sonnet | high | 1 h | A | fatta |
 | V | Verifiche sui testi delle fonti | Opus | high | 2 h per gruppo di libri | B, testi forniti da Marco | da fare |
-| I | Riscrittura delle fasi 4–5 di `docs/piano.md` nel formato dei piani | Opus | high | 1 h | E1–E3, D8 | da fare |
+| I | Riscrittura delle fasi 4–5 di `docs/piano.md` nel formato dei piani | Opus | high | 1 h | E1–E3, D8 | fatta |
 
 Totale stimato: circa 25 ore di sessione, più la fase V. Dopo A, le fasi B, C, F e H non si
 toccano a vicenda e si possono fare in qualunque ordine. E1, E2 ed E3 toccano file diversi e sono
@@ -1143,3 +1132,24 @@ uguale al numero di fasi rimaste.
 ```bash
 pnpm format:check
 ```
+
+**Esito** (2026-11-04)
+
+- Intervista a Marco il 2026-11-04, risposte in `docs/piano.md` come decisioni D9–D13: la vista
+  2.5D esce dal piano; la crittoanalisi resta racconto e animazioni, senza esercizi guidati; dei
+  rinviati della 1b resta solo la vista 3D (escono cavi trascinabili, schema verticale su mobile
+  e notazione tedesca dell’UKW-D); le missioni storiche vengono dopo la fase V e dopo la
+  crittoanalisi. Resta aperta D14: da dove viene il modello 3D, da decidere prima della fase 5a.
+- `docs/piano.md`: la sezione «Fasi» è riscritta per il lavoro rimasto, con tabella «Stato»,
+  regole comuni e dieci fasi (4a–4h, 5a, 5b), ognuna con modello, effort, durata, dipendenze,
+  prompt di apertura, passi e criteri verificabili con un comando. La tabella delle decisioni
+  della revisione (D1–D8) è spostata lì, nella sezione «Decisioni della revisione»; qui resta un
+  rimando.
+- Fatti verificati il 2026-11-04 che hanno cambiato la lista del §7 della revisione: la
+  spiegazione delle cifre di Singh e di Crypto Museum sullo spazio delle chiavi è già nella
+  lezione 10 (`10-quante-chiavi.mdx`, fase E2) e `<Citazione fonte pagina>` esiste dalla fase D:
+  nessuna delle due torna nel piano. Rejewski 1980 e il trattato di Turing sono già consultati
+  online (`fonti.yaml`), quindi la fase 4d non dipende dalla fase V se non per i fatti che solo
+  Kozaczuk conferma.
+- Comandi: `grep -c '^\*\*Modello:' docs/piano.md` → `10`, uguale alle fasi della tabella
+  «Stato» di `docs/piano.md`; `pnpm format:check` exit 0.
