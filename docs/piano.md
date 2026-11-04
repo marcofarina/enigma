@@ -149,7 +149,7 @@ norme non sono raggiungibili, quindi niente prosa).
 |---|---|---|---|---|---|---|
 | 4a | Lezione «Modelli a confronto» | Opus | high | 2 h | G4 | da fare |
 | 4b | Motore della crittoanalisi | Opus | high | 2,5 h | — | fatta (2026-11-04) |
-| 4c | Animazioni della crittoanalisi | Sonnet | high | 2,5 h | 4b, G4 | da fare |
+| 4c | Animazioni della crittoanalisi | Sonnet | high | 2,5 h | 4b, G4 | fatta (2026-11-04) |
 | 4d | Crittoanalisi polacca | Opus | high | 3 h | 4c | da fare |
 | 4e | Bletchley Park e la M4 | Opus | high | 3 h | 4c, V (Welchman, Sebag-Montefiore, Hinsley) | da fare |
 | 4f | Missioni storiche | Opus | high | 2 h | 4e, V (fonti delle chiavi) | da fare |
@@ -345,6 +345,40 @@ ls src/components/lesson/CicliIndicatori.tsx src/components/lesson/MenuBombe.tsx
 ```bash
 pnpm verify && pnpm test:e2e
 ```
+
+**Esito (2026-11-04)**
+
+- Nuovi `src/components/lesson/CicliIndicatori.tsx` e `MenuBombe.tsx`, usati con `client:visible`
+  come gli altri componenti delle lezioni. Le stringhe stanno in `src/i18n/it.json`
+  (`lesson.indicators.*` e `lesson.menu.*`).
+- `CicliIndicatori`: una giornata d’esempio fissa (Enigma I, rotori II-I-III, posizione KUL, sei
+  cavi) e una sequenza fissa di chiavi di messaggio, che si fermano quando AD, BE e CF sono
+  complete (110 indicatori). Ogni pressione aggiunge un indicatore con `addIndicator`; `chains`
+  separa cicli chiusi, disegnati come anelli, e catene aperte. Alla fine mostra la notazione a cicli
+  e il teorema dei cicli a coppie.
+- `MenuBombe`: crib `WETTERVORHERSAGE` sul messaggio e sulla chiave M3 del README del motore;
+  allineamento crib e testo cifrato, grafo del menu, anello scelto con «Percorri l’anello»,
+  ipotesi sul pannello (lettera, compagna, rotori nella posizione giusta o spostati, diagonal board)
+  che si propaga una deduzione alla volta. La prova si ferma alla prima contraddizione: con i rotori
+  sbagliati `testHypothesis` continua per centinaia di deduzioni, che nell’elenco non servono.
+- Colori: `--signal-forward-paper` per il verso dalla lettera in chiaro alla cifrata (e per le prime tre
+  lettere dell’indicatore), `--signal-return-paper` per il verso opposto; il verso è scritto anche
+  con le frecce → e ←, e le contraddizioni anche a parole.
+- Animazioni: solo `stroke-dashoffset` (nuova classe `.tracciato` in `global.css`, con `--dur` e
+  `--ritardo`) e `inchiostro` (opacità e `translateY`). Nessun timer: ogni nuova azione rimonta
+  l’elemento e riparte. Con `prefers-reduced-motion` `.tracciato` non ha animazione.
+- Pagina di prova `src/pages/prove/crittoanalisi.astro`, non collegata da nessuna parte: serve ai
+  test e2e finché le fasi 4d e 4e non usano i componenti in una lezione; allora va tolta.
+- Test: `tests/e2e/crittoanalisi.spec.ts` (axe in chiaro e in scuro, comportamento dei due
+  componenti, movimento ridotto), a desktop e mobile.
+- Verificato nel browser con il server «astro-dev»: desktop in tema chiaro (entrambe le figure) e
+  375 px per `MenuBombe` in chiaro e in scuro e per `CicliIndicatori` in chiaro, senza scorrimento
+  orizzontale. Non guardati a occhio: desktop in tema scuro e `CicliIndicatori` a 375 px in scuro;
+  li copre solo axe nei test e2e.
+- Comandi eseguiti: `pnpm verify` (214 test, 0 errori; i 4 avvisi di `lint:content` su
+  `src/i18n/it.json` c’erano già) e `pnpm test:e2e` (135 passati, 19 saltati). Con il server di
+  sviluppo acceso sulla porta 4321, Playwright lo usa al posto di `astro preview` e molti test
+  falliscono: va fermato prima.
 
 ---
 

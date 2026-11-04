@@ -616,3 +616,29 @@
     }
   }
 }
+
+/*
+ * Tracciato di un segnale (catalogo): una linea che si disegna da un capo all'altro. L'elemento SVG
+ * porta `pathLength="1"`; la durata e il ritardo si regolano con `--dur` e `--ritardo`. Solo
+ * `stroke-dashoffset`. Con prefers-reduced-motion la linea compare già disegnata.
+ */
+@keyframes tracciato {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.tracciato {
+  stroke-dasharray: 1;
+  animation: tracciato var(--dur, var(--dur-signal-slow)) linear var(--ritardo, 0ms) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tracciato {
+    stroke-dasharray: none;
+    animation: none;
+  }
+}
