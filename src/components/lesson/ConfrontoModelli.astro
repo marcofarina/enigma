@@ -1,0 +1,262 @@
+---
+import { MODEL_IDS, MODELS } from '@/engine';
+import { t, tf, type UiKey } from '@/i18n';
+import {
+  entryWheel,
+  FAMILIES,
+  family,
+  hasRewirableReflector,
+  notchSummary,
+  reflectorKind,
+  rotorCount,
+  TIMELINE_END,
+  TIMELINE_START,
+  timelineBars,
+  undatedModels,
+  yearOffset,
+} from '@/lib/modelli';
+
+/**
+ * Confronto dei 15 modelli del motore: una tabella delle caratteristiche, divisa per famiglia, e
+ * una linea del tempo con gli anni documentati. Tutto viene da `src/engine/models.ts`.
+ *
+ * `vista` sceglie che cosa mostrare, così la lezione può mettere la tabella e la linea del tempo in
+ * punti diversi.
+ */
+interface Props {
+  vista: 'tabella' | 'linea';
+}
+
+const { vista } = Astro.props;
+
+const models = MODEL_IDS.map((id) => MODELS[id]);
+const groups = FAMILIES.map((f) => ({ family: f, models: models.filter((m) => family(m) === f) }));
+const yesNo = (value: boolean) => t(value ? 'lesson.models.yes' : 'lesson.models.no');
+
+function rotors(id: (typeof MODEL_IDS)[number]): string {
+  const { regular, thin } = rotorCount(MODELS[id]);
+  return thin > 0 ? tf('lesson.models.thin', { regular, thin }) : String(regular);
+}
+
+function reflector(id: (typeof MODEL_IDS)[number]): string {
+  const model = MODELS[id];
+  const kind = t(`lesson.models.reflector.${reflectorKind(model)}` as UiKey);
+  return hasRewirableReflector(model) ? `${kind}; ${t('lesson.models.reflector.rewirable')}` : kind;
+}
+
+const columns: UiKey[] = [
+  'lesson.models.rotors',
+  'lesson.models.notches',
+  'lesson.models.stepping',
+  'lesson.models.reflector',
+  'lesson.models.plugboard',
+  'lesson.models.uhr',
+  'lesson.models.entryWheel',
+];
+
+const bars = timelineBars();
+const undated = undatedModels();
+const ticks: number[] = [];
+for (let year = TIMELINE_START; year <= TIMELINE_END; year += 5) ticks.push(year);
+const war = { left: yearOffset(1939), width: yearOffset(1946) - yearOffset(1939) };
+const years = (bar: (typeof bars)[number]) =>
+  bar.open ? tf('lesson.models.since', { from: bar.period.from }) : `${bar.period.from}–${bar.period.to}`;
+---
+
+{vista === 'tabella' && (
+  <table class="confronto font-sans text-sm" tabindex="0">
+    <caption class="caption-bottom pt-2 text-start text-text-muted">{t('lesson.models.tableCaption')}</caption>
+    <thead>
+      <tr>
+        <th scope="col">{t('lesson.models.model')}</th>
+        {columns.map((key) => (
+          <th scope="col">{t(key)}</th>
+        ))}
+      </tr>
+    </thead>
+    {groups.map(({ family: f, models: members }) => (
+      <tbody>
+        <tr class="famiglia">
+          <th scope="rowgroup" colspan={columns.length + 1}>
+            {t(`lesson.models.family.${f}` as UiKey)}
+          </th>
+        </tr>
+        {members.map((model) => (
+          <tr>
+            <th scope="row">{model.label}</th>
+            <td class="font-mono">{rotors(model.id)}</td>
+            <td class="font-mono">
+              {notchSummary(model)
+                .split('; ')
+                .map((group) => (
+                  <span class="block whitespace-nowrap">{group}</span>
+                ))}
+            </td>
+            <td>{t(model.stepping === 'gear' ? 'lesson.models.gear' : 'lesson.models.lever')}</td>
+            <td>{reflector(model.id)}</td>
+            <td>{yesNo(model.plugboard)}</td>
+            <td>{yesNo(model.uhr)}</td>
+            <td>{t(`lesson.models.entry.${entryWheel(model)}` as UiKey)}</td>
+          </tr>
+        ))}
+      </tbody>
+    ))}
+  </table>
+)}
+
+{vista === 'linea' && (
+  <figure class="my-8 font-sans text-sm">
+    <div class="linea">
+      <div class="riga asse" aria-hidden="true">
+        <span />
+        <span class="relative h-5">
+          {ticks.map((year, i) => (
+            <span
+              class:list={[
+                'absolute top-0 -translate-x-1/2 font-mono text-xs text-text-muted',
+                i % 2 === 1 && 'hidden sm:inline',
+              ]}
+              style={`left: ${yearOffset(year)}%`}
+            >
+              {year}
+            </span>
+          ))}
+        </span>
+      </div>
+      <ol class="m-0 list-none p-0">
+        {bars.map((bar) => (
+          <li class="riga">
+            <span class="min-w-0">
+              <span class="block font-semibold">{bar.label}</span>
+              <span class="block font-mono text-xs text-text-muted">
+                {years(bar)} · {t(bar.period.basis === 'use' ? 'lesson.models.use' : 'lesson.models.production')}
+              </span>
+            </span>
+            <span class="traccia" aria-hidden="true">
+              <span class="guerra" style={`left: ${war.left}%; width: ${war.width}%`} />
+              <span
+                class:list={['barra', bar.period.basis, bar.open && 'aperta']}
+                style={`left: ${bar.left}%; width: ${bar.width}%`}
+              />
+            </span>
+            {bar.users && <span class="utenti text-text-muted">{bar.users}</span>}
+          </li>
+        ))}
+      </ol>
+    </div>
+    <p class="legenda mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-text-muted" aria-hidden="true">
+      <span>
+        <span class="campione barra use" />
+        {t('lesson.models.legendUse')}
+      </span>
+      <span>
+        <span class="campione barra production" />
+        {t('lesson.models.legendProduction')}
+      </span>
+      <span>
+        <span class="campione guerra" />
+        {t('lesson.models.legendWar')}
+      </span>
+    </p>
+    <figcaption class="mt-2 text-text-muted">
+      {t('lesson.models.timelineCaption')}{' '}
+      {tf('lesson.models.undated', { models: undated.map((m) => m.label).join(', ') })}
+    </figcaption>
+  </figure>
+)}
+
+<style>
+  /* La tabella è larga: scorre da sola sugli schermi stretti (vedi .prose-it table). */
+  .confronto th,
+  .confronto td {
+    padding-inline-end: 0.75rem;
+    vertical-align: top;
+  }
+
+  .confronto tbody th[scope='row'] {
+    min-width: 8rem;
+  }
+
+  .confronto .famiglia th {
+    padding-top: 1rem;
+    color: var(--color-accent);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  /* Prima colonna con nome e anni, seconda con la traccia; gli utilizzatori sotto, su tutta la riga. */
+  .riga {
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    column-gap: 0.75rem;
+    align-items: center;
+    padding-block: 0.4rem;
+  }
+
+  @media (min-width: 40rem) {
+    .riga {
+      grid-template-columns: 13rem minmax(0, 1fr);
+    }
+  }
+
+  ol .riga + .riga {
+    border-top: 1px solid var(--print-red-soft);
+  }
+
+  .utenti {
+    grid-column: 1 / -1;
+    padding-top: 0.15rem;
+    font-size: 0.8125rem;
+  }
+
+  .traccia {
+    position: relative;
+    height: 0.9rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .guerra {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: var(--color-surface-muted);
+  }
+
+  .barra {
+    position: absolute;
+    top: 0.15rem;
+    bottom: 0.15rem;
+    border: 1.5px solid var(--color-accent);
+    border-radius: 2px;
+  }
+
+  .barra.use {
+    background: var(--color-accent);
+  }
+
+  .barra.production {
+    background: transparent;
+  }
+
+  /* Senza l’ultimo anno la barra sfuma verso il bordo dell’asse. */
+  .barra.aperta {
+    border-right: 0;
+    border-radius: 2px 0 0 2px;
+    background: linear-gradient(to right, var(--color-accent) 30%, transparent);
+  }
+
+  .campione {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    display: inline-block;
+    width: 1.5rem;
+    height: 0.7rem;
+    margin-inline-end: 0.4rem;
+    vertical-align: -0.05rem;
+  }
+
+  .campione.guerra {
+    border: 1px solid var(--color-border);
+  }
+</style>

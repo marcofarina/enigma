@@ -45,13 +45,24 @@ export type ModelId =
   | 'G260'
   | 'G312';
 
+/**
+ * Anni documentati da Crypto Museum (consultato il 4 novembre 2026). Per alcuni modelli la fonte dà
+ * gli anni d’uso, per altri quelli di produzione: `basis` dice quali.
+ */
+export interface ModelPeriod {
+  from: number;
+  /** Assente quando la fonte non dice fino a quando la macchina fu usata. */
+  to?: number;
+  basis: 'use' | 'production';
+}
+
 export interface ModelSpec {
   id: ModelId;
   label: string;
-  /** Periodo d’uso indicativo (da verificare sulle fonti prima di mostrarlo nelle schede storiche). */
-  period: string;
-  /** Chi la usava (da verificare come `period`). */
-  users: string;
+  /** Assente quando la fonte non dà anni per questo modello o esemplare. */
+  period?: ModelPeriod;
+  /** Chi la usava, secondo Crypto Museum; assente se non è noto. */
+  users?: string;
   /** Modelli militari principali, messi in evidenza nell’interfaccia. */
   featured: boolean;
   stepping: Stepping;
@@ -67,8 +78,8 @@ export interface ModelSpec {
   reflectors: Readonly<Record<string, ReflectorSpec>>;
 }
 
-const ALPHABETIC_ETW = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const QWERTZ_ETW = 'QWERTZUIOASDFGHJKPYXCVBNML';
+export const ALPHABETIC_ETW = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+export const QWERTZ_ETW = 'QWERTZUIOASDFGHJKPYXCVBNML';
 
 const MILITARY_ROTORS = {
   I: { wiring: 'EKMFLGDQVZNTOWYHXUSPAIBRCJ', notches: 'Q' },
@@ -121,7 +132,7 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   I: {
     id: 'I',
     label: 'Enigma I',
-    period: '1930–1945',
+    period: { from: 1930, to: 1945, basis: 'use' },
     users: 'Esercito (Heer) e aviazione (Luftwaffe)',
     featured: true,
     stepping: 'lever',
@@ -141,8 +152,8 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   M3: {
     id: 'M3',
     label: 'Enigma M3',
-    period: '1940–1945',
-    users: 'Marina (Kriegsmarine)',
+    period: { from: 1934, to: 1945, basis: 'use' },
+    users: 'Marina (Kriegsmarine): M1 dal 1934, M2 dal 1938, M3 dal 1940',
     featured: true,
     stepping: 'lever',
     entryWheel: ALPHABETIC_ETW,
@@ -159,8 +170,8 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   M4: {
     id: 'M4',
     label: 'Enigma M4',
-    period: '1942–1945',
-    users: 'Marina, flotta sommergibili (U-Boote)',
+    period: { from: 1942, to: 1945, basis: 'use' },
+    users: 'Marina (Kriegsmarine), soprattutto i sommergibili',
     featured: true,
     stepping: 'lever',
     entryWheel: ALPHABETIC_ETW,
@@ -183,8 +194,8 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   Norway: {
     id: 'Norway',
     label: 'Enigma norvegese (Norenigma)',
-    period: '1945–anni Cinquanta',
-    users: 'Servizi di sicurezza norvegesi nel dopoguerra',
+    period: { from: 1945, basis: 'use' },
+    users: 'Polizia di sicurezza norvegese (Overvaakingspolitiet), con Enigma I catturate',
     featured: false,
     stepping: 'lever',
     entryWheel: ALPHABETIC_ETW,
@@ -204,8 +215,8 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   D: {
     id: 'D',
     label: 'Enigma D (commerciale)',
-    period: '1926–anni Trenta',
-    users: 'Uso commerciale e diplomatico',
+    period: { from: 1926, to: 1927, basis: 'production' },
+    users: 'Uso commerciale',
     ...commercial,
     rotors: COMMERCIAL_ROTORS,
     reflectors: { UKW: COMMERCIAL_UKW },
@@ -213,8 +224,8 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   K: {
     id: 'K',
     label: 'Enigma K (commerciale)',
-    period: '1927–1945',
-    users: 'Uso commerciale; varianti per Italia, Spagna, Svizzera',
+    period: { from: 1927, to: 1944, basis: 'production' },
+    users: 'Uso commerciale; ferrovie tedesche, marina italiana, Spagna, Svizzera',
     ...commercial,
     rotors: COMMERCIAL_ROTORS,
     reflectors: { UKW: COMMERCIAL_UKW },
@@ -222,8 +233,8 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   SwissK: {
     id: 'SwissK',
     label: 'Enigma K svizzera',
-    period: '1939–anni Cinquanta',
-    users: 'Esercito e aviazione svizzeri',
+    period: { from: 1939, to: 1946, basis: 'use' },
+    users: 'Esercito, aviazione e ministero degli esteri svizzeri',
     ...commercial,
     rotors: {
       I: { wiring: 'PEZUOHXSCVFMTBGLRINQJWAYDK', notches: 'Y' },
@@ -235,8 +246,8 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   KD: {
     id: 'KD',
     label: 'Enigma KD',
-    period: 'anni Quaranta',
-    users: 'Esemplare noto conservato in Svezia',
+    period: { from: 1944, to: 1945, basis: 'use' },
+    users: 'Mil Amt, il servizio informazioni succeduto all’Abwehr, sulla linea Berlino–Madrid–Lisbona',
     ...commercial,
     rotors: {
       I: { wiring: 'VEZIOJCXKYDUNTWAPLQGBHSFMR', notches: 'SUYAEHLNQ' },
@@ -249,7 +260,7 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   Railway: {
     id: 'Railway',
     label: 'Enigma delle ferrovie (Rocket)',
-    period: 'anni Quaranta',
+    period: { from: 1940, to: 1944, basis: 'use' },
     users: 'Ferrovie tedesche (Deutsche Reichsbahn)',
     ...commercial,
     rotors: {
@@ -262,8 +273,8 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   T: {
     id: 'T',
     label: 'Enigma T (Tirpitz)',
-    period: '1942–1945',
-    users: 'Collegamenti tra Germania e Giappone',
+    period: { from: 1943, to: 1945, basis: 'use' },
+    users: 'Collegamenti fra la marina tedesca e quella giapponese',
     ...commercial,
     entryWheel: 'KZROUQHYAIGBLWVSTDXFPNMCJE',
     rotors: {
@@ -281,8 +292,8 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   A865: {
     id: 'A865',
     label: 'Enigma con contatore (A-865)',
-    period: '1928–anni Trenta',
-    users: 'Uso commerciale',
+    period: { from: 1928, to: 1931, basis: 'production' },
+    users: 'Marina olandese (esemplare A865)',
     ...gearDriven,
     rotors: {
       I: { wiring: COMMERCIAL_ROTORS.I.wiring, notches: G_NOTCHES.I },
@@ -294,8 +305,8 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   G31: {
     id: 'G31',
     label: 'Enigma G (G-31)',
-    period: '1931–1945',
-    users: 'Abwehr (servizio informazioni militare)',
+    period: { from: 1931, to: 1943, basis: 'production' },
+    users: 'Abwehr, esercito ungherese, marina olandese',
     ...gearDriven,
     rotors: {
       I: { wiring: COMMERCIAL_ROTORS.I.wiring, notches: G_NOTCHES.I },
@@ -307,8 +318,7 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   G111: {
     id: 'G111',
     label: 'Enigma G (G-111)',
-    period: 'anni Trenta–1945',
-    users: 'Esemplare usato in Ungheria e a Monaco',
+    users: 'Esercito ungherese',
     ...gearDriven,
     rotors: {
       I: { wiring: 'WLRHBQUNDKJCZSEXOTMAGYFPVI', notches: G_NOTCHES.I },
@@ -320,8 +330,7 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   G260: {
     id: 'G260',
     label: 'Enigma G (G-260)',
-    period: 'anni Trenta–1945',
-    users: 'Abwehr (esemplare in Argentina)',
+    users: 'Probabilmente il Sicherheitsdienst, rete Rot; sequestrata in Argentina nel 1945',
     ...gearDriven,
     rotors: {
       I: { wiring: 'RCSPBLKQAUMHWYTIFZVGOJNEXD', notches: G_NOTCHES.I },
@@ -333,8 +342,7 @@ export const MODELS: Readonly<Record<ModelId, ModelSpec>> = {
   G312: {
     id: 'G312',
     label: 'Enigma G (G-312)',
-    period: 'anni Trenta–1945',
-    users: 'Abwehr (esemplare a Bletchley Park)',
+    users: 'Abwehr',
     ...gearDriven,
     rotors: {
       I: { wiring: 'DMTWSILRUYQNKFEJCAZBPGXOHV', notches: G_NOTCHES.I },

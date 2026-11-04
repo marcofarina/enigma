@@ -87,7 +87,7 @@
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — Enigma K
   url: https://www.cryptomuseum.com/crypto/enigma/k/index.htm
-  note: Comprende le macchine fornite all’Italia e la rottura del traffico della marina italiana.
+  note: Comprende le macchine fornite all’Italia e la rottura del traffico della marina italiana. Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11. In produzione dal 1927 al 1944.
 - id: crypto-museum-ukw-d
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — Umkehrwalze D
@@ -96,10 +96,12 @@
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — Enigma M4
   url: https://www.cryptomuseum.com/crypto/enigma/m4/index.htm
+  note: Introdotta il 1° febbraio 1942. Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11.
 - id: crypto-museum-m3
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — Enigma M1, M2 e M3
   url: https://www.cryptomuseum.com/crypto/enigma/m3/index.htm
+  note: M1 dal 1934, M2 dal 1938, M3 dal 1940; rotori VI–VIII dal 1939. Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11.
 - id: crypto-museum-steckerbrett
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — Enigma Steckerbrett
@@ -110,6 +112,61 @@
   titolo: Crypto Museum — Enigma Uhr
   url: https://www.cryptomuseum.com/crypto/enigma/uhr/index.htm
   note: Consultata il 3 novembre 2026. Fonte della lezione 8 e della sua citazione d’apertura (introduzione della pagina).
+- id: crypto-museum-enigma-i
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Enigma I
+  url: https://www.cryptomuseum.com/crypto/enigma/i/index.htm
+  note: 'Sviluppata nel 1927–1929, introdotta nel 1930; esercito e aviazione. Fonte della frase sul pannello a spine esclusivo delle forze armate tedesche. Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11.'
+- id: crypto-museum-enigma-d
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Enigma D
+  url: https://www.cryptomuseum.com/crypto/enigma/d/index.htm
+  note: 'Sviluppata nel 1926 (modello A26), sostituita un anno dopo dalla K. Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11.'
+- id: crypto-museum-swiss-k
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Swiss-K
+  url: https://www.cryptomuseum.com/crypto/enigma/k/swiss.htm
+  note: 'Primo lotto nel 1939, ricablata dagli svizzeri «for security reasons», ritirata nel 1946. Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11.'
+- id: crypto-museum-enigma-kd
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Enigma KD
+  url: https://www.cryptomuseum.com/crypto/enigma/k/kd.htm
+  note: 'Usata dal Mil Amt sulla linea Berlino–Madrid–Lisbona dal 3 dicembre 1944; il cablaggio del motore è quello dell’esemplare del FRA svedese. Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11.'
+- id: crypto-museum-railway
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Reichsbahn Enigma
+  url: https://www.cryptomuseum.com/crypto/enigma/k/railway.htm
+  note: 'Traffico Rocket I dal 25 luglio 1940, ancora letto nell’ottobre 1944. Fonte della citazione d’apertura della lezione 11 (sezione «Rocket I»). Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11.'
+- id: crypto-museum-enigma-t
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Enigma T (Tirpitz)
+  url: https://www.cryptomuseum.com/crypto/enigma/t/index.htm
+  note: 'Basata sulla K commerciale; procedura TIRPITZ dal 1° agosto 1943 alla fine della guerra. Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11.'
+- id: crypto-museum-a28
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Zählwerk Enigma A28
+  url: https://www.cryptomuseum.com/crypto/enigma/g/a28.htm
+  note: 'Sviluppata nel 1928, sostituita nel 1931 dalla G31; l’esemplare A865 andò alla marina olandese. Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11.'
+- id: crypto-museum-enigma-g
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Enigma G
+  url: https://www.cryptomuseum.com/crypto/enigma/g/index.htm
+  note: 'Prodotta dal 1931 al 1943; Abwehr, esercito ungherese, marina olandese. La G260 fu sequestrata in Argentina nel marzo 1945. Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11.'
+- id: crypto-museum-g111
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Enigma G111
+  url: https://www.cryptomuseum.com/crypto/enigma/g/g111.htm
+  note: 'Fabbricata nel 1931 e venduta all’esercito ungherese. Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11.'
+- id: crypto-museum-g312
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Enigma G312
+  url: https://www.cryptomuseum.com/crypto/enigma/g/g312.htm
+  note: 'Fabbricata intorno al 1940 per l’Abwehr; esposta a Bletchley Park. Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11.'
+- id: crypto-museum-cablaggi
+  autori: Paul Reuvers, Marc Simons
+  titolo: Crypto Museum — Enigma wiring
+  url: https://www.cryptomuseum.com/crypto/enigma/wiring.htm
+  note: 'Comprende la Enigma norvegese, usata dal 1945 dalla polizia di sicurezza norvegese, e la G260. Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11.'
 - id: turing-treatise
   autori: Alan M. Turing
   titolo: Treatise on the Enigma, capitolo 1

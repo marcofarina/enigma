@@ -21,6 +21,7 @@ const lessons = [
   'come-funziona/l-uhr',
   'come-funziona/la-matematica-di-enigma',
   'come-funziona/quante-chiavi',
+  'come-funziona/modelli-a-confronto',
   'storia/scherbius-e-le-macchine-commerciali',
   'storia/l-adozione-militare',
   'storia/fogli-chiave-e-procedure',
