@@ -27,7 +27,7 @@ decisioni prese dopo (D9–D14).
 | G3 | Il simulatore su mobile | Sonnet | high | 1,5 h | G2 | fatta |
 | G4 | Il resto del sito nel nuovo linguaggio | Sonnet | high | 2 h | G1 | fatta |
 | H | Pulizia del codice | Sonnet | high | 1 h | A | fatta |
-| V | Verifiche sui testi delle fonti | Opus | high | 2 h per gruppo di libri | B, testi forniti da Marco | da fare |
+| V | Verifiche sui testi delle fonti | Opus | high | 2 h per gruppo di libri | B, testi forniti da Marco | fatta (manca Hamer 1997) |
 | I | Riscrittura delle fasi 4–5 di `docs/piano.md` nel formato dei piani | Opus | high | 1 h | E1–E3, D8 | fatta |
 
 Totale stimato: circa 25 ore di sessione, più la fase V. Dopo A, le fasi B, C, F e H non si
@@ -1114,6 +1114,14 @@ almeno uno per ogni fatto verificato.
 ```bash
 pnpm verify
 ```
+
+**Esito (2026-11-04)**
+
+- Fatto: la ricerca nei libri l’hanno svolta cinque sottoagenti Sonnet (effort high) in sola lettura, uno per gruppo: Singh; Batey; Kozaczuk; i due Bauer; Welchman con Sebag-Montefiore. Le decisioni sulle lezioni sono state prese nella sessione Opus. I fatti verificati sono in `docs/stato.md`, sezione «Verificato», con la pagina per Kozaczuk e i due Bauer e il capitolo per gli epub e per Welchman.
+- Correzioni di fatto: rotori IV e V al 15 dicembre 1938, non al 15 settembre (storia 2). Shark resta illeggibile per dieci mesi e mezzo, e dall’U-559 arrivano libri codice, non fogli chiave (storia 2). Numero di cavi nel tempo (lezione 7). Tolta la causa senza fonte dell’abbandono della doppia cifratura (storia 3). In storia 4 il messaggio senza L viene da un operatore italiano, dopo il settembre 1940, e non è legato a Matapan, dove servì un altro messaggio. Precisati Alberti e al-Kindi (lezione 2), Korn e l’Enigma D (lezione 6), il conto di Singh (lezione 10) e la voce `kenngruppenbuch`.
+- Fonti rimesse o aggiunte nel frontmatter delle lezioni 1, 2, 4, 5, 6, 7, 9 e 10, di storia 2, 3 e 4 e di tre voci del glossario. Le edizioni dei file sono ora in `fonti.yaml`: Singh BUR 2001, Welchman M&M Baldwin 1998, Bauer quarta edizione.
+- Resta: l’articolo di Hamer (1997), non fra i testi; la discrepanza fra i rotori commerciali D del motore e Bauer, p. 124; le note per la fase 4e, raccolte in `stato.md`, che aspettano anche Hinsley.
+- Comandi: `grep -c 'p\. [0-9]' docs/stato.md` dà 29; `pnpm verify` exit 0; `pnpm test:e2e` exit 0 (125 passati, 19 saltati).
 
 ---
 

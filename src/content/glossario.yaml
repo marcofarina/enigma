@@ -88,6 +88,7 @@
   inglese: double stepping
   definizione: Anomalia del meccanismo a nottolini per cui il rotore centrale, quando raggiunge la propria tacca, avanza due volte di seguito, prima trascinato dal rotore veloce e poi insieme al rotore di sinistra.
   vedi: come-funziona/il-passo-e-il-doppio-passo/
+  fonti: [bauer-decrypted-secrets]
 - id: foglio-chiave
   termine: foglio chiave
   tedesco: Schlüsseltafel, Maschinenschlüssel
@@ -116,9 +117,9 @@
 - id: kenngruppenbuch
   termine: Kenngruppenbuch
   tedesco: Kenngruppenbuch (K. Buch)
-  definizione: Libro della marina tedesca che legava i gruppi di riconoscimento alle chiavi dei messaggi secondo il giorno e la rete. Dal Kenngruppenbuch l’operatore sceglieva due gruppi di tre lettere, che entravano nell’indicatore. La versione del 1941 era un volume di 120 pagine.
+  definizione: Libro della marina tedesca da cui l’operatore sceglieva due gruppi di tre lettere per costruire l’indicatore del messaggio; l’indicatore si trasformava poi con tabelle di bigrammi che cambiavano ogni giorno. La versione del 1941 era un volume di 120 pagine.
   vedi: storia/fogli-chiave-e-procedure/
-  fonti: [crypto-museum-m4]
+  fonti: [crypto-museum-m4, sebag-montefiore-enigma]
 - id: nottolino
   termine: nottolino
   inglese: pawl
@@ -149,6 +150,7 @@
   inglese: permutation
   definizione: Corrispondenza biunivoca di un insieme in sé stesso; per Enigma, un modo di sostituire ciascuna delle 26 lettere con una lettera diversa per ognuna. Rejewski descrisse la macchina come composizione di permutazioni.
   vedi: come-funziona/la-matematica-di-enigma/
+  fonti: [kozaczuk-enigma]
 - id: posizione-iniziale
   termine: posizione iniziale
   tedesco: Grundstellung
