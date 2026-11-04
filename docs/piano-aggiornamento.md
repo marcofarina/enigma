@@ -619,6 +619,10 @@ La riga «Esito» di G0 dice quale direzione ha scelto Marco e in che data.
   fase V). G1 può partire: nessuno dei tre cambia token o stili globali.
 - Comandi eseguiti: `ls docs/screenshot/prima/*.png | wc -l` → `12`;
   `grep -cE '^## ' docs/design.md` → `10`; `grep -c 'claude.ai/' docs/design.md` → `1`.
+- `pnpm verify && pnpm test:e2e` verdi il 2026-11-04. Fatto verificato quel giorno: con il server
+  «astro-dev» acceso sulla porta 4321, Playwright lo riusa (`reuseExistingServer`) al posto della
+  build e 16 test falliscono per gli `h1` della barra di Astro. Prima di `pnpm test:e2e` ferma il
+  server di sviluppo.
 
 ---
 
