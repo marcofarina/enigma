@@ -153,7 +153,7 @@ norme non sono raggiungibili, quindi niente prosa).
 | 4d | Crittoanalisi polacca | Opus | high | 3 h | 4c | fatta (2026-11-04) |
 | 4e | Bletchley Park e la M4 | Opus | high | 3 h | 4c, V (Welchman, Sebag-Montefiore, Hinsley) | fatta (2026-11-04) |
 | 4f | Missioni storiche | Opus | high | 2 h | 4e, V (fonti delle chiavi) | fatta (2026-11-04) |
-| 4g | Guida per i docenti | Opus | high | 2 h | G4 | da fare |
+| 4g | Guida per i docenti | Opus | high | 2 h | G4 | fatta (2026-11-04) |
 | 4h | Accessibilità e prestazioni | Sonnet | high | 1,5 h | 4a–4g | da fare |
 | 5a | Vista 3D: architettura e caricamento | Opus | high | 3 h | 4h, D14 | da fare |
 | 5b | Vista 3D: pacco rotori e doppio passo | Sonnet | high | 2,5 h | 5a | da fare |
@@ -666,6 +666,45 @@ grep -c 'ComingSoon' src/pages/docenti/index.astro
 ```bash
 pnpm verify && pnpm test:e2e
 ```
+
+**Esito (2026-11-04)**
+
+- `src/pages/docenti/index.astro` mostra `src/content/docenti/guida.mdx` (avviso di bozza in
+  testa), al posto di `ComingSoon`, che non serviva più ed è stato tolto con la stringa
+  `status.comingSoon`. Il testo sta in `src/content/`, quindi passa da `lint:content`; i link sono
+  relativi a `/docenti/` e rispettano `base`.
+- Registro di `scrittura-istituzionale.md`: il paragrafo d’apertura ha il sito come soggetto, le
+  procedure usano l’infinito («Aprire», «Premere») per non dare del tu ai colleghi. È
+  un’interpretazione della norma, che non parla delle procedure: da confermare con Marco.
+- Sezioni: simulatore alla LIM (con «Digita», «Opzioni», le velocità dello schema e la versione
+  ridotta sotto 1024 × 576), link e QR, messaggi storici (fase 4f fatta, quindi la guida li
+  cita), esercizi e varianti, schede stampabili, collegamenti con il curricolo.
+- Ogni procedura provata nel browser con «astro-dev» a 1280×720: modalità LIM; «Condividi» con e
+  senza «Includi le lettere digitate» e il QR; il link della chiave d’esempio decifra
+  QEZKD XNWJF UKNMF S in ATTACCATEALLALBA anche a 375 px nella versione ridotta; Barbarossa e
+  «Contesto»; variante 4827 di «Decifra un messaggio» riaperta dal link e dal campo «Numero della
+  variante»; serie `schede/?seme=100&copie=25`. La stampa è stata provata con un PDF di Chromium
+  (Playwright) di tre schede: tre pagine A4 per scheda con le opzioni di partenza, soluzioni in
+  pagine separate. La scheda n. 100 ha la stessa variante di `esercizi/posizioni/?seme=100`.
+- Non provato: lo schermo intero della modalità LIM, che il pannello del browser della sessione
+  rifiuta («Permissions check failed»); la guida lo descrive dal codice di `Simulator.tsx`.
+- Collegamenti con il curricolo dalle Linee guida della Direttiva 16 gennaio 2012, n. 4,
+  articolazione Informatica, lette nella copia dell’allegato pubblicata dall’ITIS Fauser
+  (`netlab.fauser.edu/risorse/doc/C4_Informatica.pdf`): Informatica (secondo biennio), Sistemi e
+  reti (quinto anno), TPSIT (secondo biennio e quinto anno). Le voci citate sono testuali.
+- «Docenti» è tornata nei tre menu: `SiteHeader.astro`, `bench/Header.tsx` e `bench/Compact.tsx`.
+  Con sette voci a 768 px «Come funziona» andava a capo: le voci hanno `whitespace-nowrap` e sotto
+  `lg` un margine interno più stretto. A 1024×576 la barra del banco ci sta senza scorrere.
+- Test e2e: `docenti/` fra le pagine di axe in `smoke.spec.ts`; un test che apre la guida dal
+  menu e ne segue i link della serie di schede e della variante 4827; un test sulle sette voci a
+  768 px; «Docenti» nel menu della versione ridotta in `simulator.spec.ts`.
+- Comandi eseguiti: il criterio (`0`), `pnpm verify` (214 test, 0 errori, 42 pagine; i 4 avvisi di
+  `lint:content` su `it.json` c’erano già), `pnpm test:e2e` (158 passati, 24 saltati).
+- Per Marco: rileggere la guida, in particolare i collegamenti con il curricolo. La riforma degli
+  istituti tecnici porta Linee guida nuove; per il triennio di quest’anno valgono ancora quelle del
+  2012, ma il riferimento va aggiornato quando le nuove arriveranno alle terze. Notato in passata,
+  fuori fase: nelle soluzioni delle schede il titolo «Dove saranno i rotori?» è seguito dai due
+  punti («rotori?:»).
 
 ---
 

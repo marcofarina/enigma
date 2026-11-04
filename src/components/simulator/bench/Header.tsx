@@ -47,6 +47,7 @@ const NAV = [
   { href: 'crittoanalisi/', key: 'nav.cryptanalysis' },
   { href: 'esercizi/', key: 'nav.exercises' },
   { href: 'glossario/', key: 'nav.glossary' },
+  { href: 'docenti/', key: 'nav.teachers' },
 ] as const;
 
 export default function Header({ lim, onLim }: { lim: boolean; onLim: () => void }) {

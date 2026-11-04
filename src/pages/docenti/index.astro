@@ -1,9 +1,15 @@
 ---
-import ComingSoon from '@/components/content/ComingSoon.astro';
+import DraftNotice from '@/components/content/DraftNotice.astro';
+import Guida from '@/content/docenti/guida.mdx';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { t } from '@/i18n';
 ---
 
-<BaseLayout title={t('teachers.title')}>
-  <ComingSoon title={t('teachers.title')} intro={t('teachers.intro')} />
+{/* Il testo sta in src/content/docenti/guida.mdx, così lo controlla `pnpm lint:content`. */}
+<BaseLayout title={t('teachers.title')} description={t('teachers.intro')}>
+  <article class="prose-it">
+    <DraftNotice />
+    <h1>{t('teachers.title')}</h1>
+    <Guida />
+  </article>
 </BaseLayout>
