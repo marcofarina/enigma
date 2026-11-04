@@ -32,6 +32,7 @@ Esempio: l’Enigma T, costruita per le marine di Germania e Giappone a partire 
 import Citazione from '@/components/lesson/Citazione.astro';
 import ConfrontoModelli from '@/components/lesson/ConfrontoModelli.astro';
 import Esito from '@/components/lesson/Esito.astro';
+import Nota from '@/components/lesson/Nota.astro';
 import Obiettivi from '@/components/lesson/Obiettivi.astro';
 import Prerequisiti from '@/components/lesson/Prerequisiti.astro';
 import Previsione from '@/components/lesson/Previsione.astro';
@@ -95,6 +96,10 @@ Le righe della tabella sono divise in tre gruppi, e per separarli bastano due co
 Le macchine **militari** sono l’Enigma I, la M3, la M4 e la norvegese. Sono le sole con il pannello a spine, che secondo Crypto Museum era esclusivo delle forze armate tedesche. Hanno il riflettore fisso e la ruota d’ingresso in ordine alfabetico. La M3 della marina aggiunge ai cinque rotori dell’esercito altri tre rotori, il VI, il VII e l’VIII, con due tacche ciascuno; la M4 aggiunge un rotore sottile che non avanza, accanto a un riflettore sottile. La norvegese è un’Enigma I catturata e usata dopo la guerra.
 
 Le macchine **commerciali** sono la D e le macchine derivate dalla K, che le succedette nel 1927. Hanno il riflettore impostabile e la ruota d’ingresso nell’ordine della tastiera, tranne la T. Alcune hanno più tacche per rotore: cinque la T, nove la KD. Con più tacche un rotore spinge più spesso quello alla sua sinistra, e il movimento dei rotori si allontana da quello regolare di un contachilometri.
+
+<Nota titolo="La tacca dell’Enigma D nel simulatore">
+Il simulatore dà alla D le tacche della K: il rotore I fa avanzare quello alla sua sinistra quando in finestra compare la Y, il II quando compare la E, il III quando compare la N, e la tacca segue l’anello delle lettere. La D vera aveva una tacca sola per rotore, in G, fissata al corpo del rotore. Con l’anello su A il rotore successivo avanzava quando in finestra compariva la Z. Poiché la tacca non si spostava con l’anello, secondo Crypto Museum l’impostazione dell’anello non influiva sulla cifratura. I cablaggi dei rotori sono quelli veri e coincidono con quelli della K. A differire è il momento in cui scatta il rotore vicino.
+</Nota>
 
 Le macchine **con contatore** sono la A28 del 1928, che nel menu porta il numero di serie A865 di un esemplare venduto alla marina olandese, e le Enigma G che ne derivano. Muovono i rotori con un meccanismo a ingranaggi invece che con i nottolini, e i loro rotori hanno 17, 15 e 11 tacche; nella G111 il rotore V ne ha sette. Il riflettore si imposta a mano e avanza durante la cifratura: secondo Crypto Museum sono le sole Enigma note con il riflettore mosso dai rotori.
 
