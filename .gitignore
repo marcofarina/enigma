@@ -10,3 +10,6 @@ playwright-report/
 .env.*
 .claude/norms
 .claude/launch.json
+
+# Libri coperti da copyright, solo in locale
+docs/books/
