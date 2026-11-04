@@ -1,9 +1,13 @@
 ---
-import ComingSoon from '@/components/content/ComingSoon.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import ListaLezioni from '@/components/content/ListaLezioni.astro';
 import { t } from '@/i18n';
 ---
 
-<BaseLayout title={t('cryptanalysis.title')}>
-  <ComingSoon title={t('cryptanalysis.title')} intro={t('cryptanalysis.intro')} />
+<BaseLayout title={t('cryptanalysis.title')} description={t('cryptanalysis.intro')}>
+  <section class="prose-it">
+    <h1>{t('cryptanalysis.title')}</h1>
+    <p>{t('cryptanalysis.intro')}</p>
+  </section>
+  <ListaLezioni sezione="crittoanalisi" />
 </BaseLayout>

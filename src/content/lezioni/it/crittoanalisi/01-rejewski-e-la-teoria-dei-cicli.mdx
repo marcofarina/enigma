@@ -1,0 +1,112 @@
+---
+title: Rejewski e la teoria dei cicli
+description: Dagli indicatori doppi di una giornata alle permutazioni AD, BE e CF, il teorema dei cicli a coppie e la ricostruzione dei rotori militari fra il 1932 e il 1933.
+sezione: crittoanalisi
+ordine: 1
+stato: bozza
+fonti:
+  - rejewski-1980
+  - kozaczuk-enigma
+---
+
+{/*
+Tesi didattica.
+Chi sa che Enigma non si legge senza la chiave pensa che per attaccarla servisse un messaggio in chiaro, o la macchina rubata.
+La lezione mostra che i soli indicatori doppi di una giornata, senza conoscere nessun testo, danno tre permutazioni complete, AD, BE e CF, e che i loro cicli hanno una forma obbligata: a coppie di uguale lunghezza. Mostra anche il limite: per arrivare al cablaggio dei rotori a Rejewski servirono le chiavi procurate dal servizio informazioni francese.
+Alla fine lo studente sa ricavare un frammento di AD, BE e CF da alcuni indicatori, sa enunciare e spiegare il teorema dei cicli a coppie e sa dire quale dato mancava a Rejewski e come lo ebbe.
+Esempio: gli indicatori DMQ VBN, VON PUY, PUC FMQ di Rejewski 1980 (p. 6) e la giornata d’esempio della figura CicliIndicatori.
+*/}
+
+import Approfondimento from '@/components/lesson/Approfondimento.astro';
+import Citazione from '@/components/lesson/Citazione.astro';
+import CicliIndicatori from '@/components/lesson/CicliIndicatori.tsx';
+import Esito from '@/components/lesson/Esito.astro';
+import Figura from '@/components/lesson/Figura.astro';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Previsione from '@/components/lesson/Previsione.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
+import Risposta from '@/components/lesson/Risposta.astro';
+
+Dal 15 luglio 1928 le stazioni d’ascolto polacche intercettavano i primi messaggi cifrati con l’Enigma dell’esercito tedesco. Il Biuro Szyfrów, il servizio cifra dello stato maggiore polacco, provò a leggerli e dopo qualche tempo rinunciò. Il 1° settembre 1932 assunse a Varsavia tre laureati in matematica che avevano seguito un suo corso di crittologia a Poznań: Marian Rejewski, Jerzy Różycki e Henryk Zygalski. Dall’autunno Rejewski lavorò su Enigma partendo da un punto debole della procedura descritta nella lezione [Fogli chiave e procedure](../../storia/fogli-chiave-e-procedure/): la chiave del messaggio cifrata due volte.
+
+<Figura id="marian-rejewski-1932" />
+
+<Obiettivi>
+- Ricavare un frammento delle permutazioni AD, BE e CF da alcuni indicatori doppi della stessa giornata.
+- Enunciare il teorema dei cicli a coppie e spiegare perché vale per AD, BE e CF.
+- Dire quale dato mancava a Rejewski per passare da AD, BE e CF al cablaggio dei rotori, e come lo ottenne.
+</Obiettivi>
+
+## Sei lettere in testa al messaggio
+
+Fino al 15 settembre 1938 l’operatore portava i rotori sulla posizione di base del giorno, la stessa per tutta la rete, e vi cifrava due volte la chiave del messaggio. Un messaggio cominciava quindi con sei lettere: la prima e la quarta erano la cifratura della stessa lettera della chiave, la seconda e la quinta pure, e così la terza e la sesta.
+
+Chiamiamo A la sostituzione che la macchina opera sulla prima lettera, B quella sulla seconda, fino a F sulla sesta. Rejewski non conosceva nessuna delle sei, perché dipendevano dai rotori, dal pannello e dalla posizione di base. Conosceva però le sei lettere di ogni indicatore, e da quelle ricavava altro. Supponiamo che l’operatore abbia battuto una lettera *x* della chiave e che in prima posizione si sia accesa la K: la permutazione A manda la *x* nella K e, poiché la macchina è reciproca, anche la K nella *x*. In quarta posizione la stessa *x* ha acceso la V: la permutazione D manda la *x* nella V. Una dopo l’altra, A porta la K nella *x* e D porta la *x* nella V. La lettera *x* resta sconosciuta, ma il passaggio dalla K alla V è noto. Rejewski scrive questo prodotto AD, da sinistra a destra: prima A, poi D. È l’ordine opposto a quello della lezione [La matematica di Enigma](../../come-funziona/la-matematica-di-enigma/), dove la formula della macchina si legge da destra.
+
+Rejewski dà un esempio con tre indicatori della stessa giornata:
+
+```
+DMQ VBN     VON PUY     PUC FMQ
+```
+
+Dalla prima e dalla quarta lettera: la D porta alla V, la V alla P, la P alla F. È il frammento DVPF della permutazione AD. Dalla seconda e dalla quinta viene OUMB, un frammento di BE; dalla terza e dalla sesta CQNY, un frammento di CF. Con circa 80 messaggi di un giorno, scrive Rejewski, di solito tutte le lettere compaiono in tutte e sei le posizioni, e le tre permutazioni si completano. L’insieme di AD, BE e CF di un giorno si chiama **caratteristica** della giornata.
+
+<Previsione>
+Quando AD è completa, la si scompone in cicli, come nella lezione sulla matematica di Enigma. Come sono le lunghezze dei cicli?
+
+<Risposta testo="lunghezze qualsiasi">
+A e D cambiano con i rotori e con il pannello, e il loro prodotto sembra un rimescolamento a caso. Ma A e D sono fatte ciascuna di 13 scambi, e questo vincola il prodotto.
+</Risposta>
+<Risposta testo="due cicli di 13 lettere">
+Il numero 13 viene dalle 13 coppie del riflettore, e nella giornata della figura AD ha proprio due cicli di 13 lettere. Ma già nella stessa giornata CF ha cicli di altre lunghezze, e altre giornate ne danno altre ancora.
+</Risposta>
+<Risposta testo="ogni lunghezza compare un numero pari di volte" corretta />
+
+<Esito>
+Verificalo qui sotto: aggiungi gli indicatori uno alla volta, o completa la caratteristica, e confronta le lunghezze dei cicli di AD, BE e CF.
+</Esito>
+</Previsione>
+
+<CicliIndicatori client:visible />
+
+Nella giornata della figura servono 110 indicatori per completare tutte e tre le permutazioni. AD e BE hanno due cicli di 13 lettere ciascuna; CF ha due cicli di otto, due di quattro e due di una lettera. Rejewski dà come esempio la caratteristica di un’altra giornata:
+
+```
+AD = (DVPFKXGZYO) (EIJMUNQLHT) (BC) (RW) (A) (S)
+BE = (BLFQVEOUM) (HJPSWIZRN) (AXT) (CGY) (D) (K)
+CF = (ABVIKTJGFCQNY) (DUZREHLXWPSMO)
+```
+
+AD ha due cicli di dieci lettere, due di due e due di una; BE due di nove, due di tre e due di una; CF due di 13. Nel primo ciclo di AD si riconosce il frammento DVPF ricavato dai tre indicatori. In tutti i casi i cicli vanno a coppie della stessa lunghezza.
+
+## Il teorema dei cicli a coppie
+
+Ognuna delle sei permutazioni da A a F è una cifratura della macchina in una posizione fissa: come ha mostrato la lezione sulla matematica di Enigma, è fatta di 13 scambi di due lettere e non ha punti fissi. Rejewski enuncia così la proprietà che ne segue:
+
+<Citazione fonte="rejewski-1980" pagina="9" tradotta>
+Se due permutazioni dello stesso grado sono fatte solo di scambi disgiunti, il loro prodotto contiene un numero pari di cicli disgiunti della stessa lunghezza.
+</Citazione>
+
+La dimostrazione segue le lettere. Prendiamo due permutazioni X e Y fatte di scambi: X scambia la K con la L e la M con la N, Y scambia la L con la M e la N con la K. Partendo dalla K, X la porta nella L e Y porta la L nella M: il prodotto XY manda la K nella M. Dalla M, X porta nella N e Y porta la N nella K: il ciclo si chiude, ed è (KM). Partendo dalla L, X porta nella K e Y nella N; dalla N, X porta nella M e Y nella L: il ciclo è (LN). Le due lettere di ogni scambio di X, la K e la L, la M e la N, finiscono in due cicli diversi della stessa lunghezza. Con più lettere il ragionamento è lo stesso. Le lettere K, L, M, N formano una catena in cui si alternano uno scambio di X e uno di Y; ogni catena così prima o poi si richiude, e produce due cicli lunghi uguali, uno con le lettere di posto dispari della catena e uno con quelle di posto pari.
+
+<Approfondimento titolo="Dal teorema alle permutazioni A e D">
+Il teorema vale anche al contrario: una permutazione in cui ogni lunghezza compare un numero pari di volte si può sempre scrivere come prodotto di due permutazioni fatte di scambi. Dalla sola AD, quindi, non si ricavano A e D, ma un elenco di candidati. Rejewski scrive che per ciascuna di A, B e C le soluzioni possibili erano da una decina a qualche decina, mentre D, E e F seguivano da A, B e C; per l’intera caratteristica le combinazioni erano migliaia o decine di migliaia.
+
+Per scegliere servivano le abitudini degli operatori. Se si sapeva che gli operatori sceglievano volentieri chiavi di tre lettere uguali, come JJJ, e si supponeva che l’indicatore XQR GVE nascondesse JJJ, dalla caratteristica dell’esempio si ricavava che NFA QQB nascondeva PPP ed EUG IMF nascondeva ZZZ. Conoscendo bene queste abitudini, il teorema lasciava una sola soluzione. A chi gli chiede come il crittologo potesse conoscere quelle abitudini prima di aver rotto la cifra, Rejewski risponde che di solito non le conosceva, e compensava con «lunghe prove, immaginazione e a volte un pizzico di fortuna».
+</Approfondimento>
+
+## Dalla caratteristica ai rotori
+
+Con il teorema e le abitudini degli operatori Rejewski arrivò alle sei permutazioni A, …, F. Scrisse ciascuna come il percorso della corrente: il pannello a spine, i tre rotori, il riflettore e ritorno, con il rotore di destra spostato di un passo in più a ogni lettera. Ne veniva un sistema di sei equazioni in cui le incognite erano il pannello, il cablaggio dei tre rotori e quello del riflettore. Raccolse i due rotori di sinistra e il riflettore in un riflettore equivalente, perché nel breve tratto di sei lettere quei rotori di solito non si muovono: restavano tre incognite, il pannello, il rotore di destra e il riflettore equivalente. Rejewski scrive di non sapere se un sistema così si possa risolvere senza altri dati.
+
+L’altro dato arrivò nel dicembre 1932 dal servizio informazioni francese. Il capitano Gustave Bertrand, che nel servizio informazioni francese dirigeva la sezione delle cifre, portò a Varsavia documenti venduti ai francesi da un impiegato dell’ufficio cifra della Reichswehr, che aveva il nome di copertura Asché e che lo storico David Kahn ha identificato con Hans-Thilo Schmidt. Fra quei documenti c’erano le chiavi del giorno dell’esercito per settembre e ottobre 1932, con i collegamenti del pannello. Con il pannello noto, le incognite scendevano a due, il rotore di destra e il riflettore equivalente, e il sistema si poteva risolvere.
+
+I primi calcoli però non tornavano. Dopo molti tentativi su giornate diverse Rejewski pensò che l’errore stesse nell’ipotesi sulla ruota d’ingresso, il disco fisso che collega la tastiera ai rotori: aveva supposto i tasti collegati ai contatti della ruota nell’ordine in cui stanno sulla tastiera. Provò l’ipotesi più semplice, l’ordine alfabetico, e al primo tentativo dai suoi calcoli uscì il cablaggio del rotore di destra. Siccome in quegli anni l’ordine dei rotori cambiava ogni tre mesi, a settembre e a ottobre a destra c’erano due rotori diversi: lo stesso metodo diede il secondo rotore, e da lì il terzo e il riflettore. Rejewski stesso giudicò decisivo il materiale francese: senza, la ricostruzione avrebbe richiesto il caso fortunato di due giornate con i rotori nella stessa posizione, e poi molte prove.
+
+All’inizio del 1933 la macchina militare era ricostruita, e la fabbrica AVA di Varsavia ne costruì delle copie per il Biuro Szyfrów. Restava da trovare, giorno per giorno, la chiave: la lezione [Il ciclometro e il catalogo](../il-ciclometro-e-il-catalogo/) racconta come.
+
+<Riepilogo>
+- Dalla prima e dalla quarta lettera di ogni indicatore si legge un passaggio della permutazione AD, dalla seconda e dalla quinta uno di BE, dalla terza e dalla sesta uno di CF: DMQ VBN, VON PUY e PUC FMQ danno i frammenti DVPF, OUMB e CQNY. Con circa 80 messaggi di un giorno le tre permutazioni si completano.
+- Il prodotto di due permutazioni fatte di scambi ha i cicli a coppie della stessa lunghezza, e A, …, F sono fatte di 13 scambi; per questo i cicli di AD, BE e CF vanno a coppie, come nella giornata della figura e in quelle di Rejewski.
+- Dalla caratteristica e dalla forma della macchina Rejewski ricavò equazioni con troppe incognite: le chiavi di settembre e ottobre 1932, procurate dal servizio informazioni francese, gli diedero il pannello, e con l’ipotesi della ruota d’ingresso in ordine alfabetico ottenne fra il 1932 e il 1933 il cablaggio dei rotori e del riflettore.
+</Riepilogo>

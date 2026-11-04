@@ -1,0 +1,17 @@
+---
+import { getCollection } from 'astro:content';
+import LessonPage from '@/components/content/LessonPage.astro';
+import { isLessonIn, lessonSlug } from '@/lib/lessons';
+
+export async function getStaticPaths() {
+  const lezioni = (await getCollection('lezioni', (lezione) => isLessonIn(lezione, 'crittoanalisi'))).sort(
+    (a, b) => a.data.ordine - b.data.ordine,
+  );
+  return lezioni.map((lezione, i) => ({
+    params: { slug: lessonSlug(lezione) },
+    props: { lezione, previous: lezioni[i - 1], next: lezioni[i + 1] },
+  }));
+}
+---
+
+<LessonPage {...Astro.props} />

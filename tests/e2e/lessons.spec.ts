@@ -25,6 +25,9 @@ const lessons = [
   'storia/l-adozione-militare',
   'storia/fogli-chiave-e-procedure',
   'storia/enigma-e-l-italia',
+  'crittoanalisi/rejewski-e-la-teoria-dei-cicli',
+  'crittoanalisi/il-ciclometro-e-il-catalogo',
+  'crittoanalisi/la-bomba-e-i-fogli-di-zygalski',
 ];
 
 for (const path of lessons) {

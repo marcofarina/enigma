@@ -8,6 +8,7 @@ const pages = [
   'storia/',
   'glossario/',
   'storia/galleria/',
+  'crittoanalisi/',
   'schede/',
   'fonti/',
 ];

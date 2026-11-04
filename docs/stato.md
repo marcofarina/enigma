@@ -51,6 +51,10 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
   - Test e2e: nuovi esercizi, schede (anche in modalità di stampa), lezioni di storia con axe, glossario e un crawler che controlla tutti i link interni (`tests/e2e/links.spec.ts`).
   - Nelle lezioni i link interni sono relativi (`../../schede/`): rispettano `base` e il crawler li verifica.
 
+- Fase 4d, branch `fase/4d`: crittoanalisi polacca. Tre lezioni in bozza nella sezione
+  Crittoanalisi (Rejewski e la teoria dei cicli, il ciclometro e il catalogo, la bomba e i fogli di
+  Zygalski), pagina indice e voce di menu; dettagli in `docs/piano.md`, fase 4d, «Esito».
+
 ## Prossimo passo
 
 - Revisione delle bozze delle lezioni da parte dell’autore.
@@ -94,6 +98,34 @@ Valgono solo nel container delle sessioni cloud, dove le norme non sono raggiung
 - Crypto Museum, pagina “How does an Enigma machine work?”: i totali con la correzione del doppio passo sono sbagliati. Per l’Enigma I scrive 685 518 560 invece di 60 × 676 × 16 926 = 686 518 560; per la M4 toglie 650 posizioni una volta sola invece che per ciascuna delle 26 posizioni del rotore sottile (440 076 posizioni distinte, verificato con il motore). Con i rotori navali a due tacche nel mezzo la riduzione è diversa. La lezione 10 usa i valori ricalcolati.
 - Lezione 10: Bauer (pp. 119, 122) conta tre anelli, 26³, mentre la lezione ne conta due, 26², come Craig Bauer (p. 226). La lezione può nominare anche questa ipotesi fra le cifre diverse.
 - Esercizio sulla procedura dell’indicatore: descrive l’indicatore cifrato due volte con la Grundstellung del giorno, senza date. Le date per esercito e aviazione sono ora verificate (sotto, «Verificato»); per la marina Sebag-Montefiore dà la fine della doppia cifratura al 1° maggio 1937 e un indicatore costruito con il *Kenngruppenbuch*. Prima di aggiungere date all’esercizio, decidere quale rete descrive.
+
+- Riunione di Pyry: Rejewski 1980 (p. 18) la dà al 25 luglio 1939, Rejewski in Kozaczuk (app. D, p. 269) al 25 e 26, Kozaczuk (pp. 59–60) al 24 e 25 con l’arrivo degli ospiti il 24. La lezione 3 di crittoanalisi tiene il 25 e dice la differenza.
+- Cambio del riflettore A con il B: 1° novembre 1937 in Rejewski 1980 (p. 18), 2 novembre in Kozaczuk (app. D, p. 264). La lezione 2 di crittoanalisi scrive «all’inizio di novembre del 1937».
+- Rejewski 1980 (p. 18) scrive che i cavi del pannello passarono «da 6 a 13»; Kozaczuk (app. D, p. 268) dà da sette a dieci dal 1° gennaio 1939, come le altre fonti. Le lezioni usano il secondo dato.
+- Nome della bomba: Kozaczuk (p. 53) lo attribuisce a Różycki, Rejewski (app. D, p. 267) scrive che «noi» lo scegliemmo «in mancanza di un’idea migliore». La lezione 3 cita solo Rejewski.
+- Materiale di Asché: Rejewski (app. D, p. 258) parla delle chiavi di settembre e ottobre 1932; l’elenco di Kozaczuk (p. 18) nomina tabelle mensili dell’esercito di altri periodi (la scansione è poco leggibile). La lezione 1 tiene il dato di Rejewski.
+- Hinsley, *British Intelligence in the Second World War*: non consultato. La lezione 3 ne riporta la tesi solo attraverso la risposta di Rejewski in Kozaczuk (p. 64, n. 8).
+
+## Verificato (fase 4d, 2026-11-04)
+
+Fonti: Rejewski 1980 (traduzione CryptoCellar, pagine della trascrizione) e Kozaczuk, con le appendici di Rejewski (pagine stampate). Lezioni della sezione Crittoanalisi.
+
+| Fatto | Fonte | Lezione |
+|---|---|---|
+| Primi messaggi militari cifrati con Enigma intercettati dal 15 luglio 1928; corso di Poznań fra il 1928 e il 1929; Rejewski, Różycki e Zygalski assunti a Varsavia il 1° settembre 1932 | Kozaczuk, app. D, pp. 246–247 | 1 |
+| Indicatori doppi, AD, BE e CF, circa 80 messaggi, frammenti DVPF, OUMB, CQNY, caratteristica (1) | Rejewski 1980, pp. 5–6 | 1 |
+| Teorema dei cicli a coppie, candidati per A, B, C, esempio «jjj», «long tests, imagination…» | Rejewski 1980, pp. 9–11 | 1 |
+| Equazioni con S, N, Q; chiavi francesi del dicembre 1932 con il pannello; Bertrand a Varsavia dal 7 all’11 dicembre 1932; Asché identificato da Kahn con Hans-Thilo Schmidt | Rejewski 1980, pp. 7–11; Kozaczuk, pp. 17–18, p. 22 n. 2; app. D, pp. 258–259 | 1 |
+| Ruota d’ingresso in ordine alfabetico, indovinata; chiavi di settembre e ottobre 1932, ordine dei rotori trimestrale; materiale francese «decisivo»; copie dell’AVA | Kozaczuk, app. D, pp. 257–259, p. 261 | 1 |
+| Griglia, ANX, orologio di Różycki; ordine dei rotori mensile dal 1° febbraio 1936 e giornaliero dal 1° ottobre 1936; da cinque a otto cavi dal 1° ottobre 1936 | Kozaczuk, app. D, pp. 259–263; p. 63 n. 3 | 2 |
+| Ciclometro dell’AVA, due serie con il rotore destro sfalsato di tre, lampadine in numero doppio della lunghezza del ciclo; 105 456 posizioni; più di un anno di lavoro; dai dieci ai venti minuti per chiave | Rejewski 1980, pp. 14–15; Kozaczuk, app. D, pp. 263–264 | 2 |
+| Statistica del 75 % dei messaggi letti all’inizio del 1938 | Kozaczuk, app. D, p. 265 | 2 |
+| Procedura del 15 settembre 1938 (SHP; CHV PZT), rete SD alla vecchia procedura fino al 1° luglio 1939 | Kozaczuk, app. D, pp. 265–266, p. 269 | 3 |
+| Femmine (*samiczki*); circa il 40 % delle posizioni con punti fissi; fogli di Zygalski (26 per serie, 51 × 51, circa 60 cm, circa mille fori, quattro volte), due serie al 15 dicembre 1938 | Rejewski 1980, pp. 16–18; Kozaczuk, p. 54; app. D, pp. 267–268 | 3 |
+| Bomba: tre messaggi con la stessa lettera, sei serie di rotori, circa due ore, sei bombe dell’AVA (Palluth) nel novembre 1938, pannello che non tocca la lettera una volta su due | Kozaczuk, pp. 53–54; app. D, pp. 266–267 | 3 |
+| Rotori IV e V dal 15 dicembre 1938, ricostruiti dalla rete SD; 58 serie e 36 rotori per tipo mancanti; un giorno su dieci; 60 bombe per circa 1,5 milioni di złoty contro 100 000 | Kozaczuk, pp. 54–55, p. 63 n. 6 e 7; app. D, pp. 268–269 | 3 |
+| Pyry: sezione nel bosco dal 1937; partecipanti; due copie della macchina a Bertrand, una ai britannici il 16 agosto alla stazione Victoria; domanda di Knox sulla ruota d’ingresso; 60 serie di fogli dai britannici, 83 chiavi su 100 | Kozaczuk, p. 43, pp. 59–60; app. D, p. 257, pp. 269–270 | 3 |
+| Rejewski contro Hinsley sul motivo della condivisione | Kozaczuk, p. 64 n. 8 | 3 |
 
 ## Verificato (fase V, 2026-11-04)
 

@@ -87,6 +87,14 @@ html.bench-root {
 .bench-nav a {
   color: var(--alu);
   text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Con sei voci, fra 1024 e 1200 px la barra non ci sta con lo spazio pieno fra le voci. */
+@media (max-width: 1199.98px) {
+  .bench-nav {
+    gap: 0.75rem;
+  }
 }
 
 .bench-nav a:hover {
