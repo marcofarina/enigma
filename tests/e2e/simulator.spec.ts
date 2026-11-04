@@ -1,19 +1,74 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { defaultConfig, encipherWith, groupLetters } from '../../src/engine/index.ts';
+
+// La home è il simulatore a schermata unica; la versione ridotta per il telefono è della fase G3.
+test.beforeEach(({ isMobile }) => {
+  test.skip(isMobile, 'Il simulatore completo è per lo schermo del computer.');
+});
 
 const typed = (page: Page) => page.locator('[data-tape="input"]');
 const lit = (page: Page) => page.locator('[data-tape="output"]');
 const wheel = (page: Page, slot: string) => page.getByRole('spinbutton', { name: `Posizione del rotore ${slot}` });
 const screenKey = (page: Page, letter: string) =>
-  page.getByRole('region', { name: 'Tastiera' }).getByRole('button', { name: letter, exact: true });
+  page.getByRole('group', { name: 'Tastiera' }).getByRole('button', { name: letter, exact: true });
+const panel = (page: Page, name: string | RegExp) => page.getByRole('dialog', { name });
 
 async function open(page: Page, query = '') {
-  await page.goto(`simulatore/${query}`);
-  await expect(page.getByRole('heading', { name: 'Nastro' })).toBeVisible();
+  await page.goto(query);
+  await expect(page.getByRole('heading', { name: 'Messaggio' })).toBeVisible();
 }
 
-test('la tastiera fisica cifra, ignora i tasti speciali e Backspace annulla', async ({ page, isMobile }) => {
-  test.skip(isMobile, 'Tastiera fisica solo su desktop.');
+async function expectAccessible(page: Page) {
+  for (const scheme of ['light', 'dark'] as const) {
+    await page.emulateMedia({ colorScheme: scheme });
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(results.violations).toEqual([]);
+  }
+}
+
+for (const [width, height] of [
+  [1280, 720],
+  [1440, 900],
+  [1920, 1080],
+] as const) {
+  test(`a ${width}×${height} il simulatore sta tutto nella finestra`, async ({ page }) => {
+    await page.setViewportSize({ width, height });
+    await open(page);
+    await screenKey(page, 'A').click();
+    const size = await page.evaluate(() => ({
+      height: document.documentElement.scrollHeight,
+      width: document.documentElement.scrollWidth,
+    }));
+    expect(size.height).toBeLessThanOrEqual(height);
+    expect(size.width).toBeLessThanOrEqual(width);
+    // Ogni pezzo dell’inventario di docs/design.md si vede senza scorrere.
+    for (const locator of [
+      page.getByRole('combobox', { name: 'Modello' }),
+      page.getByRole('button', { name: /^Spine:/ }),
+      page.getByRole('button', { name: 'Condividi' }),
+      page.getByRole('button', { name: 'Modalità LIM' }),
+      screenKey(page, 'L'),
+      page.locator('[data-lamp="L"]'),
+      wheel(page, 'sinistro'),
+      page.getByRole('button', { name: 'Anello del rotore destro: avanti' }),
+      page.getByRole('combobox', { name: 'Segnale' }),
+      page.getByRole('textbox', { name: 'Testo da cifrare o decifrare' }),
+      page.getByRole('button', { name: 'Digita' }),
+    ])
+      await expect(locator).toBeInViewport({ ratio: 1 });
+  });
+}
+
+test('50 lettere battute in fretta danno il testo cifrato atteso', async ({ page }) => {
+  await open(page);
+  const text = 'ENIGMAXCIFRAXOGNIXLETTERAXCONXUNAXSOSTITUZIONEXNUOVA'.slice(0, 50);
+  await page.keyboard.type(text, { delay: 0 });
+  await expect(lit(page)).toHaveText(groupLetters(encipherWith(defaultConfig('I'), text)));
+  await expect(typed(page)).toHaveText(groupLetters(text));
+});
+
+test('la tastiera fisica cifra, ignora i tasti speciali e Backspace annulla', async ({ page }) => {
   await open(page);
   await page.keyboard.type('Hello');
   await expect(lit(page)).toHaveText('ILBDA');
@@ -34,12 +89,32 @@ test('la tastiera fisica cifra, ignora i tasti speciali e Backspace annulla', as
   await expect(page.locator('[data-lit]')).toHaveText('A');
 });
 
-test('i tasti a schermo funzionano e i campi di testo non digitano sulla macchina', async ({ page }) => {
+test('i tasti a schermo cifrano e i campi dei pannelli non battono sulla macchina', async ({ page }) => {
   await open(page);
   for (const letter of 'HELLO') await screenKey(page, letter).click();
   await expect(lit(page)).toHaveText('ILBDA');
-  await page.getByLabel('Coppie collegate', { exact: true }).fill('ab');
+  await page.getByRole('button', { name: /^Spine:/ }).click();
+  await panel(page, /Pannello a spine/)
+    .getByLabel('Coppie collegate')
+    .fill('ab');
+  await expect(page.getByRole('button', { name: 'Spine: un cavo' })).toBeVisible();
   await expect(typed(page)).toHaveText('Ancora nessuna lettera.');
+});
+
+test('le prese collegano i cavi, Esc chiude il pannello e il fuoco torna al pulsante', async ({ page }) => {
+  await open(page);
+  const button = page.getByRole('button', { name: /^Spine:/ });
+  await button.click();
+  const plugs = panel(page, /Pannello a spine/);
+  await plugs.getByRole('button', { name: 'Q: libera' }).click();
+  await expect(plugs.getByRole('button', { name: 'Q: in attesa, scegli la seconda presa' })).toBeVisible();
+  await plugs.getByRole('button', { name: 'W: libera' }).click();
+  await expect(plugs.getByLabel('Coppie collegate')).toHaveValue('QW');
+  await expect(page.getByRole('definition').filter({ hasText: 'QW' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(plugs).toHaveCount(0);
+  await expect(button).toBeFocused();
+  await expect(button).toHaveAccessibleName('Spine: un cavo');
 });
 
 test('un link condivisibile riapre configurazione e messaggio', async ({ page }) => {
@@ -48,110 +123,118 @@ test('un link condivisibile riapre configurazione e messaggio', async ({ page })
     'EDPUDNRGYSZRCXNUYTPOMRMBOFKTBZREZKMLXLVEFGUEYSIOZVEQMIKUBPMMYLKLTTDEISMDICAGYKUACTCDOMOHWXMUUIAUBSTSLRNBZSZWNRFXWFYSSXJZVIJHIDISHPRKLKAYUPADTXQSPINQMATLPIFSVKDASCTACDPBOPVHJK';
   await open(page, `?v=1&m=I&w=II-IV-V&r=BUL&p=BLA&u=B&s=AV.BS.CG.DL.FU.HZ.IN.KM.OW.RX&t=${message}`);
   await expect(lit(page)).toContainText('AUFKL XABTE ILUNG');
-  await expect(page.getByLabel('Coppie collegate', { exact: true })).toHaveValue('AV BS CG DL FU HZ IN KM OW RX');
+  await expect(page.getByRole('definition').filter({ hasText: 'AV BS CG DL FU HZ IN KM OW RX' })).toBeVisible();
 
-  await page.getByLabel('Rotore destro', { exact: true }).selectOption('III');
+  await page.getByRole('combobox', { name: 'Rotore destro' }).selectOption('III');
   await expect(page).toHaveURL(/w=II-IV-III/);
   await page.reload();
-  await expect(page.getByLabel('Rotore destro', { exact: true })).toHaveValue('III');
+  await expect(page.getByRole('combobox', { name: 'Rotore destro' })).toHaveValue('III');
   await expect(typed(page)).toHaveText('Ancora nessuna lettera.');
+});
+
+test('un vecchio link /simulatore/?… apre la stessa configurazione nella home', async ({ page }) => {
+  await page.goto('simulatore/?v=1&m=I&w=II-IV-V&r=BUL&p=BLA&u=B&s=AV.BS.CG.DL.FU.HZ.IN.KM.OW.RX&t=EDPUD');
+  await expect(page).toHaveURL(/\/enigma\/\?v=1&m=I&w=II-IV-V/);
+  await expect(page.getByRole('heading', { name: 'Messaggio' })).toBeVisible();
+  await expect(lit(page)).toHaveText('AUFKL');
+  await expect(page.getByRole('combobox', { name: 'Rotore sinistro' })).toHaveValue('II');
+});
+
+test('il link condiviso porta alla home e si mostra anche come codice QR', async ({ page }) => {
+  await open(page);
+  await page.getByRole('button', { name: 'Condividi' }).click();
+  const share = panel(page, 'Link condivisibile');
+  await expect(share.getByLabel('Link alla configurazione')).toHaveValue(/\/enigma\/\?v=1&m=I/);
+  await share.getByRole('button', { name: 'Mostra il codice QR' }).click();
+  await expect(share.getByRole('img', { name: 'Codice QR del link condivisibile' })).toBeVisible();
+  await expect(share.getByRole('button', { name: 'Nascondi il codice QR' })).toHaveAttribute('aria-expanded', 'true');
 });
 
 test('un link non valido carica la configurazione di base e lo dice', async ({ page }) => {
   await open(page, '?v=1&m=I&w=I-I-II&r=AAA&p=AAA&u=B');
   await expect(page.getByText('Il link aperto non è valido')).toBeVisible();
-  await expect(page.getByLabel('Rotore sinistro', { exact: true })).toHaveValue('I');
+  await expect(page.getByRole('combobox', { name: 'Rotore sinistro' })).toHaveValue('I');
 });
 
 test('la tastiera resta bloccata finché l’Uhr non ha 10 cavi', async ({ page }) => {
   await open(page);
-  await page.getByLabel('Collega l’Uhr al posto dei cavi').check();
+  await page.getByRole('button', { name: /^Spine:/ }).click();
+  const plugs = panel(page, /Pannello a spine/);
+  await plugs.getByLabel('Collega l’Uhr al posto dei cavi').check();
   await expect(page.getByText('L’Uhr richiede esattamente 10 cavi sul pannello')).toBeVisible();
   await expect(screenKey(page, 'Q')).toBeDisabled();
-  await page.getByLabel('Coppie collegate', { exact: true }).fill('AB CD EF GH IJ KL MN OP QR ST');
+  await plugs.getByLabel('Coppie collegate').fill('AB CD EF GH IJ KL MN OP QR ST');
   await expect(screenKey(page, 'Q')).toBeEnabled();
 });
 
-test('sulla M4 l’UKW-D toglie il rotore sottile', async ({ page }) => {
+test('sulla M4 l’UKW-D toglie il rotore sottile e si ricabla dal suo pannello', async ({ page }) => {
   await open(page);
-  await page.getByLabel('Modello', { exact: true }).selectOption('M4');
-  await expect(page.getByLabel('Rotore sottile', { exact: true })).toHaveValue('Beta');
-  await page.getByLabel('Riflettore (UKW)', { exact: true }).selectOption('D');
-  await expect(page.getByLabel('Rotore sottile', { exact: true })).toHaveCount(0);
-  await expect(page.getByLabel('Coppie del riflettore')).toHaveValue(/^(\w\w ){11}\w\w$/);
+  await page.getByRole('combobox', { name: 'Modello' }).selectOption('M4');
+  await expect(page.getByRole('combobox', { name: 'Rotore sottile' })).toHaveValue('Beta');
+  await page.getByRole('combobox', { name: 'Riflettore (UKW)' }).selectOption('D');
+  await expect(page.getByRole('combobox', { name: 'Rotore sottile' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Cablaggio' }).click();
+  await expect(panel(page, /Cablaggio dell’UKW-D/).getByLabel('Coppie del riflettore')).toHaveValue(
+    /^(\w\w ){11}\w\w$/,
+  );
 });
 
 test('il simulatore in uso è accessibile, anche in tema scuro', async ({ page }) => {
   await open(page);
   await screenKey(page, 'A').click();
-  await page.getByLabel('Mostra tutti i collegamenti').check();
-  for (const scheme of ['light', 'dark'] as const) {
-    await page.emulateMedia({ colorScheme: scheme });
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
-    expect(results.violations).toEqual([]);
-  }
+  await expectAccessible(page);
+  await page.getByRole('button', { name: /^Spine:/ }).click();
+  await expectAccessible(page);
 });
 
-test('la traccia passo-passo segue il segnale dell’ultimo tasto', async ({ page }) => {
+test('il passo passo segue il segnale dell’ultimo tasto', async ({ page }) => {
   await open(page);
-  const trace = page.getByRole('region', { name: 'Traccia passo-passo' });
-  await expect(trace).toContainText('Premi un tasto per seguirne il percorso');
+  await page.getByRole('combobox', { name: 'Segnale' }).selectOption('step');
   await screenKey(page, 'A').click();
-  await expect(trace).toContainText('Passo 13 di 13');
-  await expect(trace).toContainText('Si accende la lampada B');
-
-  await trace.getByRole('button', { name: 'Primo passo' }).click();
-  await expect(trace).toContainText('Passo 1 di 13');
-  await expect(trace).toContainText('AAA → AAB. Si muove il rotore destro.');
+  const well = page.getByRole('region', { name: 'Dentro la macchina' });
+  await expect(well).toContainText('Passo 1 di 13');
+  await expect(well).toContainText('AAA → AAB. Si muove il rotore destro.');
   await expect(page.locator('[data-lit]')).toHaveCount(0);
 
-  for (let i = 0; i < 3; i++) await trace.getByRole('button', { name: 'Passo successivo' }).click();
-  await expect(trace).toContainText('Rotore III (destro), andata, con B nella finestrella');
-  await expect(
-    trace.getByRole('region', { name: 'Sostituzione operata dal componente in questo momento' }),
-  ).toBeVisible();
-  for (const scheme of ['light', 'dark'] as const) {
-    await page.emulateMedia({ colorScheme: scheme });
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
-    expect(results.violations).toEqual([]);
-  }
+  for (let i = 0; i < 3; i++) await well.getByRole('button', { name: 'Passo successivo' }).click();
+  await expect(well).toContainText('Rotore III (destro), andata, con B nella finestrella');
+  await expectAccessible(page);
 
-  await trace.getByRole('button', { name: 'Avvia' }).click();
-  await expect(trace).toContainText('Passo 5 di 13');
-  await trace.getByRole('button', { name: 'Ferma' }).click();
-  await trace.getByRole('button', { name: 'Ultimo passo' }).click();
+  for (let i = 0; i < 9; i++) await well.getByRole('button', { name: 'Passo successivo' }).click();
+  await expect(well).toContainText('Passo 13 di 13');
   await expect(page.locator('[data-lit]')).toHaveText('B');
 
-  // Un tasto nuovo riporta la traccia al percorso completo.
-  await trace.getByRole('button', { name: 'Primo passo' }).click();
+  // Un tasto nuovo riparte dal primo passo; «Normale» torna al percorso completo.
   await screenKey(page, 'A').click();
-  await expect(trace).toContainText('Passo 13 di 13');
+  await expect(well).toContainText('Passo 1 di 13');
+  await page.getByRole('combobox', { name: 'Segnale' }).selectOption('normal');
+  await expect(page.locator('[data-lit]')).toHaveText('D');
 });
 
-test('la modalità LIM mostra solo la macchina ed è accessibile', async ({ page }) => {
+test('«Digita» batte il testo una lettera alla volta e un tasto lo ferma', async ({ page }) => {
   await open(page);
-  const config = page.getByRole('heading', { name: 'Configurazione', exact: true });
-  await expect(config).toBeVisible();
-  await page.getByRole('button', { name: 'Modalità LIM' }).click();
+  await page.getByRole('textbox', { name: 'Testo da cifrare o decifrare' }).fill('Hello');
+  await page.getByRole('button', { name: 'Digita' }).click();
+  await expect(lit(page)).toHaveText('ILBDA');
+
+  await page.getByRole('button', { name: 'Ricomincia' }).click();
+  await page.getByRole('textbox', { name: 'Testo da cifrare o decifrare' }).fill('A'.repeat(200));
+  await page.getByRole('button', { name: 'Digita' }).click();
+  await expect(page.getByRole('button', { name: 'Ferma' })).toBeVisible();
+  await page.getByRole('button', { name: 'Ricomincia' }).click();
+  await expect(page.getByRole('button', { name: 'Digita' })).toBeVisible();
+  await expect(typed(page)).toHaveText('Ancora nessuna lettera.');
+});
+
+test('la modalità LIM alza il contrasto, tiene la griglia ed è accessibile', async ({ page }) => {
+  await open(page);
+  const lim = page.getByRole('button', { name: 'Modalità LIM' });
+  await lim.click();
   await expect(page.locator('[data-lim]')).toHaveCount(1);
-  await expect(config).toBeHidden();
+  await expect(lim).toHaveAttribute('aria-pressed', 'true');
   await screenKey(page, 'A').click();
   await expect(lit(page)).toHaveText('B');
-  for (const scheme of ['light', 'dark'] as const) {
-    await page.emulateMedia({ colorScheme: scheme });
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
-    expect(results.violations).toEqual([]);
-  }
-  await page.getByRole('button', { name: 'Esci dalla modalità LIM' }).click();
+  await expectAccessible(page);
+  await lim.click();
   await expect(page.locator('[data-lim]')).toHaveCount(0);
-  await expect(config).toBeVisible();
-});
-
-test('il link condivisibile si mostra anche come codice QR', async ({ page }) => {
-  await open(page);
-  const toggle = page.getByRole('button', { name: 'Mostra il codice QR' });
-  await toggle.click();
-  const qr = page.getByRole('img', { name: 'Codice QR del link condivisibile' });
-  await expect(qr).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Nascondi il codice QR' })).toHaveAttribute('aria-expanded', 'true');
 });

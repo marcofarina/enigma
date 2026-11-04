@@ -1,20 +1,32 @@
 ---
-import Simulator from '@/components/simulator/Simulator.tsx';
-import BaseLayout from '@/layouts/BaseLayout.astro';
+import Head from '@/components/layout/Head.astro';
 import { t } from '@/i18n';
+import { url } from '@/lib/url';
+
+/*
+ * Il simulatore ora è la home. Questa pagina resta per i link già distribuiti
+ * (`/simulatore/?v=1&…`): rimanda alla home conservando query e frammento, così si apre la stessa
+ * configurazione.
+ */
+const home = url();
 ---
 
-<BaseLayout title={t('sim.title')}>
-  <h1 class="mb-2 text-3xl font-bold">{t('sim.title')}</h1>
-  <p class="mb-6 max-w-3xl text-text-muted">{t('sim.intro')}</p>
-  <div data-simulator>
-    <Simulator client:only="react">
-      <p slot="fallback" class="text-text-muted">
-        {t('sim.loading')}
+<!doctype html>
+<html lang="it">
+  <head>
+    <script is:inline define:vars={{ home }}>
+      window.location.replace(home + window.location.search + window.location.hash);
+    </script>
+    <Head title={t('sim.title')} />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={home} />
+  </head>
+  <body>
+    <main>
+      <h1>{t('sim.title')}</h1>
+      <p>
+        <a href={home}>{t('sim.moved')}</a>
       </p>
-    </Simulator>
-  </div>
-  <noscript>
-    <p class="rounded-md border border-border bg-surface-muted px-4 py-3">{t('sim.noscript')}</p>
-  </noscript>
-</BaseLayout>
+    </main>
+  </body>
+</html>

@@ -12,6 +12,16 @@ export interface SimulatorState {
    */
   trace: number | null;
   setTrace: (step: number | null) => void;
+  /**
+   * Cresce di uno a ogni tasto premuto (non con Annulla né con i cambi di configurazione): le
+   * animazioni della home ripartono quando cambia, e non si accodano mai.
+   */
+  pulse: number;
+  /** Vero mentre «Digita» batte un testo una lettera alla volta. */
+  typing: boolean;
+  /** Batte le lettere una alla volta, ogni `AUTOTYPE_MS`; qualunque altro comando lo ferma. */
+  autoType: (letters: string) => void;
+  stopTyping: () => void;
   /** Sostituisce la configurazione (il nastro ricomincia). */
   configure: (update: (config: MachineConfig) => MachineConfig) => void;
   press: (letter: string) => void;
@@ -25,17 +35,51 @@ export interface SimulatorState {
 
 export type SimulatorStore = StoreApi<SimulatorState>;
 
+/** Intervallo fra due lettere di «Digita» (docs/design.md, «Animazioni»). */
+export const AUTOTYPE_MS = 45;
+
 export function createSimulatorStore(initial: ops.Session): SimulatorStore {
-  return createStore<SimulatorState>()((set) => {
-    const apply = (change: (session: ops.Session) => ops.Session) =>
+  return createStore<SimulatorState>()((set, get) => {
+    let timer: ReturnType<typeof setInterval> | undefined;
+    const halt = () => {
+      if (timer === undefined) return;
+      clearInterval(timer);
+      timer = undefined;
+      set({ typing: false });
+    };
+    const apply = (change: (session: ops.Session) => ops.Session) => {
+      halt();
       set((s) => ({ session: change(s.session), trace: null }));
+    };
+    const strike = (letter: string) =>
+      set((s) => {
+        const session = ops.press(s.session, letter);
+        return session === s.session ? s : { session, trace: null, pulse: s.pulse + 1 };
+      });
     return {
       session: initial,
       trace: null,
+      pulse: 0,
+      typing: false,
       setTrace: (step) => set({ trace: step }),
       configure: (update) => apply((s) => ops.createSession(update(s.config))),
-      press: (letter) => apply((s) => ops.press(s, letter)),
+      press: (letter) => {
+        halt();
+        strike(letter);
+      },
       pressAll: (letters) => apply((s) => ops.pressAll(s, letters)),
+      autoType: (letters) => {
+        halt();
+        const queue = [...letters];
+        if (queue.length === 0 || !get().session.machine) return;
+        set({ typing: true });
+        timer = setInterval(() => {
+          const letter = queue.shift();
+          if (letter === undefined) halt();
+          else strike(letter);
+        }, AUTOTYPE_MS);
+      },
+      stopTyping: halt,
       undo: () => apply(ops.undo),
       redo: () => apply(ops.redo),
       reset: () => apply(ops.resetTape),

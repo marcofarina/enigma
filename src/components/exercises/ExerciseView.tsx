@@ -66,9 +66,7 @@ export default function ExerciseView({ exerciseId }: { exerciseId: string }) {
     wrong: t('ex.wrong'),
     empty: t('ex.empty'),
   };
-  const replay = variant.replay
-    ? `${url('simulatore/')}?${shareQuery(variant.replay.config, variant.replay.message)}`
-    : null;
+  const replay = variant.replay ? `${url()}?${shareQuery(variant.replay.config, variant.replay.message)}` : null;
 
   return (
     <div className="flex flex-col gap-8">

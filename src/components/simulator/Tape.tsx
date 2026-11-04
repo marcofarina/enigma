@@ -1,5 +1,5 @@
-import { useId, useMemo, useState, type SubmitEvent } from 'react';
-import { groupLetters, prepareText } from '@/engine';
+import { useId, useMemo, useState } from 'react';
+import { groupLetters } from '@/engine';
 import { t, tf } from '@/i18n';
 import { copyText } from './labels.ts';
 import { tapeLetters } from './session.ts';
@@ -86,69 +86,6 @@ export default function Tape({ heading = true }: { heading?: boolean }) {
         </button>
       </div>
       <p className="text-sm text-text-muted">{t('sim.tape.undoNote')}</p>
-    </section>
-  );
-}
-
-/** Digita un testo libero, dopo averlo ridotto alle 26 lettere della tastiera. */
-export function TextInput() {
-  const id = useId();
-  const locked = useSimulator((s) => s.session.machine === null);
-  const pressAll = useSimulator((s) => s.pressAll);
-  const [text, setText] = useState('');
-  const [punctuation, setPunctuation] = useState(false);
-  const [digits, setDigits] = useState(false);
-  const letters = prepareText(text, { punctuation: punctuation ? 'x' : 'drop', digits: digits ? 'spell' : 'drop' });
-
-  const onSubmit = (event: SubmitEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    pressAll(letters);
-    setText('');
-  };
-
-  return (
-    <section aria-labelledby={`${id}-title`}>
-      <h2 id={`${id}-title`} className="mb-2 text-xl font-semibold">
-        {t('sim.text.title')}
-      </h2>
-      <form className="flex flex-col gap-2" onSubmit={onSubmit}>
-        <label htmlFor={`${id}-text`} className="text-sm font-semibold">
-          {t('sim.text.label')}
-        </label>
-        <textarea
-          id={`${id}-text`}
-          rows={3}
-          className="rounded-md border border-border bg-surface px-3 py-2"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              className="h-5 w-5"
-              checked={punctuation}
-              onChange={(e) => setPunctuation(e.target.checked)}
-            />
-            {t('sim.text.punctuation')}
-          </label>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" className="h-5 w-5" checked={digits} onChange={(e) => setDigits(e.target.checked)} />
-            {t('sim.text.digits')}
-          </label>
-        </div>
-        <p className="break-words font-mono text-sm text-text-muted">
-          {tf('sim.text.preview', { count: letters.length })}
-          {letters && ` — ${groupLetters(letters)}`}
-        </p>
-        <button
-          type="submit"
-          disabled={locked || letters.length === 0}
-          className="self-start rounded-md bg-accent px-4 py-2 font-semibold text-accent-contrast disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {t('sim.text.submit')}
-        </button>
-      </form>
     </section>
   );
 }

@@ -2,6 +2,7 @@
 import '@/styles/global.css';
 import '@/styles/print.css';
 import SiteFooter from '@/components/layout/SiteFooter.astro';
+import Head from '@/components/layout/Head.astro';
 import SiteHeader from '@/components/layout/SiteHeader.astro';
 import { t } from '@/i18n';
 
@@ -10,29 +11,13 @@ interface Props {
   description?: string;
 }
 
-const { title, description = t('site.description') } = Astro.props;
-const fullTitle = title ? `${title} · ${t('site.title')}` : `${t('site.title')} · ${t('site.project')}`;
+const { title, description } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="it">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{fullTitle}</title>
-    <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
-    <meta property="og:title" content={fullTitle} />
-    <meta property="og:description" content={description} />
-    <script is:inline>
-      // Applica il tema salvato prima del primo rendering per evitare il lampo di colori sbagliati.
-      try {
-        const saved = localStorage.getItem('enigma-theme');
-        if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
-      } catch {
-        // Archiviazione non disponibile: si segue la preferenza di sistema.
-      }
-    </script>
+    <Head title={title} description={description} />
   </head>
   <body class="flex flex-col">
     <a
