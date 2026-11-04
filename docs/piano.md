@@ -171,7 +171,7 @@ dipendono da nessuna fase; vanno chiusi prima della 4h.
 | Compito | Chi | Fatto quando |
 |---|---|---|
 | Rileggere storia 4 (`src/content/lezioni/it/storia/04-enigma-e-l-italia.mdx`), riscritta nella fase V sul racconto di Batey: il messaggio senza L non è più legato a Matapan | Marco | la lezione è `stato: rivista` |
-| Confrontare i rotori commerciali dell’Enigma D di `COMMERCIAL_ROTORS` (`src/engine/models.ts`) con CryptoCellar: Bauer, *Decrypted Secrets*, p. 124, dà cablaggi diversi (rotore I `HRWYIPCGVXL…`, tacca G). Sonnet, effort high, 0,5 h; se il motore cambia, servono vettori di test nuovi | sessione Claude | la voce «Motore» di «Da verificare» in `docs/stato.md` passa a «Verificato», con la fonte |
+| Confrontare i rotori commerciali dell’Enigma D di `COMMERCIAL_ROTORS` (`src/engine/models.ts`) con CryptoCellar: Bauer, *Decrypted Secrets*, p. 124, dà cablaggi diversi (rotore I `HRWYIPCGVXL…`, tacca G). Sonnet, effort high, 0,5 h; se il motore cambia, servono vettori di test nuovi | sessione Claude (fatto il 2026-11-04: cablaggi corretti, motore invariato; resta aperta la questione delle tacche, in «Da verificare» di `docs/stato.md`) | la voce «Motore» di «Da verificare» in `docs/stato.md` passa a «Verificato», con la fonte |
 
 ### Regole comuni a tutte le fasi
 

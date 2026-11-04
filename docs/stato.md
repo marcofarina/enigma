@@ -108,7 +108,7 @@ Valgono solo nel container delle sessioni cloud, dove le norme non sono raggiung
 - Storia 2: Crypto Museum porta al 1928 la versione definitiva del pannello a spine; Kozaczuk (p. xiii) data al 1930 la versione militare con il pannello. La lezione tiene il 1928 per il progetto e il 1° giugno 1930 per l’entrata in servizio.
 - Storia 4: il primo successo di Knox contro l’Enigma K di Franco «il 4 aprile 1937» viene solo da Crypto Museum; Batey non dà il giorno.
 - Italia: nella tabella del cablaggio D (marina italiana) di Crypto Museum il rotore I contiene due volte la U, quindi non è una permutazione; per questo il modello non è stato aggiunto al motore.
-- Motore: i rotori commerciali dell’Enigma D in `COMMERCIAL_ROTORS` (rotore I `LPGSZMHAEOQK…`) non coincidono con la tabella di Bauer, *Decrypted Secrets*, p. 124 (rotore I `HRWYIPCGVXL…`, tacca G); il riflettore coincide. Da confrontare con CryptoCellar prima di cambiare il motore.
+- Motore, tacche dell’Enigma D: `COMMERCIAL_ROTORS` è condiviso da D, K e G e porta le tacche della K (`Y`, `E`, `N`, sull’anello). Crypto Museum (pagina Enigma D) dà per la D una tacca sola, in G, fissata al corpo del rotore (scatto con Z in finestra a Ringstellung A, «Turnover = RingSetting − 1»; l’anello non conta per lo spazio delle chiavi). Il motore non sa modellare una tacca sul corpo, quindi la D scatta come una K. Nessun testo lo afferma. Decisione di Marco: lasciare com’è e dirlo, oppure aggiungere il tipo di tacca al motore (cambiano i vettori della D).
 - Rapporto 6812: nella trascrizione di Tony Sale l’esempio di pannello d’emergenza (parola CHRISTENSEN) ha un refuso (ABDYG al posto di ABDFG); non è usato nei testi.
 - Galleria: il foglio chiave della Luftwaffe n. 649 su Commons è marcato solo “PD-US-no notice”; non è stato usato. Il ritratto di Rejewski (CC BY-SA 2.5, archivio della figlia) è piccolo, 200 × 274 pixel.
 - Anno del Luftwaffen-Maschinenschlüssel Nr. 619 (1944 per analogia con il 649 di Commons).
@@ -156,6 +156,19 @@ Valgono solo nel container delle sessioni cloud, dove le norme non sono raggiung
   browser della sessione lo rifiuta); da provare su una LIM vera. I collegamenti con il curricolo
   citano la Direttiva 16 gennaio 2012, n. 4: da aggiornare quando le Linee guida della riforma
   degli istituti tecnici arriveranno al triennio.
+
+## Verificato (rotori dell’Enigma D, 2026-11-04)
+
+Il cablaggio dei rotori commerciali in `COMMERCIAL_ROTORS` (`src/engine/models.ts`) è corretto: nessuna modifica al motore, nessun vettore nuovo.
+
+| Fatto | Fonte | Dove |
+|---|---|---|
+| Rotori I `LPGSZMHAEOQKVXRFYBUTNICJDW`, II `SLVGBTFXJQOHEWIRZYAMKPCNDU`, III `CJGDPSHKTURAWZXFMYNQOBVLIE` e riflettore `IMETCGFRAYSQBZXWLHKDVUPOJN` coincidono con le pagine «Enigma D» e «Cablaggi» di Crypto Museum, che li dichiara identici a quelli della K | `crypto-museum-enigma-d`, `crypto-museum-cablaggi` | `models.ts` |
+| Le stesse stringhe sono nel catalogo dei cablaggi dell’NSA (modulo del luglio 1952, pubblicato da CryptoCellar, cap. 4, p. 44) sotto «“A” or Old Commercial» | `cryptocellar` | `models.ts` |
+| Il rotore I `HRWYIPCGVXLAFUJBKODTSMZNQE` che dà Bauer, *Decrypted Secrets*, p. 124, è un altro cablaggio: lo stesso catalogo lo elenca a p. 43 sotto «“A” (Old Commercial)», con il riflettore uguale e rotori II e III diversi. Appartiene a una macchina più antica, non alla D | `cryptocellar` | non usato |
+| Cablaggio delle cinque D «STAB» (A327, A328, A343, A344, A345), con i rotori ritoccati: I `LZGSPMHAEOQKUXRFYBVTNICJDW`, II `SLVJBTFXGQOHEWIRCYAMKPZNDU`, III `CJGDPSAKTURHWZXFMQNYOBVLIE` | `crypto-museum-cablaggi` | non nel motore |
+
+Nota: la lettura del catalogo viene da `pdftotext` su una scansione; nella pagina 71 (A-837) c’è un refuso evidente di OCR (`VKRF` al posto di `VXRF`), che conferma di non fidarsi di una sola stringa letta così.
 
 ## Verificato (fase 4a, 2026-11-04)
 
