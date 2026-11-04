@@ -45,6 +45,7 @@ nell’intervista della fase I (D9–D14). Valgono per le fasi qui sotto.
 | D12 | Quando vengono le missioni storiche? | Dopo la fase V, in una fase a sé dopo la crittoanalisi | 4f | raccomandazione accettata (2026-11-04) |
 | D13 | La vista 3D resta nel piano? | — | 5a, 5b | 2026-11-04: Marco la tiene |
 | D14 | Da dove viene il modello 3D: fatto in Blender (licenza propria) o un modello CC BY verificato? | — | 4i, 5a | 2026-11-04: strada 2. Prima si cerca su Sketchfab un modello di Enigma con licenza CC0 o CC BY, rotori già separati e meno di circa 50 000 poligoni; se c’è, lo si adatta e lo si registra con l’attribuzione; se no, la geometria la fa Claude con l’MCP di Blender. In ogni caso materiali, texture e luce possono venire da Poly Haven (CC0). Metodo: `blender-mcp` (Marco vuole imparare a usarlo per PQuest di Python Doesn’t Byte); il codice che costruisce ogni pezzo si salva comunque in `scripts/blender/` |
+| D15 | Come entra il modello 3D nel sito? | — | 4i–4j, 5a–5c | 2026-11-04: pagina a sé, `/macchina/`, con voce di menu; la home resta com’è. Nella pagina si esplora la macchina, si cifra e decifra (stesso store del simulatore), si smonta con un selettore a fasi e si tocca un pezzo per leggerne la spiegazione e andare alla lezione. Le posizioni esplose si decidono in Blender e viaggiano nel `.glb`; il cablaggio dei rotori non si modella, lo disegna il codice dai dati del motore. Tetto del `.glb`: 1 MB, caricato solo dopo il pulsante «Avvia la vista 3D». Con tutti i pezzi da separare e nominare, un modello di terzi adatto è improbabile: la ricerca di D14 resta, ma ci si aspetta di costruire quasi tutto |
 
 ## Analisi della code base esistente
 
@@ -155,14 +156,16 @@ norme non sono raggiungibili, quindi niente prosa).
 | 4f | Missioni storiche | Opus | high | 2 h | 4e, V (fonti delle chiavi) | fatta (2026-11-04) |
 | 4g | Guida per i docenti | Opus | high | 2 h | G4 | fatta (2026-11-04) |
 | 4h | Accessibilità e prestazioni | Sonnet | high | 1,5 h | 4a–4g | fatta (2026-11-04) |
-| 4i | Modello 3D con Blender | Sonnet | high | 3 h | D14; Marco al Mac con Blender aperto | da fare |
-| 5a | Vista 3D: architettura e caricamento | Opus | high | 3 h | 4h, 4i | da fare |
-| 5b | Vista 3D: pacco rotori e doppio passo | Sonnet | high | 2,5 h | 5a | da fare |
+| 4i | Modello 3D: struttura e convenzione dei nodi | Sonnet | high | 3 h | D14; Marco al Mac con Blender aperto | da fare |
+| 4j | Modello 3D: smontaggio e posizioni esplose | Sonnet | high | 3 h | 4i; Marco al Mac con Blender aperto | da fare |
+| 5a | Pagina 3D: architettura, caricamento e digitazione | Opus | high | 3 h | 4h, 4i | da fare |
+| 5b | Pagina 3D: vista esplosa e interno dei rotori | Sonnet | high | 3 h | 4j, 5a | da fare |
+| 5c | Pagina 3D: schede dei pezzi | Sonnet | high | 2,5 h | 5b | da fare |
 
-Totale stimato: circa 27 ore di sessione. 4a, 4b e 4g non si toccano a vicenda e si possono
+Totale stimato: circa 33 ore di sessione. 4a, 4b e 4g non si toccano a vicenda e si possono
 fare in qualunque ordine; 4d e 4e toccano file diversi e sono indipendenti fra loro. 4f viene
 dopo la crittoanalisi per decisione di Marco (D12). 4h chiude la v1.0 e va fatta per ultima,
-perché misura le pagine nuove. 4i non dipende da nessun’altra fase ma non si può fare nel cloud: serve Blender aperto sul Mac di Marco.
+perché misura le pagine nuove. 4i e 4j non si possono fare nel cloud: serve Blender aperto sul Mac di Marco. La 5a parte dopo la 4i, la 5b dopo la 4j e la 5a, la 5c dopo la 5b.
 
 ### Fuori dalle fasi
 
@@ -824,13 +827,13 @@ pnpm verify && pnpm test:e2e
 
 ---
 
-### Fase 4i — Modello 3D con Blender
+### Fase 4i — Modello 3D: struttura e convenzione dei nodi
 
-**Modello: Sonnet · Effort: high · Durata: 3 h · Dipende da: D14; non si fa nel cloud, Marco deve avere Blender aperto sul Mac**
+**Modello: Sonnet · Effort: high · Durata: 3 h · Dipende da: D14, D15; non si fa nel cloud, Marco deve avere Blender aperto sul Mac**
 
-**Obiettivo.** Un file `.glb` dell’Enigma I a tre rotori, sotto il tetto di peso, con i nodi
-chiamati secondo una convenzione fissa, e i file che lo rigenerano nel repo. La 5a lo carica; la 5b
-anima i rotori e i nottolini.
+**Obiettivo.** Un `.glb` dell’Enigma I a tre rotori con la struttura esterna e i rotori come pezzi
+interi, i nodi chiamati secondo una convenzione fissa e i file che lo rigenerano nel repo. La 5a lo
+carica; la 4j lo completa con lo smontaggio.
 
 **Prompt di apertura**
 
@@ -838,7 +841,7 @@ anima i rotori e i nottolini.
 Prima di tutto: questa fase richiede Sonnet con effort high. Se non stai girando su Sonnet,
 fermati e dimmelo senza fare altro.
 
-Esegui la fase 4i di docs/piano.md. Leggi la decisione D14. Controlla che gli strumenti
+Esegui la fase 4i di docs/piano.md. Leggi le decisioni D14 e D15. Controlla che gli strumenti
 dell’MCP di Blender siano disponibili in questa sessione; se non lo sono, fermati e dimmi che cosa
 manca (Blender, l’addon, il server).
 ```
@@ -855,27 +858,28 @@ manca (Blender, l’addon, il server).
 
 **Passi**
 
-1. **Ricerca (30 minuti al massimo).** Cerca su Sketchfab un modello di Enigma con tutti e tre i
-   requisiti di D14: licenza CC0 o CC BY, rotori già separati, meno di circa 50 000 poligoni.
-   Verifica la licenza sulla pagina del modello e annotala. Se ne trovi uno, mostralo a Marco prima
-   di adattarlo. Se no, passa al passo 2 e scrivilo nell’«Esito».
+1. **Ricerca (30 minuti al massimo).** Cerca su Sketchfab un modello di Enigma con i requisiti di
+   D14: licenza CC0 o CC BY, pezzi già separati e nominati (almeno rotori, tasti e lampade), meno
+   di circa 50 000 poligoni. Verifica la licenza sulla pagina del modello e annotala. Se ne trovi
+   uno, mostralo a Marco prima di adattarlo. Se no, scrivilo nell’«Esito» e passa al passo 2.
 2. **Costruzione.** Dove serve la geometria, usa l’MCP con le foto della galleria
    (`enigma-i-milano`, `rotori-e-perno`, `rotori-con-anelli`) come riferimento per le proporzioni.
    Materiali, texture e luce possono venire da Poly Haven (CC0): annotane gli id nell’«Esito». Niente
-   altri asset di terzi.
-3. **Convenzione dei nodi** (la 5b la usa per l’animazione). Nomi in minuscolo: `scatola`,
+   altri asset di terzi. Pezzi uguali (tasti, lampade, contatti) sono istanze della stessa mesh.
+3. **Convenzione dei nodi** (la 4j, la 5a e la 5b la usano). Nomi in minuscolo: `scatola`,
    `coperchio`, `tasto_a`…`tasto_z`, `lampada_a`…`lampada_z`, `pannello_spine`, `riflettore`,
    `ruota_ingresso`, e per ogni rotore (`rotore_destro`, `rotore_centrale`, `rotore_sinistro`) un
    nodo con i figli `corpo`, `anello`, `tacca`, `contatti`; poi `nottolino_destro` e
    `nottolino_centrale`. L’origine di ogni rotore sta sul suo asse e l’asse è X, così girarlo in
-   three.js è una sola proprietà.
+   three.js è una sola proprietà. I nomi che servono alla 4j in più li sceglie la 4j e li aggiunge
+   alla convenzione.
 4. **Il codice resta nel repo.** Ogni pezzo costruito con `execute_blender_code` si salva anche in
    `scripts/blender/<pezzo>.py`, e un `scripts/blender/costruisci.py` li esegue in ordine ed esporta
    il `.glb`. Il `.blend` non va in git.
-5. **Esportazione** in `public/modelli/enigma-i.glb` (glTF binario), sotto 500 KB.
+5. **Esportazione** in `public/modelli/enigma-i.glb` (glTF binario), sotto 500 KB in questa fase.
 6. **Verifica dei nodi.** `scripts/verifica-modello.ts`, senza dipendenze nuove: legge il blocco
-   JSON del `.glb`, controlla il peso e che esistano tutti i nodi della convenzione. Si lancia con
-   `node scripts/verifica-modello.ts`.
+   JSON del `.glb`, controlla il peso e che esistano tutti i nodi dell’elenco `NODI_ATTESI`
+   definito in testa al file. Si lancia con `node scripts/verifica-modello.ts`.
 7. **Licenza.** Chiedi a Marco con quale licenza pubblica la geometria fatta da lui e da Claude; se
    c’è una base di terzi, ripeti titolo, autore, URL e licenza. Scrivi la risposta nell’«Esito» e in
    «Da verificare» di `docs/stato.md`: la voce nel sito la crea la 5a.
@@ -901,51 +905,12 @@ con l’MCP e che cosa conviene sapere per PQuest.
 
 ---
 
-### Fase 5a — Vista 3D: architettura e caricamento
+### Fase 4j — Modello 3D: smontaggio e posizioni esplose
 
-**Modello: Opus · Effort: high · Durata: 3 h · Dipende da: 4h, 4i (il modello 3D)**
+**Modello: Sonnet · Effort: high · Durata: 3 h · Dipende da: 4i; non si fa nel cloud, Marco deve avere Blender aperto sul Mac**
 
-**Obiettivo.** Una vista 3D della macchina con React Three Fiber e drei, caricata solo su
-richiesta: chi non la apre non scarica nulla in più, e senza WebGL resta il banco della home.
-
-**Prompt di apertura**
-
-```
-Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
-dimmelo senza fare altro.
-
-Esegui la fase 5a di docs/piano.md. Leggi la decisione D14 e l’«Esito» della fase 4i: dicono dove
-sta il modello 3D, come si chiamano i suoi nodi e con quale licenza. Se la 4i non è fatta, fermati
-e dimmelo.
-```
-
-**Passi**
-
-1. Dove si apre la vista (un pulsante del banco o una pagina) e come prende lo stato dallo store
-   del simulatore.
-2. Caricamento pigro: il pacchetto di three.js è in un pezzo separato, scaricato al primo uso.
-3. Senza WebGL un avviso e il banco; con `prefers-reduced-motion` niente rotazioni automatiche.
-4. Il modello con la sua voce di licenza (come `immagini.yaml` per le immagini).
-
-**Criteri di accettazione**
-
-```bash
-pnpm build && ls dist/_astro | grep -ci three
-```
-almeno `1`, e la home senza la vista aperta non lo scarica (test e2e sulle richieste di rete).
-
-```bash
-pnpm verify && pnpm test:e2e
-```
-
----
-
-### Fase 5b — Vista 3D: pacco rotori e doppio passo
-
-**Modello: Sonnet · Effort: high · Durata: 2,5 h · Dipende da: 5a**
-
-**Obiettivo.** Nella vista 3D si vedono la vista esplosa del pacco rotori, l’interno del rotore
-(contatti, tacca, anello) e i nottolini che rendono visibile il doppio passo.
+**Obiettivo.** Il `.glb` di 4i diventa un modello smontabile: ogni componente è un pezzo a sé e
+porta nel file la posizione esplosa e la fase in cui si stacca, così la pagina non ha tabelle sue.
 
 **Prompt di apertura**
 
@@ -953,22 +918,194 @@ pnpm verify && pnpm test:e2e
 Prima di tutto: questa fase richiede Sonnet con effort high. Se non stai girando su Sonnet,
 fermati e dimmelo senza fare altro.
 
-Esegui la fase 5b di docs/piano.md, partendo dalla vista costruita in 5a. Avvia il sito con il
-server «astro-dev» e verifica nel browser.
+Esegui la fase 4j di docs/piano.md, partendo dal modello e dalla convenzione dei nodi dell’«Esito»
+della fase 4i. Controlla che gli strumenti dell’MCP di Blender siano disponibili in questa
+sessione; se non lo sono, fermati e dimmi che cosa manca.
 ```
 
 **Passi**
 
-1. Vista esplosa del pacco rotori, comandata da un controllo accessibile da tastiera.
-2. Interno di un rotore: contatti, cablaggio, tacca, anello che si sposta.
-3. Nottolini e doppio passo, sincronizzati con lo stato del motore a ogni tasto.
+1. **Pezzi in più.** Aggiungi ciò che si vede aprendo la macchina: dentro ogni rotore il disco dei
+   contatti destro e sinistro, la molla del puntale, la tacca e l’anello come pezzi separati; sotto
+   i tasti la leva e il trascinatore; il fondo della scatola con le batterie e i fili delle
+   lampade. Il cablaggio dei rotori non si modella (D15). Un nome per ogni pezzo, in minuscolo,
+   aggiunti a `NODI_ATTESI`.
+2. **Fasi dello smontaggio.** Quattro: 1 apertura (coperchio e pannello a spine); 2 rotori e
+   riflettore estratti dalla macchina; 3 rotori aperti (anello, dischi, tacca, molla); 4 meccanica
+   sotto i tasti e fondo. Ogni pezzo che si stacca ha un nodo genitore con la sua fase.
+3. **Dati nel file.** Per ogni pezzo staccabile, nelle proprietà personalizzate del nodo (in
+   glTF finiscono in `extras`): `esploso`, il vettore `[x, y, z]` dello spostamento in unità del
+   modello, e `fase`, un intero da 1 a 4. Lo spostamento lo scegli guardando la scena: i pezzi
+   non devono sovrapporsi nella posizione finale e restano allineati sull’asse del loro gruppo.
+4. **Anteprima di ogni fase.** Renderizza un PNG per fase con `bpy` (o con una schermata dell’MCP)
+   e guardalo prima di esportare. Salva lo script in `scripts/blender/`.
+5. **Peso.** Il tetto del `.glb` passa a 1 MB. Se lo si supera, riduci i poligoni dei pezzi
+   piccoli, non le fasi.
+6. **Verifica.** Estendi `scripts/verifica-modello.ts`: ogni nodo con `esploso` ha tre numeri e una
+   `fase` fra 1 e 4, ogni fase ha almeno un pezzo, nessun nodo di `NODI_ATTESI` manca.
+
+**Criteri di accettazione**
+
+```bash
+node scripts/verifica-modello.ts
+```
+exit 0, con il peso sotto 1 MB, i dati `esploso` e `fase` su ogni pezzo staccabile e tutti i nodi
+della convenzione.
+
+```bash
+pnpm verify
+```
+
+**Esito.** Da compilare: elenco dei pezzi e delle fasi, peso, difficoltà incontrate con le
+proprietà personalizzate e l’esportazione di `extras`.
+
+---
+
+### Fase 5a — Pagina 3D: architettura, caricamento e digitazione
+
+**Modello: Opus · Effort: high · Durata: 3 h · Dipende da: 4h, 4i (il modello 3D)**
+
+**Obiettivo.** La pagina `/macchina/` con la macchina in 3D (React Three Fiber e drei), caricata
+solo su richiesta. Si ruota la camera, si digita da tastiera fisica o dai tasti del modello e si
+vedono lampade e rotori reagire al motore. Senza WebGL resta un avviso e il rimando al simulatore.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase 5a di docs/piano.md. Leggi le decisioni D14 e D15 e l’«Esito» della fase 4i: dicono
+dove sta il modello 3D, come si chiamano i suoi nodi e con quale licenza. Se la 4i non è fatta,
+fermati e dimmelo.
+```
+
+**Passi**
+
+1. **Pagina e menu.** `/macchina/` con `url()`, una voce di menu come le altre sezioni, la home
+   invariata. La pagina si apre con una scena statica di anteprima (immagine o scena minima) e un
+   pulsante «Avvia la vista 3D».
+2. **Caricamento pigro.** Il pacchetto di three.js e il `.glb` si scaricano dopo il pulsante, non
+   prima.
+3. **Stato condiviso.** La vista usa lo store del simulatore: stessa sessione, stessi link
+   condivisibili. Il tasto premuto sul modello o sulla tastiera fisica passa dallo stesso punto del
+   simulatore schematico; il motore resta unico.
+4. **Segnale.** Lampada accesa e rotori che girano nelle finestrelle; un’area `aria-live` fuori
+   schermo annuncia «Lampada E» a ogni tasto, e serve anche ai test.
+5. **Accessibilità e preferenze.** Senza WebGL un avviso e il rimando al simulatore; con
+   `prefers-reduced-motion` niente rotazioni automatiche e transizioni di camera senza animazione.
+6. **Licenza del modello** con la sua voce di crediti (come `immagini.yaml` per le immagini), a
+   partire dalla risposta registrata dalla 4i.
+7. **Prestazioni.** `/macchina/` entra in `scripts/pagine.ts`, quindi nel budget di Lighthouse
+   (prestazioni ≥ 90, accessibilità 100) e nei test di axe, misurate sullo stato iniziale.
+
+**Criteri di accettazione**
+
+```bash
+pnpm build && ls dist/_astro | grep -ci three
+```
+almeno `1`; né la home né `/macchina/` prima del clic scaricano three.js o il `.glb` (test e2e sulle
+richieste di rete).
+
+```bash
+pnpm build && pnpm test:lighthouse
+```
+exit 0, con `/macchina/` nel budget.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+con un test che avvia la vista, batte una lettera e legge l’annuncio della lampada.
+
+---
+
+### Fase 5b — Pagina 3D: vista esplosa e interno dei rotori
+
+**Modello: Sonnet · Effort: high · Durata: 3 h · Dipende da: 4j, 5a**
+
+**Obiettivo.** Un selettore fa scorrere la macchina dalla posizione chiusa a quella smontata; si
+vede l’interno dei rotori con il cablaggio disegnato dal codice, e i nottolini mostrano il doppio
+passo a ogni tasto.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Sonnet con effort high. Se non stai girando su Sonnet,
+fermati e dimmelo senza fare altro.
+
+Esegui la fase 5b di docs/piano.md, partendo dalla pagina costruita in 5a e dai dati `esploso` e
+`fase` del modello di 4j. Avvia il sito con il server «astro-dev» e verifica nel browser.
+```
+
+**Passi**
+
+1. **Selettore.** Un `input type="range"` nativo da 0 a 4 (a passi continui): ogni intero è una
+   fase. `aria-valuetext` dice in parole la fase («rotori estratti»). Il valore sposta ogni pezzo
+   dalla posizione di riposo a `esploso`, con la sua fase come inizio e fine dell’interpolazione.
+2. **Cablaggio.** Disegnato dal codice a partire dai dati del modello selezionato nel simulatore
+   (`models.ts`), come linee fra i contatti dei due dischi; cambia quando cambia il rotore scelto.
+3. **Nottolini.** Si muovono secondo lo stato del motore a ogni tasto, e il doppio passo si
+   riconosce: il nottolino centrale spinge insieme il rotore centrale e quello di sinistra.
+4. **Preferenze.** Con `prefers-reduced-motion` il selettore sposta i pezzi senza animare la camera.
 
 **Criteri di accettazione**
 
 ```bash
 pnpm verify && pnpm test:e2e
 ```
-con un test che batte le lettere del doppio passo (da ADU) e controlla le posizioni mostrate.
+con un test che porta il selettore a 4 e controlla `aria-valuetext`, e un altro che batte le
+lettere del doppio passo (da ADU) e controlla le posizioni mostrate.
+
+---
+
+### Fase 5c — Pagina 3D: schede dei pezzi
+
+**Modello: Sonnet · Effort: high · Durata: 2,5 h · Dipende da: 5b**
+
+**Obiettivo.** Toccando un pezzo (o scegliendolo da un elenco accessibile) si apre una scheda con il
+suo nome, una spiegazione breve e il link alla lezione che lo tratta.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Sonnet con effort high. Se non stai girando su Sonnet,
+fermati e dimmelo senza fare altro.
+
+Esegui la fase 5c di docs/piano.md. Prima di scrivere le schede leggi
+.claude/norms/scrittura-didattica.md; a fine stesura fai la passata di scrittura-umana.md e di
+scrittura-parlata.md §1. Si lavora in locale: nel cloud le norme non sono raggiungibili.
+```
+
+**Passi**
+
+1. **Dati.** `src/content/pezzi.yaml`, una voce per pezzo: `id` (il nome del nodo), `nome`,
+   `descrizione` (due o tre frasi, controllate da `lint:content`), `lezione` (percorso della
+   lezione che lo spiega) e `fonti` se c’è un fatto storico. La scheda rimanda alla lezione, non
+   la ripete.
+2. **Interazione.** Il clic (o il tocco) su un pezzo lo evidenzia e apre la scheda; un elenco dei
+   pezzi, navigabile da tastiera e leggibile da uno screen reader, fa lo stesso senza il mouse. Il
+   focus passa alla scheda e torna all’elemento che l’ha aperta.
+3. **Raccordo con l’esploso.** Dall’elenco o dalla scheda un pulsante porta il selettore alla fase
+   in cui il pezzo è visibile.
+4. **Test di coerenza.** Un test unitario controlla che ogni nodo con `fase` abbia una voce in
+   `pezzi.yaml`, e viceversa; che ogni `lezione` esista; che ogni `fonti` sia in `fonti.yaml`.
+5. **Prosa.** Le schede nascono come bozza e le rivede Marco. Fatti non confermati da una fonte
+   consultata vanno in «Da verificare» di `docs/stato.md`.
+
+**Criteri di accettazione**
+
+```bash
+pnpm lint:content
+```
+exit 0.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+con un test che apre la scheda dalla lista con la tastiera e controlla il link alla lezione, e il
+crawler dei link interni che include le nuove pagine.
+
+---
 
 ## Verifica
 
