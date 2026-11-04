@@ -65,16 +65,19 @@ function useTurn(letter: string): { n: number; dir: -1 | 0 | 1 } {
  * Finestrella con la sua rotella: è uno spinbutton. Si gira con le frecce (Home e Fine vanno ad
  * A e Z), con la rotella del mouse, con i pulsanti ▲ ▼ o digitando una lettera.
  */
-function Dial({
+export function Dial({
   label,
   letter,
   onChange,
   knurl = true,
+  stacked = false,
 }: {
   label: string;
   letter: string;
   onChange: (letter: string) => void;
   knurl?: boolean;
+  /** Frecce sopra e sotto la finestrella invece che accanto: la versione ridotta per il telefono. */
+  stacked?: boolean;
 }) {
   const dial = useRef<HTMLDivElement>(null);
   const index = toIndex(letter);
@@ -120,7 +123,7 @@ function Dial({
   };
 
   return (
-    <div className="rotor-dial">
+    <div className={stacked ? 'rotor-dial stacked' : 'rotor-dial'}>
       <div className="rotor-arrows">
         <button
           type="button"

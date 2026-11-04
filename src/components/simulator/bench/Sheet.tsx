@@ -28,6 +28,12 @@ const PRESETS: { id: string; label: string; config: MachineConfig }[] = [
   },
 ];
 
+interface MessageProps {
+  perRow?: number;
+  minRows?: number;
+  compact?: boolean;
+}
+
 const MANUAL = 'manuale';
 /** Gruppi per riga del messaggio e righe mostrate anche a foglio vuoto. */
 const PER_ROW = 6;
@@ -93,7 +99,11 @@ function DailyKey() {
   );
 }
 
-function Message() {
+/**
+ * Il messaggio: due righe di lettere, tasti e lampade, a gruppi di cinque. La versione ridotta
+ * mette quattro gruppi per riga e non ha «Ripeti».
+ */
+export function Message({ perRow = PER_ROW, minRows = MIN_ROWS, compact = false }: MessageProps) {
   const id = useId();
   const session = useSimulator((s) => s.session);
   const pulse = useSimulator((s) => s.pulse);
@@ -105,7 +115,7 @@ function Message() {
   const box = useRef<HTMLDivElement>(null);
 
   const groups = Math.ceil(output.length / 5);
-  const cells = Math.max(MIN_ROWS * PER_ROW, Math.ceil((groups + 1) / PER_ROW) * PER_ROW);
+  const cells = Math.max(minRows * perRow, Math.ceil((groups + 1) / perRow) * perRow);
   const current = output.length > 0 ? groups - 1 : -1;
 
   // Il foglio segue l’ultima riga, come il nastro di una telescrivente.
@@ -128,9 +138,11 @@ function Message() {
           >
             {t('sim.tape.undo')}
           </button>
-          <button type="button" className="sbtn" disabled={session.undone.length === 0} onClick={redo}>
-            {t('sim.tape.redo')}
-          </button>
+          {!compact && (
+            <button type="button" className="sbtn" disabled={session.undone.length === 0} onClick={redo}>
+              {t('sim.tape.redo')}
+            </button>
+          )}
           <button type="button" className="sbtn" disabled={session.presses.length === 0} onClick={reset}>
             {t('sim.tape.reset')}
           </button>
@@ -157,7 +169,12 @@ function Message() {
       <p className="sr-only">
         {t('sim.tape.output')}: <span data-tape="output">{output ? groupLetters(output) : t('sim.tape.empty')}</span>
       </p>
-      <div ref={box} aria-hidden="true" className="message">
+      <div
+        ref={box}
+        aria-hidden="true"
+        className="message"
+        style={perRow === PER_ROW ? undefined : { gridTemplateColumns: `repeat(${perRow}, minmax(0, 1fr))` }}
+      >
         {Array.from({ length: cells }, (_, g) => {
           const typed = input.slice(g * 5, g * 5 + 5);
           const lit = output.slice(g * 5, g * 5 + 5);

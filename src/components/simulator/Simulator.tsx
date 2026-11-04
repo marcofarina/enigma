@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { defaultConfig, encodeConfig } from '@/engine';
 import { t } from '@/i18n';
+import Compact from './bench/Compact.tsx';
+import { useCompact } from './bench/compact.ts';
 import Header from './bench/Header.tsx';
 import BenchKeyboard from './bench/Keyboard.tsx';
 import { PlugPanel, SharePanel, UkwDPanel, OptionsPanel } from './bench/Panels.tsx';
@@ -27,6 +29,7 @@ export default function Simulator() {
   const [{ store, invalidLink }] = useState(initialStore);
   const [lim, setLim] = useState(false);
   const mode = useSignalMode();
+  const compact = useCompact();
 
   // Tastiera fisica: lettere e Backspace, ma non mentre si scrive in un campo. Esc chiude il
   // pannello aperto; qualunque tasto ferma «Digita».
@@ -72,6 +75,16 @@ export default function Simulator() {
     document.addEventListener('fullscreenchange', onFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
   }, [lim]);
+
+  // Sotto 1024×576 la home è la versione ridotta; la stessa condizione sta in bench.css.
+  if (compact)
+    return (
+      <SimulatorContext value={store}>
+        <div className="bench bench-compact machine machine-paint" data-mode="normal">
+          <Compact invalidLink={invalidLink} />
+        </div>
+      </SimulatorContext>
+    );
 
   return (
     <SimulatorContext value={store}>

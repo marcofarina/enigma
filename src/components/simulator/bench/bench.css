@@ -7,7 +7,6 @@
  */
 
 html.bench-root {
-  /* Anche dove la griglia esce dalla finestra (sotto 1024 px, fino alla fase G3) il fondo è vernice. */
   background: var(--machine-paint);
   font-size: clamp(12.8px, min(100vw / 80, 100vh / 45), 24px);
 }
@@ -1031,13 +1030,6 @@ html.bench-root {
   }
 }
 
-/* Sotto 1024×576 la pagina scorre: la versione ridotta per il telefono è della fase G3. */
-@media not ((min-width: 1024px) and (min-height: 576px)) {
-  .bench {
-    height: auto;
-  }
-}
-
 .bench-loading,
 .bench-noscript {
   margin: 0;
@@ -1049,4 +1041,314 @@ html.bench-root {
   width: 2rem;
   height: 2rem;
   font-size: 1.125rem;
+}
+
+/* ── Versione ridotta (docs/design.md, «Versione ridotta»): sotto 1024×576 ───────────────────── */
+
+/*
+ * La condizione è quella di `compact.ts`. Sotto la soglia la radice torna a 16 px e le misure
+ * sono quelle della artboard «Bachelite a 375 px»: nessuna griglia scalata, nessuno scorrimento
+ * orizzontale. Lo scorrimento verticale resta, sui telefoni più bassi.
+ */
+@media not ((min-width: 1024px) and (min-height: 576px)) {
+  html.bench-root {
+    font-size: 16px;
+  }
+
+  .bench {
+    display: block;
+    height: auto;
+    min-height: 100dvh;
+    max-width: none;
+  }
+
+  .bench-fallback {
+    min-height: 0;
+  }
+
+  /* Finché l’isola non è pronta, e senza JavaScript, la barra va a capo invece di uscire. */
+  .bench-header {
+    flex-wrap: wrap;
+    min-height: 3.25rem;
+    padding-inline: 1rem;
+  }
+
+  .bench-header .bench-nav {
+    flex-wrap: wrap;
+    gap: 0 1.125rem;
+    margin-left: 0;
+  }
+
+  .bench-header .bench-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+
+  .bench-brand {
+    margin-right: auto;
+  }
+
+  .compact-header {
+    position: relative;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    height: 3.25rem;
+    padding-inline: 1rem 0.5rem;
+  }
+
+  .compact-header .bench-brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: 1.1875rem;
+  }
+
+  .compact-menu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--alu-bright);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .compact-menu[aria-expanded='true'] {
+    color: var(--focus-machine);
+  }
+
+  /* Il menu è un foglio sotto la barra: carta e inchiostro del tema, come nelle altre pagine. */
+  .compact-sheet {
+    position: absolute;
+    inset: 100% 0 auto;
+    z-index: 10;
+    padding: 0.25rem 1rem 1rem;
+    border-bottom: 1.5px solid var(--print-red);
+    background: var(--paper);
+    color: var(--ink);
+    animation: bench-sheet var(--dur-panel) var(--ease-snap) both;
+  }
+
+  .compact-sheet :focus-visible {
+    outline-color: var(--focus-paper);
+  }
+
+  .compact-sheet ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .compact-sheet li {
+    border-bottom: 1px solid var(--print-red-soft);
+  }
+
+  .compact-sheet a {
+    display: flex;
+    align-items: center;
+    min-height: 3rem;
+    color: var(--ink);
+    font-size: 1rem;
+    text-decoration: none;
+  }
+
+  .compact-sheet a[aria-current='page'] {
+    color: var(--print-red);
+    font-weight: 700;
+  }
+
+  .compact-theme {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 2.75rem;
+    margin-top: 1rem;
+    padding: 0 0.75rem;
+    border: 1px solid var(--field-border);
+    border-radius: var(--radius);
+    background: var(--paper-deep);
+    color: var(--ink);
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  @keyframes bench-sheet {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+
+  .compact-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.125rem;
+    width: 100%;
+    max-width: 30rem;
+    margin-inline: auto;
+    padding: 1rem 1rem 0.875rem;
+  }
+
+  /* Finestrelle: frecce da 44 px sopra e sotto, il nome del rotore in basso. */
+  .compact-rotors {
+    display: flex;
+    gap: 0.875rem;
+  }
+
+  .compact-rotor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .rotor-dial.stacked {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .stacked .rotor-arrows {
+    display: contents;
+  }
+
+  .stacked .arrow {
+    width: 2.75rem;
+    height: 2.75rem;
+    touch-action: manipulation;
+  }
+
+  .stacked .arrow:first-child {
+    order: 1;
+  }
+
+  .stacked .window {
+    order: 2;
+    width: 3.125rem;
+    height: 3.375rem;
+  }
+
+  .stacked .window span {
+    font-size: 1.875rem;
+  }
+
+  .stacked .arrow:last-child {
+    order: 3;
+  }
+
+  .compact-rotor-name {
+    color: var(--alu-muted);
+    font-size: 0.75rem;
+  }
+
+  /* Lampade da 31 px e tasti da 34 × 46: si stringono sotto i 343 px di spazio, senza uscire. */
+  .compact-main .bench-machine {
+    width: 100%;
+    gap: 1.125rem;
+    padding-top: 0;
+  }
+
+  .compact-main .bench-rows,
+  .compact-main .bench-rows > div {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .compact-main .lamps {
+    gap: 0.4375rem;
+  }
+
+  .compact-main .lamps > div {
+    gap: 0.4375rem;
+  }
+
+  .compact-main .keys {
+    gap: 0.375rem;
+  }
+
+  .compact-main .keys > div {
+    gap: 0.25rem;
+  }
+
+  .compact-main .lamp {
+    flex: 0 1 1.9375rem;
+    width: auto;
+    min-width: 0;
+    height: auto;
+    aspect-ratio: 1;
+    font-size: 0.875rem;
+  }
+
+  .compact-main .key {
+    flex: 0 1 2.125rem;
+    width: auto;
+    min-width: 0;
+    height: 2.875rem;
+    border-width: 2px;
+    border-radius: 1.0625rem;
+    font-size: 1rem;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  /* Il foglio del messaggio: quattro gruppi per riga, alto quanto serve. */
+  .compact-sheet-message {
+    flex: none;
+    width: 100%;
+    padding: 0.25rem 0.75rem 0.75rem;
+  }
+
+  .compact-sheet-message .sheet-rule {
+    flex-wrap: wrap;
+  }
+
+  .compact-sheet-message .sbtn {
+    min-width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .compact-sheet-message .message {
+    flex: none;
+    max-height: 13.5rem;
+  }
+
+  .compact-sheet-message .group-in {
+    font-size: 0.75rem;
+  }
+
+  .compact-sheet-message .group-out {
+    font-size: 1.0625rem;
+  }
+
+  .compact-notice {
+    margin-top: 0.25rem;
+    max-width: 30ch;
+    color: var(--alu-muted);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    text-align: center;
+  }
+
+  .compact-notice p {
+    margin: 0;
+  }
+
+  .compact-notice a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--focus-machine);
+  }
+
+  .compact-notice a:hover {
+    color: var(--alu-bright);
+  }
 }
