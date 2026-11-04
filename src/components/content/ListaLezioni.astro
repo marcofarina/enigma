@@ -14,15 +14,20 @@ const lezioni = (await getCollection('lezioni', (lezione) => isLessonIn(lezione,
 );
 ---
 
-<ol class="mt-6 grid max-w-3xl gap-3">
+<ol class="tavola mt-8">
   {lezioni.map((lezione) => (
     <li>
       <a
         href={url(`${sezione}/${lessonSlug(lezione)}/`)}
-        class="block rounded-lg border border-border bg-surface p-4 text-text no-underline hover:border-accent"
+        class="tavola-riga min-h-11 grid-cols-[2.25rem_1fr] sm:grid-cols-[2.5rem_1fr]"
       >
-        <span class="font-semibold">{lezione.data.title}</span>
-        <span class="block text-text-muted">{lezione.data.description}</span>
+        <span class="tavola-numero pt-0.5" aria-hidden="true">
+          {String(lezione.data.ordine).padStart(2, '0')}
+        </span>
+        <span>
+          <span class="tavola-titolo">{lezione.data.title}</span>
+          <span class="tavola-testo block">{lezione.data.description}</span>
+        </span>
       </a>
     </li>
   ))}

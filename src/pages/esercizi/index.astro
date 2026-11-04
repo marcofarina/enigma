@@ -13,25 +13,28 @@ const levels = [
 ---
 
 <BaseLayout title={t('ex.title')}>
-  <h1 class="mb-2 text-3xl font-bold">{t('ex.title')}</h1>
-  <p class="mb-4 max-w-3xl text-text-muted">{t('ex.intro')}</p>
-  <p class="mb-8 max-w-3xl">
-    <a href={url('schede/')} class="underline">
-      {t('ex.sheetsLink')}
-    </a>
+  <h1 class="page-title">{t('ex.title')}</h1>
+  <p class="page-lead !mb-4">{t('ex.intro')}</p>
+  <p class="mb-8 max-w-[var(--content-width)]">
+    <a href={url('schede/')}>{t('ex.sheetsLink')}</a>
   </p>
   {levels.map(({ level, title }) => (
     <section aria-labelledby={`livello-${level}`} class="mb-10">
-      <h2 id={`livello-${level}`} class="mb-4 text-2xl font-semibold">
+      <h2 id={`livello-${level}`} class="section-title !mt-10 !mb-3">
         {title}
       </h2>
-      <ul class="grid gap-4 sm:grid-cols-2">
+      <ul class="tavola">
         {EXERCISES.filter((exercise) => exercise.level === level).map((exercise) => (
-          <li class="flex flex-col gap-1 rounded-xl border border-border bg-surface p-4">
-            <a href={url(`esercizi/${exercise.id}/`)} class="text-lg font-semibold text-text underline">
-              {exercise.title}
-            </a>
-            <p class="text-text-muted">{exercise.summary}</p>
+          <li class="tavola-riga relative sm:grid-cols-[1fr_auto]">
+            <div class="flex flex-col gap-0.5">
+              <a
+                href={url(`esercizi/${exercise.id}/`)}
+                class="tavola-titolo self-start after:absolute after:inset-0 after:content-['']"
+              >
+                {exercise.title}
+              </a>
+              <p class="tavola-testo mb-0">{exercise.summary}</p>
+            </div>
             <SolvedCount client:only="react" exerciseId={exercise.id} />
           </li>
         ))}

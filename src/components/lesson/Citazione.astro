@@ -31,22 +31,36 @@ const page =
       : tf('lesson.quote.page', { page: pagina });
 ---
 
-<figure class="my-8">
-  <blockquote lang={lingua} class="m-0 border-s-4 border-accent ps-5 text-xl leading-relaxed [&>p:last-child]:mb-0">
+<figure class="citazione my-10">
+  <blockquote
+    lang={lingua}
+    class="m-0 p-0 font-sans text-[1.25rem] leading-[1.5] text-ink italic [&>p:last-child]:mb-0"
+  >
     <slot />
   </blockquote>
-  <figcaption class="mt-2 ps-6 font-sans text-sm text-text-muted">
+  <figcaption class="mt-3 font-mono text-[0.8125rem] leading-[1.5] text-ink-muted">
     {autore && `${autore}, ${t('lesson.quote.citedIn')} `}
     {data.autori},{' '}
     {data.url ? (
-      <a href={data.url} class="underline">
-        <cite>{data.titolo}</cite>
+      <a href={data.url}>
+        <cite class="not-italic">{data.titolo}</cite>
       </a>
     ) : (
-      <cite>{data.titolo}</cite>
+      <cite class="not-italic">{data.titolo}</cite>
     )}
     {data.anno && ` (${data.anno})`}
     {page && `, ${page}`}
     {tradotta && ` (${t('lesson.quote.translated')})`}
   </figcaption>
 </figure>
+
+<style>
+  /* Un breve filetto rosso separa la frase dalla sua fonte, come in una pagina stampata. */
+  .citazione figcaption::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    margin-bottom: 0.5rem;
+    border-top: 1.5px solid var(--print-red);
+  }
+</style>

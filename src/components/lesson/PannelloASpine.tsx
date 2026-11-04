@@ -20,7 +20,7 @@ export default function PannelloASpine({ coppie = '' }: Props) {
 
   return (
     <figure className="my-8 font-sans text-base">
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4">
+      <div className="flex flex-col gap-4 figure-panel">
         <PairEditor
           label={t('sim.plugboard.label')}
           gridLabel={t('sim.plugboard.grid')}
@@ -29,7 +29,7 @@ export default function PannelloASpine({ coppie = '' }: Props) {
           onChange={setPairs}
           status={tf('sim.plugboard.count', { count: cables })}
         />
-        <p className="rounded-md bg-surface-muted px-3 py-2" aria-live="polite">
+        <p className="figure-result" aria-live="polite">
           {cables === 0
             ? t('lesson.plugboard.none')
             : tf(cables === 1 ? 'lesson.plugboard.countOne' : 'lesson.plugboard.count', {

@@ -6,11 +6,11 @@ import { t } from '@/i18n';
 
 <BaseLayout title={t('sheet.pageTitle')} description={t('sheet.intro')}>
   <div class="no-print">
-    <h1 class="mb-2 text-3xl font-bold">{t('sheet.pageTitle')}</h1>
-    <p class="mb-8 max-w-3xl text-text-muted">{t('sheet.intro')}</p>
+    <h1 class="page-title">{t('sheet.pageTitle')}</h1>
+    <p class="page-lead !mb-8">{t('sheet.intro')}</p>
   </div>
   <SheetGenerator client:only="react">
-    <p slot="fallback" class="text-text-muted">
+    <p slot="fallback" class="text-ink-muted">
       {t('sheet.loading')}
     </p>
   </SheetGenerator>

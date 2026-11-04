@@ -121,7 +121,11 @@ test('la previsione a scelta segna la risposta data e l’esito, anche in tema s
   await expect(prediction.getByText('Sarebbe così con un contachilometri')).toBeVisible();
   await expect(prediction.getByRole('radio', { name: /più corto/ })).toBeDisabled();
   await expect(prediction.locator('[data-corretta] [data-segno]')).toHaveText('esito');
-  // Lo stato rivelato (scelte bloccate, segni, commento) deve restare accessibile.
+  // Lo stato rivelato (scelte bloccate, segni, commento) deve restare accessibile. Verdetto ed esito
+  // compaiono con una dissolvenza: axe misura il contrasto a movimento finito.
+  await page.evaluate(() =>
+    Promise.all(document.getAnimations().map((animation) => animation.finished.catch(() => undefined))),
+  );
   for (const scheme of ['light', 'dark'] as const) {
     await page.emulateMedia({ colorScheme: scheme });
     const results = await new AxeBuilder({ page })

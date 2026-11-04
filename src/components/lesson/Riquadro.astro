@@ -1,47 +1,27 @@
 ---
 /**
- * Riquadro con titolo dello scheletro della lezione: lo usano `Prerequisiti`, `Obiettivi` e
- * `Riepilogo`, non le lezioni. Il titolo è un `h2`, così chi usa un lettore di schermo trova i
- * riquadri scorrendo i titoli della pagina.
+ * Tavola con titolo dello scheletro della lezione: la usano `Prerequisiti`, `Obiettivi` e
+ * `Riepilogo`, non le lezioni. Il titolo è un `h2`, così chi usa un lettore di schermo trova le
+ * tavole scorrendo i titoli della pagina. Obiettivi e riepilogo sono numerati, perché si leggono in
+ * coppia: la voce 2 del riepilogo risponde alla voce 2 degli obiettivi.
  */
 interface Props {
-  /** Identificativo del titolo: ogni riquadro compare al più una volta per lezione. */
+  /** Identificativo del titolo: ogni tavola compare al più una volta per lezione. */
   id: string;
   titolo: string;
-  /** Il riepilogo chiude la lezione e ha il fondo pieno; i riquadri d’apertura no. */
+  /** Il riepilogo chiude la lezione: più spazio sopra. */
   chiusura?: boolean;
+  /** Voci numerate (obiettivi e riepilogo). */
+  numerata?: boolean;
 }
 
-const { id, titolo, chiusura = false } = Astro.props;
+const { id, titolo, chiusura = false, numerata = false } = Astro.props;
 ---
 
 <section
   aria-labelledby={id}
-  class:list={[
-    'riquadro my-6 rounded-lg border border-border px-5 py-4 font-sans text-base',
-    chiusura ? 'mt-12 bg-surface-muted' : 'bg-surface',
-  ]}
+  class:list={['tavola-lezione', chiusura && 'tavola-chiusura', numerata && 'tavola-numerata']}
 >
-  <h2 id={id} class="mt-0 mb-2 text-sm font-semibold tracking-wide text-text-muted uppercase">
-    {titolo}
-  </h2>
-  <div class="[&>:last-child]:mb-0">
-    <slot />
-  </div>
+  <h2 id={id}>{titolo}</h2>
+  <slot />
 </section>
-
-<style>
-  /* Prerequisiti e obiettivi uno sotto l’altro formano un riquadro solo. */
-  .riquadro:has(+ .riquadro) {
-    margin-bottom: 0;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-
-  .riquadro + .riquadro {
-    margin-top: 0;
-    border-top-style: dashed;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-  }
-</style>

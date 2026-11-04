@@ -103,14 +103,12 @@ export default function SchematicView({ heading = true }: { heading?: boolean })
 
   return (
     <section aria-labelledby={`${id}-title`} className="flex flex-col gap-2">
-      <h2 id={`${id}-title`} className={heading ? 'text-xl font-semibold' : 'sr-only'}>
+      <h2 id={`${id}-title`} className={heading ? 'text-section font-bold' : 'sr-only'}>
         {t('sim.schematic.title')}
       </h2>
       {heading && <p className="text-sm text-text-muted">{t('sim.schematic.hint')}</p>}
       {!schematic ? (
-        <p className="rounded-md border border-border bg-surface-muted px-4 py-3 text-sm">
-          {t('sim.schematic.unavailable')}
-        </p>
+        <p className="figure-result text-sm">{t('sim.schematic.unavailable')}</p>
       ) : (
         <>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
@@ -145,7 +143,10 @@ export default function SchematicView({ heading = true }: { heading?: boolean })
             </span>
           </div>
           {/* Lo schema ha una larghezza minima leggibile: sugli schermi stretti scorre in orizzontale. */}
-          <ScrollRegion className="rounded-lg border border-border bg-surface" labelledBy={`${id}-title`}>
+          <ScrollRegion
+            className="rounded-[var(--radius-sheet)] border border-border bg-surface"
+            labelledBy={`${id}-title`}
+          >
             <svg
               viewBox={`0 0 ${schematic.width} ${schematic.height}`}
               className="block w-full min-w-[36rem] font-mono"

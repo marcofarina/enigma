@@ -36,7 +36,7 @@ export default function MiniSimulatore({ config, schema = false, nastro = true, 
           ref={keys}
           role="group"
           aria-label={t('sim.title')}
-          className="flex flex-col gap-5 rounded-xl border border-border bg-surface px-2 py-5 sm:px-4"
+          className="machine machine-paint machine-insert flex flex-col gap-5 px-2 py-5 sm:px-4"
         >
           <Issues />
           <Windows />
@@ -46,7 +46,7 @@ export default function MiniSimulatore({ config, schema = false, nastro = true, 
           {traccia && <TracePanel heading={false} />}
           {schema && <SchematicView heading={false} />}
         </div>
-        <figcaption className="mt-2 text-sm text-text-muted">
+        <figcaption className="mt-2 text-caption text-ink-muted">
           {didascalia ? `${didascalia} ` : ''}
           {t('lesson.mini.hint')}
         </figcaption>

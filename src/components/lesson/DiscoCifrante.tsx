@@ -68,7 +68,7 @@ export default function DiscoCifrante({
 
   return (
     <figure className="my-8 font-sans text-base">
-      <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-surface p-4 sm:flex-row sm:items-start">
+      <div className="flex flex-col items-center gap-4 figure-panel sm:flex-row sm:items-start">
         <svg
           viewBox={`0 0 ${SIZE} ${SIZE}`}
           className="w-full max-w-72 shrink-0"
@@ -97,7 +97,7 @@ export default function DiscoCifrante({
           <div className="flex items-center gap-2">
             <button
               type="button"
-              className="h-11 w-11 rounded-md border border-border hover:border-accent"
+              className="btn !p-0"
               aria-label={t('lesson.disc.left')}
               onClick={() => setTurns((n) => n - 1)}
             >
@@ -108,7 +108,7 @@ export default function DiscoCifrante({
             </output>
             <button
               type="button"
-              className="h-11 w-11 rounded-md border border-border hover:border-accent"
+              className="btn !p-0"
               aria-label={t('lesson.disc.right')}
               onClick={() => setTurns((n) => n + 1)}
             >
@@ -118,17 +118,12 @@ export default function DiscoCifrante({
           <label htmlFor={`${id}-text`} className="text-sm font-semibold">
             {t('lesson.disc.plain')}
           </label>
-          <input
-            id={`${id}-text`}
-            className="rounded-md border border-border bg-surface px-3 py-2"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          />
+          <input id={`${id}-text`} className="field" value={text} onChange={(e) => setText(e.target.value)} />
           {rotazione && (
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
-                className="h-5 w-5"
+                className="casella"
                 checked={rotate}
                 onChange={(e) => setRotate(e.target.checked)}
               />
@@ -136,10 +131,7 @@ export default function DiscoCifrante({
             </label>
           )}
           <p className="text-sm font-semibold">{t('lesson.disc.cipher')}</p>
-          <p
-            className="min-h-10 break-words rounded-md bg-surface-muted px-3 py-2 font-mono text-lg tracking-wider"
-            aria-live="polite"
-          >
+          <p className="figure-result min-h-10 break-words font-mono text-lg tracking-wider" aria-live="polite">
             {groupLetters(output)}
           </p>
         </div>

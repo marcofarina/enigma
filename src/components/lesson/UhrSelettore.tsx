@@ -30,11 +30,11 @@ export default function UhrSelettore({ coppie = 'AZ BN GI KL PC ED QT HV MF JR',
   // Una lettera che non torna indietro: X va in Y, ma Y non va in X.
   const broken = plugs.find(({ letter }) => target(target(letter)) !== letter);
   const move = (delta: number) => setSetting((current) => mod(current + delta, SETTINGS));
-  const button = 'rounded-md border border-border bg-surface px-3 py-2 font-mono hover:border-accent';
+  const button = 'btn font-mono';
 
   return (
     <figure className="my-8 font-sans text-base">
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4">
+      <div className="flex flex-col gap-4 figure-panel">
         <div className="flex flex-wrap items-center gap-2">
           <label htmlFor={`${id}-setting`} className="basis-full font-semibold sm:basis-auto">
             {t('sim.uhr.setting')}
@@ -44,7 +44,7 @@ export default function UhrSelettore({ coppie = 'AZ BN GI KL PC ED QT HV MF JR',
           </button>
           <select
             id={`${id}-setting`}
-            className="rounded-md border border-border bg-surface px-2 py-2 font-mono"
+            className="field field-mono"
             value={setting}
             onChange={(event) => setSetting(Number(event.target.value))}
           >
@@ -62,10 +62,7 @@ export default function UhrSelettore({ coppie = 'AZ BN GI KL PC ED QT HV MF JR',
           <caption className="sr-only">{tf('lesson.uhr.caption', { setting: pad(setting) })}</caption>
           <tbody>
             {[0, 1].map((half) => (
-              <tr key={half}>
-                <th scope="row" className="sr-only">
-                  {t(half === 0 ? 'lesson.uhr.rowFirst' : 'lesson.uhr.rowSecond')}
-                </th>
+              <tr key={half} aria-label={t(half === 0 ? 'lesson.uhr.rowFirst' : 'lesson.uhr.rowSecond')}>
                 {plugs.slice(half * 10, half * 10 + 10).map(({ letter, plug, red }) => (
                   <td key={plug} className="border border-border px-0.5 py-1">
                     <span
@@ -86,7 +83,7 @@ export default function UhrSelettore({ coppie = 'AZ BN GI KL PC ED QT HV MF JR',
             ))}
           </tbody>
         </table>
-        <p className="rounded-md bg-surface-muted px-3 py-2" aria-live="polite">
+        <p className="figure-result" aria-live="polite">
           {broken
             ? tf('lesson.uhr.oneWay', {
                 setting: pad(setting),
