@@ -44,7 +44,7 @@ nell’intervista della fase I (D9–D14). Valgono per le fasi qui sotto.
 | D11 | Che cosa resta dei rinviati della fase 1b? | — | — | 2026-11-04: escono i cavi trascinabili (bastano i due clic sulle prese, fase G0), lo schema in verticale su mobile (la versione ridotta non ha lo schema, fase G3) e la notazione tedesca dell’UKW-D |
 | D12 | Quando vengono le missioni storiche? | Dopo la fase V, in una fase a sé dopo la crittoanalisi | 4f | raccomandazione accettata (2026-11-04) |
 | D13 | La vista 3D resta nel piano? | — | 5a, 5b | 2026-11-04: Marco la tiene |
-| D14 | Da dove viene il modello 3D: fatto in Blender (licenza propria) o un modello CC BY verificato? | — | 5a | da decidere prima della fase 5a |
+| D14 | Da dove viene il modello 3D: fatto in Blender (licenza propria) o un modello CC BY verificato? | — | 4i, 5a | 2026-11-04: strada 2. Prima si cerca su Sketchfab un modello di Enigma con licenza CC0 o CC BY, rotori già separati e meno di circa 50 000 poligoni; se c’è, lo si adatta e lo si registra con l’attribuzione; se no, la geometria la fa Claude con l’MCP di Blender. In ogni caso materiali, texture e luce possono venire da Poly Haven (CC0). Metodo: `blender-mcp` (Marco vuole imparare a usarlo per PQuest di Python Doesn’t Byte); il codice che costruisce ogni pezzo si salva comunque in `scripts/blender/` |
 
 ## Analisi della code base esistente
 
@@ -155,13 +155,14 @@ norme non sono raggiungibili, quindi niente prosa).
 | 4f | Missioni storiche | Opus | high | 2 h | 4e, V (fonti delle chiavi) | fatta (2026-11-04) |
 | 4g | Guida per i docenti | Opus | high | 2 h | G4 | fatta (2026-11-04) |
 | 4h | Accessibilità e prestazioni | Sonnet | high | 1,5 h | 4a–4g | fatta (2026-11-04) |
-| 5a | Vista 3D: architettura e caricamento | Opus | high | 3 h | 4h, D14 | da fare |
+| 4i | Modello 3D con Blender | Sonnet | high | 3 h | D14; Marco al Mac con Blender aperto | da fare |
+| 5a | Vista 3D: architettura e caricamento | Opus | high | 3 h | 4h, 4i | da fare |
 | 5b | Vista 3D: pacco rotori e doppio passo | Sonnet | high | 2,5 h | 5a | da fare |
 
-Totale stimato: circa 24 ore di sessione. 4a, 4b e 4g non si toccano a vicenda e si possono
+Totale stimato: circa 27 ore di sessione. 4a, 4b e 4g non si toccano a vicenda e si possono
 fare in qualunque ordine; 4d e 4e toccano file diversi e sono indipendenti fra loro. 4f viene
 dopo la crittoanalisi per decisione di Marco (D12). 4h chiude la v1.0 e va fatta per ultima,
-perché misura le pagine nuove.
+perché misura le pagine nuove. 4i non dipende da nessun’altra fase ma non si può fare nel cloud: serve Blender aperto sul Mac di Marco.
 
 ### Fuori dalle fasi
 
@@ -823,9 +824,86 @@ pnpm verify && pnpm test:e2e
 
 ---
 
+### Fase 4i — Modello 3D con Blender
+
+**Modello: Sonnet · Effort: high · Durata: 3 h · Dipende da: D14; non si fa nel cloud, Marco deve avere Blender aperto sul Mac**
+
+**Obiettivo.** Un file `.glb` dell’Enigma I a tre rotori, sotto il tetto di peso, con i nodi
+chiamati secondo una convenzione fissa, e i file che lo rigenerano nel repo. La 5a lo carica; la 5b
+anima i rotori e i nottolini.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Sonnet con effort high. Se non stai girando su Sonnet,
+fermati e dimmelo senza fare altro.
+
+Esegui la fase 4i di docs/piano.md. Leggi la decisione D14. Controlla che gli strumenti
+dell’MCP di Blender siano disponibili in questa sessione; se non lo sono, fermati e dimmi che cosa
+manca (Blender, l’addon, il server).
+```
+
+**Prima della sessione (Marco, una volta sola).**
+
+1. `brew install --cask blender` e `brew install uv`.
+2. Installare in Blender l’addon di [ahujasid/blender-mcp](https://github.com/ahujasid/blender-mcp)
+   e avviarne il server dal pannello laterale.
+3. Registrare il server per l’utente, così serve anche a Python Doesn’t Byte (il comando esatto è
+   nel README del progetto; di solito `claude mcp add --scope user blender -- uvx blender-mcp`).
+4. Salvare il file `.blend` prima di ogni sessione: lo strumento `execute_blender_code` esegue
+   codice Python arbitrario.
+
+**Passi**
+
+1. **Ricerca (30 minuti al massimo).** Cerca su Sketchfab un modello di Enigma con tutti e tre i
+   requisiti di D14: licenza CC0 o CC BY, rotori già separati, meno di circa 50 000 poligoni.
+   Verifica la licenza sulla pagina del modello e annotala. Se ne trovi uno, mostralo a Marco prima
+   di adattarlo. Se no, passa al passo 2 e scrivilo nell’«Esito».
+2. **Costruzione.** Dove serve la geometria, usa l’MCP con le foto della galleria
+   (`enigma-i-milano`, `rotori-e-perno`, `rotori-con-anelli`) come riferimento per le proporzioni.
+   Materiali, texture e luce possono venire da Poly Haven (CC0): annotane gli id nell’«Esito». Niente
+   altri asset di terzi.
+3. **Convenzione dei nodi** (la 5b la usa per l’animazione). Nomi in minuscolo: `scatola`,
+   `coperchio`, `tasto_a`…`tasto_z`, `lampada_a`…`lampada_z`, `pannello_spine`, `riflettore`,
+   `ruota_ingresso`, e per ogni rotore (`rotore_destro`, `rotore_centrale`, `rotore_sinistro`) un
+   nodo con i figli `corpo`, `anello`, `tacca`, `contatti`; poi `nottolino_destro` e
+   `nottolino_centrale`. L’origine di ogni rotore sta sul suo asse e l’asse è X, così girarlo in
+   three.js è una sola proprietà.
+4. **Il codice resta nel repo.** Ogni pezzo costruito con `execute_blender_code` si salva anche in
+   `scripts/blender/<pezzo>.py`, e un `scripts/blender/costruisci.py` li esegue in ordine ed esporta
+   il `.glb`. Il `.blend` non va in git.
+5. **Esportazione** in `public/modelli/enigma-i.glb` (glTF binario), sotto 500 KB.
+6. **Verifica dei nodi.** `scripts/verifica-modello.ts`, senza dipendenze nuove: legge il blocco
+   JSON del `.glb`, controlla il peso e che esistano tutti i nodi della convenzione. Si lancia con
+   `node scripts/verifica-modello.ts`.
+7. **Licenza.** Chiedi a Marco con quale licenza pubblica la geometria fatta da lui e da Claude; se
+   c’è una base di terzi, ripeti titolo, autore, URL e licenza. Scrivi la risposta nell’«Esito» e in
+   «Da verificare» di `docs/stato.md`: la voce nel sito la crea la 5a.
+
+**Criteri di accettazione**
+
+```bash
+node scripts/verifica-modello.ts
+```
+exit 0, con il peso sotto 500 KB e tutti i nodi della convenzione.
+
+```bash
+ls scripts/blender/costruisci.py
+```
+
+```bash
+pnpm verify
+```
+
+**Esito.** Da compilare: modello scelto (di terzi o fatto da zero, con licenza e URL), peso,
+numero di poligoni, id Poly Haven usati, licenza della geometria, che cosa ha richiesto più tempo
+con l’MCP e che cosa conviene sapere per PQuest.
+
+---
+
 ### Fase 5a — Vista 3D: architettura e caricamento
 
-**Modello: Opus · Effort: high · Durata: 3 h · Dipende da: 4h, D14 (il modello 3D)**
+**Modello: Opus · Effort: high · Durata: 3 h · Dipende da: 4h, 4i (il modello 3D)**
 
 **Obiettivo.** Una vista 3D della macchina con React Three Fiber e drei, caricata solo su
 richiesta: chi non la apre non scarica nulla in più, e senza WebGL resta il banco della home.
@@ -836,8 +914,9 @@ richiesta: chi non la apre non scarica nulla in più, e senza WebGL resta il ban
 Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
 dimmelo senza fare altro.
 
-Esegui la fase 5a di docs/piano.md. Leggi la decisione D14 in docs/piano.md: dice da dove viene
-il modello 3D e con quale licenza. Se D14 non ha risposta, fermati e chiedila a Marco.
+Esegui la fase 5a di docs/piano.md. Leggi la decisione D14 e l’«Esito» della fase 4i: dicono dove
+sta il modello 3D, come si chiamano i suoi nodi e con quale licenza. Se la 4i non è fatta, fermati
+e dimmelo.
 ```
 
 **Passi**
