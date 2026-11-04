@@ -1,0 +1,19 @@
+---
+import CicliIndicatori from '@/components/lesson/CicliIndicatori';
+import MenuBombe from '@/components/lesson/MenuBombe';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<!--
+  Pagina di prova della fase 4c: non è collegata da nessuna parte. Serve ai test e2e finché
+  le lezioni di crittoanalisi (fasi 4d e 4e) non usano i due componenti; allora si toglie.
+-->
+<BaseLayout title="Prova delle animazioni di crittoanalisi">
+  <div class="prose-it mx-auto max-w-3xl">
+    <h1>Prova delle animazioni di crittoanalisi</h1>
+    <h2>Cicli degli indicatori</h2>
+    <CicliIndicatori client:visible />
+    <h2>Menu e Bombe</h2>
+    <MenuBombe client:visible />
+  </div>
+</BaseLayout>
