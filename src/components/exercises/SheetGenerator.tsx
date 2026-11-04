@@ -3,6 +3,7 @@ import { t, tf } from '@/i18n';
 import { EXERCISES, randomSeedFrom } from '@/exercises/catalog.ts';
 import { isSeed } from '@/exercises/random.ts';
 import { classSeeds, generateSheet, type DailyKey, type Sheet } from '@/exercises/sheets.ts';
+import ScrollRegion from '@/components/ui/ScrollRegion.tsx';
 import Blocks from './Blocks.tsx';
 
 const SEED_PARAM = 'seme';
@@ -104,15 +105,9 @@ function SheetView({ sheet, first }: { sheet: Sheet; first: boolean }) {
       <section className="flex flex-col gap-2">
         <h3 className="text-lg font-semibold">{t('sheet.keys.title')}</h3>
         <p className="text-sm">{t('sheet.keys.hint')}</p>
-        <div
-          className="overflow-x-auto"
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-          tabIndex={0}
-          role="region"
-          aria-label={tf('sheet.keys.caption', { number: sheet.number })}
-        >
+        <ScrollRegion label={tf('sheet.keys.caption', { number: sheet.number })}>
           <KeyTable sheet={sheet} />
-        </div>
+        </ScrollRegion>
       </section>
       {sheet.messages.length > 0 && (
         <section className="page-break flex flex-col gap-4">

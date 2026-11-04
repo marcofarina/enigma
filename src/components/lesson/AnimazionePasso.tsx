@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   createMachine,
   defaultConfig,
@@ -29,12 +29,10 @@ const SLOT_KEYS = ['lesson.step.left', 'lesson.step.middle', 'lesson.step.right'
  * avanza, così il doppio passo del rotore centrale diventa visibile.
  */
 export default function AnimazionePasso({ rotori = 'I-II-III', inizio = 'ADU' }: Props) {
-  const names = rotori.split('-');
+  const names = useMemo(() => rotori.split('-'), [rotori]);
   const machine = useMemo(
     () => createMachine({ ...defaultConfig('I'), rotors: names, positions: inizio }),
-    // La macchina dipende solo dalle props, che in una lezione non cambiano.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [rotori, inizio],
+    [names, inizio],
   );
   const [history, setHistory] = useState<Entry[]>(() => [
     { state: initialState(machine), moved: [false, false, false] },
@@ -43,20 +41,22 @@ export default function AnimazionePasso({ rotori = 'I-II-III', inizio = 'ADU' }:
   const current = history.at(-1) ?? { state: initialState(machine), moved: [false, false, false] };
   const notches = names.map((name) => MODELS.I.rotors[name]?.notches ?? '');
 
-  const advance = () =>
-    setHistory((h) => {
-      const last = h.at(-1);
-      if (!last) return h;
-      const result = step(machine, last.state);
-      return [...h, { state: result.state, moved: result.moved }];
-    });
+  const advance = useCallback(
+    () =>
+      setHistory((h) => {
+        const last = h.at(-1);
+        if (!last) return h;
+        const result = step(machine, last.state);
+        return [...h, { state: result.state, moved: result.moved }];
+      }),
+    [machine],
+  );
 
   useEffect(() => {
     if (!playing) return;
     const timer = window.setInterval(advance, 900);
     return () => window.clearInterval(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playing, machine]);
+  }, [playing, advance]);
 
   const atNotch = (slot: number) => notches[slot]?.includes(toLetter(current.state.positions[slot] ?? 0)) ?? false;
   const movedNames = current.moved.flatMap((m, slot) => (m ? [t(SLOT_KEYS[slot] ?? 'lesson.step.right')] : []));

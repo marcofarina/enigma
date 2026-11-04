@@ -1,4 +1,4 @@
-import { createContext, useContext, type KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { createContext, useContext, useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { createStore, useStore, type StoreApi } from 'zustand';
 import type { MachineConfig } from '@/engine';
 import { isEditableTarget, keyAction } from './keys.ts';
@@ -67,4 +67,22 @@ export function handlePhysicalKey(store: SimulatorStore, event: KeyboardEvent | 
   if (action.type === 'undo') state.undo();
   else state.press(action.letter);
   return true;
+}
+
+/**
+ * Ref da dare a un contenitore: la tastiera fisica agisce sulla macchina solo mentre il focus è
+ * dentro di esso (per esempio dopo un clic su un tasto). L’ascoltatore sta qui e non su un
+ * attributo `onKeyDown`, perché il contenitore non è un controllo: i tasti li gestiscono i
+ * controlli che contiene, e il contenitore li raccoglie quando risalgono.
+ */
+export function useKeyCapture(store: SimulatorStore) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    const onKeyDown = (event: KeyboardEvent) => handlePhysicalKey(store, event);
+    element.addEventListener('keydown', onKeyDown);
+    return () => element.removeEventListener('keydown', onKeyDown);
+  }, [store]);
+  return ref;
 }
