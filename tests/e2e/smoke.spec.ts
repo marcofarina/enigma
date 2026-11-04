@@ -11,6 +11,7 @@ const pages = [
   'crittoanalisi/',
   'schede/',
   'fonti/',
+  'docenti/',
 ];
 
 for (const path of pages) {
@@ -82,4 +83,35 @@ test('la galleria mostra ogni immagine con i crediti', async ({ page }) => {
   }
   await page.goto('fonti/');
   await expect(page.getByText('Alessandro Nassiri', { exact: false }).first()).toBeVisible();
+});
+
+test('la guida per i docenti è nel menu e i suoi link aprono le procedure che descrive', async ({ page, isMobile }) => {
+  await page.goto('come-funziona/');
+  if (isMobile) await page.getByRole('button', { name: 'Menu' }).click();
+  await page.getByRole('link', { name: 'Docenti' }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'Guida per i docenti' })).toBeVisible();
+  // Sul telefono il menu a foglio si chiude con la navigazione: la voce corrente si vede solo a desktop.
+  if (!isMobile) await expect(page.getByRole('link', { name: 'Docenti' })).toHaveAttribute('aria-current', 'page');
+
+  // La serie di schede: primo numero e numero di schede vengono dall’indirizzo.
+  await page.getByRole('link', { name: 'questo link apre la serie dalla n. 100 alla n. 124' }).click();
+  await expect(page.getByText('Verranno stampate 25 schede, dalla n. 100 alla n. 124.')).toBeVisible();
+  await page.goBack();
+
+  // La stessa variante per tutta la classe.
+  await page.getByRole('link', { name: 'questa è la variante 4827 di «Decifra un messaggio»' }).click();
+  await expect(page.getByText('Variante 4827')).toBeVisible();
+  await expect(page.getByText('RUKCR RTYSU CETAC UOUJS EGZZU NCKHI EK')).toBeVisible();
+});
+
+test('a 768 px le sette voci dell’intestazione stanno su una riga', async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 900 });
+  await page.goto('docenti/');
+  const nav = page.getByRole('navigation', { name: 'Navigazione principale' }).first();
+  const links = nav.getByRole('link');
+  await expect(links).toHaveCount(7);
+  const boxes = await Promise.all((await links.all()).map((link) => link.boundingBox()));
+  const heights = boxes.map((box) => box?.height ?? 0);
+  expect(Math.max(...heights) - Math.min(...heights)).toBeLessThan(1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(768);
 });

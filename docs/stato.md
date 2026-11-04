@@ -63,6 +63,10 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
   messaggi di Barbarossa (due parti), U-264 e Scharnhorst da `src/content/missioni.yaml`, ognuno con
   il pannello «Contesto»; dettagli in `docs/piano.md`, fase 4f, «Esito».
 
+- Fase 4g, branch `fase/4g`: guida per i docenti in `/docenti/` (testo in
+  `src/content/docenti/guida.mdx`), «Docenti» di nuovo nei menu; dettagli in `docs/piano.md`,
+  fase 4g, «Esito».
+
 ## Prossimo passo
 
 - Revisione delle bozze delle lezioni da parte dell’autore.
@@ -129,6 +133,10 @@ Valgono solo nel container delle sessioni cloud, dove le norme non sono raggiung
   19:25 è il «T.O.O.» del modulo, senza fuso orario; il Duke of York la ricevette alle 18:32 Z.
 - Missione U-264: Erskine non dice che nave fosse HMS Hurricane; il testo la chiama «nave
   britannica».
+- Guida per i docenti: lo schermo intero della modalità LIM non è stato provato (il pannello del
+  browser della sessione lo rifiuta); da provare su una LIM vera. I collegamenti con il curricolo
+  citano la Direttiva 16 gennaio 2012, n. 4: da aggiornare quando le Linee guida della riforma
+  degli istituti tecnici arriveranno al triennio.
 
 ## Verificato (fase 4f, 2026-11-04)
 

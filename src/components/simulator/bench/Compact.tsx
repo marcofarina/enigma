@@ -16,6 +16,7 @@ const NAV = [
   { href: 'crittoanalisi/', key: 'nav.cryptanalysis' },
   { href: 'esercizi/', key: 'nav.exercises' },
   { href: 'glossario/', key: 'nav.glossary' },
+  { href: 'docenti/', key: 'nav.teachers' },
 ] as const;
 
 /** Intestazione da 52 px: il marchio e il pulsante del menu, che si apre come foglio sotto la barra. */

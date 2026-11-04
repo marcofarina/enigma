@@ -335,7 +335,7 @@ test('a 375 px il menu si apre, porta alle sezioni e si chiude con Esc', { tag: 
   await menu.click();
   await expect(menu).toHaveAttribute('aria-expanded', 'true');
   await expect(page.getByRole('link', { name: 'Simulatore' })).toBeFocused();
-  for (const name of ['Come funziona', 'Storia', 'Esercizi', 'Glossario'])
+  for (const name of ['Come funziona', 'Storia', 'Esercizi', 'Glossario', 'Docenti'])
     await expect(page.getByRole('link', { name })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Tema chiaro o scuro' })).toBeVisible();
   await page.keyboard.press('Escape');

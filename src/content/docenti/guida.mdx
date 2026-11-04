@@ -1,0 +1,92 @@
+{/*
+Guida per i docenti (fase 4g di docs/piano.md). Registro di .claude/norms/scrittura-istituzionale.md:
+il paragrafo d’apertura descrive il sito, le procedure usano l’infinito. Ogni procedura è stata
+provata nel browser con «astro-dev» il 2026-11-04; i link sono relativi a /docenti/, così
+rispettano `base`.
+*/}
+
+Per l’uso in classe il sito mette a disposizione un simulatore con una modalità per la LIM, link e codici QR che aprono una configurazione già pronta, messaggi storici da decifrare, esercizi autocorretti con varianti numerate e schede da stampare. Gli argomenti delle lezioni toccano alcune voci delle Linee guida di Informatica, Sistemi e reti e TPSIT, elencate in fondo alla pagina.
+
+Il sito non richiede account e non salva dati personali. I progressi degli esercizi e la scelta del tema restano nel browser in cui sono stati registrati: non passano da un dispositivo all’altro e il docente non li vede.
+
+## Il simulatore alla LIM
+
+La pagina iniziale del sito è il simulatore. La modalità LIM alza il contrasto, con i testi secondari pieni e i bordi più marcati, e porta la pagina a schermo intero se il browser lo consente; la disposizione dei comandi resta la stessa.
+
+1. Aprire il [simulatore](../).
+2. Premere «Modalità LIM», in alto a destra.
+3. Per uscire, premere di nuovo «Modalità LIM». Se la pagina è a schermo intero, basta anche il tasto Esc.
+
+Il simulatore completo richiede una finestra larga almeno 1024 pixel e alta almeno 576. In una finestra più piccola, per esempio sul telefono, compare una versione ridotta con finestrelle, tastiera e lampade: le posizioni dei rotori si regolano con le frecce, il resto della configurazione si cambia solo nel simulatore completo.
+
+Per far vedere il percorso del segnale, il menu in basso a destra dello schema ha tre velocità: «Normale», «Al rallentatore» e «Passo passo». In «Passo passo», dopo ogni tasto, i pulsanti ◀ e ▶ mostrano il percorso della corrente un passaggio alla volta, dal movimento dei rotori alla lampada.
+
+Per cifrare un testo intero senza batterlo lettera per lettera:
+
+1. Scrivere il testo nel campo in fondo al foglio, a sinistra.
+2. Premere «Digita»: la macchina batte le lettere una alla volta, e il foglio le riporta in gruppi di cinque insieme alle lampade accese.
+
+Il simulatore toglie spazi, apostrofi e accenti; il pannello «Opzioni», accanto al campo, scrive X al posto del punto e le cifre in lettere. «Annulla», sul foglio, riporta indietro i rotori di una lettera, cosa che sulla macchina reale non si poteva fare.
+
+## Link condivisibili e codici QR
+
+L’indirizzo del simulatore contiene la configurazione della macchina: modello, riflettore, rotori, anelli, posizione iniziale e cavi. Lo stesso indirizzo apre la macchina impostata allo stesso modo su qualunque computer, e sul telefono nella versione ridotta.
+
+1. Impostare la macchina.
+2. Premere «Condividi», in alto a destra.
+3. Premere «Copia il link», oppure «Mostra il codice QR» per proiettare il codice alla LIM e farlo inquadrare con la fotocamera del telefono.
+
+Il link riporta la posizione iniziale dei rotori, non quella raggiunta dopo le lettere battute. Con l’opzione «Includi le lettere digitate» il link riapre la macchina con il messaggio già battuto, e il foglio mostra i tasti premuti e le lampade accese. Senza l’opzione il link porta solo la chiave, e il testo cifrato si può scrivere alla lavagna: per esempio, con [questa chiave](../?v=1&m=I&w=III-I-V&r=CKM&p=QRS&u=B&s=AQ.BJ.CW.DH.EV.FM.GT.IX.KZ.LP) il testo cifrato QEZKD XNWJF UKNMF S torna ATTACCATEALLALBA.
+
+Anche l’indirizzo nella barra del browser segue la configurazione, e copiato da lì funziona come il link di «Condividi».
+
+## Messaggi storici
+
+Il menu «Carica una chiave», accanto al titolo «Chiave del giorno» sul foglio a sinistra del simulatore, contiene nel gruppo «Messaggi storici» quattro messaggi intercettati durante la guerra, in ordine di data: le due parti di un rapporto della divisione SS-Totenkopf durante l’operazione Barbarossa (7 luglio 1941), un messaggio trasmesso dal sommergibile U-264 (19 novembre 1942) e l’ultimo della nave da battaglia Scharnhorst (26 dicembre 1943).
+
+1. Scegliere un messaggio nel gruppo «Messaggi storici».
+2. Premere «Digita»: il testo cifrato è già nel campo, e le lampade danno il testo in chiaro, in tedesco.
+3. Premere «Contesto» per leggere la storia del messaggio, i dettagli da notare, la traduzione e le fonti.
+
+Per Barbarossa il pannello descrive anche la procedura dell’indicatore del 1940, da riprodurre sulla macchina. I messaggi storici non sono nella versione ridotta per il telefono, e il link di «Condividi» porta la chiave del messaggio ma non il testo cifrato né il contesto.
+
+## Esercizi e varianti
+
+Gli [esercizi](../esercizi/) sono divisi in tre livelli, operatore, meccanica e matematica, e si correggono da soli. Ogni variante nasce da un numero fra uno e 999 999, il seme, che compare in testa all’esercizio («Variante 4827») e nell’indirizzo della pagina (`?seme=4827`). Lo stesso numero dà a tutti lo stesso esercizio.
+
+Per assegnare la stessa variante a tutta la classe:
+
+1. Aprire l’esercizio e leggere il numero della variante.
+2. Condividere l’indirizzo della pagina, oppure scrivere il numero alla lavagna: ogni studente lo scrive in «Numero della variante» e preme «Apri».
+
+Per esempio, [questa è la variante 4827 di «Decifra un messaggio»](../esercizi/decifra/?seme=4827). «Nuova variante» estrae un altro numero. La soluzione è disponibile a chi svolge l’esercizio, con «Mostra la soluzione»; negli esercizi sulla macchina, sotto la soluzione, «Rivedi nel simulatore» apre il simulatore con la chiave e il messaggio della variante.
+
+## Schede stampabili
+
+Le schede sono fogli A4 per lavorare senza computer. Ogni scheda ha un numero, che fa da seme, e contiene un foglio chiave del mese sul modello di quelli della Luftwaffe, i messaggi da decifrare con il loro indicatore e gli esercizi scelti. Una serie per la classe usa numeri consecutivi, quindi ogni studente riceve una scheda diversa.
+
+1. Aprire le [schede stampabili](../schede/).
+2. Scrivere in «Numero della prima scheda» un numero fra uno e 999 999, e in «Schede (una per studente)» quante schede servono, fino a 40.
+3. Scegliere in «Messaggi da decifrare» quanti messaggi mettere in ogni scheda, da zero a tre, e spuntare gli esercizi da aggiungere.
+4. Lasciare spuntata «Aggiungi le soluzioni su pagine separate, in fondo» per avere le soluzioni di tutta la serie dopo l’ultima scheda.
+5. Premere «Stampa».
+
+La riga sotto il numero della prima scheda conferma la serie, per esempio «Verranno stampate 25 schede, dalla n. 100 alla n. 124». L’indirizzo della pagina conserva solo il primo numero e il numero di schede. Per esempio, [questo link apre la serie dalla n. 100 alla n. 124](../schede/?seme=100&copie=25) con le opzioni di partenza: due messaggi, gli esercizi «Dove saranno i rotori?», «Un crittogramma impossibile» e «Contare i collegamenti del pannello» e le soluzioni in fondo. Con queste opzioni ogni scheda occupa tre pagine.
+
+Gli esercizi di una scheda sono la variante con lo stesso numero dell’esercizio in linea: la scheda n. 100 ha lo stesso «Dove saranno i rotori?» della [variante 100 in linea](../esercizi/posizioni/?seme=100).
+
+## Collegamenti con il curricolo
+
+Le voci fra caporali vengono dalle Linee guida per il secondo biennio e il quinto anno degli istituti tecnici (Direttiva 16 gennaio 2012, n. 4), indirizzo Informatica e telecomunicazioni, articolazione Informatica.
+
+### Informatica
+
+Fra le conoscenze del secondo biennio le Linee guida indicano «Principali strutture dati e loro implementazione» e «Teoria della complessità algoritmica». Un rotore è una permutazione delle 26 lettere e si implementa con un array: la lezione [I rotori](../come-funziona/i-rotori/) mostra come la posizione e l’anello cambiano la lettera in uscita, e [La matematica di Enigma](../come-funziona/la-matematica-di-enigma/) compone le permutazioni dell’intera macchina. [Quante chiavi](../come-funziona/quante-chiavi/) conta le impostazioni fattore per fattore, e l’esercizio [Trova la posizione iniziale](../esercizi/posizione-iniziale/) risolve per tentativi un problema ristretto a 26 possibilità. Il confronto fra le 26 prove dell’esercizio e il numero di chiavi contato nella lezione dà la misura di una ricerca esaustiva sull’intero spazio delle chiavi.
+
+### Sistemi e reti
+
+Fra le conoscenze del quinto anno compaiono le «Tecniche crittografiche applicate alla protezione dei sistemi e delle reti». Enigma è un cifrario simmetrico: il messaggio torna in chiaro solo su una macchina impostata come quella del mittente ([Che cos’è Enigma](../come-funziona/che-cos-e-enigma/)). La lezione [Fogli chiave e procedure](../storia/fogli-chiave-e-procedure/) descrive i due livelli della chiave, quella del giorno, distribuita in anticipo su carta, e quella del messaggio, diversa per ogni messaggio e trasmessa cifrata: lo stesso schema di una chiave di sessione protetta da una chiave a lungo termine. La sezione [Crittoanalisi](../crittoanalisi/) racconta attacchi che partivano dalle procedure degli operatori, come la chiave del messaggio cifrata due volte ([Rejewski e la teoria dei cicli](../crittoanalisi/rejewski-e-la-teoria-dei-cicli/)) e i pezzi di testo prevedibili ([Il crib e la Bombe](../crittoanalisi/il-crib-e-la-bombe/)).
+
+### Tecnologie e progettazione di sistemi informatici e di telecomunicazioni
+
+Il secondo biennio comprende i «Principi di teoria e di codifica dell’informazione». Prima di essere cifrato, un testo va ridotto alle 26 lettere della tastiera, con le convenzioni descritte sopra per il campo di «Digita»; la lezione [Dalla sostituzione al rotore](../come-funziona/dalla-sostituzione-al-rotore/) mostra perché una sostituzione fissa lascia passare le frequenze delle lettere. Fra le abilità del quinto anno c’è «Progettare semplici protocolli di comunicazione»: la procedura dell’indicatore è un protocollo fra due operatori, e l’esercizio [La procedura dell’indicatore](../esercizi/indicatore/) chiede di ricavare la chiave del messaggio da un indicatore e di decifrare il testo.

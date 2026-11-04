@@ -10,6 +10,7 @@ const links = [
   { href: url('crittoanalisi/'), label: t('nav.cryptanalysis') },
   { href: url('esercizi/'), label: t('nav.exercises') },
   { href: url('glossario/'), label: t('nav.glossary') },
+  { href: url('docenti/'), label: t('nav.teachers') },
 ];
 
 const currentPath = Astro.url.pathname;
@@ -35,7 +36,7 @@ const isCurrent = (href: string) => (href === url() ? currentPath === href : cur
             <li>
               <a
                 href={link.href}
-                class="nav-link inline-flex min-h-11 items-center px-2 text-alu no-underline hover:text-alu-bright"
+                class="nav-link inline-flex min-h-11 items-center whitespace-nowrap px-1.5 text-alu lg:px-2 no-underline hover:text-alu-bright"
                 aria-current={isCurrent(link.href) ? 'page' : undefined}
               >
                 {link.label}
