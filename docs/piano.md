@@ -151,7 +151,7 @@ norme non sono raggiungibili, quindi niente prosa).
 | 4b | Motore della crittoanalisi | Opus | high | 2,5 h | — | fatta (2026-11-04) |
 | 4c | Animazioni della crittoanalisi | Sonnet | high | 2,5 h | 4b, G4 | fatta (2026-11-04) |
 | 4d | Crittoanalisi polacca | Opus | high | 3 h | 4c | fatta (2026-11-04) |
-| 4e | Bletchley Park e la M4 | Opus | high | 3 h | 4c, V (Welchman, Sebag-Montefiore, Hinsley) | da fare |
+| 4e | Bletchley Park e la M4 | Opus | high | 3 h | 4c, V (Welchman, Sebag-Montefiore, Hinsley) | fatta (2026-11-04) |
 | 4f | Missioni storiche | Opus | high | 2 h | 4e, V (fonti delle chiavi) | da fare |
 | 4g | Guida per i docenti | Opus | high | 2 h | G4 | da fare |
 | 4h | Accessibilità e prestazioni | Sonnet | high | 1,5 h | 4a–4g | da fare |
@@ -500,6 +500,53 @@ almeno `1`.
 ```bash
 pnpm verify && pnpm test:e2e
 ```
+
+**Esito (2026-11-04)**
+
+- Fonti: Welchman e Sebag-Montefiore da `docs/books/`, Singh (edizione italiana e, per la frase di
+  Hinsley, quella inglese per ragazzi), il capitolo 1 del trattato di Turing (riscaricato da
+  CryptoCellar). Hinsley non è fra i libri: le sue tesi arrivano attraverso Sebag-Montefiore,
+  Singh e Welchman, e la lezione lo dice. I fatti controllati sono in «Verificato (fase 4e)» di
+  `docs/stato.md`; le divergenze fra le fonti in «Da verificare». La sezione «Per la fase 4e» è
+  stata assorbita da quelle due.
+- Tre lezioni in bozza in `src/content/lezioni/it/crittoanalisi/`, con obiettivi e riepilogo come
+  la Storia (D3), ognuna con una forma diversa:
+  - `04-il-crib-e-la-bombe.mdx`: crib, menu, anelli che il pannello non cancella, deduzioni da
+    un’ipotesi, diagonal board, fermate. Usa `MenuBombe` con una `Previsione` (ipotesi sbagliata
+    con i rotori giusti) e una citazione breve di Turing (cap. 1, p. 2). Numeri calcolati con il
+    motore sulla chiave del componente: il crib sta in 19 posizioni su 33; un anello lascia
+    11 064 posizioni su 17 576, due ne lasciano 7 117; con il diagonal board la scansione si ferma
+    una volta (BLA), senza 648 volte; le 25 ipotesi sbagliate si contraddicono entro la
+    quattordicesima deduzione.
+  - `05-la-m4-e-shark.mdx`: Enigma della marina, tabella delle catture del 1941, quarto rotore,
+    blackout di Shark, U-559 e 13 dicembre 1942. Una `Previsione` con `MiniSimulatore` su una M4
+    con Beta in A, che cifra WETTER in OOHJSF come la M3 della lezione 4 (verificato nel motore e
+    nel browser).
+  - `06-quanto-conto-ultra.mdx`: casi documentati (PQ12, PQ17, sbarco), stima controfattuale, una
+    sezione per autore (Hinsley, Singh, Sebag-Montefiore, Welchman) e il confronto fra il 1946 e il
+    1948 attribuiti a Hinsley. Niente cifra come risposta.
+- Dove Singh diverge, le lezioni lo dicono: date della prima Bombe e della ripresa del maggio 1940,
+  diagonal board non nominato, progetto attribuito al solo Turing (lezione 4); riflettore navale a
+  26 posizioni (lezione 5); Hinsley con il 1948 (lezione 6).
+- Rimandi aggiornati: «Il riflettore», «Il pannello a spine» e «La bomba e i fogli di Zygalski»
+  ora collegano la lezione 4. Glossario: voci nuove `diagonal-board` e `menu`; `bombe` riscritta
+  (non più «la diagonal board», Turing non più unico autore), `crib` e `ultra` rimandano alle
+  lezioni nuove. Nomi nuovi in `scripts/nomi-propri.txt`.
+- Tolta `src/pages/prove/crittoanalisi.astro`: `tests/e2e/crittoanalisi.spec.ts` prova ora
+  `CicliIndicatori` nella lezione 1 e `MenuBombe` nella lezione 4; l’accessibilità delle due la
+  controlla `lessons.spec.ts`, che ha le tre lezioni nuove.
+- Nella lezione 6 una tabella di prosa a quattro colonne faceva fallire axe a 375 px (regione che
+  scorre senza tastiera): è diventata una sezione per autore.
+- Verificato nel browser con «astro-dev»: lezione 5 a desktop (tabella e simulatore) e a 375 px,
+  lezione 4 a 375 px (`MenuBombe`, «Percorri l’anello»), lezione 6 a 375 px; nessuno scorrimento
+  orizzontale. Non guardato a occhio il tema scuro: lo copre axe.
+- Comandi eseguiti: il criterio (`1` lezione con `MenuBombe`), `pnpm verify` (214 test, 0 errori;
+  i 4 avvisi di `lint:content` su `it.json` c’erano già), `pnpm test:e2e` (147 passati, 19
+  saltati).
+- Per Marco: come in 4d, niente citazione d’apertura; se la vuole, servono tre proposte. Da
+  rileggere in particolare la sezione «Il diagonal board» della lezione 4 (il modello delle
+  fermate senza diagonal board è quello del motore, non la Bombe di Turing del 1940) e le quattro
+  tesi della lezione 6.
 
 ---
 

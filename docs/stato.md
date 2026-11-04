@@ -55,6 +55,10 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
   Crittoanalisi (Rejewski e la teoria dei cicli, il ciclometro e il catalogo, la bomba e i fogli di
   Zygalski), pagina indice e voce di menu; dettagli in `docs/piano.md`, fase 4d, «Esito».
 
+- Fase 4e, branch `fase/4e`: Bletchley Park e la M4. Tre lezioni in bozza nella sezione
+  Crittoanalisi (il crib e la Bombe, la M4 e Shark, quanto contò Ultra), voci nuove del glossario e
+  pagina di prova delle animazioni tolta; dettagli in `docs/piano.md`, fase 4e, «Esito».
+
 ## Prossimo passo
 
 - Revisione delle bozze delle lezioni da parte dell’autore.
@@ -106,6 +110,51 @@ Valgono solo nel container delle sessioni cloud, dove le norme non sono raggiung
 - Materiale di Asché: Rejewski (app. D, p. 258) parla delle chiavi di settembre e ottobre 1932; l’elenco di Kozaczuk (p. 18) nomina tabelle mensili dell’esercito di altri periodi (la scansione è poco leggibile). La lezione 1 tiene il dato di Rejewski.
 - Hinsley, *British Intelligence in the Second World War*: non consultato. La lezione 3 ne riporta la tesi solo attraverso la risposta di Rejewski in Kozaczuk (p. 64, n. 8).
 
+- M4 in posizione neutra: Sebag-Montefiore (cap. 19 e 20) scrive anello in Z e A nella finestrella del rotore sottile; nel motore la M4 con Beta e il riflettore B sottile cifra come la M3 con il riflettore B quando posizione e anello coincidono (A e A, oppure Z e Z), non con anello Z e finestrella A. Forse è una questione di notazione: a Bletchley Park l’anello Z faceva da zero (Welchman, app. I; Turing, cap. 1, p. 5, «window position = rod position + Ringstellung + a constant»). La lezione 5 di crittoanalisi usa nel simulatore Beta in A con l’anello in A e nella parte storica dice solo «posizione neutra».
+- Prima Bombe: Singh (cap. 4) dà *Victory* al 14 marzo 1940 e *Agnus Dei* all’8 agosto, con l’interruzione dal 10 maggio all’8 agosto; Welchman (cap. 7 e cap. 13) ricorda le prime Bombe operative non prima del settembre 1940 e la ripresa delle decifrazioni al 20 maggio, senza Bombe; secondo Welchman Hinsley dà l’agosto 1940 (vol. 1, p. 184) e la fine di maggio (vol. 1, p. 494). La lezione 4 di crittoanalisi riporta tutte le versioni.
+- Fine della doppia cifratura nel 1940: Bauer (p. 123) 1° maggio, Welchman (cap. 7) 10 maggio, ma nel cap. 13 ricorda il 15; Singh (cap. 4) 10 maggio. La lezione 4 di crittoanalisi scrive «nel maggio del 1940».
+- Hinsley, *British Intelligence in the Second World War*, resta non consultato. Le sue tesi su Ultra arrivano da Sebag-Montefiore (introduzione e note 3, 4, 7–10: autunno 1941, maggio 1943, sbarco al 1946 nella conferenza del 18 febbraio 1992) e da Singh (cap. 4: guerra finita nel 1948 invece che nel 1945); la lezione 6 di crittoanalisi le attribuisce a quei libri. Il periodo «between October and November 1941» di Sebag-Montefiore (vol. 2, p. 174) va confrontato con Hinsley.
+- Singh (cap. 4) dà al riflettore della macchina navale 26 posizioni; Sebag-Montefiore (cap. 19) e il motore no: le 26 posizioni in più vengono dal rotore sottile della M4, dal 1° febbraio 1942. La lezione 5 di crittoanalisi lo dice.
+- Numero di Bombe: Singh (cap. 4) 15 Bombe otto mesi dopo l’agosto 1940 e 49 alla fine del 1942; Welchman (cap. 13 e cap. 8) da otto a dodici alla fine del secondo anno e «some forty to forty-six» con Gayhurst. Le lezioni non danno numeri.
+
+## Verificato (fase 4e, 2026-11-04)
+
+Fonti: Welchman (trascrizione senza pagine, si citano capitoli e appendice), Sebag-Montefiore (epub senza pagine, capitoli, appendici e cronologia), Singh (epub, capitolo 4 «Far breccia in Enigma», e l’edizione inglese per ragazzi per la frase di Hinsley), Turing, *Treatise*, cap. 1 (pagine dell’originale). Lezioni della sezione Crittoanalisi. I numeri del crib WETTERVORHERSAGE sono calcolati con il motore (`src/engine/cryptanalysis.ts`) sulla chiave di `MenuBombe`.
+
+| Fatto | Fonte | Lezione |
+|---|---|---|
+| Fine dei fogli britannici (*Jeffreys sheets*) con il cambio di procedura del maggio 1940; Welchman a capo della Hut 6 | Welchman, cap. 7, cap. 11 | 4 |
+| Crib: definizione, gergo scolastico, indirizzi e firme stereotipati | Welchman, cap. 4 | 4 |
+| «Il risultato della cifratura di G non può mai essere G» | Turing, *Treatise*, cap. 1, p. 2 | 4 |
+| Menu come grafo con le posizioni; nome «menu» | Welchman, cap. 4; Sebag-Montefiore, app. 2 | 4 |
+| Macchina di Turing: rotori sfalsati mossi insieme su 26³ posizioni, test automatico; menu con tre anelli; crib lunghi | Welchman, cap. 4; Sebag-Montefiore, app. 2 | 4 |
+| Deduzioni da un’ipotesi sul pannello, fatte a mano su una copia senza pannello | Sebag-Montefiore, app. 2 | 4 |
+| Diagonal board: idea di Welchman nell’autunno 1939 («before the war was three months old»), Turing incredulo e poi convinto, Travis vicedirettore, Keen della BTM e due prototipi; matrice 26 × 26, nome forse di Keen | Welchman, cap. 4, app. I | 4 |
+| Numero delle configurazioni non misura la sicurezza, «it could happen again» | Welchman, cap. 4 | 4 |
+| Menu corti e scatto del rotore di mezzo | Welchman, app. I | 4 |
+| *Simultaneous scanning*; fermata quando la corrente non raggiunge tutte le lettere | Sebag-Montefiore, app. 2; Welchman, cap. 8 | 4 |
+| Dodici gruppi di tre tamburi; Wrens; 12–15 minuti per ordine, 12–15 ore e più per 60 ordini; fermate false | Welchman, app. I, cap. 8 | 4 |
+| Bombe «non fu figlia di una sola persona», sviluppata dalle idee polacche | Welchman, cap. 4 | 4 |
+| Otto rotori e 336 ordini; operatori senza formule fisse | Singh, cap. 4; Sebag-Montefiore, cap. 19 | 5 |
+| Indicatore navale: due trigrammi dal *Kenngruppenbuch*, uno cifrato dalla *Grundstellung*, tabelle dei bigrammi | Sebag-Montefiore, app. 3 | 5 |
+| Venti minuti per ordine, 112 ore per 336 ordini; *Banburismus* per ridurre gli ordini, con tabelle dei bigrammi anche parziali | Sebag-Montefiore, cap. 19, app. 3 | 5 |
+| *Krebs* (4 marzo 1941), *München* (7 maggio), U-110 (9 maggio), *Lauenburg* (28 giugno): che cosa diede ciascuna; tempi di lettura da dieci giorni a sei ore; tabelle cambiate il 15 giugno e il 29 novembre | Sebag-Montefiore, cap. 13, cronologia | 5 |
+| U-110: Balme, un’ora e mezza; Giorgio VI («perhaps the most important single event…») e Sebag-Montefiore che lo smentisce | Sebag-Montefiore, cap. 13 | 5 |
+| Nessuna cattura basta una volta per tutte; storie interne rese pubbliche nel dicembre 1999 | Sebag-Montefiore, introduzione | 5 |
+| M4 dal 1° febbraio 1942 su Triton/Shark; rotore nuovo regolabile a mano, fermo, non intercambiabile; 336 invece di 3 024 ordini; cablaggi ricavati dagli errori di dicembre 1941 | Sebag-Montefiore, cap. 19 | 5 |
+| Crib dai bollettini meteorologici brevi fino al 20 gennaio 1942; crib di Dönitz del 14 marzo 1942, sei Bombe per 17 giorni; *Banburismus* inutile con la M4 | Sebag-Montefiore, cap. 19, cronologia | 5 |
+| Rapporto del 9 febbraio 1942 («out of focus»); più di quattro milioni di tonnellate nei primi otto mesi del 1942; costa americana e cifrario navale n. 3 | Sebag-Montefiore, cap. 19 | 5, 6 |
+| U-559 (30 ottobre 1942): cinque cacciatorpediniere, dieci ore, Fasson, Grazier, Brown; libro arrivato il 24 novembre; rottura del 13 dicembre con il rotore sottile neutro nei messaggi brevi; messaggio di Pound a King | Sebag-Montefiore, cap. 20, cronologia | 5 |
+| Bombe a quattro rotori: britanniche non affidabili, statunitensi dopo il maggio 1943 | Sebag-Montefiore, introduzione | 5 |
+| Winterbotham nel 1974, Ultra, segreto di trent’anni | Welchman, prologo; Singh, cap. 4 | 6 |
+| PQ12 (marzo 1942, 18 navi, decifrazioni in due o tre ore); PQ17 (luglio 1942, Denning e Pound, 23 navi su 35) | Sebag-Montefiore, cap. 19, cronologia | 6 |
+| 58 divisioni stimate prima dello sbarco | Singh, cap. 4 (citazione di Hinsley) | 6 |
+| Rischio di affondare troppe navi e tradire il segreto | Sebag-Montefiore, introduzione | 6 |
+| Tesi di Singh («fuori discussione», «non in modo unanime», 1948) | Singh, cap. 4; *The Code Book* per ragazzi, cap. 4 | 6 |
+| Tesi di Sebag-Montefiore su catture, Schmidt e polacchi; bomba atomica | Sebag-Montefiore, introduzione e note 2–4, 10 | 6 |
+| Tesi di Welchman: persone e organizzazione; Hinsley sulla prima Bombe senza i polacchi «utter nonsense»; 34 commenti di Rejewski (*Cryptologia*, gennaio 1982) | Welchman, cap. 13 | 6 |
+| Welchman scrive a memoria e non conosce i metodi dei «wizards» | Welchman, cap. 13, app. I | 6 |
+
 ## Verificato (fase 4d, 2026-11-04)
 
 Fonti: Rejewski 1980 (traduzione CryptoCellar, pagine della trascrizione) e Kozaczuk, con le appendici di Rejewski (pagine stampate). Lezioni della sezione Crittoanalisi.
@@ -155,13 +204,6 @@ I testi sono in `docs/books/`, fuori da git. Gli epub e la trascrizione di Welch
 | Rotore: cablaggio del rotore I, anello con la tacca solidale (inventato da Paul Bernstein), ruota d’ingresso | Bauer, p. 108, p. 115, p. 121, p. 124, p. 126 | Lezione 4, invariata |
 | Riflettore: brevetto di Willi Korn del 21 marzo 1926; nessuna lettera cifrata in sé stessa; fisso nell’Enigma I; UKW-D osservato dal 2 gennaio 1944 | Bauer, pp. 114–115, p. 118, p. 120 | Lezione 6: tolto «alla guida dell’azienda», che Bauer non conferma; Enigma D «fra il 1926 e il 1927» (Crypto Museum 1926, Bauer 1927). Bauer scrive «Willi», Crypto Museum «Willy»: le lezioni tengono «Willy» |
 | Doppio passo: periodo 26 × 25 × 26 = 16 900 | Bauer, p. 147; Craig Bauer, p. 224 | Lezione 5 e glossario: fonte `bauer-decrypted-secrets` |
-
-### Per la fase 4e (Bletchley Park)
-
-- *Diagonal board*: idea di Welchman nell’autunno 1939; Turing, dapprima incredulo, la sostenne con Travis; il progetto fu di Harold «Doc» Keen della BTM. Welchman, cap. 4.
-- U-110 (9 maggio 1941): macchina, libri codice, impostazioni *Offizier* di giugno, libri dei messaggi brevi, tavole dei bigrammi; Sebag-Montefiore nega che sia stata la cattura decisiva. Sebag-Montefiore, cap. 13.
-- U-559 (30 ottobre 1942): Fasson e Grazier annegano; libri dei messaggi brevi; la rottura del 13 dicembre viene anche dall’abitudine di impostare il quarto rotore in modo che la M4 si comportasse come una macchina a tre rotori. Sebag-Montefiore, cap. 20.
-- Ultra: Sebag-Montefiore riporta la tesi di Hinsley (sbarco in Normandia rinviato al 1946 senza la vittoria sugli U-Boot) e i suoi limiti; Welchman non dà cifre. Sebag-Montefiore, introduzione; Welchman, prefazione.
 
 ### Fonti tolte dal frontmatter (fase B, D7, 2026-11-03)
 

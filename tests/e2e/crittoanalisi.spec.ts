@@ -1,30 +1,23 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-const PAGE = 'prove/crittoanalisi/';
+/** Le due animazioni stanno nelle lezioni che le usano; l’accessibilità la controlla `lessons.spec.ts`. */
+const CYCLES = 'crittoanalisi/rejewski-e-la-teoria-dei-cicli/';
+const MENU = 'crittoanalisi/il-crib-e-la-bombe/';
 
-/** Porta in vista un’isola, aspetta che si idrati e la restituisce. */
-async function island(page: Page, index: number): Promise<Locator> {
-  const element = page.locator('astro-island').nth(index);
+/** Porta in vista l’isola di Astro che contiene `text`, aspetta che si idrati e la restituisce. */
+async function island(page: Page, text: string): Promise<Locator> {
+  const element = page.locator('astro-island').filter({ hasText: text });
   await element.scrollIntoViewIfNeeded();
   await expect(element).not.toHaveAttribute('ssr');
   return element;
 }
 
-test('la pagina delle animazioni di crittoanalisi è accessibile, in chiaro e in scuro', async ({ page }) => {
-  await page.goto(PAGE);
-  await island(page, 0);
-  await island(page, 1);
-  for (const scheme of ['light', 'dark'] as const) {
-    await page.emulateMedia({ colorScheme: scheme });
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
-    expect(results.violations).toEqual([]);
-  }
-});
+const INDICATORS = 'Aggiungi un indicatore';
+const STRIP = 'Per ogni posizione del messaggio';
 
 test('gli indicatori chiudono i cicli di AD, BE e CF uno dopo l’altro', async ({ page }) => {
-  await page.goto(PAGE);
-  const figure = await island(page, 0);
+  await page.goto(CYCLES);
+  const figure = await island(page, INDICATORS);
   await expect(figure.getByText('Nessun indicatore ancora')).toBeVisible();
   await figure.getByRole('button', { name: 'Aggiungi un indicatore' }).click();
   await expect(figure.getByText(/^Indicatore 1: chiave/)).toBeVisible();
@@ -44,8 +37,8 @@ test('gli indicatori chiudono i cicli di AD, BE e CF uno dopo l’altro', async 
 });
 
 test('il menu propone un anello e l’ipotesi giusta regge fino in fondo', async ({ page }) => {
-  await page.goto(PAGE);
-  const figure = await island(page, 1);
+  await page.goto(MENU);
+  const figure = await island(page, STRIP);
   await expect(figure.getByRole('list', { name: 'Crib allineato al testo cifrato' }).getByRole('listitem')).toHaveCount(
     16,
   );
@@ -55,8 +48,8 @@ test('il menu propone un anello e l’ipotesi giusta regge fino in fondo', async
 });
 
 test('con i rotori spostati l’ipotesi si contraddice e la prova si ferma', async ({ page }) => {
-  await page.goto(PAGE);
-  const figure = await island(page, 1);
+  await page.goto(MENU);
+  const figure = await island(page, STRIP);
   await figure.getByLabel('Rotori').selectOption({ label: 'spostati di 3 passi' });
   await figure.getByRole('button', { name: 'Mostra tutte' }).click();
   await expect(figure.getByText(/^Contraddizione alla deduzione \d+/)).toBeVisible();
@@ -68,8 +61,8 @@ test('con i rotori spostati l’ipotesi si contraddice e la prova si ferma', asy
 
 test('con prefers-reduced-motion i tracciati compaiono senza movimento', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(PAGE);
-  const figure = await island(page, 1);
+  await page.goto(MENU);
+  const figure = await island(page, STRIP);
   await figure.getByRole('button', { name: 'Percorri l’anello' }).click();
   const names = await figure
     .locator('.tracciato')

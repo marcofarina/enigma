@@ -37,6 +37,7 @@ David Hamer
 Alan Turing
 Turing
 Welchman
+Gordon Welchman
 Kerckhoffs
 Heimsoeth
 Rinke
@@ -87,3 +88,12 @@ Umkehrwalze
 Uhr
 Walzenlage
 Zählwerk Enigma
+
+# Fase 4e
+Shark
+Triton
+Ultra
+Sebag-Montefiore
+Singh
+Atlantico
+Hans-Thilo Schmidt
