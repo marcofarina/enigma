@@ -1,18 +1,19 @@
 ---
 title: Enigma e l’Italia
-description: Le Enigma K della Regia Marina, la guerra di Spagna e la lettera che mancava prima di Capo Matapan.
+description: Le Enigma K della Regia Marina, la guerra di Spagna, un messaggio senza nessuna L e le decifrazioni prima di Capo Matapan.
 sezione: storia
 ordine: 4
 stato: bozza
 fonti:
   - crypto-museum-enigma-k
   - crypto-museum-storia
+  - batey-dilly
 ---
 
 {/*
 Tesi didattica.
 Chi associa Enigma alla Germania non sa che anche le forze armate italiane la usarono, e in una versione più debole: l’Enigma K commerciale, senza pannello a spine.
-La lezione mostra che cosa comprò l’Italia, perché senza il pannello i metodi britannici a carta e matita bastavano, e come nel 1941 un cifrato senza nessuna L rivelò il testo in chiaro.
+La lezione mostra che cosa comprò l’Italia, perché senza il pannello i metodi britannici a carta e matita bastavano, e come fra il 1940 e il 1941 un cifrato senza nessuna L rivelò il testo in chiaro.
 Alla fine lo studente sa dire in che cosa l’Enigma italiana differiva da quella tedesca, sa spiegare con l’assenza di punti fissi perché un cifrato senza L rivelava il testo e sa dire da quale parte vengono le fonti di questa storia.
 Esempio: la L premuta più volte di seguito sull’Enigma K del simulatore.
 */}
@@ -38,27 +39,27 @@ All’Enigma K mancava il pannello a spine dell’Enigma I tedesca. Senza il pan
 
 ## La guerra di Spagna
 
-Durante la guerra civile spagnola, nel 1937, Dilly Knox e William Bodsworth della GC&CS britannica riuscirono a leggere il traffico Enigma tra la marina del generale Franco e quella italiana. Il primo successo di Knox contro un’Enigma K di Franco risale al 4 aprile 1937. Il metodo discendeva dall’analisi dell’Enigma D che Hugh Foss aveva scritto dieci anni prima, perfezionata da Knox con una tecnica a carta e matita che chiamava *rodding*.
+Durante la guerra civile spagnola, nel 1937, Dilly Knox e William Bodsworth della GC&CS britannica riuscirono a leggere il traffico Enigma tra la marina del generale Franco e quella italiana. Il primo successo di Knox contro un’Enigma K di Franco risale al 4 aprile 1937. Il metodo discendeva dall’analisi dell’Enigma D che Hugh Foss aveva completato alla fine degli anni Venti, perfezionata da Knox con una tecnica a carta e matita che chiamava *rodding*.
 
 ## La lettera che mancava
 
-Nel frattempo il traffico della marina italiana era tornato illeggibile. A Bletchley Park Knox guidava un piccolo gruppo di crittoanaliste, ricordate come *Dilly’s girls*. Nel marzo 1941 una di loro, Mavis Lever, allora diciannovenne, notò un messaggio di prova in cui non compariva nemmeno una L.
+Nel frattempo il traffico della marina italiana era tornato illeggibile. A Bletchley Park Knox guidava un piccolo gruppo di crittoanaliste, ricordate come *Dilly’s girls*. Nel settembre 1940 una di loro, Mavis Lever, allora diciannovenne, tornò a leggerlo. Qualche tempo dopo notò un messaggio di prova, lungo almeno trenta gruppi di lettere, in cui non compariva nemmeno una L. Gli italiani mandavano messaggi fittizi come questo per tenere costante il volume del traffico.
 
 Il simulatore qui sotto riproduce un’Enigma K. Premi la L una ventina di volte di seguito, come l’operatore di quel messaggio, e guarda quali lampade si accendono.
 
 <MiniSimulatore client:visible config="v=1&m=K&w=I-II-III&r=AAA&p=AAA&u=UKW" didascalia="Enigma K con i rotori commerciali I, II e III in posizione AAA. Le macchine della Regia Marina avevano rotori con un cablaggio diverso." />
 
-Le lampade cambiano a ogni tasto, ma la L non si accende: Enigma non cifra mai una lettera in sé stessa, come dimostra la lezione [Il riflettore](../../come-funziona/il-riflettore/). Mavis Lever ne dedusse che l’operatore aveva battuto soltanto la L, il tasto in basso a destra della tastiera. Con un testo in chiaro noto, anche fatto di una lettera sola ripetuta, il gruppo di Knox poteva ricostruire cablaggio e impostazioni.
+Le lampade cambiano a ogni tasto, ma la L non si accende: Enigma non cifra mai una lettera in sé stessa, come dimostra la lezione [Il riflettore](../../come-funziona/il-riflettore/). Mavis Lever ne dedusse che l’operatore italiano aveva battuto soltanto la L, il tasto in basso a destra della tastiera. Con un testo in chiaro noto, anche fatto di una lettera sola ripetuta, il gruppo di Knox poteva ricostruire cablaggio e impostazioni. Molti anni dopo Mavis Lever, con il cognome da sposata, Batey, raccontò questa storia nella sua biografia di Knox: dal primo di questi messaggi ricavò il cablaggio di un rotore nuovo, con l’aiuto di Keith Batey, che lavorava nella Hut 6.
 
-Le decifrazioni che ne seguirono contribuirono alla vittoria britannica nella battaglia di Capo Matapan, il 28 marzo 1941; Crypto Museum le considera decisive.
+All’inizio del marzo 1941 il gruppo di Knox leggeva anche i messaggi cifrati con i rotori nuovi. Il 25 marzo decifrò un messaggio breve secondo cui mancavano tre giorni a un’operazione della flotta italiana; da lì l’ammiraglio Cunningham ricavò la data, e il 28 marzo la flotta britannica sconfisse quella italiana a Capo Matapan. Batey non collega questo messaggio a quello senza L: lo attribuisce alle tabelle che il gruppo aveva costruito sul modo in cui gli operatori cifravano il punto fermo.
 
 <Nota titolo="Una storia raccontata da una parte sola">
-Quasi tutto ciò che sappiamo dell’Enigma italiana viene da fonti britanniche, scritte da chi la attaccava. Il punto di vista italiano — come la Regia Marina usava la macchina, che cosa sapeva della sua sicurezza — compare molto meno nei racconti più diffusi. Anche il peso delle decifrazioni nell’esito di Matapan, rispetto agli altri fattori della battaglia, è una questione da affrontare con fonti di entrambe le parti.
+Quasi tutto ciò che sappiamo dell’Enigma italiana viene da fonti britanniche, scritte da chi la attaccava. Il punto di vista italiano — come la Regia Marina usava la macchina, che cosa sapeva della sua sicurezza — compare molto meno nei racconti più diffusi. Anche il peso delle decifrazioni nell’esito di Matapan è discusso: Crypto Museum le considera decisive, mentre Batey scrive che potevano orientare la strategia e che la battaglia la decisero i comandanti. Batey riporta anche un dato dei documenti italiani: l’ammiraglio Iachino aveva a bordo un crittografo, che decifrò un segnale britannico.
 </Nota>
 
 ## Dopo Matapan
 
-Mavis Lever restò nel gruppo di Knox, che dal 1941 lavorò sull’Enigma G dell’Abwehr; molti anni dopo, con il cognome da sposata, Batey, scrisse una biografia di Knox, *Dilly*, pubblicata nel 2009. Knox, già malato all’inizio della guerra, morì nel febbraio 1943.
+Mavis Lever restò nel gruppo di Knox, che dal 1941 lavorò sull’Enigma G dell’Abwehr; la sua biografia di Knox, *Dilly*, uscì nel 2009. Knox, già malato all’inizio della guerra, morì nel febbraio 1943.
 
 <Riepilogo>
 - Marina, esercito e aeronautica italiani usarono l’Enigma K commerciale, senza pannello a spine; le macchine della marina e dell’esercito avevano rotori con il cablaggio speciale dello schema D.

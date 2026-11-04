@@ -2,9 +2,9 @@
 - id: singh-codici-segreti
   autori: Simon Singh
   titolo: Codici & segreti. La storia affascinante dei messaggi cifrati dall’antico Egitto a Internet
-  editore: Rizzoli
-  anno: 1999
-  note: Edizione originale “The Code Book”, Fourth Estate, 1999. Numeri di pagina delle citazioni da verificare sull’edizione in uso.
+  editore: BUR Rizzoli
+  anno: 2001
+  note: Edizione italiana a cura di Stefano Galli; prima edizione Rizzoli 1999, edizione BUR Saggi dell’aprile 2001, ISBN 978-88-17-12539-0. Originale “The Code Book”, Fourth Estate, 1999. Consultata in epub il 4 novembre 2026; l’epub non ha numeri di pagina e si citano i capitoli.
 - id: rejewski-1980
   autori: Marian Rejewski
   titolo: An Application of the Theory of Permutations in Breaking the Enigma Cipher
@@ -15,28 +15,33 @@
 - id: welchman-hut-six
   autori: Gordon Welchman
   titolo: The Hut Six Story. Breaking the Enigma Codes
-  editore: McGraw-Hill
-  anno: 1982
+  editore: M&M Baldwin
+  anno: 1998
+  note: 'Seconda impressione, con correzioni minori, dell’edizione 1997, ISBN 0-947712-34-8; prima edizione McGraw-Hill 1982, con la parte 4 aggiunta nel 1986. Consultato il 4 novembre 2026 in una trascrizione senza pagine: si citano i capitoli.'
 - id: kozaczuk-enigma
   autori: Władysław Kozaczuk
   titolo: Enigma. How the German Machine Cipher Was Broken, and How It Was Read by the Allies in World War Two
   editore: University Publications of America
   anno: 1984
+  note: A cura di Christopher Kasparek, che lo ha tradotto dall’originale polacco “W kręgu Enigmy” (1979). Le appendici B–E sono testi di Marian Rejewski (pp. 229–291). Consultato il 4 novembre 2026; le pagine sono quelle stampate.
 - id: sebag-montefiore-enigma
   autori: Hugh Sebag-Montefiore
   titolo: 'Enigma: The Battle for the Code'
   editore: Weidenfeld & Nicolson
   anno: 2000
+  note: 'Consultato il 4 novembre 2026 nell’edizione digitale Hachette UK del 2011, senza pagine: si citano i capitoli.'
 - id: batey-dilly
   autori: Mavis Batey
   titolo: 'Dilly: The Man Who Broke Enigmas'
-  editore: Dialogue
+  editore: Biteback Publishing (Dialogue)
   anno: 2009
+  note: 'Consultato il 4 novembre 2026 nell’edizione del 2011, ISBN 978-1-84954-278-4, in epub senza pagine: si citano i capitoli.'
 - id: bauer-decrypted-secrets
   autori: Friedrich L. Bauer
   titolo: Decrypted Secrets. Methods and Maxims of Cryptology
-  editore: Springer
+  editore: Springer, Berlin Heidelberg
   anno: 2007
+  note: Quarta edizione, riveduta e ampliata, ISBN 978-3-540-24502-5. Consultata il 4 novembre 2026; le pagine sono quelle stampate.
 - id: crypto-museum
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — Enigma
