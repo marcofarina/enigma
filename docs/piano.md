@@ -147,7 +147,7 @@ norme non sono raggiungibili, quindi niente prosa).
 
 | Fase | Contenuto | Modello | Effort | Durata | Dipende da | Stato |
 |---|---|---|---|---|---|---|
-| 4a | Lezione «Modelli a confronto» | Opus | high | 2 h | G4 | da fare |
+| 4a | Lezione «Modelli a confronto» | Opus | high | 2 h | G4 | fatta (2026-11-04) |
 | 4b | Motore della crittoanalisi | Opus | high | 2,5 h | — | fatta (2026-11-04) |
 | 4c | Animazioni della crittoanalisi | Sonnet | high | 2,5 h | 4b, G4 | fatta (2026-11-04) |
 | 4d | Crittoanalisi polacca | Opus | high | 3 h | 4c | fatta (2026-11-04) |
@@ -232,6 +232,32 @@ un file, e `1`.
 ```bash
 pnpm verify && pnpm test:e2e
 ```
+
+**Esito (2026-11-04)**
+
+- `period` e `users` di tutti i 15 modelli verificati sulle pagine di Crypto Museum (con `curl`).
+  `period` è ora `{ from, to?, basis }`: `basis` distingue gli anni d’uso da quelli di produzione
+  (D, K, A28, G31), e `to` manca quando la fonte non dà la fine (norvegese). G111, G260 e G312 non
+  hanno `period`: sono esemplari singoli, la fonte dà solo l’anno di fabbricazione o del
+  sequestro. Corretti fra l’altro D (1926–1927, non «anni Trenta», niente uso diplomatico), T
+  (1943–1945, dalla procedura TIRPITZ), KD (Mil Amt dal 1944, non «anni Quaranta»), G111 (esercito
+  ungherese: «Monaco» era l’asta del 2009), G260 (probabilmente il Sicherheitsdienst, non
+  l’Abwehr), M3 (dal 1934, perché vale anche per M1 e M2). Undici voci nuove in `fonti.yaml`.
+- `src/lib/modelli.ts` (con `modelli.test.ts`) ricava dal catalogo famiglie, tacche, riflettore,
+  ruota d’ingresso e barre della linea del tempo; `ALPHABETIC_ETW` e `QWERTZ_ETW` sono esportate dal
+  motore. `ConfrontoModelli.astro` è statico (nessuna isola), con `vista="tabella"` o
+  `vista="linea"`; stringhe in `lesson.models.*`.
+- Lezione `11-modelli-a-confronto.mdx` in bozza, scheletro completo. Citazione d’apertura scelta da
+  Marco fra tre proposte: Crypto Museum, pagina della Reichsbahn Enigma, sul traffico Rocket I.
+  Previsione: da quale macchina deriva l’Enigma T.
+- Provata nel browser con «astro-dev» a 1024 px e a 375 px, in tema chiaro e scuro: a 1024 px la
+  tabella sta nella colonna, a 375 px scorre da sola senza allargare la pagina.
+- `tests/e2e/smoke.spec.ts`: i link «Simulatore» e «Come funziona» del menu si cercano con
+  `exact: true`, perché la descrizione della lezione 11 contiene «simulatore» e la ricerca per
+  sottostringa trovava due link.
+- Trovato e non corretto: il rotore IV della norvegese nel motore ha il cablaggio dell’Enigma I,
+  mentre Crypto Museum ne dà un altro (in «Da verificare» di `docs/stato.md`).
+- Comandi: `pnpm verify` (218 unit test, 43 pagine), `pnpm test:e2e` (160 passati, 24 saltati).
 
 ---
 

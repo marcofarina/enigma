@@ -67,6 +67,10 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
   `src/content/docenti/guida.mdx`), «Docenti» di nuovo nei menu; dettagli in `docs/piano.md`,
   fase 4g, «Esito».
 
+- Fase 4a, branch `fase/4a`: lezione «Modelli a confronto» (11 di «Come funziona», in bozza) con
+  il componente `ConfrontoModelli` (tabella e linea del tempo dai dati del motore); `period` e
+  `users` dei modelli verificati; dettagli in `docs/piano.md`, fase 4a, «Esito».
+
 ## Prossimo passo
 
 - Revisione delle bozze delle lezioni da parte dell’autore.
@@ -104,7 +108,17 @@ Valgono solo nel container delle sessioni cloud, dove le norme non sono raggiung
 - Galleria: il foglio chiave della Luftwaffe n. 649 su Commons è marcato solo “PD-US-no notice”; non è stato usato. Il ritratto di Rejewski (CC BY-SA 2.5, archivio della figlia) è piccolo, 200 × 274 pixel.
 - Anno del Luftwaffen-Maschinenschlüssel Nr. 619 (1944 per analogia con il 649 di Commons).
 - Hamer 1997: l’articolo non è fra i testi consultati. Il volume 21 è coerente con la bibliografia di Craig Bauer, *Secret History* (2021), che cita *Cryptologia* 21 (4) per l’ottobre 1997; la frase della lezione 5 che nomina Hamer resta appoggiata a Crypto Museum, e `hamer-1997` resta fuori dal frontmatter.
-- `period` e `users` dei modelli in `src/engine/models.ts`, prima di mostrarli nelle schede storiche.
+- Enigma norvegese: nel motore il rotore IV ha il cablaggio del rotore IV dell’Enigma I
+  (`ESOVPZJAYQUIRHXLNFTGKDCMWB`), mentre la pagina dei cablaggi di Crypto Museum dà
+  `FGZJMVXEPBWSHQTLIUDYKCNRAO` (gli altri quattro rotori e il riflettore coincidono). Da confrontare
+  con l’articolo di Hamer e Weierud citato da Crypto Museum; se il motore cambia servono vettori di
+  test nuovi.
+- Swiss-K: Crypto Museum dà il primo lotto nel 1939 nell’introduzione e le macchine «Swiss-K» nel
+  1940 (consegne del 5 maggio e del 10 luglio) più avanti nella stessa pagina. Il motore tiene il 1939.
+- M4: la pagina della M4 la dà introdotta il 1° febbraio 1942, quella della M3 il 2 febbraio. Il
+  sito tiene il 1° febbraio.
+- G260: compare nell’elenco dei clienti della G di Crypto Museum sotto «I.G. Farben», ma la
+  stessa pagina la attribuisce al Sicherheitsdienst in Argentina. `users` dice «probabilmente».
 - Notazione dell’UKW-D (Bletchley J–Y o tedesca B–O): né Bauer (p. 120, «D» o «Dora») né Craig Bauer la danno. Uhr: l’esempio di Crypto Museum (posizione 03, spina 1a verso 5b e 5b verso 4a) coincide con il motore; manca un confronto su un messaggio reale.
 - Dettagli tecnici dell’Enigma K usata dalla Regia Marina: Bauer (pp. 281, 284) parla della macchina senza pannello, ma non dà cablaggi.
 - Crypto Museum, pagina “How does an Enigma machine work?”: i totali con la correzione del doppio passo sono sbagliati. Per l’Enigma I scrive 685 518 560 invece di 60 × 676 × 16 926 = 686 518 560; per la M4 toglie 650 posizioni una volta sola invece che per ciascuna delle 26 posizioni del rotore sottile (440 076 posizioni distinte, verificato con il motore). Con i rotori navali a due tacche nel mezzo la riduzione è diversa. La lezione 10 usa i valori ricalcolati.
@@ -137,6 +151,21 @@ Valgono solo nel container delle sessioni cloud, dove le norme non sono raggiung
   browser della sessione lo rifiuta); da provare su una LIM vera. I collegamenti con il curricolo
   citano la Direttiva 16 gennaio 2012, n. 4: da aggiornare quando le Linee guida della riforma
   degli istituti tecnici arriveranno al triennio.
+
+## Verificato (fase 4a, 2026-11-04)
+
+Pagine di Crypto Museum consultate il 4 novembre 2026 con `curl`; ognuna ha una voce in
+`src/content/fonti.yaml`.
+
+| Fatto | Fonte | Dove |
+|---|---|---|
+| Enigma I introdotta nel 1930, esercito e aviazione; il pannello a spine esclusivo delle forze armate tedesche | `crypto-museum-enigma-i` | `models.ts`, lezione 11 |
+| M1 dal 1934, M2 dal 1938, M3 dal 1940, elettricamente identiche; M4 dal 1° febbraio 1942 | `crypto-museum-m3`, `crypto-museum-m4`, `crypto-museum-cablaggi` | `models.ts`, lezione 11 |
+| Enigma D del 1926, sostituita dalla K nel 1927; K prodotta dal 1927 al 1944, usata dalla marina italiana per tutta la guerra | `crypto-museum-enigma-d`, `crypto-museum-enigma-k` | `models.ts`, lezione 11 |
+| Swiss-K dal 1939, ricablata dagli svizzeri, ritirata nel 1946; KD del Mil Amt dal 3 dicembre 1944 sulla linea Berlino–Madrid–Lisbona, esemplare del FRA; Reichsbahn: traffico dal 25 luglio 1940, difficoltà dal 19 settembre al 28 ottobre 1944 per i crib | `crypto-museum-swiss-k`, `crypto-museum-enigma-kd`, `crypto-museum-railway` | `models.ts`, lezione 11 |
+| Enigma T derivata dalla K, procedura TIRPITZ dal 1° agosto 1943 | `crypto-museum-enigma-t` | `models.ts`, previsione della lezione 11 |
+| A28 del 1928, sostituita dalla G31 nel 1931, A865 alla marina olandese; G prodotta dal 1931 al 1943; l’Abwehr cablava da sé i rotori; G111 del 1931 all’esercito ungherese; G312 del 1940 circa; G260 sequestrata in Argentina nel marzo 1945 | `crypto-museum-a28`, `crypto-museum-enigma-g`, `crypto-museum-g111`, `crypto-museum-g312` | `models.ts`, lezione 11 |
+| Norvegese: Enigma I catturate, ricablate dal 1945 dall’Overvaakingspolitiet | `crypto-museum-cablaggi` | `models.ts`, lezione 11 |
 
 ## Verificato (fase 4f, 2026-11-04)
 

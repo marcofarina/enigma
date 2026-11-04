@@ -1,0 +1,122 @@
+---
+title: Modelli a confronto
+description: I 15 modelli di Enigma del simulatore messi a confronto. Che cosa hanno in comune, quali pezzi cambiano da un modello all’altro, perché macchine uguali potevano cifrare in modo diverso e in quali anni furono usate.
+sezione: come-funziona
+ordine: 11
+stato: bozza
+fonti:
+  - crypto-museum-railway
+  - crypto-museum-enigma-i
+  - crypto-museum-enigma-t
+  - crypto-museum-enigma-d
+  - crypto-museum-enigma-k
+  - crypto-museum-m3
+  - crypto-museum-m4
+  - crypto-museum-swiss-k
+  - crypto-museum-enigma-kd
+  - crypto-museum-a28
+  - crypto-museum-enigma-g
+  - crypto-museum-g111
+  - crypto-museum-g312
+  - crypto-museum-cablaggi
+---
+
+{/*
+Tesi didattica.
+Chi ha seguito le lezioni conosce l’Enigma I e pensa che «Enigma» sia quella macchina, con il pannello a spine e il riflettore fisso.
+La lezione mostra che i 15 modelli del simulatore sono variazioni dello stesso schema, in cui cambiano quattro pezzi: il pannello, il riflettore, il movimento dei rotori e l’ordine della ruota d’ingresso; e che anche a pezzi uguali cambiavano i fili.
+Alla fine lo studente sa leggere nella tabella di quali pezzi è fatto un modello, sa dividere i modelli in tre famiglie, sa dire perché macchine uguali cifravano in modo diverso e che cosa la linea del tempo non mostra.
+Esempio: l’Enigma T, costruita per le marine di Germania e Giappone a partire dalla K commerciale.
+*/}
+
+import Citazione from '@/components/lesson/Citazione.astro';
+import ConfrontoModelli from '@/components/lesson/ConfrontoModelli.astro';
+import Esito from '@/components/lesson/Esito.astro';
+import Obiettivi from '@/components/lesson/Obiettivi.astro';
+import Prerequisiti from '@/components/lesson/Prerequisiti.astro';
+import Previsione from '@/components/lesson/Previsione.astro';
+import Riepilogo from '@/components/lesson/Riepilogo.astro';
+import Risposta from '@/components/lesson/Risposta.astro';
+
+<Citazione fonte="crypto-museum-railway" tradotta>
+Anche una normale Enigma K, senza il pannello a spine dell’esercito, poteva essere difficile da rompere se il contenuto dei messaggi era meno prevedibile.
+</Citazione>
+
+Nelle lezioni precedenti abbiamo smontato un’Enigma sola, l’Enigma I dell’esercito tedesco. Il menu del simulatore ne offre 15: macchine commerciali vendute a ferrovie ed eserciti stranieri, le versioni della marina, una macchina per i collegamenti con il Giappone, un esemplare ritrovato negli archivi del servizio informazioni svedese e uno sequestrato a una spia in Argentina. Si chiamano tutte Enigma, ma non tutte hanno i pezzi che abbiamo studiato.
+
+<Prerequisiti>
+- Dalla lezione [Tastiera, lampade e circuito](../tastiera-lampade-e-circuito/): la ruota d’ingresso è il disco fisso di contatti che collega la tastiera ai rotori.
+- Dalla lezione [Il passo e il doppio passo](../il-passo-e-il-doppio-passo/): la tacca di un rotore fa avanzare quello alla sua sinistra.
+- Dalla lezione [Il riflettore](../il-riflettore/): il riflettore rimanda la corrente indietro attraverso i rotori, per un’altra strada.
+- Dalle lezioni [Il pannello a spine](../il-pannello-a-spine/) e [L’Uhr](../l-uhr/): il pannello scambia coppie di lettere prima e dopo i rotori, e l’Uhr ne cambia i collegamenti con una manopola.
+- Dalla lezione [Quante chiavi](../quante-chiavi/): per il principio di Kerckhoffs si suppone che chi attacca conosca i cablaggi.
+</Prerequisiti>
+
+<Obiettivi>
+- Dire quali pezzi delle lezioni precedenti ha un modello del simulatore, leggendo la tabella dei modelli.
+- Dividere i 15 modelli in tre famiglie e dire che cosa distingue ciascuna.
+- Spiegare perché due macchine con gli stessi pezzi potevano cifrare in modo diverso.
+- Dire che cosa mostra la linea del tempo dei modelli e che cosa lascia fuori.
+</Obiettivi>
+
+## Lo schema comune
+
+I 15 modelli hanno lo schema dell’Enigma I: una tastiera, un pannello di lampade, una ruota d’ingresso, tre rotori che avanzano e un riflettore. Da un modello all’altro cambiano quattro pezzi:
+
+- il pannello a spine, che c’è oppure no;
+- il riflettore, che può essere fisso, impostabile a mano su 26 posizioni, oppure impostabile e capace di avanzare durante la cifratura;
+- il movimento dei rotori: quante tacche ha ogni rotore, e se a spingerlo sono i nottolini o un meccanismo a ingranaggi;
+- la ruota d’ingresso, i cui contatti seguono l’ordine alfabetico, quello della tastiera o un ordine scelto apposta.
+
+Nella tabella qui sotto questi pezzi sono in colonna per tutti i modelli. Prima di leggerla, prova una previsione su una macchina sola. L’Enigma T fu costruita durante la seconda guerra mondiale per i collegamenti fra la marina tedesca e quella giapponese.
+
+<Previsione>
+Da quale macchina deriva l’Enigma T?
+
+<Risposta testo="dall’Enigma I dell’esercito">
+È l’idea che una macchina per due marine militari debba essere una macchina militare, con il pannello a spine. Confronta nella tabella la riga della T con quella dell’Enigma I.
+</Risposta>
+<Risposta testo="dalla M4 della marina">
+La M4 era la macchina dei sommergibili tedeschi, e viene naturale pensare che la marina tedesca abbia dato la propria macchina a quella giapponese. Confronta nella tabella la riga della T con quella della M4.
+</Risposta>
+<Risposta testo="dall’Enigma K commerciale" corretta />
+
+<Esito>
+Crypto Museum scrive che la T deriva dalla K commerciale e non dall’Enigma I. Nella tabella la T sta fra le commerciali: niente pannello a spine, riflettore impostabile, rotori spinti dai nottolini. Dalla K la separano i rotori, otto fra cui scegliere invece di tre e con cinque tacche ciascuno invece di una, e la ruota d’ingresso, che ha un ordine proprio. Rotori, ruota d’ingresso e riflettore della T erano cablati apposta per i giapponesi.
+</Esito>
+</Previsione>
+
+<ConfrontoModelli vista="tabella" />
+
+## Tre famiglie
+
+Le righe della tabella sono divise in tre gruppi, e per separarli bastano due colonne: il pannello e l’avanzamento.
+
+Le macchine **militari** sono l’Enigma I, la M3, la M4 e la norvegese. Sono le sole con il pannello a spine, che secondo Crypto Museum era esclusivo delle forze armate tedesche. Hanno il riflettore fisso e la ruota d’ingresso in ordine alfabetico. La M3 della marina aggiunge ai cinque rotori dell’esercito altri tre rotori, il VI, il VII e l’VIII, con due tacche ciascuno; la M4 aggiunge un rotore sottile che non avanza, accanto a un riflettore sottile. La norvegese è un’Enigma I catturata e usata dopo la guerra.
+
+Le macchine **commerciali** sono la D e le macchine derivate dalla K, che le succedette nel 1927. Hanno il riflettore impostabile e la ruota d’ingresso nell’ordine della tastiera, tranne la T. Alcune hanno più tacche per rotore: cinque la T, nove la KD. Con più tacche un rotore spinge più spesso quello alla sua sinistra, e il movimento dei rotori si allontana da quello regolare di un contachilometri.
+
+Le macchine **con contatore** sono la A28 del 1928, che nel menu porta il numero di serie A865 di un esemplare venduto alla marina olandese, e le Enigma G che ne derivano. Muovono i rotori con un meccanismo a ingranaggi invece che con i nottolini, e i loro rotori hanno 17, 15 e 11 tacche; nella G111 il rotore V ne ha sette. Il riflettore si imposta a mano e avanza durante la cifratura: secondo Crypto Museum sono le sole Enigma note con il riflettore mosso dai rotori.
+
+L’ordine della ruota d’ingresso conta per chi deve ricostruire una macchina. Come racconta la lezione [Rejewski e la teoria dei cicli](../../crittoanalisi/rejewski-e-la-teoria-dei-cicli/), Rejewski suppose all’inizio che nell’Enigma militare la ruota d’ingresso seguisse l’ordine della tastiera, quello delle commerciali, e i suoi calcoli non tornavano; tornarono con l’ordine alfabetico.
+
+## Stessi pezzi, fili diversi
+
+La tabella mostra i pezzi di ogni macchina e lascia fuori i cablaggi, cioè i fili dentro i rotori e il riflettore. Nella tabella la K svizzera e quella delle ferrovie tedesche hanno le stesse caratteristiche della K, eppure cifrano in modo diverso: hanno rotori con un altro cablaggio, e quella delle ferrovie anche un riflettore ricablato. Le macchine svizzere erano arrivate con il cablaggio commerciale, e gli svizzeri le ricablarono per ragioni di sicurezza. Dopo la guerra la polizia di sicurezza norvegese fece lo stesso con alcune Enigma I catturate: cambiò i fili dei rotori e del riflettore, e lasciò com’erano la ruota d’ingresso e le tacche. L’Abwehr, il servizio informazioni militare tedesco, ordinava i rotori delle sue Enigma G senza fili e li cablava da sé, per nascondere il cablaggio anche al costruttore.
+
+Nella lezione [Quante chiavi](../quante-chiavi/) abbiamo supposto che chi attacca conosca i cablaggi. Chi ricablava le proprie macchine aggiungeva un segreto: prima di cercare la chiave del giorno, chi attaccava doveva ricostruire i fili. Bletchley Park ricavò per via crittoanalitica i cablaggi della macchina delle ferrovie, e lesse senza troppa fatica il suo traffico, che chiamava Rocket I. Dal 19 settembre 1944 però cominciò ad avere difficoltà, e solo il 28 ottobre tornò a leggerlo: secondo Crypto Museum, in quelle settimane i **crib**, i pezzi di testo in chiaro che i crittoanalisti indovinavano nei messaggi, erano meno regolari del solito. Senza pannello, e con i cablaggi noti, la macchina era la stessa di prima; a cambiare erano i messaggi. Come si sfrutta un crib lo racconta la lezione [Il crib e la Bombe](../../crittoanalisi/il-crib-e-la-bombe/).
+
+## La linea del tempo
+
+<ConfrontoModelli vista="linea" />
+
+Nella linea del tempo ci sono gli anni che Crypto Museum dà per ciascun modello. Non sono tutti dello stesso tipo: per la D, la K, la A28 e la G31 la fonte dà gli anni in cui furono prodotte, per gli altri modelli quelli in cui furono usate, e le due cose non coincidono. La K, per esempio, fu prodotta dal 1927 al 1944, ma la marina italiana la usò per tutta la guerra. Nel simulatore la M3 vale anche per la M1 e la M2, che Crypto Museum dice elettricamente identiche: per questo la sua barra comincia nel 1934, con la M1.
+
+Alcuni valori mancano. Per la norvegese la fonte dà solo l’inizio, il 1945, e la barra sfuma verso destra. La G111, la G260 e la G312 non hanno anni: sono esemplari singoli di Enigma G, e di ciascuno la fonte sa al più quando fu fabbricato, la G111 nel 1931 e la G312 intorno al 1940, o dove fu trovato, la G260 in Argentina nel marzo 1945. La KD è datata con gli anni del Mil Amt, il servizio informazioni succeduto all’Abwehr, che la usò dal dicembre 1944; il cablaggio del simulatore viene però dall’esemplare conservato negli archivi del servizio informazioni svedese, il FRA, e Crypto Museum non sa dire se coincida con quello del Mil Amt.
+
+<Riepilogo>
+- Ogni modello del simulatore ha tastiera, lampade, ruota d’ingresso, tre rotori che avanzano e un riflettore; la tabella dice per ciascuno se ha il pannello e l’Uhr, come si comporta il riflettore, quante tacche hanno i rotori e in che ordine è la ruota d’ingresso. La T, per esempio, ha i pezzi della K commerciale, con più rotori e più tacche.
+- Le militari hanno il pannello a spine, che nessuna macchina commerciale aveva; le commerciali hanno il riflettore impostabile e, tranne la T, la ruota d’ingresso nell’ordine della tastiera; le macchine con contatore muovono i rotori con ingranaggi e fanno avanzare anche il riflettore.
+- Due macchine con gli stessi pezzi cifrano in modo diverso se i fili dei rotori o del riflettore sono diversi: svizzeri, ferrovie tedesche, polizia norvegese e Abwehr usavano cablaggi propri, che chi attaccava doveva ricostruire prima di cercare la chiave. Con i cablaggi noti, la difficoltà di leggere il traffico dipendeva ancora dai messaggi, come mostrò Rocket I nell’autunno del 1944.
+- La linea del tempo mescola anni di produzione e anni d’uso, non ha l’ultimo anno della norvegese e lascia fuori la G111, la G260 e la G312, di cui la fonte non dà anni.
+</Riepilogo>

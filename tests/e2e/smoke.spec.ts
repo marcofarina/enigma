@@ -52,8 +52,8 @@ test('a 375 px l’intestazione sta su una riga e il menu si apre e si chiude', 
 
   await menu.click();
   await expect(menu).toHaveAttribute('aria-expanded', 'true');
-  await expect(page.getByRole('link', { name: 'Simulatore' })).toBeFocused();
-  await expect(page.getByRole('link', { name: 'Come funziona' })).toHaveAttribute('aria-current', 'page');
+  await expect(page.getByRole('link', { name: 'Simulatore', exact: true })).toBeFocused();
+  await expect(page.getByRole('link', { name: 'Come funziona', exact: true })).toHaveAttribute('aria-current', 'page');
   await page.keyboard.press('Escape');
   await expect(menu).toHaveAttribute('aria-expanded', 'false');
   await expect(menu).toBeFocused();
