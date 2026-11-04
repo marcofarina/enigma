@@ -1,17 +1,38 @@
 ---
 import { t } from '@/i18n';
+
+interface Props {
+  /** Mostra l’etichetta accanto all’icona: nel menu del telefono il pulsante occupa una riga. */
+  conTesto?: boolean;
+  class?: string;
+}
+
+const { conTesto = false, class: className } = Astro.props;
 ---
 
 <button
   type="button"
-  class="theme-toggle inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-border text-text hover:bg-surface-muted"
-  aria-label={t('theme.toggle')}
+  class:list={[
+    'theme-toggle inline-flex min-h-11 items-center gap-3 rounded-[var(--radius)] border border-border bg-surface text-text hover:border-text-muted',
+    conTesto ? 'w-full px-3 text-body' : 'min-w-11 justify-center md:min-h-8 md:min-w-11',
+    className,
+  ]}
+  aria-label={conTesto ? undefined : t('theme.toggle')}
   title={t('theme.toggle')}
 >
-  <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-    <circle cx="12" cy="12" r="9"></circle>
-    <path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"></path>
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 16 16"
+    width="16"
+    height="16"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+  >
+    <circle cx="8" cy="8" r="6"></circle>
+    <path d="M8 2a6 6 0 0 0 0 12z" fill="currentColor"></path>
   </svg>
+  {conTesto && <span>{t('theme.label')}</span>}
 </button>
 
 <script>

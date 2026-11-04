@@ -183,8 +183,10 @@ Sopra il tema attivo: `--alu-muted` e `--ring-letter` diventano `#cfcbc0`, `--wi
 
 ## Caratteri
 
-Tre famiglie, tutte con licenza SIL Open Font License, servite in locale da `public/fonts/`
-(`woff2`, con il file della licenza accanto). Nessuna richiesta a Google Fonts nel sito.
+Tre famiglie, tutte con licenza SIL Open Font License, servite in locale da `src/assets/fonts/`
+(`woff2`, con il file della licenza accanto). Nessuna richiesta a Google Fonts nel sito. Non
+stanno in `public/`: dentro un `url()` del CSS Vite non aggiunge il prefisso `/enigma/` ai file
+pubblici, mentre a quelli importati sì (fase G1).
 
 | Famiglia | Pesi e assi | Uso |
 | --- | --- | --- |
