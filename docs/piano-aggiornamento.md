@@ -32,7 +32,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | E2 | Riscrittura «Come funziona» 5–8 | Opus | high | 2,5 h | B, C, D, D4 | fatta |
 | E3 | Riscrittura Storia 1–4 e glossario | Opus | high | 2 h | B, C, D | fatta |
 | F | Interfaccia e i18n | Sonnet | high | 1 h | A, C, D5 | fatta |
-| G0 | Direzione visiva sul canvas | Opus | high | 2 h | F, D6 | da fare |
+| G0 | Direzione visiva sul canvas | Opus | high | 2 h | F, D6 | fatta |
 | G1 | Design system nel codice | Opus | high | 2,5 h | G0, H | da fare |
 | G2 | Il simulatore a schermata unica come home | Opus | high | 3 h | G1 | da fare |
 | G3 | Il simulatore su mobile | Sonnet | high | 1,5 h | G2 | da fare |
@@ -602,6 +602,23 @@ grep -cE '^## ' docs/design.md && grep -c 'claude.ai/' docs/design.md
 il primo almeno `7`, il secondo almeno `1`.
 
 La riga «Esito» di G0 dice quale direzione ha scelto Marco e in che data.
+
+**Esito** (2026-11-04)
+
+- Direzione scelta da Marco il 2026-11-04: «Bachelite con il foglio», cioè i materiali della
+  direzione A, lo schema a tutta altezza con tutti i fili della direzione B e il foglio della
+  chiave e del messaggio della direzione C. Descritta in `docs/design.md`, con il link al canvas.
+- Il pannello a spine diventa un pannello ancorato, non modale, aperto dall’intestazione
+  (richiesta di Marco: una finestra modale; la variante non modale lascia lo schema scoperto
+  mentre si collegano i cavi, e Marco l’ha accettata).
+- Screenshot «prima» in `docs/screenshot/prima/` (12 file), presi con
+  `pnpm exec playwright screenshot` sul server di sviluppo: includono la barra degli strumenti di
+  sviluppo di Astro. Gli screenshot «dopo» vanno presi allo stesso modo, perché si confrontino.
+- Restano da confermare con Marco i tre punti in fondo a `docs/design.md` (simulatore scuro anche
+  nel tema chiaro, nota sull’annullare spostata nella lezione 1, chiavi storiche solo dopo la
+  fase V). G1 può partire: nessuno dei tre cambia token o stili globali.
+- Comandi eseguiti: `ls docs/screenshot/prima/*.png | wc -l` → `12`;
+  `grep -cE '^## ' docs/design.md` → `10`; `grep -c 'claude.ai/' docs/design.md` → `1`.
 
 ---
 
