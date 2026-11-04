@@ -18,6 +18,9 @@ const panel = (page: Page, name: string | RegExp) => page.getByRole('dialog', { 
 async function open(page: Page, query = '') {
   await page.goto(query);
   await expect(page.getByRole('heading', { name: 'Messaggio' })).toBeVisible();
+  // Il simulatore registra la tastiera fisica in un effetto, dopo il primo disegno: due fotogrammi
+  // bastano perché sia pronto, anche quando la pagina carica in fretta e i test girano in parallelo.
+  await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
 }
 
 async function expectAccessible(page: Page) {

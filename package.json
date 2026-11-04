@@ -21,6 +21,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:lighthouse": "node scripts/lighthouse.ts",
     "verify": "pnpm lint && pnpm format:check && pnpm lint:content && pnpm check && pnpm test && pnpm build"
   },
   "dependencies": {
@@ -43,12 +44,14 @@
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "chrome-launcher": "^1.2.2",
     "eslint": "^10.13.0",
     "eslint-plugin-astro": "^3.2.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.1.1",
     "fast-check": "^4.10.2",
     "globals": "^17.13.0",
+    "lighthouse": "^13.6.0",
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "^1.1.2",
     "typescript": "~6.0.3",

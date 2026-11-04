@@ -1,5 +1,7 @@
 ---
 import { t } from '@/i18n';
+import archivo from '@/assets/fonts/archivo/archivo-latin-normal.woff2?url';
+import courierPrime from '@/assets/fonts/courier-prime/courier-prime-latin-400-normal.woff2?url';
 
 interface Props {
   title?: string | undefined;
@@ -17,6 +19,9 @@ const fullTitle = title ? `${title} · ${t('site.title')}` : `${t('site.title')}
 <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
+{/* I due caratteri della prima schermata partono subito: se arrivano dopo il primo rendering il testo si rimpagina (Lighthouse: spostamento di layout). */}
+<link rel="preload" href={archivo} as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={courierPrime} as="font" type="font/woff2" crossorigin />
 <script is:inline>
   // Applica il tema salvato prima del primo rendering per evitare il lampo di colori sbagliati.
   try {

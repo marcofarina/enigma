@@ -26,6 +26,7 @@ Sito Astro + React + TypeScript (Tailwind, MDX), pubblicato su GitHub Pages sott
 - `pnpm dev` — server di sviluppo
 - `pnpm verify` — lint, formattazione, regole tipografiche, tipi, unit test e build (da far passare prima di ogni push)
 - `pnpm test:e2e` — test Playwright con axe (richiede `pnpm build`)
+- `pnpm test:lighthouse` — budget Lighthouse: prestazioni ≥ 90, accessibilità 100, a desktop e a 375 px (richiede `pnpm build`; le pagine stanno in `scripts/pagine.ts`)
 
 Node ≥ 22.23.4 (vedi `.nvmrc`), pnpm 10.
 

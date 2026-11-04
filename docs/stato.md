@@ -71,10 +71,15 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
   il componente `ConfrontoModelli` (tabella e linea del tempo dai dati del motore); `period` e
   `users` dei modelli verificati; dettagli in `docs/piano.md`, fase 4a, «Esito».
 
+- Fase 4h, branch `fase/4h`: `pnpm test:lighthouse` (prestazioni ≥ 90, accessibilità 100, a desktop e
+  a 375 px sulle pagine di `scripts/pagine.ts`), anche in CI; axe sulle stesse pagine; stack dei
+  caratteri senza `ui-monospace`, preload dei due font della prima schermata e segnaposto a schermo
+  intero per i componenti `client:only`; dettagli in `docs/piano.md`, fase 4h, «Esito».
+
 ## Prossimo passo
 
 - Revisione delle bozze delle lezioni da parte dell’autore.
-- Le fasi rimaste (4a–4h, 5a, 5b) sono in `docs/piano.md`, sezione «Fasi», ognuna con il suo
+- Le fasi rimaste (5a, 5b) sono in `docs/piano.md`, sezione «Fasi», ognuna con il suo
   prompt di apertura. La vista 2.5D e i rinviati della 1b sono usciti dal piano il 2026-11-04
   (decisioni D9 e D11).
 

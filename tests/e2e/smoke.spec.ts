@@ -1,20 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { pagineAxe } from '../../scripts/pagine.ts';
 
-const pages = [
-  '',
-  'come-funziona/',
-  'come-funziona/che-cos-e-enigma/',
-  'storia/',
-  'glossario/',
-  'storia/galleria/',
-  'crittoanalisi/',
-  'schede/',
-  'fonti/',
-  'docenti/',
-];
-
-for (const path of pages) {
+for (const path of pagineAxe) {
   test(`la pagina /${path} si carica ed è accessibile`, async ({ page }) => {
     const response = await page.goto(path);
     expect(response?.ok()).toBe(true);

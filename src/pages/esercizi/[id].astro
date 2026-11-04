@@ -21,7 +21,10 @@ const { exercise } = Astro.props as { exercise: Exercise };
   </p>
   <h1 class="page-title !mb-6">{exercise.title}</h1>
   <ExerciseView client:only="react" exerciseId={exercise.id}>
-    <p slot="fallback" class="text-ink-muted">
+    <p
+      slot="fallback"
+      class:list={[exercise.simulator ? 'fallback-schermo' : 'fallback-schermo-stretto', 'text-ink-muted']}
+    >
       {t('ex.loading')}
     </p>
   </ExerciseView>

@@ -154,7 +154,7 @@ norme non sono raggiungibili, quindi niente prosa).
 | 4e | Bletchley Park e la M4 | Opus | high | 3 h | 4c, V (Welchman, Sebag-Montefiore, Hinsley) | fatta (2026-11-04) |
 | 4f | Missioni storiche | Opus | high | 2 h | 4e, V (fonti delle chiavi) | fatta (2026-11-04) |
 | 4g | Guida per i docenti | Opus | high | 2 h | G4 | fatta (2026-11-04) |
-| 4h | Accessibilità e prestazioni | Sonnet | high | 1,5 h | 4a–4g | da fare |
+| 4h | Accessibilità e prestazioni | Sonnet | high | 1,5 h | 4a–4g | fatta (2026-11-04) |
 | 5a | Vista 3D: architettura e caricamento | Opus | high | 3 h | 4h, D14 | da fare |
 | 5b | Vista 3D: pacco rotori e doppio passo | Sonnet | high | 2,5 h | 5a | da fare |
 
@@ -768,6 +768,58 @@ exit 0.
 ```bash
 pnpm verify && pnpm test:e2e
 ```
+
+**Esito (2026-11-04, branch `fase/4h`)**
+
+- `pnpm test:lighthouse` (`scripts/lighthouse.ts`): avvia `astro preview` su una porta sua (4322),
+  apre il Chromium di Playwright (o `CHROME_PATH`) e misura le dieci pagine di
+  `scripts/pagine.ts` — home, simulatore, «Modelli a confronto», «Enigma e l’Italia», «La bomba e
+  i fogli di Zygalski», indice degli esercizi, «Decifra un messaggio», schede, glossario, docenti —
+  a desktop (preset di Lighthouse) e a 375 px (mobile con schermo 375 × 812, throttling di
+  Lighthouse). Esce con 1 se una misura sta sotto il budget; una pagina sotto soglia si rimisura
+  fino a tre volte e conta la migliore, perché le prestazioni oscillano. Dipendenze nuove:
+  `lighthouse` 13.6.0 e `chrome-launcher` 1.2.2. Il passo è anche in `ci.yml`, dopo gli e2e.
+- Lo stesso elenco serve ad axe: `tests/e2e/smoke.spec.ts` legge `pagineAxe` da `scripts/pagine.ts`
+  (le dieci di Lighthouse più indici di sezione, galleria e fonti); sono entrate `simulatore/`,
+  `esercizi/`, `esercizi/decifra/` e una lezione di Storia, una di Crittoanalisi e «Modelli a
+  confronto».
+- Prima misura: accessibilità 100 ovunque, prestazioni 50–76 a quasi tutte le pagine (18 misure su
+  20 sotto 90). Cause trovate, in ordine di peso:
+  1. **`ui-monospace` nello stack di `--font-mono`**. In Chromium su macOS la prima risoluzione di
+     quel nome blocca il primo rendering per circa 2 s (FCP 2,1 s contro 30 ms, riprodotto con
+     Playwright cambiando solo la famiglia). Tolto da `src/styles/tokens.css`: lo stack è
+     `'Courier Prime', Menlo, Consolas, monospace`. Effetto: prestazioni 95–100 a desktop e 97–100
+     a 375 px; anche la suite e2e passa da 1,4 min a 45 s.
+  2. **Spostamento di layout dei componenti `client:only`** (`esercizi/[id]`, `schede/`): il
+     segnaposto era una riga, il componente porta la pagina a 3000 px e il piè di pagina, già in
+     vista, scivolava (CLS 0,2). Classe `.fallback-schermo` in `global.css` (altezza `100svh`):
+     sempre per gli esercizi con simulatore e per le schede, solo sotto 48 rem per gli altri
+     (a desktop stanno in una schermata). CLS misurato su tutte le 11 pagine di esercizi e le
+     schede a 375, 1350 e 1920 px: 0 ovunque tranne `esercizi/` a 375 px (0,05, sotto la soglia
+     di 0,1).
+  3. **Cambio di carattere**: a seconda che Archivo arrivi prima o dopo il primo rendering, il
+     glossario a 375 px aveva un CLS di 0,25 (prestazioni 87) o 0,02. `Head.astro` ora precarica
+     `archivo-latin-normal` e `courier-prime-latin-400-normal` (importati con `?url`, quindi con
+     lo stesso hash del CSS). Resta un CLS di 0,02 al massimo, dal grassetto della macchina da
+     scrivere.
+- Risultato finale (tre misure di ogni pagina a 375 px più due giri completi del comando): prestazioni da 96
+  a 100, accessibilità 100 in tutte le 20 combinazioni. Non c’è nulla che non si sia potuto
+  correggere. La pagina `simulatore/` ha un reindirizzamento (audit `redirects`): costa pochi
+  punti a 375 px (96–98) e non è stato toccato.
+- Test instabile, trovato per via della velocità nuova: i due test di `simulator.spec.ts` che
+  battono la tastiera fisica (`50 lettere battute in fretta…`, `la tastiera fisica cifra…`)
+  fallivano una volta ogni tre giri completi. Il simulatore registra la tastiera in un effetto
+  dopo il primo disegno e `open()` aspettava solo il titolo; ora `open()` aspetta anche due
+  fotogrammi. Cinque giri completi consecutivi: 172 passati, 24 saltati. Il difetto era del test,
+  non del sito (un lettore non batte 50 tasti in 5 ms).
+- Per Marco: i due compiti di «Fuori dalle fasi» non risultano chiusi (storia 4 ancora da
+  rileggere; i rotori commerciali dell’Enigma D da confrontare con CryptoCellar): il piano li
+  voleva prima della 4h, ma nessuna riga della 4h ne dipende e non li ho toccati. La CI su
+  GitHub (Linux) non è stata provata: i punteggi di Lighthouse cambiano con la macchina; se
+  `pnpm test:lighthouse` fallisse lì per pochi punti, il budget va riletto, non allentato a occhio.
+- Comandi eseguiti: `pnpm build && pnpm test:lighthouse` (exit 0, due volte di fila dopo le
+  correzioni), `pnpm verify` (218 test, 0 errori, 43 pagine), `pnpm test:e2e` (172 passati, 24
+  saltati, cinque giri).
 
 ---
 
