@@ -1,6 +1,8 @@
 import { defineCollection, reference } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { encipherWith, MODELS, validateConfig, type ModelId } from './engine/index.ts';
+import { missionConfig } from './lib/missioni.ts';
 
 /** Lezioni e capitoli divulgativi, scritti in MDX. */
 const lezioni = defineCollection({
@@ -83,4 +85,80 @@ const glossario = defineCollection({
   }),
 });
 
-export const collections = { lezioni, fonti, immagini, glossario };
+/** Solo lettere maiuscole: gli spazi fra i gruppi del modulo si tolgono. */
+const lettere = z
+  .string()
+  .transform((text) => text.replace(/\s+/g, ''))
+  .pipe(z.string().regex(/^[A-Z]+$/));
+
+/**
+ * Messaggi storici del menu «Carica una chiave» della home (fase 4f di docs/piano.md). La build
+ * decifra ogni parte con il motore: una lettera sbagliata nei dati la ferma.
+ */
+const missioni = defineCollection({
+  loader: file('./src/content/missioni.yaml'),
+  schema: z
+    .object({
+      titolo: z.string(),
+      /** Giorno della trasmissione: ordina il menu. */
+      data: z.coerce.date(),
+      modello: z.enum(Object.keys(MODELS) as [ModelId, ...ModelId[]]),
+      riflettore: z.string(),
+      rotori: z.array(z.string()).min(3),
+      anelli: z.string().regex(/^[A-Z]+$/),
+      spine: z.string().regex(/^([A-Z]{2})( [A-Z]{2})*$/),
+      parti: z
+        .array(
+          z.object({
+            indicatore: z
+              .string()
+              .regex(/^[A-Z]{3} [A-Z]{3}$/)
+              .optional(),
+            posizioni: z.string().regex(/^[A-Z]+$/),
+            /** Nei gruppi del modulo: così finisce nel campo «Digita». */
+            cifrato: z.string().regex(/^[A-Z]+( [A-Z]+)*$/),
+            chiaro: lettere,
+          }),
+        )
+        .min(1),
+      /** Prosa controllata da `lint:content`: chi, quando, come se ne è ritrovata la chiave. */
+      contesto: z.string(),
+      /** Che cosa notare battendo il messaggio. */
+      procedura: z.string(),
+      /** Traduzione nostra del testo in chiaro. */
+      traduzione: z.string(),
+      fonti: z.array(reference('fonti')).min(1),
+      /** Lezione da cui approfondire, senza `base` (per esempio `storia/fogli-chiave-e-procedure/`). */
+      lezione: z
+        .string()
+        .regex(/^[a-z0-9-]+(\/[a-z0-9-]+)*\/$/)
+        .optional(),
+    })
+    .superRefine((missione, ctx) => {
+      missione.parti.forEach((parte, index) => {
+        const config = missionConfig(missione, parte);
+        const issues = validateConfig(config);
+        if (issues.length > 0) {
+          ctx.addIssue({ code: 'custom', path: ['parti', index], message: issues.map((i) => i.message).join(' ') });
+          return;
+        }
+        if (encipherWith(config, parte.cifrato.replaceAll(' ', '')) !== parte.chiaro)
+          ctx.addIssue({
+            code: 'custom',
+            path: ['parti', index, 'chiaro'],
+            message: 'Il motore non decifra il testo cifrato in questo testo in chiaro.',
+          });
+        if (parte.indicatore) {
+          const [start, key] = parte.indicatore.split(' ') as [string, string];
+          if (encipherWith({ ...config, positions: start }, key) !== parte.posizioni)
+            ctx.addIssue({
+              code: 'custom',
+              path: ['parti', index, 'indicatore'],
+              message: 'L’indicatore non dà la chiave del messaggio.',
+            });
+        }
+      });
+    }),
+});
+
+export const collections = { lezioni, fonti, immagini, glossario, missioni };

@@ -134,3 +134,36 @@
   editore: Delacorte Press
   anno: 2003
   note: Edizione ridotta per ragazzi di «The Code Book» (1999), ISBN 9780385730624, consultata in epub il 3 novembre 2026; l’epub non ha numeri di pagina. Il capitolo 3, «The Mechanization of Secrecy», contiene il conto delle chiavi, circa 10 milioni di miliardi con tre rotori e sei cavi e senza contare gli anelli, e le catene di Rejewski, la cui lunghezza non dipende dal pannello.
+- id: sullivan-weierud-2005
+  autori: Geoff Sullivan, Frode Weierud
+  titolo: Breaking German Army Ciphers
+  editore: Cryptologia 29 (3), pp. 193–232
+  anno: 2005
+  url: https://cryptocellar.org/pubs/bgac.pdf
+  note: Consultato il 4 novembre 2026 nella copia pubblicata da CryptoCellar, con le pagine della rivista. Oltre 500 messaggi radio del 1941 e del 1945 su moduli originali, dall’eredità di Waldemar Werther, ufficiale del servizio d’ascolto della Luftwaffe, attraverso Michael van der Meulen (p. 194); i messaggi del 1941 vengono dalla campagna contro l’Unione Sovietica, operazione Barbarossa, e da unità del gruppo d’armate Nord, tutte delle SS o delle Waffen-SS (pp. 194–195); attacco al solo testo cifrato con metodi statistici (p. 193). Fonte del contesto della missione Barbarossa della home.
+- id: ostwald-weierud-1941
+  autori: Olaf Ostwald, Frode Weierud
+  titolo: Ciphertexts from Heeresgruppe Nord in July 1941
+  editore: CryptoCellar
+  anno: 2019
+  url: https://cryptocellar.org/bgac/heeresgruppe-nord-july-1941.pdf
+  note: Consultato il 4 novembre 2026; le pagine sono quelle del PDF. Chiave del 7 luglio 1941 (B, rotori II IV V, anelli BUL, spine AV BS CG DL FU HZ IN KM OW RX) nella tavola di p. 1 e a p. 7; messaggio n. 20 in due parti, da «SS-T Div Kdr» a «LVI AK», trasmesso alle 19:25, con gruppi di riconoscimento RFUGZ e FNJAU e indicatori WXC KCH (chiave BLA) e CRS YPJ (chiave LSD), pp. 7–8. La seconda parte ha 150 lettere cifrate, 15 più della versione che circola nei simulatori. Fonte della missione Barbarossa della home.
+- id: erskine-1996
+  autori: Ralph Erskine
+  titolo: Lettera al direttore, 6 dicembre 1995
+  editore: Cryptologia 20 (4)
+  anno: 1996
+  url: https://web.archive.org/web/20070102161932/http://members.fortunecity.com/jpeschel/erskin.htm
+  note: Numero di ottobre 1996; consultata il 4 novembre 2026 nella trascrizione del sito members.fortunecity.com/jpeschel conservata da Internet Archive, senza le pagine della rivista. Riporta tre intercettazioni dal nord Atlantico durante il blackout di Triton, probabilmente cifrate con la M4, dall’appendice II al rapporto n. 110/S del comandante di HMS Hurricane del 25 novembre 1942; la seconda, ricevuta alle 18:40 del 19 (T.O.R. 1840/19Z, 62 gruppi), è il messaggio di U-264. Fonte della data della missione U-264 della home.
+- id: krah-m4-first-break
+  autori: Stefan Krah
+  titolo: First break of the M4 Project
+  anno: 2006
+  url: https://www.bytereef.org/m4-project-first-break.html
+  note: Consultata il 4 novembre 2026. Chiave (UKW B sottile, Beta II IV I, anelli AAAV, spine AT BL DF GJ HM NW OP QY RZ VX, chiave del messaggio VJNA), testo in chiaro e interpretazione del messaggio di Hartwig Looks, rotto il 20 febbraio 2006; Dan Girard lo ha ritrovato nel diario di guerra di U-264 (NARA, T1022, bobina 2886). La pagina principale del progetto, https://www.bytereef.org/m4_project.html, descrive il calcolo distribuito sui computer dei volontari. Fonte della missione U-264 della home.
+- id: weierud-scharnhorst
+  autori: Frode Weierud
+  titolo: Scharnhorst’s Last Message?
+  editore: CryptoCellar
+  url: https://cryptocellar.org/bgac/scharnhorst.html
+  note: Consultata il 4 novembre 2026. Modulo di intercettazione di D. Rough, radiotelegrafista del Duke of York, 26 dicembre 1943, 6475 kHz, trovato fra le carte di Edward Thomas, ufficiale di intelligence della nave; telescrivente di Bletchley Park del 13 gennaio 1944 con la traduzione e la nota «ultima trasmissione»; brano di Patrick Beesley, «Very Special Intelligence», p. 216 (affondamento una ventina di minuti dopo, 36 superstiti); chiave trovata dal progetto M4 il 28 maggio 2008 (B, rotori III VI VIII, anelli AHM, chiave del messaggio UZV). Fonte della missione Scharnhorst della home.

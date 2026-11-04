@@ -152,7 +152,7 @@ norme non sono raggiungibili, quindi niente prosa).
 | 4c | Animazioni della crittoanalisi | Sonnet | high | 2,5 h | 4b, G4 | fatta (2026-11-04) |
 | 4d | Crittoanalisi polacca | Opus | high | 3 h | 4c | fatta (2026-11-04) |
 | 4e | Bletchley Park e la M4 | Opus | high | 3 h | 4c, V (Welchman, Sebag-Montefiore, Hinsley) | fatta (2026-11-04) |
-| 4f | Missioni storiche | Opus | high | 2 h | 4e, V (fonti delle chiavi) | da fare |
+| 4f | Missioni storiche | Opus | high | 2 h | 4e, V (fonti delle chiavi) | fatta (2026-11-04) |
 | 4g | Guida per i docenti | Opus | high | 2 h | G4 | da fare |
 | 4h | Accessibilità e prestazioni | Sonnet | high | 1,5 h | 4a–4g | da fare |
 | 5a | Vista 3D: architettura e caricamento | Opus | high | 3 h | 4h, D14 | da fare |
@@ -588,6 +588,43 @@ almeno `3`.
 ```bash
 pnpm verify && pnpm test:e2e
 ```
+
+**Esito (2026-11-04)**
+
+- Fonti cercate in rete, perché nessun libro del progetto riporta i tre messaggi. La pagina di
+  Franklin Heath (da Internet Archive: il sito rispondeva con un errore) rimanda alle fonti
+  primarie, che sono le voci nuove di `fonti.yaml`: `ostwald-weierud-1941` (il PDF di CryptoCellar
+  con il modulo n. 20 del 7 luglio 1941, chiave e indicatori) e `sullivan-weierud-2005` per
+  Barbarossa; `krah-m4-first-break` ed `erskine-1996` per U-264; `weierud-scharnhorst` per
+  Scharnhorst. Fatti e pagine in «Verificato (fase 4f)» di `docs/stato.md`.
+- Due correzioni ai vettori di `src/engine/__tests__/historical.test.ts`: la seconda parte di
+  Barbarossa ha 150 lettere e non 135 (le ultime 15 decifrano «KAMENEC X DIV X KDR X»); U-264 fu
+  ricevuto il 19 novembre 1942, non il 25, che è la data del rapporto di HMS Hurricane.
+- `src/content/missioni.yaml`, collezione `missioni` in `src/content.config.ts`: per ogni messaggio
+  chiave del giorno, parti (chiave del messaggio, indicatore se riproducibile, testo cifrato nei
+  gruppi del modulo, testo in chiaro), contesto, «da notare», traduzione nostra, fonti e lezione.
+  La build decifra ogni parte con il motore e controlla l’indicatore: una lettera sbagliata la
+  ferma (provato alterando una lettera). Barbarossa usa l’Enigma I, non la M3 dei test.
+- Menu «Carica una chiave» (`Sheet.tsx`): gruppo «Messaggi storici» in ordine di data (Barbarossa
+  parte 1 e 2, U-264, Scharnhorst) e, in fondo, «Chiavi di prova». Una missione carica la chiave,
+  mette il testo cifrato nel campo «Digita» e mostra la riga «Messaggio storico» con il pulsante
+  «Contesto», che apre un pannello ancorato (`MissionPanel` in `Panels.tsx`). I campi `contesto`,
+  `procedura` e `traduzione` passano da `lint:content`; nomi nuovi in `scripts/nomi-propri.txt`.
+- Barbarossa mostra la procedura del 1940 con un indicatore vero: con i rotori in WXC, KCH dà
+  BLA. Le due missioni della marina caricano direttamente la chiave del messaggio, perché
+  l’indicatore navale passa da tabelle di bigrammi che il simulatore non riproduce.
+- `docs/design.md`, «Da confermare», punto 3 (solo Barbarossa): superato da questa fase, che chiede
+  le tre missioni.
+- Test e2e in `tests/e2e/simulator.spec.ts`: uno per parte (selezionata la missione e premuto
+  «Digita», le lampade danno il testo in chiaro scritto nel test, indipendente dai dati) e uno per
+  l’indicatore di Barbarossa, il pannello con fonti e lezione, axe in chiaro e in scuro, Esc e la
+  chiave di prova che toglie la missione. Verificato nel browser con «astro-dev» a 1280×720: la
+  pagina resta alta 720 px con la riga della missione e il pannello scorre.
+- Comandi eseguiti: il criterio (`6` righe), `pnpm verify` (214 test, 0 errori, 42 pagine; i 4
+  avvisi di `lint:content` su `it.json` c’erano già), `pnpm test:e2e` (152 passati, 24 saltati).
+- Per Marco: da rileggere i testi delle missioni in `src/content/missioni.yaml` e le traduzioni,
+  che sono nostre (le scelte incerte sono in «Da verificare» di `docs/stato.md`). La versione
+  ridotta per il telefono non ha il menu delle chiavi, quindi nemmeno le missioni.
 
 ---
 

@@ -1,6 +1,7 @@
 import { useId, useLayoutEffect, useMemo, useRef, useState, type SubmitEvent } from 'react';
 import { defaultConfig, encodeConfig, groupLetters, MODELS, prepareText, type MachineConfig } from '@/engine';
 import { t, tf } from '@/i18n';
+import { missionConfig, type Mission } from '@/lib/missioni';
 import { copyText } from '../labels.ts';
 import { tapeLetters } from '../session.ts';
 import { useSimulator } from '../store.ts';
@@ -8,11 +9,17 @@ import { panelDomId } from './Panel.tsx';
 import { textOptions } from './Panels.tsx';
 import { useBench } from './ui.ts';
 
-/**
- * Chiavi pronte del menu «Carica una chiave». Solo chiavi di prova finché le chiavi storiche non
- * hanno una voce verificata in `fonti.yaml` (docs/design.md, «Da confermare con Marco», punto 3).
- */
-const PRESETS: { id: string; label: string; config: MachineConfig }[] = [
+/** Una voce del menu «Carica una chiave». */
+interface Preset {
+  id: string;
+  label: string;
+  config: MachineConfig;
+  /** Per i messaggi storici: la missione e il testo cifrato della parte, da mettere in «Digita». */
+  mission?: { id: string; ciphertext: string };
+}
+
+/** Chiavi di prova, in fondo al menu dopo i messaggi storici di `src/content/missioni.yaml`. */
+const TEST_PRESETS: Preset[] = [
   { id: 'base', label: t('bench.preset.base'), config: defaultConfig('I') },
   {
     id: 'cavi',
@@ -28,6 +35,22 @@ const PRESETS: { id: string; label: string; config: MachineConfig }[] = [
   },
 ];
 
+/** Una voce per ogni parte di ogni messaggio storico. */
+function missionPresets(missions: readonly Mission[]): Preset[] {
+  return missions.flatMap((mission) =>
+    mission.parti.map((part, index) => ({
+      id: mission.parti.length > 1 ? `${mission.id}-${index + 1}` : mission.id,
+      label:
+        mission.parti.length > 1
+          ? tf('bench.mission.part', { title: mission.titolo, number: index + 1 })
+          : mission.titolo,
+      config: missionConfig(mission, part),
+      // Il testo cifrato va nel campo nei gruppi del modulo originale.
+      mission: { id: mission.id, ciphertext: part.cifrato },
+    })),
+  );
+}
+
 interface MessageProps {
   perRow?: number;
   minRows?: number;
@@ -39,11 +62,14 @@ const MANUAL = 'manuale';
 const PER_ROW = 6;
 const MIN_ROWS = 4;
 
-function DailyKey() {
+function DailyKey({ missions }: { missions: readonly Mission[] }) {
   const config = useSimulator((s) => s.session.config);
   const configure = useSimulator((s) => s.configure);
+  const missionId = useBench((s) => s.mission);
+  const historic = useMemo(() => missionPresets(missions), [missions]);
+  const presets = useMemo(() => [...historic, ...TEST_PRESETS], [historic]);
   const encoded = encodeConfig(config);
-  const preset = PRESETS.find((p) => encodeConfig(p.config) === encoded)?.id ?? MANUAL;
+  const preset = presets.find((p) => encodeConfig(p.config) === encoded)?.id ?? MANUAL;
   const plugs = config.plugboard ?? [];
   const plugText =
     config.uhr !== undefined
@@ -61,18 +87,33 @@ function DailyKey() {
           className="field"
           value={preset}
           onChange={(event) => {
-            const chosen = PRESETS.find((p) => p.id === event.target.value);
-            if (chosen) configure(() => chosen.config);
+            const chosen = presets.find((p) => p.id === event.target.value);
+            if (!chosen) return;
+            configure(() => chosen.config);
+            useBench.setState(
+              chosen.mission ? { mission: chosen.mission.id, text: chosen.mission.ciphertext } : { mission: null },
+            );
           }}
         >
           <option value={MANUAL} disabled={preset !== MANUAL}>
             {t('bench.key.manual')}
           </option>
-          {PRESETS.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.label}
-            </option>
-          ))}
+          {historic.length > 0 && (
+            <optgroup label={t('bench.key.historic')}>
+              {historic.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.label}
+                </option>
+              ))}
+            </optgroup>
+          )}
+          <optgroup label={t('bench.key.tests')}>
+            {TEST_PRESETS.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label}
+              </option>
+            ))}
+          </optgroup>
         </select>
       </div>
       <dl className="key-table" data-columns={MODELS[config.model].plugboard ? 4 : 3}>
@@ -95,7 +136,34 @@ function DailyKey() {
           <dd>{config.positions}</dd>
         </div>
       </dl>
+      <MissionRow mission={missions.find((m) => m.id === missionId)} preset={preset} />
     </>
+  );
+}
+
+/** La riga del messaggio storico caricato, con il pulsante che apre il contesto. */
+function MissionRow({ mission, preset }: { mission: Mission | undefined; preset: string }) {
+  const open = useBench((s) => s.panel === 'mission');
+  const togglePanel = useBench((s) => s.togglePanel);
+  if (!mission) return null;
+  const count = mission.parti.length;
+  const part = count > 1 && preset.startsWith(`${mission.id}-`) ? Number(preset.slice(mission.id.length + 1)) : null;
+  return (
+    <div className="sheet-row sheet-mission">
+      <p>
+        <span className="sheet-mission-label">{t('bench.mission.label')}</span> {mission.titolo}
+        {part !== null && `, ${tf('bench.mission.partOf', { number: part, count })}`}
+      </p>
+      <button
+        type="button"
+        className="sbtn"
+        aria-expanded={open}
+        aria-controls={open ? panelDomId('mission') : undefined}
+        onClick={(event) => togglePanel('mission', event.currentTarget)}
+      >
+        {t('bench.mission.open')}
+      </button>
+    </div>
   );
 }
 
@@ -253,7 +321,7 @@ function TypeText() {
   );
 }
 
-export default function Sheet({ invalidLink }: { invalidLink: boolean }) {
+export default function Sheet({ invalidLink, missions }: { invalidLink: boolean; missions: readonly Mission[] }) {
   return (
     <section aria-label={t('bench.sheet')} className="sheet">
       {invalidLink && (
@@ -261,7 +329,7 @@ export default function Sheet({ invalidLink }: { invalidLink: boolean }) {
           {t('sim.share.invalid')}
         </p>
       )}
-      <DailyKey />
+      <DailyKey missions={missions} />
       <Message />
       <TypeText />
     </section>

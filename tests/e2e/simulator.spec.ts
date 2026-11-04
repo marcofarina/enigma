@@ -362,3 +362,84 @@ test(
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
   },
 );
+
+// Messaggi storici del menu «Carica una chiave» (src/content/missioni.yaml). Il testo in chiaro
+// atteso è scritto qui, indipendente dai dati: viene dalle fonti, non dal motore.
+const missions = [
+  {
+    id: 'barbarossa-1',
+    title: 'Barbarossa, 7 luglio 1941, parte 1',
+    plaintext:
+      'AUFKLXABTEILUNGXVONXKURTINOWAXKURTINOWAXNORDWESTLXSEBEZXSEBEZXUAFFLIEGERSTRASZERIQTUNGXDUBROWKIXDUBROWKIXOPOTSCHKAXOPOTSCHKAXUMXEINSAQTDREINULLXUHRANGETRETENXANGRIFFXINFXRGTX',
+  },
+  {
+    id: 'barbarossa-2',
+    title: 'Barbarossa, 7 luglio 1941, parte 2',
+    plaintext:
+      'DREIGEHTLANGSAMABERSIQERVORWAERTSXEINSSIEBENNULLSEQSXUHRXROEMXEINSXINFRGTXDREIXAUFFLIEGERSTRASZEMITANFANGXEINSSEQSXKMXKMXOSTWXKAMENECXKAMENECXDIVXKDRX',
+  },
+  {
+    id: 'u-264',
+    title: 'U-264, 19 novembre 1942',
+    plaintext:
+      'VONVONJLOOKSJHFFTTTEINSEINSDREIZWOYYQNNSNEUNINHALTXXBEIANGRIFFUNTERWASSERGEDRUECKTYWABOSXLETZTERGEGNERSTANDNULACHTDREINULUHRMARQUANTONJOTANEUNACHTSEYHSDREIYZWOZWONULGRADYACHTSMYSTOSSENACHXEKNSVIERMBFAELLTYNNNNNNOOOVIERYSICHTEINSNULL',
+  },
+  {
+    id: 'scharnhorst',
+    title: 'Scharnhorst, 26 dicembre 1943',
+    plaintext: 'STEUEREJTANAFJORDJANSTANDORTQUAAACCCVIERNEUNNEUNZWOFAHRTZWONULSMXXSCHARNHORSTHCO',
+  },
+];
+
+for (const mission of missions) {
+  test(`la missione ${mission.id} carica la chiave e il testo cifrato, e «Digita» lo decifra`, async ({ page }) => {
+    await open(page);
+    const menu = page.getByRole('combobox', { name: 'Carica una chiave' });
+    await menu.selectOption(mission.id);
+    await expect(menu.locator('option:checked')).toHaveText(mission.title);
+    await expect(page.getByText('Messaggio storico', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Digita' }).click();
+    // «Digita» batte una lettera ogni 45 ms: i messaggi lunghi chiedono una decina di secondi.
+    await expect(lit(page)).toHaveText(groupLetters(mission.plaintext), { timeout: 20_000 });
+  });
+}
+
+test('l’indicatore di Barbarossa dà la chiave del messaggio, e il contesto ha le fonti', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await open(page);
+  await page.getByRole('combobox', { name: 'Carica una chiave' }).selectOption('barbarossa-1');
+  // Con la missione caricata il simulatore sta ancora nella finestra.
+  const size = await page.evaluate(() => document.documentElement.scrollHeight);
+  expect(size).toBeLessThanOrEqual(720);
+
+  // Procedura del 1940: rotori sulla posizione in chiaro WXC, si batte KCH, si accende BLA.
+  for (const [slot, letter] of [
+    ['sinistro', 'W'],
+    ['centrale', 'X'],
+    ['destro', 'C'],
+  ] as const)
+    await wheel(page, slot).press(letter);
+  for (const letter of 'KCH') await screenKey(page, letter).click();
+  await expect(lit(page)).toHaveText('BLA');
+
+  // Scegliere di nuovo la parte riporta i rotori sulla chiave del messaggio.
+  await page.getByRole('combobox', { name: 'Carica una chiave' }).selectOption('barbarossa-1');
+  await expect(wheel(page, 'sinistro')).toHaveAttribute('aria-valuetext', 'B');
+
+  await page.getByRole('button', { name: 'Contesto' }).click();
+  const context = panel(page, 'Barbarossa, 7 luglio 1941');
+  await expect(context).toContainText('SS-Totenkopf');
+  await expect(context.getByRole('link', { name: 'Ciphertexts from Heeresgruppe Nord in July 1941' })).toHaveAttribute(
+    'href',
+    'https://cryptocellar.org/bgac/heeresgruppe-nord-july-1941.pdf',
+  );
+  await expect(context.getByRole('link', { name: 'Fogli chiave e procedure' })).toBeVisible();
+  await expectAccessible(page);
+  await page.keyboard.press('Escape');
+  await expect(context).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Contesto' })).toBeFocused();
+
+  // Una chiave di prova toglie la missione.
+  await page.getByRole('combobox', { name: 'Carica una chiave' }).selectOption('base');
+  await expect(page.getByText('Messaggio storico', { exact: true })).toBeHidden();
+});

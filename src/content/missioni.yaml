@@ -1,0 +1,78 @@
+# Messaggi storici del menu «Carica una chiave» della home (fase 4f di docs/piano.md).
+# Il testo cifrato è scritto nei gruppi del modulo originale (cinque lettere per l’esercito,
+# quattro per la marina), senza i gruppi dell’indicatore. La build decifra ogni parte con il
+# motore e si ferma se il testo in chiaro non coincide (src/content.config.ts).
+- id: barbarossa
+  titolo: Barbarossa, 7 luglio 1941
+  data: 1941-07-07
+  modello: I
+  riflettore: B
+  rotori: [II, IV, V]
+  anelli: BUL
+  spine: AV BS CG DL FU HZ IN KM OW RX
+  parti:
+    - indicatore: WXC KCH
+      posizioni: BLA
+      cifrato: >-
+        EDPUD NRGYS ZRCXN UYTPO MRMBO FKTBZ REZKM LXLVE FGUEY SIOZV EQMIK UBPMM YLKLT TDEIS MDICA GYKUA
+        CTCDO MOHWX MUUIA UBSTS LRNBZ SZWNR FXWFY SSXJZ VIJHI DISHP RKLKA YUPAD TXQSP INQMA TLPIF SVKDA
+        SCTAC DPBOP VHJK
+      chiaro: >-
+        AUFKLXABTEILUNGXVONXKURTINOWAXKURTINOWAXNORDWESTLXSEBEZXSEBEZXUAFFLIEGERSTRASZERIQTUNGXDUBROWKIXDUBROWKIX
+        OPOTSCHKAXOPOTSCHKAXUMXEINSAQTDREINULLXUHRANGETRETENXANGRIFFXINFXRGTX
+    - indicatore: CRS YPJ
+      posizioni: LSD
+      cifrato: >-
+        SFBWD NJUSE GQOBH KRTAR EEZMW KPPRB XOHDR OEQGB BGTQV PGVKB VVGBI MHUSZ YDAJQ IROAX SSSNR EHYGG
+        RPISE ZBOVM QIEMM ZCYSG QDGRE RVBIL EKXYQ IRGIR QNRDN VRXCY YTNJR SBDPJ BFFKY QWFUS
+      chiaro: >-
+        DREIGEHTLANGSAMABERSIQERVORWAERTSXEINSSIEBENNULLSEQSXUHRXROEMXEINSXINFRGTXDREIXAUFFLIEGERSTRASZE
+        MITANFANGXEINSSEQSXKMXKMXOSTWXKAMENECXKAMENECXDIVXKDRX
+  contesto: 'Il 7 luglio 1941 alle 19:25 il comandante della divisione SS-Totenkopf trasmise al LVI corpo d’armata un rapporto in due parti sull’avanzata verso Opotschka. Erano i giorni dell’operazione Barbarossa, la campagna tedesca contro l’Unione Sovietica, e la divisione faceva parte del gruppo d’armate Nord. Il modulo radio di questo rapporto è uno degli oltre 500 messaggi del 1941 e del 1945 arrivati a Geoff Sullivan e Frode Weierud dalle carte di Waldemar Werther, ufficiale del servizio d’ascolto della Luftwaffe. Nel 2005 Sullivan e Weierud spiegarono su Cryptologia come ricostruivano le chiavi senza conoscere il testo, con metodi statistici; la chiave del 7 luglio 1941 l’hanno pubblicata Olaf Ostwald e Frode Weierud.'
+  procedura: 'Il modulo della prima parte comincia con il gruppo di riconoscimento RFUGZ, che non è cifrato, e con l’indicatore WXC KCH, secondo la procedura introdotta nel 1940; quello della seconda parte ha l’indicatore CRS YPJ. Puoi verificare la chiave del messaggio: porta le finestrelle su WXC e batti KCH, e le lampade danno le tre lettere che il foglio riporta come inizio. Poi scegli di nuovo questa parte dal menu, che riporta i rotori sulla chiave del messaggio, e premi «Digita». Nel testo in chiaro X separa le parole, Q sta per CH (SIQER, SEQS) e i nomi di luogo sono scritti due volte.'
+  traduzione: 'Il reparto esplorante è partito alle 18:30 da Kurtinowa, a nord-ovest di Sebez, sulla Fliegerstraße in direzione di Dubrowki e Opotschka. L’attacco del terzo reggimento di fanteria procede lentamente ma con sicurezza. Alle 17:06 il I battaglione del terzo reggimento è sulla Fliegerstraße, con la testa a 16 km a est di Kamenec. Il comandante della divisione.'
+  fonti: [ostwald-weierud-1941, sullivan-weierud-2005]
+  lezione: storia/fogli-chiave-e-procedure/
+
+- id: u-264
+  titolo: U-264, 19 novembre 1942
+  data: 1942-11-19
+  modello: M4
+  riflettore: B-thin
+  rotori: [Beta, II, IV, I]
+  anelli: AAAV
+  spine: AT BL DF GJ HM NW OP QY RZ VX
+  parti:
+    - posizioni: VJNA
+      cifrato: >-
+        NCZW VUSX PNYM INHZ XMQX SFWX WLKJ AHSH NMCO CCAK UQPM KCSM HKSE INJU SBLK IOSX CKUB HMLL XCSJ USRR
+        DVKO HULX WCCB GVLI YXEO AHXR HKKF VDRE WEZL XOBA FGYU JQUK GRTV UKAM EURB VEKS UHHV OYHA BCJW MAKL
+        FKLM YFVN RIZR VVRT KOFD ANJM OLBG FFLE OPRG TFLV RHOW OPBE KVWM UQFM PWPA RMFH AGKX IIBG
+      chiaro: >-
+        VONVONJLOOKSJHFFTTTEINSEINSDREIZWOYYQNNSNEUNINHALTXXBEIANGRIFFUNTERWASSERGEDRUECKTYWABOSXLETZTERGEGNER
+        STANDNULACHTDREINULUHRMARQUANTONJOTANEUNACHTSEYHSDREIYZWOZWONULGRADYACHTSMYSTOSSENACHXEKNSVIERMBFAELLTY
+        NNNNNNOOOVIERYSICHTEINSNULL
+  contesto: 'Il sommergibile U-264 del Kapitänleutnant Hartwig Looks trasmise questo messaggio dal nord Atlantico il 19 novembre 1942, mentre Bletchley Park non riusciva a leggere Shark, la chiave dei sommergibili cifrata con la M4. Il testo intercettato è finito in appendice a un rapporto del comandante della nave britannica HMS Hurricane, datato 25 novembre 1942. Nel 1996 Ralph Erskine pubblicò il messaggio su Cryptologia con altri due mai decifrati, come sfida ai lettori. Il 20 febbraio 2006 la chiave del messaggio fu trovata dal progetto M4 di Stefan Krah, che divideva la ricerca fra i computer dei volontari; Dan Girard ritrovò poi lo stesso testo nel diario di guerra di U-264, negli archivi nazionali statunitensi.'
+  procedura: 'Molte pagine danno il 25 novembre come data del messaggio, ma è la data del rapporto; l’intestazione dell’intercettazione dice che fu ricevuto alle 18:40 (ora di Greenwich) del 19. La marina trasmetteva in gruppi di quattro lettere e cifrava l’indicatore con tabelle di bigrammi che il simulatore non riproduce, quindi il menu carica direttamente la chiave del messaggio, VJNA. Nel testo in chiaro restano lettere sbagliate, come SEYHS al posto di SECHS ed EKNS al posto di EINS.'
+  traduzione: 'Da Looks. Radiotelegramma 1132/19. Contenuto: durante l’attacco costretto all’immersione, bombe di profondità. Ultima posizione del nemico alle 08:30, quadrato AJ 9863, rotta 220 gradi, velocità otto nodi; lo inseguo. Barometro a 1014 millibar in calo, vento da nord-nord-est forza 4, visibilità dieci miglia.'
+  fonti: [krah-m4-first-break, erskine-1996]
+  lezione: crittoanalisi/la-m4-e-shark/
+
+- id: scharnhorst
+  titolo: Scharnhorst, 26 dicembre 1943
+  data: 1943-12-26
+  modello: M3
+  riflettore: B
+  rotori: [III, VI, VIII]
+  anelli: AHM
+  spine: AN EZ HK IJ LR MQ OT PV SW UX
+  parti:
+    - posizioni: UZV
+      cifrato: >-
+        YKAE NZAP MSCH ZBFO CUVM RMDP YCOF HADZ IZME FXTH FLOL PZLF GGBO TGOX GRET DWTJ IQHL MXVJ WKZU ASTR
+      chiaro: STEUEREJTANAFJORDJANSTANDORTQUAAACCCVIERNEUNNEUNZWOFAHRTZWONULSMXXSCHARNHORSTHCO
+  contesto: 'La sera del 26 dicembre 1943 la nave da battaglia tedesca Scharnhorst, sotto il fuoco della flotta britannica a nord della Norvegia, trasmise la sua posizione e la rotta verso il Tanafjord. Il messaggio fu intercettato da D. Rough, radiotelegrafista della corazzata britannica Duke of York; secondo lo storico Patrick Beesley la Scharnhorst affondò una ventina di minuti dopo, e si salvarono 36 uomini. Bletchley Park decifrò il messaggio solo il 13 gennaio 1944 e annotò che era l’ultima trasmissione della nave. Il modulo originale dell’intercettazione è riemerso fra le carte dell’ufficiale di intelligence del Duke of York, e il 28 maggio 2008 il progetto M4 ritrovò la chiave del messaggio in meno di un giorno.'
+  procedura: 'La Scharnhorst usava la macchina a tre rotori della marina, con due rotori che l’esercito non aveva, VI e VIII. Come per U-264, il menu carica direttamente la chiave del messaggio, UZV. Nel testo in chiaro le lettere del quadrato sono ripetute tre volte (AAA CCC sta per AC) e il nome Tanafjord è chiuso fra due J; il testo tedesco coincide con la traduzione inglese di Bletchley Park.'
+  traduzione: 'Mi dirigo verso il Tanafjord. Posizione, quadrato AC 4992; velocità 20 nodi. Scharnhorst.'
+  fonti: [weierud-scharnhorst]
+  lezione: crittoanalisi/la-m4-e-shark/

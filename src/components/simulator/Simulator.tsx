@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { defaultConfig, encodeConfig } from '@/engine';
 import { t } from '@/i18n';
+import type { Mission } from '@/lib/missioni';
 import Compact from './bench/Compact.tsx';
 import { useCompact } from './bench/compact.ts';
 import Header from './bench/Header.tsx';
 import BenchKeyboard from './bench/Keyboard.tsx';
-import { PlugPanel, SharePanel, UkwDPanel, OptionsPanel } from './bench/Panels.tsx';
+import { MissionPanel, PlugPanel, SharePanel, UkwDPanel, OptionsPanel } from './bench/Panels.tsx';
 import Sheet from './bench/Sheet.tsx';
 import { useBench } from './bench/ui.ts';
 import Well, { useSignalMode } from './bench/Well.tsx';
@@ -25,7 +26,7 @@ function initialStore() {
  * La home: il simulatore a schermata unica (docs/design.md). Intestazione con i controlli della
  * macchina, a sinistra lampade, tastiera e foglio, a destra il vano dello schema.
  */
-export default function Simulator() {
+export default function Simulator({ missions = [] }: { missions?: readonly Mission[] }) {
   const [{ store, invalidLink }] = useState(initialStore);
   const [lim, setLim] = useState(false);
   const mode = useSignalMode();
@@ -94,7 +95,7 @@ export default function Simulator() {
         <main id="contenuto" className="bench-main">
           <div className="bench-left">
             <BenchKeyboard />
-            <Sheet invalidLink={invalidLink} />
+            <Sheet invalidLink={invalidLink} missions={missions} />
           </div>
           <Well />
         </main>
@@ -102,6 +103,7 @@ export default function Simulator() {
         <UkwDPanel />
         <OptionsPanel />
         <SharePanel />
+        <MissionPanel missions={missions} />
       </div>
     </SimulatorContext>
   );

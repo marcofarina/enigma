@@ -2,9 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { encipherWith, type MachineConfig } from '../index.ts';
 
 /**
- * Messaggi reali decifrati, dalla raccolta di Frank Spieß / Franklin Heath
- * (http://wiki.franklinheath.co.uk/index.php/Enigma/Sample_Messages), già usati nei test
- * del simulatore di Summerside Makerspace.
+ * Messaggi reali decifrati, già usati nei test del simulatore di Summerside Makerspace (dalla
+ * raccolta di Franklin Heath). Le fonti primarie sono in `src/content/fonti.yaml`: Ostwald e
+ * Weierud per Barbarossa, Krah ed Erskine per U-264, Weierud per Scharnhorst. Gli stessi
+ * messaggi sono le missioni della home (`src/content/missioni.yaml`).
  */
 const messages: { name: string; config: MachineConfig; ciphertext: string; plaintext: string }[] = [
   {
@@ -32,13 +33,16 @@ const messages: { name: string; config: MachineConfig; ciphertext: string; plain
       reflector: 'B',
       plugboard: ['AV', 'BS', 'CG', 'DL', 'FU', 'HZ', 'IN', 'KM', 'OW', 'RX'],
     },
+    // Le ultime 15 lettere mancano nella raccolta di Franklin Heath: vengono dal modulo trascritto
+    // da Ostwald e Weierud (p. 8).
     ciphertext:
-      'SFBWDNJUSEGQOBHKRTAREEZMWKPPRBXOHDROEQGBBGTQVPGVKBVVGBIMHUSZYDAJQIROAXSSSNREHYGGRPISEZBOVMQIEMMZCYSGQDGRERVBILEKXYQIRGIRQNRDNVRXCYYTNJR',
+      'SFBWDNJUSEGQOBHKRTAREEZMWKPPRBXOHDROEQGBBGTQVPGVKBVVGBIMHUSZYDAJQIROAXSSSNREHYGGRPISEZBOVMQIEMMZCYSGQDGRERVBILEKXYQIRGIRQNRDNVRXCYYTNJRSBDPJBFFKYQWFUS',
     plaintext:
-      'DREIGEHTLANGSAMABERSIQERVORWAERTSXEINSSIEBENNULLSEQSXUHRXROEMXEINSXINFRGTXDREIXAUFFLIEGERSTRASZEMITANFANGXEINSSEQSXKMXKMXOSTWXKAMENECXK',
+      'DREIGEHTLANGSAMABERSIQERVORWAERTSXEINSSIEBENNULLSEQSXUHRXROEMXEINSXINFRGTXDREIXAUFFLIEGERSTRASZEMITANFANGXEINSSEQSXKMXKMXOSTWXKAMENECXKAMENECXDIVXKDRX',
   },
   {
-    name: 'U-264 (Kapitänleutnant Hartwig Looks), 25 novembre 1942',
+    // Ricevuto alle 18:40 del 19 novembre (Erskine); il 25 è la data del rapporto che lo riporta.
+    name: 'U-264 (Kapitänleutnant Hartwig Looks), 19 novembre 1942',
     config: {
       model: 'M4',
       rotors: ['Beta', 'II', 'IV', 'I'],
