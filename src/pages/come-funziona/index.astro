@@ -1,13 +1,7 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { t } from '@/i18n';
-import { isLessonIn, lessonSlug } from '@/lib/lessons';
-import { url } from '@/lib/url';
-
-const lezioni = (await getCollection('lezioni', (lezione) => isLessonIn(lezione, 'come-funziona'))).sort(
-  (a, b) => a.data.ordine - b.data.ordine,
-);
+import ListaLezioni from '@/components/content/ListaLezioni.astro';
 ---
 
 <BaseLayout title={t('howItWorks.title')} description={t('howItWorks.intro')}>
@@ -15,17 +9,5 @@ const lezioni = (await getCollection('lezioni', (lezione) => isLessonIn(lezione,
     <h1>{t('howItWorks.title')}</h1>
     <p>{t('howItWorks.intro')}</p>
   </section>
-  <ol class="mt-6 grid max-w-3xl gap-3">
-    {lezioni.map((lezione) => (
-      <li>
-        <a
-          href={url(`come-funziona/${lessonSlug(lezione)}/`)}
-          class="block rounded-lg border border-border bg-surface p-4 text-text no-underline hover:border-accent"
-        >
-          <span class="font-semibold">{lezione.data.title}</span>
-          <span class="block text-text-muted">{lezione.data.description}</span>
-        </a>
-      </li>
-    ))}
-  </ol>
+  <ListaLezioni sezione="come-funziona" />
 </BaseLayout>

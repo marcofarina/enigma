@@ -1,6 +1,7 @@
 import { useEffect, useId, useMemo, useState } from 'react';
 import { ALPHABET, toLetter } from '@/engine';
 import { t, tf } from '@/i18n';
+import ScrollRegion from '@/components/ui/ScrollRegion.tsx';
 import { useSimulator } from './store.ts';
 import { describeTraceStep, traceOf, type TraceStep } from './trace.ts';
 
@@ -21,13 +22,7 @@ function StageMap({ step }: { step: Extract<TraceStep, { kind: 'stage' }> }) {
     <figure className="flex flex-col gap-1">
       <figcaption className="text-sm text-text-muted">{t('sim.trace.map')}</figcaption>
       {/* Le righe non entrano sempre negli schermi stretti: l’area scorre anche da tastiera. */}
-      <div
-        className="overflow-x-auto rounded-md border border-border bg-surface-muted px-2 py-2"
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-        tabIndex={0}
-        role="region"
-        aria-label={t('sim.trace.map')}
-      >
+      <ScrollRegion className="rounded-md border border-border bg-surface-muted px-2 py-2" label={t('sim.trace.map')}>
         <div aria-hidden="true" className="flex w-max flex-col gap-0.5 font-mono text-sm text-text-muted">
           <div className="flex items-center gap-0.5">
             <span className="w-12 shrink-0 font-sans text-xs">{t('sim.trace.mapIn')}</span>
@@ -41,7 +36,7 @@ function StageMap({ step }: { step: Extract<TraceStep, { kind: 'stage' }> }) {
             )}
           </div>
         </div>
-      </div>
+      </ScrollRegion>
     </figure>
   );
 }

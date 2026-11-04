@@ -4,7 +4,7 @@ import { t } from '@/i18n';
 import ConfigPanel from '@/components/simulator/ConfigPanel.tsx';
 import { Issues, Keyboard, Lampboard, Windows } from '@/components/simulator/Machine.tsx';
 import { createSession } from '@/components/simulator/session.ts';
-import { createSimulatorStore, handlePhysicalKey, SimulatorContext } from '@/components/simulator/store.ts';
+import { createSimulatorStore, SimulatorContext, useKeyCapture } from '@/components/simulator/store.ts';
 import Tape from '@/components/simulator/Tape.tsx';
 
 /**
@@ -13,6 +13,7 @@ import Tape from '@/components/simulator/Tape.tsx';
  */
 export default function ExerciseSimulator() {
   const [store] = useState(() => createSimulatorStore(createSession(defaultConfig('I'))));
+  const keys = useKeyCapture(store);
   return (
     <SimulatorContext value={store}>
       <section aria-labelledby="exercise-simulator" className="flex flex-col gap-3">
@@ -22,9 +23,7 @@ export default function ExerciseSimulator() {
         <p className="text-sm text-text-muted">{t('ex.simulatorHint')}</p>
         <div className="grid gap-6 lg:grid-cols-[22rem_minmax(0,1fr)]">
           <ConfigPanel />
-          {/* Il contenitore raccoglie i tasti premuti mentre il focus è su uno dei suoi controlli. */}
-          {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-          <div className="flex min-w-0 flex-col gap-5" onKeyDown={(event) => handlePhysicalKey(store, event)}>
+          <div ref={keys} role="group" aria-label={t('ex.simulator')} className="flex min-w-0 flex-col gap-5">
             <Issues />
             <div className="flex flex-col items-center gap-5 rounded-xl border border-border bg-surface px-2 py-5">
               <Windows />

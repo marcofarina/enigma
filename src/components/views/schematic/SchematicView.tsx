@@ -4,6 +4,7 @@ import { t, tf } from '@/i18n';
 import { reflectorShortLabel } from '@/components/simulator/labels.ts';
 import { currentState } from '@/components/simulator/session.ts';
 import { useSimulator } from '@/components/simulator/store.ts';
+import ScrollRegion from '@/components/ui/ScrollRegion.tsx';
 import { layoutSchematic, rowY, type Column, type Mark } from './layout.ts';
 
 const markClass: Record<Exclude<Mark, null>, string> = {
@@ -143,15 +144,8 @@ export default function SchematicView({ heading = true }: { heading?: boolean })
               {t('sim.schematic.return')}
             </span>
           </div>
-          {/* Lo schema ha una larghezza minima leggibile: sugli schermi stretti scorre in orizzontale,
-              e l’area deve ricevere il focus per poterla scorrere da tastiera (WCAG 2.1.1). */}
-          <div
-            className="overflow-x-auto rounded-lg border border-border bg-surface"
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-            tabIndex={0}
-            role="region"
-            aria-labelledby={`${id}-title`}
-          >
+          {/* Lo schema ha una larghezza minima leggibile: sugli schermi stretti scorre in orizzontale. */}
+          <ScrollRegion className="rounded-lg border border-border bg-surface" labelledBy={`${id}-title`}>
             <svg
               viewBox={`0 0 ${schematic.width} ${schematic.height}`}
               className="block w-full min-w-[36rem] font-mono"
@@ -228,7 +222,7 @@ export default function SchematicView({ heading = true }: { heading?: boolean })
                 </g>
               ))}
             </svg>
-          </div>
+          </ScrollRegion>
           {!last && <p className="text-sm text-text-muted">{t('sim.schematic.empty')}</p>}
         </>
       )}

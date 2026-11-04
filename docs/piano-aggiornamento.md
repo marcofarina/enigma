@@ -37,7 +37,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | G2 | Il simulatore a schermata unica come home | Opus | high | 3 h | G1 | da fare |
 | G3 | Il simulatore su mobile | Sonnet | high | 1,5 h | G2 | da fare |
 | G4 | Il resto del sito nel nuovo linguaggio | Sonnet | high | 2 h | G1 | da fare |
-| H | Pulizia del codice | Sonnet | high | 1 h | A | da fare |
+| H | Pulizia del codice | Sonnet | high | 1 h | A | fatta |
 | V | Verifiche sui testi delle fonti | Opus | high | 2 h per gruppo di libri | B, testi forniti da Marco | da fare |
 | I | Riscrittura delle fasi 4–5 di `docs/piano.md` nel formato dei piani | Opus | high | 1 h | E1–E3, D8 | da fare |
 
@@ -848,6 +848,12 @@ minore di `8`, e ogni riga rimasta ha un commento con il motivo.
 ```bash
 pnpm verify && pnpm test:e2e
 ```
+
+**Esito (2026-11-04)**
+
+- Fatto: gli `eslint-disable` in `src` passano da otto a uno. I quattro contenitori che scorrono in orizzontale (`TracePanel`, `Blocks`, `SheetGenerator`, `SchematicView`) usano il nuovo `src/components/ui/ScrollRegion.tsx` (`role="region"`, nome accessibile, `tabIndex={0}` per WCAG 2.1.1): l’unica disattivazione rimasta sta lì, con il motivo (la regola considera `region` non interattivo). I due contenitori che raccoglievano i tasti (`MiniSimulatore`, `ExerciseSimulator`) hanno ora `role="group"` con `aria-label`, e il gestore è nell’hook `useKeyCapture` di `store.ts`: con `role="group"` e `onKeyDown` nel JSX la regola `no-noninteractive-element-interactions` scatta comunque, quindi l’ascoltatore si registra sul contenitore con `addEventListener`. `AnimazionePasso`: nomi dei rotori in `useMemo`, `advance` in `useCallback`, nessun `exhaustive-deps` silenziato. Nuovo `src/components/content/ListaLezioni.astro` (prop `sezione`) usato da `come-funziona/index.astro` e `storia/index.astro`.
+- Comandi: `grep -rn 'eslint-disable' src | wc -l` dà 1; `pnpm verify` exit 0; `pnpm test:e2e` exit 0 (113 passati, 3 saltati). La tastiera fisica nel simulatore ridotto è coperta dal test già presente in `tests/e2e/lessons.spec.ts` («il mini simulatore usa la tastiera fisica solo quando ha il focus»).
+- Resta: il quinto rilievo del §6 (nessun controllo automatico che la matematica in prosa passi da `<Formula>`) non è in questa fase. Nel gruppo `ExerciseSimulator` il nome del gruppo («Simulatore») ripete quello del titolo della sezione: innocuo, ma si può distinguere se la fase G ridisegna la pagina.
 
 ---
 

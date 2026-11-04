@@ -1,21 +1,15 @@
 import { ALPHABET } from '@/engine';
 import { t } from '@/i18n';
+import ScrollRegion from '@/components/ui/ScrollRegion.tsx';
 import type { Block, KeySheet } from '@/exercises/catalog.ts';
 
 const ringNumber = (letter: string) => String(ALPHABET.indexOf(letter) + 1).padStart(2, '0');
 
-/** Area che scorre in orizzontale sugli schermi stretti e riceve il focus da tastiera. */
 function Scroll({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div
-      className="overflow-x-auto rounded-md border border-border"
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-      tabIndex={0}
-      role="region"
-      aria-label={label}
-    >
+    <ScrollRegion className="rounded-md border border-border" label={label}>
       {children}
-    </div>
+    </ScrollRegion>
   );
 }
 
