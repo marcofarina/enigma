@@ -35,7 +35,7 @@ mie; la scelta è di Marco. Annotare qui la risposta prima di aprire le fasi che
 | G0 | Direzione visiva sul canvas | Opus | high | 2 h | F, D6 | fatta |
 | G1 | Design system nel codice | Opus | high | 2,5 h | G0, H | fatta |
 | G2 | Il simulatore a schermata unica come home | Opus | high | 3 h | G1 | fatta |
-| G3 | Il simulatore su mobile | Sonnet | high | 1,5 h | G2 | da fare |
+| G3 | Il simulatore su mobile | Sonnet | high | 1,5 h | G2 | fatta |
 | G4 | Il resto del sito nel nuovo linguaggio | Sonnet | high | 2 h | G1 | da fare |
 | H | Pulizia del codice | Sonnet | high | 1 h | A | fatta |
 | V | Verifiche sui testi delle fonti | Opus | high | 2 h per gruppo di libri | B, testi forniti da Marco | da fare |
@@ -853,6 +853,44 @@ almeno `1`.
 ```bash
 pnpm verify && pnpm test:e2e
 ```
+
+**Esito** (2026-11-04)
+
+- Sotto 1024×576 la home è la versione ridotta di `docs/design.md`. `Simulator.tsx` sceglie con
+  `useCompact()` (`bench/compact.ts`, stessa condizione del CSS) fra la schermata unica e
+  `bench/Compact.tsx`; store, tastiera fisica e indirizzo con la configurazione sono gli stessi.
+  A 375 e a 768 px non c’è scorrimento orizzontale; in verticale la pagina scorre di una
+  quarantina di pixel a 375 × 812 (le frecce da 44 px costano più dei 30 della artboard).
+- Pezzi: intestazione da 52 con marchio e menu da 44 px (foglio sotto la barra: Simulatore, Come
+  funziona, Storia, Esercizi, Glossario e il tema; Esc lo chiude e riporta il fuoco), tre
+  finestrelle con frecce da 44 px (quattro sulla M4, da un link) e il nome del rotore, lampade da
+  31, tasti da 34 × 46, foglio del messaggio a quattro gruppi per riga con Annulla, Ricomincia e
+  Copia, avviso con il link «Apri le lezioni». Niente schema, pannelli, menu di configurazione né
+  campi di testo: i tasti sono pulsanti e toccarli non fa salire la tastiera del telefono.
+  Lampade e tasti si stringono sotto i 343 px di spazio (320 px compresi). I tasti restano da
+  34 px di larghezza, come disegnato, e non da 44: sono l’unica eccezione al bersaglio minimo.
+- Il testo dell’avviso sta in `src/i18n/it.json` (`bench.compact.*`) e passa `pnpm lint:content`.
+  `Dial` (`Well.tsx`) ha l’opzione `stacked`, `Message` (`Sheet.tsx`) le opzioni `perRow`, `minRows`
+  e `compact`; sotto la soglia la radice torna a 16 px e le misure sono quelle della artboard.
+  Senza JavaScript la barra va a capo e resta raggiungibile.
+- Scelte prese qui, da rivedere con Marco: nel foglio ridotto ci sono Annulla, Ricomincia e Copia
+  (la artboard ha solo il nastro, ma sul telefono un tasto sbagliato non si recupera altrimenti) e
+  non Ripeti; l’avviso ha il link a una riga propria, alta 44 px, e non in coda al testo; a 768 px
+  vale lo stesso disegno, centrato, senza scalarlo; il menu segue il tema (carta e inchiostro), come
+  quello delle altre pagine; il «Condividi» e la modalità LIM non ci sono.
+- Test in `tests/e2e/simulator.spec.ts`, con l’etichetta `@compact` (girano anche sul progetto
+  mobile; il `beforeEach` salta gli altri): a 375 e a 768 px nessuno scorrimento orizzontale, avviso
+  visibile con il link, niente schema né campi; bersagli da 44 px, lampade 31, tasti 34 × 46 e quattro
+  gruppi per riga; tasti che cifrano senza campi di testo e frecce che girano la finestrella; menu;
+  axe in chiaro e in scuro, anche con il menu aperto; link con quattro rotori. `expectAccessible`
+  ora attende la fine delle animazioni: con più lavoro in parallelo axe misurava il contrasto del
+  pannello a spine a metà dissolvenza (difetto di G2, riprodotto con `--repeat-each`).
+- Verificato nel browser a 375 e 768 px, in chiaro e in scuro: tasti, frecce, menu, link con
+  messaggio, M4 a quattro rotori, avviso di link non valido. Gli screenshot «dopo» di home e
+  simulatore restano alla fase G4, che li fa con G3 fatta.
+- Comandi: `grep -c '375' tests/e2e/simulator.spec.ts` → `13`; il `grep` dei colori letterali →
+  `0`; `pnpm verify` exit 0 (192 unit test, 4 avvisi di `lint:content` già presenti su righe che
+  G3 non tocca); `pnpm test:e2e` exit 0 (125 passati, 19 saltati).
 
 ---
 

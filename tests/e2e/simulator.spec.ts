@@ -2,9 +2,10 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { defaultConfig, encipherWith, groupLetters } from '../../src/engine/index.ts';
 
-// La home è il simulatore a schermata unica; la versione ridotta per il telefono è della fase G3.
-test.beforeEach(({ isMobile }) => {
-  test.skip(isMobile, 'Il simulatore completo è per lo schermo del computer.');
+// Il simulatore completo è per lo schermo del computer; i test della versione ridotta (sotto
+// 1024×576) portano l'etichetta @compact e girano anche sul progetto mobile.
+test.beforeEach(({ isMobile }, testInfo) => {
+  test.skip(isMobile && !testInfo.tags.includes('@compact'), 'Il simulatore completo è per lo schermo del computer.');
 });
 
 const typed = (page: Page) => page.locator('[data-tape="input"]');
@@ -20,6 +21,15 @@ async function open(page: Page, query = '') {
 }
 
 async function expectAccessible(page: Page) {
+  // Panelli e menu compaiono con una dissolvenza: axe misura il contrasto a movimento finito.
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((animation) => animation.effect?.getComputedTiming().iterations !== Infinity)
+        .map((animation) => animation.finished.catch(() => undefined)),
+    ),
+  );
   for (const scheme of ['light', 'dark'] as const) {
     await page.emulateMedia({ colorScheme: scheme });
     const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
@@ -238,3 +248,117 @@ test('la modalità LIM alza il contrasto, tiene la griglia ed è accessibile', a
   await lim.click();
   await expect(page.locator('[data-lim]')).toHaveCount(0);
 });
+
+// ── Versione ridotta (docs/design.md, «Versione ridotta»): 375 px e 768 px ─────────────────────
+
+for (const [width, height] of [
+  [375, 812],
+  [768, 1024],
+] as const) {
+  test(
+    `a ${width} px la home è la versione ridotta, senza scorrimento orizzontale`,
+    { tag: '@compact' },
+    async ({ page }) => {
+      await page.setViewportSize({ width, height });
+      await open(page);
+      await screenKey(page, 'A').click();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+
+      // Solo i pezzi della versione ridotta: niente schema, niente pannelli di configurazione.
+      await expect(page.getByRole('region', { name: 'Dentro la macchina' })).toHaveCount(0);
+      await expect(page.getByRole('button', { name: /^Spine:/ })).toHaveCount(0);
+      await expect(page.getByRole('combobox')).toHaveCount(0);
+      await expect(page.getByRole('textbox')).toHaveCount(0);
+
+      // L'avviso rimanda al computer e porta alle lezioni.
+      const notice = page.getByText('Qui hai la macchina pronta a cifrare.');
+      await expect(notice).toBeVisible();
+      await expect(notice).toContainText('si configurano su un computer');
+      await expect(page.getByRole('link', { name: 'Apri le lezioni' })).toHaveAttribute(
+        'href',
+        /\/enigma\/come-funziona\/$/,
+      );
+      const brand = await page.getByRole('link', { name: 'Enigma' }).boundingBox();
+      const menu = await page.getByRole('button', { name: 'Menu' }).boundingBox();
+      expect(brand && menu && Math.abs(brand.y + brand.height / 2 - (menu.y + menu.height / 2))).toBeLessThan(2);
+    },
+  );
+}
+
+test(
+  'a 375 px i bersagli di tocco sono da 44 px e i quattro gruppi stanno su una riga',
+  { tag: '@compact' },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await open(page);
+    const targets = page.locator('.compact-rotors .arrow, .compact-menu, .compact-main .sbtn, .compact-notice a');
+    for (const target of await targets.all()) {
+      const box = await target.boundingBox();
+      expect(box?.width).toBeGreaterThanOrEqual(44);
+      expect(box?.height).toBeGreaterThanOrEqual(44);
+    }
+    // Lampade da 31 e tasti da 34 × 46.
+    const lamp = await page.locator('[data-lamp="Q"]').boundingBox();
+    const key = await screenKey(page, 'Q').boundingBox();
+    expect([lamp?.width, lamp?.height]).toEqual([31, 31]);
+    expect([key?.width, key?.height]).toEqual([34, 46]);
+    // Foglio: quattro gruppi per riga.
+    const tops = await page
+      .locator('.compact-sheet-message .group')
+      .evaluateAll((items) => items.map((item) => Math.round(item.getBoundingClientRect().top)));
+    expect(new Set(tops.slice(0, 4)).size).toBe(1);
+    expect(tops[4]).toBeGreaterThan(tops[0] ?? 0);
+  },
+);
+
+test('a 375 px i tasti cifrano senza aprire la tastiera del telefono', { tag: '@compact' }, async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await open(page);
+  // Nessun campo di testo: toccare un tasto non può far salire la tastiera del telefono.
+  await expect(page.locator('input, textarea, [contenteditable]')).toHaveCount(0);
+  const text = 'HELLO';
+  for (const letter of text) await screenKey(page, letter).click();
+  await expect(typed(page)).toHaveText('HELLO');
+  await expect(lit(page)).toHaveText(groupLetters(encipherWith(defaultConfig('I'), text)));
+  expect(await page.evaluate(() => document.activeElement?.tagName)).toBe('BUTTON');
+
+  // Le frecce da 44 px girano la finestrella e fanno ricominciare il messaggio.
+  await page.getByRole('button', { name: 'Posizione del rotore destro: Lettera successiva' }).click();
+  await expect(wheel(page, 'destro')).toHaveAttribute('aria-valuetext', 'G');
+  await expect(typed(page)).toHaveText('Ancora nessuna lettera.');
+});
+
+test('a 375 px il menu si apre, porta alle sezioni e si chiude con Esc', { tag: '@compact' }, async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await open(page);
+  const menu = page.getByRole('button', { name: 'Menu' });
+  await menu.click();
+  await expect(menu).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByRole('link', { name: 'Simulatore' })).toBeFocused();
+  for (const name of ['Come funziona', 'Storia', 'Esercizi', 'Glossario'])
+    await expect(page.getByRole('link', { name })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Tema chiaro o scuro' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveAttribute('aria-expanded', 'false');
+  await expect(menu).toBeFocused();
+});
+
+test('a 375 px la versione ridotta è accessibile, in chiaro e in scuro', { tag: '@compact' }, async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await open(page);
+  await screenKey(page, 'A').click();
+  await expectAccessible(page);
+  await page.getByRole('button', { name: 'Menu' }).click();
+  await expectAccessible(page);
+});
+
+test(
+  'un link con quattro rotori a 375 px mostra quattro finestrelle senza uscire dallo schermo',
+  { tag: '@compact' },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await open(page, '?v=1&m=M4&w=Beta-I-II-III&r=AAAA&p=AAAA&u=B-thin');
+    await expect(page.getByRole('spinbutton')).toHaveCount(4);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
+  },
+);

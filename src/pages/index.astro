@@ -27,7 +27,7 @@ const nav = [
   <body class="machine machine-paint">
     <Simulator client:only="react">
       {/* Finché la macchina non è pronta, e senza JavaScript, la barra porta comunque al percorso. */}
-      <div slot="fallback" class="bench">
+      <div slot="fallback" class="bench bench-fallback">
         <header class="bench-header">
           <a href={url()} class="bench-brand">
             {t('site.title')}

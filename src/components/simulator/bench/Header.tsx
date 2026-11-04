@@ -12,7 +12,7 @@ import { useBench, type PanelId } from './ui.ts';
 const THEME_KEY = 'enigma-theme';
 
 /** Stesso comportamento di `ThemeToggle.astro`: la scelta si ricorda fra le pagine. */
-function toggleTheme() {
+export function toggleTheme() {
   const explicit = document.documentElement.dataset['theme'];
   const dark =
     explicit === 'dark' || (explicit !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
