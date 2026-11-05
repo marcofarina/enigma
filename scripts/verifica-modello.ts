@@ -13,19 +13,21 @@ import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { MeshoptDecoder } from 'meshoptimizer';
 
-const FASI = ['4i', '4j', '4k', '4l'] as const;
+const FASI = ['4i', '4j', '4k', '4l', '4m'] as const;
 type Fase = (typeof FASI)[number];
-const FASE_MODELLO: Fase = '4l';
+const FASE_MODELLO: Fase = '4m';
 
 /**
  * Tetto del peso: 300 KB per l’abbozzo della 4i, 1 MB per il modello completo (D15), 6 MB per il
- * modello ibrido con l’esterno di ASHISH, texture comprese (D23).
+ * modello ibrido con l’esterno di ASHISH, texture comprese (D23); il tetto resta quello dalla 4m, con
+ * l’interno cotto in un atlante.
  */
 const TETTO: Record<Fase, number> = {
   '4i': 300 * 1024,
   '4j': 1024 * 1024,
   '4k': 1024 * 1024,
   '4l': 6 * 1024 * 1024,
+  '4m': 6 * 1024 * 1024,
 };
 /** Dalla 4l: il lato massimo delle texture (D23) e il loro formato. */
 const TEXTURE_MAX = 2048;
@@ -104,7 +106,17 @@ const ATLANTE_MAX = 512;
  * I materiali con lettera o numero: ognuno ha come colore base l’atlante. Dalla 4l tasti e lampade
  * hanno le lettere di ASHISH e l’atlante resta ai soli numeri degli anelli.
  */
-const MATERIALI_CON_ATLANTE = FASE_MODELLO === '4l' ? ['tessera'] : ['tessera', 'cima_tasto', 'vetro'];
+const MATERIALI_CON_ATLANTE =
+  FASI.indexOf(FASE_MODELLO) >= FASI.indexOf('4l') ? ['tessera'] : ['tessera', 'cima_tasto', 'vetro'];
+
+/**
+ * Dalla 4m l’interno ha un solo materiale, `interno`, con colore, occlusione e ruvidità e metallicità
+ * (la stessa immagine, canali R, G e B) e normal map: un atlante cotto in Blender (scripts/blender/
+ * cottura.py). I materiali piani dei pezzi interni non ci sono più; resta `ottone`, il perno dei
+ * nottolini nella cassa.
+ */
+const INTERNO_MAX = 1024;
+const MATERIALI_PIANI_TOLTI = ['vernice', 'metallo', 'metallo_scuro', 'bachelite', 'batteria'];
 
 // --- glTF ------------------------------------------------------------------------------------
 
@@ -137,7 +149,9 @@ interface Animazione {
 }
 interface Materiale {
   name?: string;
-  pbrMetallicRoughness?: { baseColorTexture?: { index: number } };
+  pbrMetallicRoughness?: { baseColorTexture?: { index: number }; metallicRoughnessTexture?: { index: number } };
+  normalTexture?: { index: number };
+  occlusionTexture?: { index: number };
 }
 interface Gltf {
   nodes?: Nodo[];
@@ -404,6 +418,37 @@ function verifica(gltf: Gltf, bin: Buffer, peso: number) {
     if (materiale === undefined) errori.push(`manca il materiale ${nome}`);
     else if (texture === undefined || sorgente(gltf, texture) !== indiceAtlante) {
       errori.push(`il materiale ${nome} non ha l’atlante come colore base`);
+    }
+  }
+
+  if (fasi.includes('4m')) {
+    const interno = (gltf.materials ?? []).find((m) => m.name === 'interno');
+    if (interno === undefined) {
+      errori.push('manca il materiale interno');
+    } else {
+      const texture = {
+        'colore base': interno.pbrMetallicRoughness?.baseColorTexture?.index,
+        'ruvidità e metallicità': interno.pbrMetallicRoughness?.metallicRoughnessTexture?.index,
+        'normal map': interno.normalTexture?.index,
+        occlusione: interno.occlusionTexture?.index,
+      };
+      for (const [che, indice] of Object.entries(texture)) {
+        const immagine = sorgente(gltf, indice);
+        if (immagine === undefined) {
+          errori.push(`il materiale interno non ha la texture di ${che}`);
+          continue;
+        }
+        const lato = lati[immagine];
+        if (lato !== undefined && (lato.larghezza > INTERNO_MAX || lato.altezza > INTERNO_MAX)) {
+          errori.push(`la texture di ${che} dell’interno è ${lato.larghezza} × ${lato.altezza}, oltre ${INTERNO_MAX}`);
+        }
+      }
+      if (texture['ruvidità e metallicità'] !== texture.occlusione) {
+        errori.push('l’occlusione e la ruvidità non stanno nella stessa texture (formato ORM)');
+      }
+    }
+    for (const nome of MATERIALI_PIANI_TOLTI) {
+      if ((gltf.materials ?? []).some((m) => m.name === nome)) errori.push(`c’è ancora il materiale piano ${nome}`);
     }
   }
 

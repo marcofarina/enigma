@@ -72,5 +72,65 @@ pnpm verify && pnpm build && pnpm test:e2e
 ```
 verdi. L’«Esito» riporta il giudizio di Marco sulle immagini del passo 5.
 
-**Esito.** Da compilare: materiali e risoluzione dell’atlante, peso prima e dopo, facce aggiunte
-dagli smussi, giudizio di Marco.
+**Esito** (2026-11-05, Sonnet): fatta, verificata e approvata da Marco.
+
+L’interno ha smussi, un materiale solo cotto in un atlante e occlusione. Sorgenti nuovi in
+`scripts/blender/`: `smussi.py` (Bevel + Weighted Normal sulle mesh interne, una volta per mesh),
+`cottura.py` (materiali procedurali, UV in un atlante, cottura con Cycles, materiale `interno`) e
+`confronto.py` (rende i confronti dal `.glb` grezzo). `costruisci.py` li chiama prima dell’esterno.
+`FASE_MODELLO` è `'4m'` e `verifica-modello.ts` controlla il materiale `interno` (le quattro texture,
+al più 1024 px, occlusione e ruvidità nella stessa immagine) e l’assenza dei materiali piani.
+
+- **Materiali e atlante:** `interno`, tre immagini WebP di 1024 × 1024 (colore 136 KB, ORM 166 KB,
+  normal map 121 KB). Colori e finiture dalle foto della galleria (`rotori-con-anelli`) e dalla texture
+  di ASHISH `low_mec.002`: bachelite nera, alluminio satinato con zigrinatura per la rotella, ottone,
+  vernice raggrinzita con il ferro agli spigoli, cartone per la batteria. La densità è circa 10 pixel
+  per mm. A 2048 px l’atlante pesava 960 KB e il file 6650 KB: oltre il tetto, quindi 1024 (il ripiego
+  del passo 6).
+- **Occlusione:** cotta un pezzo alla volta, non a pezzi montati come diceva il passo 3: montati, le
+  facce che si toccano (rotella sull’anello, cricchetto nel nucleo) uscivano nere, e lo smontaggio le
+  scopre. Così le ombre sono quelle dentro il pezzo (fra i denti, nei fori, negli smussi).
+  three.js usa la mappa di occlusione solo con la luce d’ambiente: la resa è della 5f.
+- **Smussi:** 0,3–0,6 mm sugli spigoli oltre 30°, un segmento sui pezzi a denti e piccoli, due sugli
+  altri. Le mesh interne passano da 3844 a 15 660 triangoli (+11 816); le mesh del file da 113 723 a
+  125 539, i triangoli disegnati da 118 027 a 133 411. Con due segmenti dappertutto erano 17 996.
+- **Peso:** da 5479 KB a 6085 KB (tetto 6144): texture 4434 KB (interno 423, ASHISH 3999, glifi 12),
+  geometria, animazione e JSON 1651 KB. Il margine è di 59 KB: chi aggiunge geometria o texture deve
+  prima toglierne (per esempio le normal map di ASHISH a qualità 80).
+- **Immagini del passo 5** in `docs/screenshot/modello/`: `rotore-aperto`, `rotori-estratti`,
+  `riflettore`, `nottolini`, `batteria` e `batteria-da-vicino`, rese dal `.glb` esportato con la luce dell’anteprima. Le ho
+  riguardate anche nel Blender aperto, importando il `.glb` in una scena provvisoria poi tolta, con
+  l’ombreggiatura dei materiali. L’interno e la piastra di ASHISH stanno bene insieme.
+- **Batteria, seconda passata:** il primo giro era un parallelepipedo di cartone con un’etichetta
+  rettangolare e due cilindretti (Marco: «fa un po’ pena»). Ora è una piatta 3R12: mantello di carta
+  crema con fasce scure sopra e sotto, spigoli morbidi (smusso da 1 mm), cima chiusa da una pasta nera
+  e due lamelle d’ottone, una per lato corto, piegate sulle facce laterali. Misure (62 × 68 × 22 mm) e
+  mantello di carta da Radiomuseum (Daimon, Wehrmacht; Venus 3R12); posizione del vano da Cipher Machines
+  and Cryptology. **Ipotesi, senza fonte:** la pasta nera, le lamelle e il loro verso; vanno
+  confermati con una foto di un esemplare originale.
+- **Giudizio di Marco sulle immagini** (2026-11-05): i rotori vanno bene; la batteria del primo giro no,
+  rifatta come sopra; la batteria nuova va bene (2026-11-05).
+
+Non fatto, perché non è fra i passi della 4m (la 4l li aveva assegnati a questa fase, ma il suo file
+non li elenca) e cambia la geometria e le posizioni della convenzione: il passo dei rotori (30 mm
+contro i 28,1 delle finestrelle di ASHISH), le rotelle a destra dell’anello mentre ASHISH ha le
+coperture a sinistra, la leva più avanti dei tasti. Restano aperti; servono una decisione di Marco e,
+se si fanno, una fase di geometria. Il perno dei nottolini nella cassa resta `ottone` piatto, dello
+stesso colore di quello cotto.
+
+Comandi eseguiti:
+
+```bash
+pnpm modello && pnpm verifica:modello
+grep -l "BEVEL" scripts/blender/*.py | wc -l
+ls docs/screenshot/modello/*.png | wc -l
+pnpm verify
+pnpm build && pnpm test:e2e
+```
+
+Esiti: `pnpm modello` e `verifica:modello` verdi (`fase 4m: 6085 KB … 0 errori.`, la build in circa
+2,5 minuti per la cottura); `grep` dà 1; `ls` dà 5; `pnpm verify` verde. Il primo `pnpm test:e2e`
+fallì perché un `pnpm dev` acceso sulla porta 4321 era stato riusato da Playwright al posto della
+build (gli errori citavano la barra di sviluppo di Astro); fermato il server su richiesta di Marco,
+`pnpm build && pnpm test:e2e` danno 198 passati e 24 saltati, come nella 4l, compreso «nessuna
+richiesta esce dal sito».
