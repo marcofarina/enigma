@@ -1,0 +1,122 @@
+/*
+ * La pagina 3D (fase 5a di docs/piano.md). Il palco ha i colori della macchina in entrambi i temi,
+ * come il vano dello schema del simulatore; intorno c’è il foglio della pagina.
+ */
+
+.macchina {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.macchina-palco {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  /* Su uno schermo basso il palco non supera tre quarti della finestra: la scena si allarga invece di alzarsi. */
+  max-height: 75vh;
+  border-radius: var(--radius);
+  background: var(--machine-well);
+  color: var(--alu);
+}
+
+.macchina-palco:focus-visible {
+  outline: 3px solid var(--focus-machine);
+  outline-offset: 2px;
+}
+
+/* L’anteprima e la scena occupano tutto il palco, una sopra l’altra. */
+.macchina-palco > img,
+.macchina-palco > div:not(.macchina-avvio) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.macchina-anteprima {
+  object-fit: contain;
+}
+
+.macchina-avvio {
+  /* Una targhetta al centro del palco: la nota non si legge sopra l’anteprima. */
+  position: absolute;
+  inset: 0;
+  width: fit-content;
+  height: fit-content;
+  margin: auto;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  background: var(--machine-well);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  font-size: var(--type-caption);
+  color: var(--alu);
+}
+
+.macchina-pulsante {
+  min-height: 2.75rem;
+  padding: 0.25rem 1.25rem;
+  border: 1.5px solid var(--alu);
+  border-radius: var(--radius);
+  background: var(--machine-control);
+  color: var(--alu-bright);
+  font-family: var(--font-sans);
+  font-size: var(--type-ui);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.macchina-pulsante:hover {
+  border-color: var(--alu-bright);
+}
+
+.macchina-pulsante:focus-visible {
+  outline: 3px solid var(--focus-machine);
+  outline-offset: 2px;
+}
+
+.macchina-stato {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 1.25rem;
+  margin: 0;
+  text-align: center;
+  font-size: var(--type-caption);
+  color: var(--alu);
+}
+
+.macchina-avviso {
+  margin: 0;
+  border-block: 1px solid var(--print-red-soft);
+  padding-block: 0.5rem;
+}
+
+.macchina-nastro {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.5rem 1.5rem;
+  margin: 0;
+}
+
+.macchina-nastro dt {
+  font-size: var(--type-caption);
+  color: var(--ink-muted);
+}
+
+.macchina-nastro dd {
+  min-height: 1.6em;
+  margin: 0;
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  word-spacing: 0.3em;
+}
+
+.macchina-azioni {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}

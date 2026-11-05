@@ -92,14 +92,22 @@ test('la guida per i docenti è nel menu e i suoi link aprono le procedure che d
   await expect(page.getByText('RUKCR RTYSU CETAC UOUJS EGZZU NCKHI EK')).toBeVisible();
 });
 
-test('a 768 px le sette voci dell’intestazione stanno su una riga', async ({ page }) => {
-  await page.setViewportSize({ width: 768, height: 900 });
+test('a 1024 px le otto voci dell’intestazione stanno su una riga', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 900 });
   await page.goto('docenti/');
   const nav = page.getByRole('navigation', { name: 'Navigazione principale' }).first();
   const links = nav.getByRole('link');
-  await expect(links).toHaveCount(7);
+  await expect(links).toHaveCount(8);
   const boxes = await Promise.all((await links.all()).map((link) => link.boundingBox()));
   const heights = boxes.map((box) => box?.height ?? 0);
   expect(Math.max(...heights) - Math.min(...heights)).toBeLessThan(1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1024);
+});
+
+test('a 768 px le voci stanno nel menu a foglio e la barra non trabocca', async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 900 });
+  await page.goto('docenti/');
+  await page.getByRole('button', { name: 'Menu' }).click();
+  await expect(page.locator('#menu-sito').getByRole('link', { name: 'Macchina 3D' })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(768);
 });

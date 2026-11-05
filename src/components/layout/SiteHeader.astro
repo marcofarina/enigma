@@ -5,6 +5,7 @@ import ThemeToggle from './ThemeToggle.astro';
 
 const links = [
   { href: url(), label: t('nav.simulator') },
+  { href: url('macchina/'), label: t('nav.machine3d') },
   { href: url('come-funziona/'), label: t('nav.howItWorks') },
   { href: url('storia/'), label: t('nav.history') },
   { href: url('crittoanalisi/'), label: t('nav.cryptanalysis') },
@@ -19,18 +20,18 @@ const isCurrent = (href: string) => (href === url() ? currentPath === href : cur
 ---
 
 {/*
-  La barra è un pezzo di macchina, vernice e alluminio in entrambi i temi (docs/design.md). Sul
-  telefono il menu si apre come un foglio sotto la barra.
+  La barra è un pezzo di macchina, vernice e alluminio in entrambi i temi (docs/design.md). Sotto
+  i 1024 px, dove le otto voci non stanno in una riga, il menu si apre come un foglio sotto la barra.
 */}
 <header class="site-header no-print relative z-40">
   <div class="machine machine-paint border-b border-machine-line">
     <div class="mx-auto flex h-[3.25rem] max-w-6xl items-center gap-4 px-4 md:px-5">
-      <a href={url()} class="me-auto inline-flex min-h-11 items-center gap-3 text-alu-bright no-underline md:me-0">
+      <a href={url()} class="me-auto inline-flex min-h-11 items-center gap-3 text-alu-bright no-underline lg:me-0">
         <span class="brand text-xl leading-none">{t('site.title')}</span>
         <span class="hidden text-caption text-alu-muted lg:inline">{t('site.project')}</span>
       </a>
 
-      <nav aria-label={t('nav.label')} class="ms-auto hidden md:block">
+      <nav aria-label={t('nav.label')} class="ms-auto hidden lg:block">
         <ul class="flex items-center gap-1 text-ui">
           {links.map((link) => (
             <li>
@@ -46,13 +47,13 @@ const isCurrent = (href: string) => (href === url() ? currentPath === href : cur
         </ul>
       </nav>
 
-      <div class="ms-3 hidden md:block">
+      <div class="ms-3 hidden lg:block">
         <ThemeToggle />
       </div>
 
       <button
         type="button"
-        class="menu-toggle inline-flex size-11 items-center justify-center rounded-[var(--radius)] text-alu-bright md:hidden"
+        class="menu-toggle inline-flex size-11 items-center justify-center rounded-[var(--radius)] text-alu-bright lg:hidden"
         aria-expanded="false"
         aria-controls="menu-sito"
       >
@@ -87,7 +88,7 @@ const isCurrent = (href: string) => (href === url() ? currentPath === href : cur
 
   <div
     id="menu-sito"
-    class="menu-sheet absolute inset-x-0 top-full border-b border-print-red bg-paper text-ink md:hidden"
+    class="menu-sheet absolute inset-x-0 top-full border-b border-print-red bg-paper text-ink lg:hidden"
     hidden
   >
     <nav aria-label={t('nav.label')} class="px-4 pb-4 pt-2">
@@ -168,8 +169,8 @@ const isCurrent = (href: string) => (href === url() ? currentPath === href : cur
     document.addEventListener('click', (event) => {
       if (!sheet.hidden && event.target instanceof Node && !header.contains(event.target)) setOpen(false);
     });
-    // Se la finestra si allarga oltre il telefono il menu a foglio non serve più.
-    window.matchMedia('(min-width: 48rem)').addEventListener('change', (event) => {
+    // Da 1024 px in su le voci stanno nella barra e il menu a foglio non serve più.
+    window.matchMedia('(min-width: 64rem)').addEventListener('change', (event) => {
       if (event.matches) setOpen(false);
     });
   }

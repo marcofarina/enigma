@@ -11,6 +11,10 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${port}/enigma/`,
     trace: 'on-first-retry',
+    // La pagina 3D (fase 5a) vuole WebGL 2. Il Chromium headless di Playwright 1.63 (Chromium 153) lo
+    // ha già con SwiftShader su macOS; il flag lo garantisce dove Chromium non ripiega più da solo
+    // sul rendering software, come le macchine Linux senza GPU della CI.
+    launchOptions: { args: ['--enable-unsafe-swiftshader'] },
   },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },

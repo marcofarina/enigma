@@ -19,5 +19,6 @@ describe('immagini di terzi', () => {
     expect(licenseLabel('CC-BY-SA-3.0-DE')).toBe('CC BY-SA 3.0 DE');
     expect(licenseLabel('CC0-1.0')).toBe('CC0');
     expect(licenseLabel('PD')).toBe('pubblico dominio');
+    expect(licenseLabel('CC-BY-NC-SA-4.0')).toBe('CC BY-NC-SA 4.0');
   });
 });

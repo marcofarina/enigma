@@ -18,6 +18,6 @@ export function licenseLabel(license: string): string {
   if (license === 'PD') return 'pubblico dominio';
   if (license === 'propria') return 'licenza propria';
   if (license.startsWith('CC0')) return 'CC0';
-  const match = /^CC-(BY(?:-SA)?)-(\d\.\d)(?:-([A-Z]{2}))?$/.exec(license);
+  const match = /^CC-(BY(?:-NC)?(?:-SA)?)-(\d\.\d)(?:-([A-Z]{2}))?$/.exec(license);
   return match ? ['CC', match[1], match[2], match[3]].filter(Boolean).join(' ') : license;
 }

@@ -1,0 +1,41 @@
+---
+import '@/components/macchina/macchina.css';
+import Macchina from '@/components/macchina/Macchina.tsx';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { t } from '@/i18n';
+import { modello3d } from '@/lib/modello3d';
+
+/*
+ * La macchina in 3D (fase 5a di docs/piano.md, decisione D15). Finché React non parte, e senza
+ * JavaScript, la pagina mostra l’anteprima resa da Blender; three.js e il modello arrivano solo
+ * dopo «Avvia la vista 3D».
+ */
+---
+
+<BaseLayout title={t('machine3d.title')} description={t('machine3d.description')}>
+  <section class="prose-it mb-6">
+    <h1>{t('machine3d.title')}</h1>
+    <p>{t('machine3d.intro')}</p>
+  </section>
+
+  <Macchina client:only="react">
+    <div slot="fallback" class="macchina">
+      <div class="macchina-palco machine">
+        <img
+          class="macchina-anteprima"
+          src={modello3d.anteprima}
+          width={modello3d.larghezzaAnteprima}
+          height={modello3d.altezzaAnteprima}
+          alt={t('machine3d.previewAlt')}
+        />
+      </div>
+    </div>
+  </Macchina>
+  <noscript>
+    <p class="mt-4">{t('sim.noscript')}</p>
+  </noscript>
+
+  <p class="mt-8 text-caption text-text-muted">
+    {t('machine3d.credit')} <a href={modello3d.crediti}>{t('machine3d.creditLink')}</a>
+  </p>
+</BaseLayout>
