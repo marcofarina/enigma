@@ -72,8 +72,7 @@ pnpm verify && pnpm build && pnpm test:e2e
 ```
 verdi. L’«Esito» riporta il giudizio di Marco sulle immagini del passo 5.
 
-**Esito** (2026-11-05, Sonnet): il modello è fatto e verificato; manca solo il giudizio di Marco sulla
-batteria rifatta.
+**Esito** (2026-11-05, Sonnet): fatta, verificata e approvata da Marco.
 
 L’interno ha smussi, un materiale solo cotto in un atlante e occlusione. Sorgenti nuovi in
 `scripts/blender/`: `smussi.py` (Bevel + Weighted Normal sulle mesh interne, una volta per mesh),
@@ -110,7 +109,7 @@ al più 1024 px, occlusione e ruvidità nella stessa immagine) e l’assenza dei
   and Cryptology. **Ipotesi, senza fonte:** la pasta nera, le lamelle e il loro verso; vanno
   confermati con una foto di un esemplare originale.
 - **Giudizio di Marco sulle immagini** (2026-11-05): i rotori vanno bene; la batteria del primo giro no,
-  rifatta come sopra. Il giudizio sulla batteria nuova è da riportare qui.
+  rifatta come sopra; la batteria nuova va bene (2026-11-05).
 
 Non fatto, perché non è fra i passi della 4m (la 4l li aveva assegnati a questa fase, ma il suo file
 non li elenca) e cambia la geometria e le posizioni della convenzione: il passo dei rotori (30 mm
