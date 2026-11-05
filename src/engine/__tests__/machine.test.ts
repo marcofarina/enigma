@@ -3,6 +3,7 @@ import {
   createMachine,
   encipher,
   encipherWith,
+  engagedPawls,
   initialState,
   InvalidConfigError,
   MODEL_IDS,
@@ -158,6 +159,71 @@ describe('avanzamento dei rotori', () => {
     const last = step(machine, state);
     expect([last.state.reflectorPosition, ...last.state.positions]).toEqual([2, 2, 3, 6]);
     expect(last.reflectorMoved).toBe(true);
+  });
+});
+
+describe('nottolini in presa', () => {
+  /** Per ogni tasto da `inizio`: le finestrelle prima del tasto e i nottolini in presa (L = sinistro, C, R). */
+  const sequenza = (config: MachineConfig, tasti: number) => {
+    const machine = createMachine(config);
+    let state = initialState(machine);
+    const righe: string[] = [];
+    for (let i = 0; i < tasti; i++) {
+      const pawls = engagedPawls(machine, state);
+      righe.push(`${windowLetters(state)} ${pawls.map((p, slot) => (p ? 'LCR'[slot] : '-')).join('')}`);
+      state = step(machine, state).state;
+    }
+    righe.push(windowLetters(state));
+    return righe;
+  };
+
+  it('da ADU: il veloce spinge sempre, poi il centrale, poi il doppio passo del sinistro', () => {
+    expect(sequenza({ ...basic, positions: 'ADU' }, 4)).toEqual([
+      'ADU --R', // il rotore III non è sulla tacca V: spinge solo il destro
+      'ADV -CR', // il III è sulla V: il nottolino centrale entra e spinge il II
+      'AEW L-R', // il II è sulla E: entra il sinistro e spinge insieme II e I (doppio passo)
+      'BFX --R',
+      'BFY',
+    ]);
+  });
+
+  it('se il veloce e il centrale sono sulle tacche, i nottolini sono in presa tutti e due', () => {
+    const machine = createMachine({ ...basic, positions: 'AEV' });
+    expect(engagedPawls(machine, initialState(machine))).toEqual([true, true, true]);
+    // Il centrale avanza una volta sola, come dice `step`.
+    expect(windowLetters(step(machine, initialState(machine)).state)).toBe('BFW');
+  });
+
+  it('concorda con i rotori che avanzano: ogni rotore sale se spinge il suo nottolino o, per il centrale, quello di sinistra', () => {
+    const machine = createMachine({ ...basic, positions: 'AAA' });
+    for (const positions of ['ADU', 'ADV', 'AEW', 'AEV', 'QEV', 'AAQ', 'ZZZ']) {
+      const state = { ...initialState(machine), positions: [...positions].map((c) => c.charCodeAt(0) - 65) };
+      const [left, middle, right] = engagedPawls(machine, state);
+      expect(step(machine, state).moved).toEqual([left, middle || left, right]);
+    }
+  });
+
+  it('sulla M4 il rotore sottile non ha nottolino', () => {
+    const machine = createMachine({
+      model: 'M4',
+      rotors: ['Beta', 'I', 'II', 'III'],
+      rings: 'AAAA',
+      positions: 'ZQEV',
+      reflector: 'B-thin',
+    });
+    expect(engagedPawls(machine, initialState(machine))).toEqual([false, true, true, true]);
+  });
+
+  it('a ingranaggi non ci sono nottolini', () => {
+    const machine = createMachine({
+      model: 'G31',
+      rotors: ['I', 'II', 'III'],
+      rings: 'AAA',
+      positions: 'BBB',
+      reflector: 'UKW',
+      reflectorPosition: 'B',
+    });
+    expect(engagedPawls(machine, initialState(machine))).toEqual([false, false, false]);
   });
 });
 

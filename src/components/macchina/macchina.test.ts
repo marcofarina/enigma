@@ -9,7 +9,20 @@ import {
   toIndex,
   type MachineConfig,
 } from '@/engine';
-import { letteraDelNodo, offsetAtlante, PASSO, rotazioniRotore } from './geometria.ts';
+import {
+  angoloNottolino,
+  DURATA_CLIP,
+  inquadratura,
+  letteraDelNodo,
+  offsetAtlante,
+  PASSO,
+  posizioneSelettore,
+  puntoContatto,
+  rampa,
+  rotazioniRotore,
+  segmentiCablaggio,
+  tempoClip,
+} from './geometria.ts';
 import { queryPerIlSimulatore, sessioneDallaQuery } from './configurazione.ts';
 import { press } from '../simulator/session.ts';
 
@@ -89,5 +102,98 @@ describe('configurazione della pagina 3D', () => {
 
   it('con un link guasto avvisa e parte dalla configurazione di base', () => {
     expect(sessioneDallaQuery('?v=1&m=I&r=XX').avviso.tipo).toBe('link-non-valido');
+  });
+});
+
+describe('selettore dello smontaggio', () => {
+  it('su un valore intero dice la fase, in mezzo dice fra quali', () => {
+    expect(posizioneSelettore(0)).toEqual({ fase: 0 });
+    expect(posizioneSelettore(4)).toEqual({ fase: 4 });
+    expect(posizioneSelettore(2.003)).toEqual({ fase: 2 });
+    expect(posizioneSelettore(0.4)).toEqual({ da: 0, a: 1 });
+    expect(posizioneSelettore(3.5)).toEqual({ da: 3, a: 4 });
+    expect(posizioneSelettore(9)).toEqual({ fase: 4 });
+  });
+
+  it('il tempo della clip non esce da 0 e dalla durata', () => {
+    expect(tempoClip(-1)).toBe(0);
+    expect(tempoClip(2.5)).toBe(2.5);
+    expect(tempoClip(4)).toBeLessThan(DURATA_CLIP);
+    expect(tempoClip(4)).toBeGreaterThan(DURATA_CLIP - 0.001);
+  });
+
+  it('la rampa va da 0 a 1 fra i due estremi', () => {
+    expect(rampa(1.9, 2, 3)).toBe(0);
+    expect(rampa(2.5, 2, 3)).toBe(0.5);
+    expect(rampa(4, 2, 3)).toBe(1);
+  });
+
+  it('la camera sale e si allontana man mano che si smonta', () => {
+    let prima = inquadratura(0);
+    for (let v = 0.25; v <= 4; v += 0.25) {
+      const ora = inquadratura(v);
+      expect(ora.y).toBeGreaterThanOrEqual(prima.y);
+      expect(ora.scala).toBeGreaterThanOrEqual(prima.scala);
+      prima = ora;
+    }
+    expect(inquadratura(0)).toEqual({ y: 0.055, scala: 1 });
+  });
+});
+
+describe('cablaggio dei rotori', () => {
+  it('i contatti stanno sul cerchio, il primo in alto e l’angolo cresce verso il retro', () => {
+    const r = 0.035;
+    const a = puntoContatto(0, r);
+    expect(a.y).toBeCloseTo(r);
+    expect(a.z).toBeCloseTo(0);
+    const quartoDiGiro = puntoContatto(6.5, r);
+    expect(quartoDiGiro.y).toBeCloseTo(0);
+    expect(quartoDiGiro.z).toBeCloseTo(-r);
+    for (let i = 0; i < 26; i++) {
+      const p = puntoContatto(i, r);
+      expect(Math.hypot(p.y, p.z)).toBeCloseTo(r);
+    }
+  });
+
+  it('ogni linea va dal contatto d’ingresso a quello a cui il cablaggio lo collega', () => {
+    const machine = createMachine({ ...defaultConfig('I'), rotors: ['II', 'IV', 'V'] });
+    const cablaggio = machine.rotors[0]!.forward;
+    const punti = segmentiCablaggio(cablaggio, 0.035, 0.0135, -0.014);
+    expect(punti).toHaveLength(26 * 6);
+    for (let i = 0; i < 26; i++) {
+      const da = puntoContatto(i, 0.035);
+      const a = puntoContatto(cablaggio[i]!, 0.035);
+      const k = i * 6;
+      expect([punti[k], punti[k + 3]]).toEqual([expect.closeTo(0.0135), expect.closeTo(-0.014)]);
+      expect(punti[k + 1]).toBeCloseTo(da.y);
+      expect(punti[k + 2]).toBeCloseTo(da.z);
+      expect(punti[k + 4]).toBeCloseTo(a.y);
+      expect(punti[k + 5]).toBeCloseTo(a.z);
+    }
+  });
+
+  it('rotori diversi hanno cablaggi diversi', () => {
+    const a = segmentiCablaggio(
+      createMachine({ ...defaultConfig('I'), rotors: ['I', 'II', 'III'] }).rotors[2]!.forward,
+      0.035,
+      1,
+      0,
+    );
+    const b = segmentiCablaggio(
+      createMachine({ ...defaultConfig('I'), rotors: ['I', 'II', 'IV'] }).rotors[2]!.forward,
+      0.035,
+      1,
+      0,
+    );
+    expect(Array.from(a)).not.toEqual(Array.from(b));
+  });
+});
+
+describe('nottolini', () => {
+  it('vanno e tornano, e quello in presa spinge di più', () => {
+    expect(angoloNottolino(0, true)).toBe(0);
+    expect(angoloNottolino(1, true)).toBeCloseTo(0);
+    expect(angoloNottolino(0.5, true)).toBeGreaterThan(angoloNottolino(0.5, false));
+    expect(angoloNottolino(0.5, false)).toBeGreaterThan(0);
   });
 });

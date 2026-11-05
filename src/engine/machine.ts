@@ -136,6 +136,33 @@ export function windowLetters(state: MachineState): string {
 }
 
 /**
+ * Quali nottolini, al prossimo tasto, trovano una tacca e spingono, uno per slot (da sinistra a
+ * destra, come `MachineState.positions`).
+ *
+ * - Il nottolino del rotore veloce poggia sul cricchetto e spinge a ogni tasto: è sempre in presa.
+ * - Il nottolino del rotore centrale è in presa quando il rotore veloce ha la tacca sotto di lui.
+ * - Il nottolino del rotore lento è in presa quando la tacca è quella del rotore centrale: e allora
+ *   spinge sia il rotore lento sia il centrale, che avanza una seconda volta in due tasti (il doppio
+ *   passo). Se lo sono entrambi, il centrale avanza comunque una volta sola, come in `step`.
+ *
+ * Nelle macchine a ingranaggi e nei rotori sottili della M4 non ci sono nottolini: restano `false`.
+ */
+export function engagedPawls(machine: Machine, state: MachineState): boolean[] {
+  const count = state.positions.length;
+  const pawls = state.positions.map(() => false);
+  if (machine.model.stepping === 'gear') return pawls;
+
+  const atNotch = (slot: number) => machine.rotors[slot]?.notches.has(state.positions[slot] ?? -1) ?? false;
+  const fast = count - 1;
+  const middle = count - 2;
+  const slow = count - 3;
+  pawls[fast] = true;
+  pawls[middle] = atNotch(fast);
+  if (slow >= 0) pawls[slow] = atNotch(middle);
+  return pawls;
+}
+
+/**
  * Fa avanzare i rotori come alla pressione di un tasto, prima che il circuito si chiuda.
  *
  * - Leve e nottolini (modelli militari e commerciali): il rotore destro avanza sempre; un nottolino
