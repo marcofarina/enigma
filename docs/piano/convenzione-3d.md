@@ -1,5 +1,8 @@
 # Convenzione del modello 3D
 
+Dal 2026-11-05 il modello è ibrido (D20): la 4l riscrive le sezioni su misure, nodi, materiali,
+lettere e peso per l’esterno di ASHISH. Finché la 4l non è chiusa, vale il testo qui sotto.
+
 Convenzione fissata il 2026-11-05 nella revisione delle fasi 3D; valgono D14 e D15. La 4i la mette alla prova
 e la può correggere; dopo la 4i cambia solo con una modifica di questa sezione e di `NODI_ATTESI`
 in `scripts/verifica-modello.ts`, nello stesso commit. `FASE_MODELLO`, nello stesso file, dice fin

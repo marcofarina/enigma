@@ -1,6 +1,6 @@
 # Fase 5c — Pagina 3D: schede dei pezzi
 
-**Modello: Opus · Effort: high · Durata: 2,5 h · Dipende da: 5b; solo in locale (prosa)**
+**Modello: Opus · Effort: high · Durata: 2,5 h · Dipende da: 4n, 5g; solo in locale (prosa)**
 
 **Obiettivo.** Toccando un pezzo, o scegliendolo da un elenco accessibile, si apre una scheda con
 il suo nome, una spiegazione breve e il link alla lezione che lo tratta.

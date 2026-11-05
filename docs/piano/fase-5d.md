@@ -1,6 +1,10 @@
 # Fase 5d — Lezione animata: copione, lettore e scena
 
-**Modello: Opus · Effort: high · Durata: 3 h · Dipende da: 5b, D16–D19**
+**Modello: Opus · Effort: high · Durata: 3 h · Dipende da: 4n, 5f, 5g, D16–D19**
+
+Dal 2026-11-05 le parti esterne vengono dal modello di ASHISH, con texture (D20): le parti «fantasma»
+vanno provate su quei materiali, e il lettore va nel posto che gli dà la sezione «Pagina 3D» di
+`docs/design.md` (G5).
 
 **Obiettivo.** In `/macchina/` un pulsante «Guarda come funziona» avvia una lezione di uno o due
 minuti: si preme un tasto, i rotori avanzano, la corrente va dal tasto al pannello a spine, alla
