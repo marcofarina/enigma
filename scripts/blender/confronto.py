@@ -26,7 +26,8 @@ INQUADRATURE = [
     ("rotore-aperto", 72, ["rotore_centrale"], (0.55, -0.80, 0.45), 0.34, []),
     ("riflettore", 72, ["riflettore", "rotore_sinistro"], (-0.45, -0.75, 0.50), 0.36, []),
     ("nottolini", 96, ["nottolino_sinistro", "nottolino_centrale", "nottolino_destro"], (0.75, -0.45, 0.40), 0.22, ["cassa", "tastiera", "coperchio_legno", "tasto_", "lampada_"]),
-    ("batteria", 96, ["batteria", "ruota_ingresso"], (0.80, -0.55, 0.45), 0.34, []),
+    ("batteria", 96, ["batteria", "ruota_ingresso"], (0.80, -0.55, 0.40), 0.50, []),
+    ("batteria-da-vicino", 96, ["batteria"], (0.55, -0.70, 0.55), 0.17, []),
     ("rotori-estratti", 48, ["rotore_destro", "rotore_centrale", "rotore_sinistro", "riflettore"], (0.45, -0.85, 0.55), 0.62, []),
 ]
 

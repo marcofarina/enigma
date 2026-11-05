@@ -153,7 +153,8 @@ diventa `low_box.001` e `glass` perde la sua texture: pochi pezzi, 600 KB di tex
 L’interno (4m) ha un materiale solo, `interno`: tre immagini di 1024 × 1024 pixel cotte in Blender
 con Cycles da materiali procedurali (alluminio zigrinato della rotella, bachelite del nucleo e del
 cricchetto, bachelite lucida dell’anello, ottone dei contatti, vernice raggrinzita del riflettore e
-della ruota d’ingresso, acciaio dell’asse, dei nottolini e della leva, cartone della batteria). Sono
+della ruota d’ingresso, acciaio dell’asse, dei nottolini e della leva; la batteria è un mantello di carta crema con fasce
+scure, la cima chiusa da una pasta nera e due lamelle d’ottone piegate sui lati corti). Sono
 il colore base (sRGB), un’immagine ORM (occlusione nel rosso, ruvidità nel verde, metallicità nel blu,
 come vuole glTF: `occlusionTexture` e `metallicRoughnessTexture` puntano alla stessa immagine) e la
 normal map. L’occlusione è cotta un pezzo alla volta, da solo: dà le ombre dentro il pezzo (fra i denti,
@@ -175,8 +176,8 @@ lui in WebP. `pnpm modello` esporta da Blender un `.glb` grezzo in `scripts/blen
 delle posizioni cambiando traslazione e scala dei nodi, e allora gli anelli non girerebbero più
 attorno alla loro origine. Il filtro di meshopt arrotonda le traslazioni della clip fino a 0,05 mm:
 la verifica le confronta con una tolleranza di 0,1 mm. Il tetto è 6 MB; con la 4m il file pesa
-6106 KB (margine di 38 KB), di cui 4449 KB di texture (442 KB l’atlante dell’interno, 3995 KB le
-texture di ASHISH, 12 KB l’atlante dei glifi) e 1657 KB di geometria, animazione e JSON, con 125 539
+6085 KB (margine di 59 KB), di cui 4434 KB di texture (423 KB l’atlante dell’interno, 3999 KB le
+texture di ASHISH, 12 KB l’atlante dei glifi) e 1651 KB di geometria, animazione e JSON, con 125 539
 triangoli nelle mesh (133 411 disegnati). Chi aggiunge geometria o texture deve prima toglierne.
 
 **Chi muove che cosa.** Il codice della pagina muove solo i nodi della tabella marcati «codice», e

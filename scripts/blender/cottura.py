@@ -2,7 +2,7 @@
 
 I pezzi dell'interno (rotori, riflettore, ruota d'ingresso, nottolini, leva, batteria, asse) nascono
 con materiali piani. Qui prendono materiali procedurali (alluminio, bachelite, ottone, vernice
-raggrinzita, cartone), che Cycles cuoce in tre immagini sull'unico materiale `interno`:
+raggrinzita, carta della batteria), che Cycles cuoce in tre immagini sull'unico materiale `interno`:
 
     interno_colore    colore base (sRGB)
     interno_orm       occlusione (R), ruvidità (G), metallicità (B): il formato di glTF
@@ -68,9 +68,9 @@ RICETTE = {
     ("nottolino_con_dito", "metallo"): "acciaio",
     ("asse_rotori", "metallo"): "acciaio",
     ("leva_tasti", "metallo"): "acciaio",
-    ("batteria", "vernice"): "cartone_scuro",
-    ("batteria", "batteria"): "cartone",
-    ("batteria", "ottone"): "ottone",
+    ("batteria", "batteria"): "carta_batteria",
+    ("batteria", "vernice"): "pece",
+    ("batteria", "ottone"): "ottone_lamella",
 }
 
 
@@ -124,9 +124,12 @@ def procedurale(
     scala_rilievo=1200.0,
     zigrino=False,
     usura=None,
+    bande=None,
 ):
     """Un materiale Principled con colore e ruvidità che variano col rumore, un rilievo fine e, se c'è
-    `usura` = (colore, metallicità), lo spigolo smussato che lascia scoperto il materiale di sotto."""
+    `usura` = (colore, metallicità), lo spigolo smussato che lascia scoperto il materiale di sotto. Con
+    `bande` = (z_basso, z_alto, colore) il materiale è scuro sotto e sopra queste quote (coordinate
+    dell'oggetto, in metri): le fasce stampate del mantello di una batteria."""
     mat = bpy.data.materials.new(f"proc_{nome}")
     mat.use_nodes = True
     albero = mat.node_tree
@@ -149,6 +152,20 @@ def procedurale(
         min(1.0, ruvidita + varia_ruvidita),
     )
     metal = metallico
+
+    if bande is not None:
+        z_basso, z_alto, colore_banda = bande
+        z = _n(albero, "ShaderNodeSeparateXYZ")
+        albero.links.new(coordinate, z.inputs["Vector"])
+        sotto = _n(albero, "ShaderNodeMath", operation="LESS_THAN")
+        sopra = _n(albero, "ShaderNodeMath", operation="GREATER_THAN")
+        somma = _n(albero, "ShaderNodeMath", operation="ADD")
+        for nodo, soglia in ((sotto, z_basso), (sopra, z_alto)):
+            albero.links.new(z.outputs["Z"], nodo.inputs[0])
+            nodo.inputs[1].default_value = soglia
+        albero.links.new(sotto.outputs["Value"], somma.inputs[0])
+        albero.links.new(sopra.outputs["Value"], somma.inputs[1])
+        base = _mescola(albero, somma.outputs["Value"], base, colore_banda + (1.0,))
 
     if usura is not None:
         # Maschera dello spigolo: la normale smussata (nodo Bevel) si scosta da quella vera dove c'è
@@ -212,8 +229,11 @@ def materiali_procedurali():
         "ottone": procedurale("ottone", (0.62, 0.40, 0.11), metallico=1.0, ruvidita=0.28, varia_colore=0.12, varia_ruvidita=0.1, rilievo=0.10, scala_rilievo=1500),
         # Vernice nera raggrinzita; agli spigoli si vede il ferro.
         "vernice": procedurale("vernice", (0.030, 0.029, 0.027), ruvidita=0.78, varia_colore=0.25, varia_ruvidita=0.08, rilievo=1.0, scala_rilievo=1400, usura=(argento, 1.0)),
-        "cartone": procedurale("cartone", (0.50, 0.42, 0.27), ruvidita=0.85, varia_colore=0.18, varia_ruvidita=0.05, rilievo=0.5, scala_rilievo=1600),
-        "cartone_scuro": procedurale("cartone_scuro", (0.13, 0.09, 0.05), ruvidita=0.8, varia_colore=0.25, varia_ruvidita=0.05, rilievo=0.5, scala_rilievo=1600),
+        # La batteria: carta crema con fasce scure sopra e sotto (a 8 e a 62 mm dalla base), pasta
+        # nera di chiusura, lamelle d'ottone un po' più chiare e lisce dei contatti dei rotori.
+        "carta_batteria": procedurale("carta_batteria", (0.44, 0.38, 0.26), ruvidita=0.85, varia_colore=0.07, varia_ruvidita=0.05, scala=1400, rilievo=0.5, scala_rilievo=2200, bande=(0.008, 0.062, (0.035, 0.032, 0.03))),
+        "pece": procedurale("pece", (0.012, 0.012, 0.011), ruvidita=0.55, varia_colore=0.3, rilievo=0.15, scala_rilievo=800),
+        "ottone_lamella": procedurale("ottone_lamella", (0.66, 0.44, 0.13), metallico=1.0, ruvidita=0.22, varia_colore=0.08, rilievo=0.05, scala_rilievo=1500, usura=((0.85, 0.7, 0.35), 1.0)),
     }
 
 

@@ -29,7 +29,7 @@ SMUSSI = {
     "nottolino": (0.00030, 1),
     "nottolino_con_dito": (0.00030, 1),
     "leva_tasti": (0.00030, 1),
-    "batteria": (0.00050, 2),
+    "batteria": (0.00100, 2),  # gli spigoli di un mantello di carta piegato sono morbidi
 }
 
 
