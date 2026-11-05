@@ -10,9 +10,11 @@ Le tracce sono solo `location` (in glTF `translation`): sui nodi che il codice d
 
 Il disegno dello smontaggio, in metri e con gli assi di Blender (Z in alto, −Y verso chi scrive):
 
-    fase 1  il coperchio sale di 150 mm, più in alto dei rotori che usciranno; lo sportello sale di
-            100 mm e viene in avanti di 30
-    fase 2  prima i rotori, l'asse e il riflettore salgono di 110 mm, fuori dalla cassa (primo mezzo
+    fase 1  il coperchio sale di 190 mm, più in alto dei rotori che usciranno; lo sportello sale di
+            100 mm e viene in avanti di 30; il coperchio di legno, aperto dietro la macchina, si
+            allontana di 150 mm all'indietro (D22; la 4n rivede tutto lo smontaggio sull'esterno di
+            ASHISH)
+    fase 2  prima i rotori, l'asse e il riflettore salgono di 135 mm, fuori dalla cassa (primo mezzo
             secondo); poi si allargano lungo X, sempre sul loro asse, per fare posto alla fase 3: il
             riflettore di 62 mm a sinistra, il rotore sinistro di 40 a sinistra e il destro di 40 a destra
     fase 3  ogni rotore si apre lungo X attorno al nucleo, che resta fermo: a sinistra i contatti piani e
@@ -36,6 +38,7 @@ ROTORI = ("rotore_sinistro", "rotore_centrale", "rotore_destro")
 FASI = {
     "coperchio_interno": 1,
     "sportello_spine": 1,
+    "coperchio_legno": 1,
     "asse_rotori": 2,
     "riflettore": 2,
     **{rotore: 2 for rotore in ROTORI},
@@ -43,17 +46,18 @@ FASI = {
     "batteria": 4,
 }
 SPOSTAMENTI = {
-    "coperchio_interno": (0.0, 0.0, 0.150),
+    "coperchio_interno": (0.0, 0.0, 0.190),
     "sportello_spine": (0.0, -0.030, 0.100),
-    "asse_rotori": (0.0, 0.0, 0.110),
-    "riflettore": (-0.062, 0.0, 0.110),
-    "rotore_sinistro": (-0.040, 0.0, 0.110),
-    "rotore_centrale": (0.0, 0.0, 0.110),
-    "rotore_destro": (0.040, 0.0, 0.110),
+    "coperchio_legno": (0.0, 0.150, 0.0),
+    "asse_rotori": (0.0, 0.0, 0.135),
+    "riflettore": (-0.062, 0.0, 0.135),
+    "rotore_sinistro": (-0.040, 0.0, 0.135),
+    "rotore_centrale": (0.0, 0.0, 0.135),
+    "rotore_destro": (0.040, 0.0, 0.135),
     "tastiera": (0.0, 0.0, 0.100),
     "batteria": (0.050, 0.0, 0.140),
 }
-SALITA_ROTORI = (0.0, 0.0, 0.110)  # a metà della fase 2: solo la salita, senza l'allargamento
+SALITA_ROTORI = (0.0, 0.0, 0.135)  # a metà della fase 2: solo la salita, senza l'allargamento
 INTERMEDIE = {nome: [(FOTOGRAMMI_FASE + FOTOGRAMMI_FASE // 2, (0.0, 0.0, SPOSTAMENTI[nome][2]))] for nome in SPOSTAMENTI if FASI[nome] == 2}
 
 # La fase 3: lo spostamento lungo X di ogni pezzo del rotore rispetto al rotore (posizione locale). Il
@@ -133,7 +137,8 @@ def sovrapposizioni():
     pezzo ha il suo posto e le scatole non si toccano (l'asse dei rotori è escluso: attraversa i pezzi
     infilati su di lui). Tasti e lampade non contano (i tasti seguono la
     tastiera), e la cassa è confrontata solo per l'altezza: i pezzi che escono devono stare sopra il suo
-    bordo (tranne la tastiera, che sta sul piano, e lo sportello, che sta fuori davanti).
+    bordo (tranne la tastiera, che sta sul piano, lo sportello, che sta fuori davanti, e il coperchio di
+    legno, che sta fuori dietro).
     """
     scena = bpy.context.scene
     scena.frame_set(FINE)
@@ -156,7 +161,7 @@ def sovrapposizioni():
                     problemi.append((a.name, b.name))
         bordo = _scatola(bpy.data.objects["cassa"])[1][2]
         for ogg in mossi:
-            if ogg.name not in ("tastiera", "sportello_spine") and scatole[ogg.name][0][2] < bordo - MARGINE:
+            if ogg.name not in ("tastiera", "sportello_spine", "coperchio_legno") and scatole[ogg.name][0][2] < bordo - MARGINE:
                 problemi.append((ogg.name, "cassa"))
         return problemi
     finally:

@@ -17,3 +17,6 @@ __pycache__/
 
 # Anteprime delle fasi dello smontaggio, rese da scripts/blender/costruisci.py
 scripts/blender/anteprime/
+
+# Copia di partenza del modello di ASHISH (D21): fuori da git, vedi scripts/blender/sorgenti.md
+scripts/blender/sorgenti/

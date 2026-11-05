@@ -43,5 +43,15 @@ const immagini = await getCollection('immagini');
         font: modello3d.carattere.licenza,
       })}
     </p>
+    <p>
+      {t('sources.model3dExterior')}{' '}
+      <cite>
+        <a href={modello3d.esterno.url}>{modello3d.esterno.titolo}</a>
+      </cite>
+      {t('sources.model3dExteriorAuthor')} <a href={modello3d.esterno.urlAutore}>ASHISH</a>,
+      {t('sources.model3dExteriorLicense')}
+      <a href={modello3d.esterno.urlLicenza}>{licenseLabel(modello3d.esterno.licenza)}</a>.{' '}
+      {t('sources.model3dExteriorChanges')}
+    </p>
   </section>
 </BaseLayout>

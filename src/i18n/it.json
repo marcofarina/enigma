@@ -589,8 +589,13 @@
   "machine3d.typed": "Tasti",
   "machine3d.lit": "Lampade",
   "machine3d.reset": "Ricomincia",
-  "machine3d.credit": "Modello 3D dell’Enigma I di Marco Farina, con licenza CC BY-NC-SA 4.0.",
+  "machine3d.credit": "Modello 3D dell’Enigma I di Marco Farina, con licenza CC BY-NC-SA 4.0. La cassa, la tastiera, il pannello a spine e i coperchi sono modificati da",
+  "machine3d.creditAuthor": "di",
   "machine3d.creditLink": "Crediti",
   "sources.model3d": "Modello 3D",
-  "sources.model3dText": "Il modello 3D dell’Enigma I è di Marco Farina, costruito in Blender, con licenza {license}. Le misure della cassa vengono dalla scheda del Deutsches Technikmuseum; le lettere dei tasti, delle lampade e degli anelli sono in Archivo ({font})."
+  "sources.model3dText": "Il modello 3D dell’Enigma I è di Marco Farina, costruito in Blender, con licenza {license}. I rotori, i nottolini, la leva e la batteria sono nostri; le misure della cassa vengono dalla scheda del Deutsches Technikmuseum; i numeri degli anelli sono in Archivo ({font}).",
+  "sources.model3dExterior": "La cassa con il coperchio di legno, la piastra con le lampade, il coperchio dei rotori, la tastiera e il pannello a spine vengono, modificati, da",
+  "sources.model3dExteriorAuthor": "di",
+  "sources.model3dExteriorLicense": "con licenza",
+  "sources.model3dExteriorChanges": "Le modifiche: il modello è ruotato e scalato alle misure della cassa, scomposto nei pezzi che la pagina muove, senza le spine e i cavi del pannello (li disegna la pagina) e con le prese che le spine coprivano; le texture sono ridotte a 2048 pixel."
 }

@@ -15,45 +15,33 @@ import bpy
 from mathutils import Matrix, Vector
 
 # --- Misure -------------------------------------------------------------------------------------
-# La cassa: scheda del Deutsches Technikmuseum, inventario 1/2000/0146 0 (fonte
-# «technikmuseum-enigma» in src/content/fonti.yaml): a coperchio chiuso 340 mm di profondità,
-# 280 di larghezza, 160 di altezza. Il coperchio di legno non è un nodo della convenzione, quindi
-# l'altezza della cassa senza coperchio è una stima.
-LARGHEZZA = 0.280
-PROFONDITA = 0.340
-ALTEZZA_CHIUSA = 0.160
-ALTEZZA = 0.115  # stima: la cassa aperta, senza il coperchio di legno
-SPESSORE = 0.010  # pareti e fondo
+# Dalla 4l la cassa e il resto dell'esterno vengono dal modello di ASHISH (esterno.py), che li
+# porta a 340 mm di profondità e 281,7 di larghezza (fonte «technikmuseum-enigma»: 340 × 280 mm).
+# Le misure che restano qui sono quelle dell'interno della 4j, prima dello spostamento
+# esterno.OFFSET_INTERNO che lo mette sotto le finestrelle di ASHISH.
+SPESSORE = 0.010  # il fondo della cassa della 4j: la batteria ci appoggia sopra
 
-FRONTE = -PROFONDITA / 2  # y del fronte
-RETRO = PROFONDITA / 2
-Z_PIANO = 0.110  # faccia superiore del piano di tasti e lampade
-
-# Le misure che seguono non vengono dalla fonte: sono scelte dalle foto della galleria (4j).
-PASSO_TASTI = 0.026  # distanza fra due tasti, e fra due lampade, della stessa fila
-Y_VANO = -0.010  # dove finisce il piano e comincia il vano dei rotori
-Y_PIANO_TASTI = -0.080  # dove il piano delle lampade finisce e comincia la piastra dei tasti
 Y_ASSE = 0.075  # asse dei rotori
 Z_ASSE = 0.070
 RAGGIO_ROTORE = 0.050
 RAGGIO_CONTATTI = 0.035  # cerchio dei 26 contatti sulle facce di rotori, ruota d'ingresso e riflettore
 PASSO_ANGOLO = 2 * math.pi / 26  # un contatto, una faccia dell'anello
 
-# Le tre file della tastiera e delle lampade dell'Enigma I, dalla più lontana alla più vicina a chi
-# scrive, e la y di ciascuna.
+# Il perno su cui girano i tre nottolini: lo regge la cassa, i nottolini ci stanno sopra.
+Y_PERNO = 0.012
+Z_PERNO = 0.030
+
+# Le tre file della tastiera, delle lampade e del pannello a spine dell'Enigma I, dalla più lontana
+# alla più vicina a chi scrive (sul pannello, dall'alto in basso).
 FILE_QWERTZ = ("QWERTZUIO", "ASDFGHJK", "PYXCVBNML")
-Y_FILE_TASTI = (-0.094, -0.117, -0.140)
-Y_FILE_LAMPADE = (-0.030, -0.050, -0.070)
-Z_FONDO_TASTO = Z_PIANO - 0.022  # dove finisce il gambo di un tasto, sopra la leva
 
 # --- Atlante dei glifi --------------------------------------------------------------------------
 # Un'immagine di ATLANTE_LATO pixel con ATLANTE_COLONNE colonne di celle quadrate. Le celle da 0 a
 # 25 hanno le lettere da A a Z, quelle da 26 a 51 i numeri da 01 a 26 degli anelli. Si conta per
-# righe, dall'alto a sinistra. In glTF la cella (colonna, riga) ha l'origine in (colonna / 8,
-# riga / 8): tasti e lampade puntano alla cella 0 e la pagina sposta la texture sulla loro lettera.
+# righe, dall'alto a sinistra. Dalla 4l lo usano solo gli anelli dei rotori: tasti e lampade hanno
+# le lettere di ASHISH.
 ATLANTE_LATO = 512
 ATLANTE_COLONNE = 8
-CELLA_LETTERA = 0
 CELLA_NUMERO = 26
 
 
@@ -80,9 +68,8 @@ def svuota():
     ):
         for blocco in list(raccolta):
             raccolta.remove(blocco)
-    for immagine in list(bpy.data.images):
-        if immagine.name.startswith("atlante"):
-            bpy.data.images.remove(immagine)
+    for immagine in list(bpy.data.images):  # l'atlante e le texture di ASHISH
+        bpy.data.images.remove(immagine)
 
 
 def materiale(nome, colore, metallico=0.0, ruvidita=0.5):
@@ -98,10 +85,7 @@ def materiale(nome, colore, metallico=0.0, ruvidita=0.5):
 
 
 def materiale_con_atlante(nome, immagine, ruvidita=0.35):
-    """Un materiale il cui colore base è l'atlante dei glifi: tessera crema con la lettera in nero.
-
-    Il colore della lampada accesa non sta qui: lo mette la pagina (emissivo), dal token del sito.
-    """
+    """Un materiale il cui colore base è l'atlante dei glifi: tessera crema con il numero in nero."""
     mat = bpy.data.materials.new(nome)
     mat.use_nodes = True
     bsdf = next(n for n in mat.node_tree.nodes if n.type == "BSDF_PRINCIPLED")
@@ -117,18 +101,14 @@ def materiale_con_atlante(nome, immagine, ruvidita=0.35):
 def materiali(atlante):
     """I materiali del modello, per nome. atlante è l'immagine dei glifi."""
     return {
-        "legno": materiale("legno", (0.23, 0.12, 0.05), ruvidita=0.6),
         "vernice": materiale("vernice", (0.02, 0.02, 0.02), ruvidita=0.8),
         "metallo": materiale("metallo", (0.62, 0.62, 0.64), metallico=1.0, ruvidita=0.35),
         "metallo_scuro": materiale("metallo_scuro", (0.10, 0.10, 0.11), metallico=0.7, ruvidita=0.5),
         "ottone": materiale("ottone", (0.71, 0.55, 0.22), metallico=1.0, ruvidita=0.3),
         "bachelite": materiale("bachelite", (0.03, 0.03, 0.03), ruvidita=0.4),
         "batteria": materiale("batteria", (0.55, 0.50, 0.38), ruvidita=0.7),
-        # Le tre tessere con lettera o numero: stessa immagine, tre materiali, così la pagina
-        # clona solo quello che le serve (la lampada per accenderla, il tasto per la sua lettera).
+        # La tessera con i numeri degli anelli. Tasti e lampade hanno i materiali di ASHISH.
         "tessera": materiale_con_atlante("tessera", atlante),
-        "cima_tasto": materiale_con_atlante("cima_tasto", atlante, ruvidita=0.5),
-        "vetro": materiale_con_atlante("vetro", atlante, ruvidita=0.2),
     }
 
 
@@ -241,27 +221,6 @@ def contatti_sul_cerchio(bm, x, raggio_cerchio, sporgenza, raggio, verso=1, lati
         cilindro(bm, centro, raggio, sporgenza, "X", lati, indice_materiale)
 
 
-def faccia_superiore(bm):
-    """La faccia più in alto della mesh, quella con la normale verso +Z."""
-    return max(bm.faces, key=lambda f: (f.normal.z, f.calc_center_median().z))
-
-
-def uv_cerchio(bm, faccia, raggio, indice_cella=CELLA_LETTERA, occupazione=0.8):
-    """Mappa il disco in cima a un tasto o a una lampada sulla cella indice_cella dell'atlante.
-
-    Il disco di raggio raggio occupa occupazione * cella: il glifo, che sta nel mezzo, non tocca il
-    bordo. La y della mesh è l'alto della lettera: la lettera si legge dal fronte della macchina.
-    """
-    strato = bm.loops.layers.uv.verify()
-    u0, v0, lato = centro_cella(indice_cella)
-    for loop in faccia.loops:
-        co = loop.vert.co
-        loop[strato].uv = (
-            u0 + co.x / raggio * occupazione * lato / 2,
-            v0 + co.y / raggio * occupazione * lato / 2,
-        )
-
-
 def mesh(nome, costruisci, mats):
     """Crea una mesh: costruisci(bm) aggiunge la geometria, mats è l'elenco dei materiali."""
     bm = bmesh.new()
@@ -302,16 +261,3 @@ def posizione_mondo(ogg):
         somma += ogg.location
         ogg = ogg.parent
     return somma
-
-
-def posizioni_qwertz(y_file, z):
-    """Per ogni lettera, la posizione nel mondo del suo tasto o della sua lampada.
-
-    y_file sono le tre y delle file, nell'ordine di FILE_QWERTZ.
-    """
-    posizioni = {}
-    for fila, y in zip(FILE_QWERTZ, y_file):
-        primo = -(len(fila) - 1) / 2 * PASSO_TASTI
-        for i, lettera in enumerate(fila):
-            posizioni[lettera.lower()] = (primo + i * PASSO_TASTI, y, z)
-    return posizioni

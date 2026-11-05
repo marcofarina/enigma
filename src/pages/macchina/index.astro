@@ -3,6 +3,7 @@ import '@/components/macchina/macchina.css';
 import Macchina from '@/components/macchina/Macchina.tsx';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { t } from '@/i18n';
+import { licenseLabel } from '@/lib/images';
 import { modello3d } from '@/lib/modello3d';
 
 /*
@@ -36,6 +37,12 @@ import { modello3d } from '@/lib/modello3d';
   </noscript>
 
   <p class="mt-8 text-caption text-text-muted">
-    {t('machine3d.credit')} <a href={modello3d.crediti}>{t('machine3d.creditLink')}</a>
+    {t('machine3d.credit')}{' '}
+    <cite>
+      <a href={modello3d.esterno.url}>{modello3d.esterno.titolo}</a>
+    </cite>
+    {t('machine3d.creditAuthor')} <a href={modello3d.esterno.urlAutore}>ASHISH</a> (
+    <a href={modello3d.esterno.urlLicenza}>{licenseLabel(modello3d.esterno.licenza)}</a>).{' '}
+    <a href={modello3d.crediti}>{t('machine3d.creditLink')}</a>
   </p>
 </BaseLayout>

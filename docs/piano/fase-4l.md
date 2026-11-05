@@ -103,3 +103,77 @@ verdi; il test «nessuna richiesta esce dal sito» resta com’è.
 
 **Esito.** Da compilare: tabella della corrispondenza dei pezzi, fattore di scala, peso
 (texture e geometria separati), numero di facce, scelta per le lampade, modifiche a `Scena.tsx`.
+
+**Esito** (2026-11-05, Opus)
+
+Il `.glb` è ibrido: l’esterno viene da ASHISH, scomposto da `scripts/blender/esterno.py`; l’interno
+è quello della 4k, spostato sotto le finestrelle. `pnpm modello` importa `scene.gltf`, costruisce,
+esporta un `.glb` grezzo in `scripts/blender/sorgenti/` e lo comprime con meshopt
+(`scripts/comprimi-modello.ts`). La convenzione è riscritta nelle sezioni su misure, origini, nodi,
+ancore, pannello, lettere, lampade, materiali, peso e smontaggio.
+
+Corrispondenza dei pezzi (la tabella completa, con un commento per pezzo, è `CORRISPONDENZA` in
+`esterno.py`):
+
+| Nodo | Pezzi di ASHISH |
+| --- | --- |
+| `cassa` | `part.085` (fondo), `082` (pareti), `001` (telaio), `066`, `068`, `018`, `029`–`031`, `079`–`081`; la parte di `part.005` davanti al taglio a y = 41,3 mm; il perno dei nottolini |
+| `coperchio_interno` | la parte di `part.005` dietro il taglio; `009`, `011`, `015`, `017`, `021`, `022`, `032`–`034`, `045`–`053`, `072`–`074`, `087` |
+| `coperchio_legno` | `077`, `078`, `003`, `035`–`044`, `056`, `019`, `069`–`071`, `002`, `007` |
+| `tastiera` | `006`, `004`, `067`, `075` |
+| `tasto_a` … `tasto_z` | `part.013` (QWERTZUIO), `014` (ASDFGHJK), `012` (PYXCVBNML): 7 pezzi per tasto, raggruppati lungo X |
+| `lampada_a` … `lampada_z` | `part.010`: 26 dischi e 26 lettere, raggruppati per centro e ordinati in tre file |
+| `pannello_spine` | `008`, `076`, `020`, `086` (9 prese) più 17 copie di una presa |
+| `sportello_spine` | `part`, `024`–`028`, `083`, `084` |
+| tolti | `054` (18 spine), `060` (9 cavi), `016` (la finta fascia dei rotori con i numeri dipinti 08, 17, 07) |
+
+L’ordine delle lettere è controllato in Blender: nascondendo i nodi Q, K, M, X delle lampade e
+Q, K, M, Y dei tasti spariscono proprio quelle lettere.
+
+- **Scala:** 340 / 350 = 0,9714, uniforme, dopo una rotazione di 90° attorno a Z. La cassa misura
+  28,2 × 34,2 × 13,2 cm (larghezza × profondità × altezza, senza coperchio di legno).
+- **Peso:** 5479 KB, sotto il tetto di 6 MB: texture 4011 KB (sette immagini WebP, sei di ASHISH a
+  2048 px e l’atlante dei numeri a 512 px), geometria e animazione 1344 KB, JSON 123 KB. Per stare
+  sotto il tetto `w1_low_box` è diventato `low_box.001` e `glass` ha perso la sua texture: due
+  immagini da circa 600 KB in meno.
+- **Facce:** 113 723 triangoli nelle mesh, 118 027 disegnati (i pezzi dei tre rotori sono copie
+  collegate); ASHISH ne aveva 148 000 prima di togliere spine e cavi.
+- **Lampade:** ogni `lampada_<l>` è il disco di ASHISH con la sua lettera, con il materiale `vetro`
+  (copia di `low_mec.002`). La pagina lo clona e usa la texture come mappa emissiva: si accende la
+  lettera bianca. Nessun disco di vetro aggiunto.
+- **`Scena.tsx`:** `useGLTF(modello3d.file, false, true)` per il decoder meshopt di drei; la lampada
+  clona `vetro` senza spostare la texture sull’atlante; tolti `materialeConLettera` e il ramo di
+  `cima_tasto`, che nel modello nuovo non esiste. Luce e tone mapping non toccati (5f).
+- **Compressione:** metodo FILTER e non QUANTIZE, perché la quantizzazione di gltf-transform cambia
+  traslazione e scala dei nodi e gli anelli non girerebbero più attorno alla loro origine. Il filtro
+  arrotonda le traslazioni della clip fino a 0,05 mm: `verifica-modello.ts` decodifica il file con
+  gltf-transform e le confronta con una tolleranza di 0,1 mm. Al posto di `@gltf-transform/cli` la
+  catena usa le librerie (`@gltf-transform/core`, `extensions`, `functions` e `meshoptimizer`),
+  perché il comando `meshopt` della CLI quantizza sempre.
+- **Pagina e crediti:** il credito di ASHISH (titolo, autore, licenza, «modificati») sta sotto la
+  vista in `/macchina/` e in «Fonti e crediti», con l’elenco delle modifiche. Il pulsante dice
+  «circa 6 MB».
+
+Resta per le fasi dopo:
+
+- 4m: il passo dei rotori (30 mm) contro quello delle finestrelle di ASHISH (28,1 mm), le rotelle a
+  destra dell’anello mentre ASHISH ha le coperture a sinistra, la leva più avanti dei tasti.
+- 4n: lo smontaggio. Ho alzato la salita dei rotori a 135 mm e quella del coperchio interno a
+  190 mm perché il controllo delle sovrapposizioni passasse, e il coperchio di legno si allontana di
+  150 mm all’indietro; lo sportello, che in ASHISH pende già aperto davanti alla cassa, nella fase 1
+  sale ancora e copre il pannello. Nelle anteprime dietro la cassa si vede una striscia rossa quando
+  il coperchio di legno si allontana.
+- 5f: l’inquadratura dell’anteprima e della camera taglia la cima del coperchio di legno.
+
+Comandi eseguiti:
+
+```bash
+git check-ignore scripts/blender/sorgenti/ashish/scene.gltf
+pnpm modello && pnpm verifica:modello
+grep -c 'ASHISH' src/pages/fonti/index.astro src/pages/macchina/index.astro
+pnpm verify && pnpm build && pnpm test:e2e
+```
+
+Esiti: `check-ignore` esce con 0; `verifica:modello` dà `fase 4l: 5479 KB … 0 errori.`; `grep` dà 1
+per file; `verify` e build verdi; e2e 198 passati e 24 saltati, compreso «nessuna richiesta esce
+dal sito» sui due progetti.

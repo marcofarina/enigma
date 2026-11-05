@@ -12,8 +12,11 @@ import { queryPerIlSimulatore, sessioneDallaQuery } from './configurazione.ts';
 /** three.js, React Three Fiber, drei e il `.glb` arrivano solo con questo import, dopo il pulsante. */
 const Scena = lazy(() => import('./Scena.tsx'));
 
-/** Peso indicativo di ciò che la vista scarica (modello e libreria), da ricontrollare quando il modello cambia. */
-const PESO_VISTA = '900 KB';
+/**
+ * Peso indicativo di ciò che la vista scarica (modello e libreria), da ricontrollare quando il modello
+ * cambia: dalla 4l il `.glb` con l’esterno di ASHISH pesa circa 5,4 MB (D23).
+ */
+const PESO_VISTA = '6 MB';
 
 /** Quante lettere del nastro mostra la pagina: le ultime sei gruppi da cinque. */
 const LETTERE_NASTRO = 30;

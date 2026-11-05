@@ -83,7 +83,7 @@ indice e il proprio file in `docs/piano/` (tabella in fondo).
 | 4k | Modello 3D: animazione dello smontaggio | Sonnet | high | 2 h | 4j; Marco al Mac con Blender aperto | fatta (2026-11-05) |
 | 5a | Pagina 3D: architettura, caricamento e digitazione | Opus | high | 3 h | 4h, 4i | fatta (2026-11-05) |
 | 5b | Pagina 3D: vista esplosa, cablaggio e nottolini | Sonnet | high | 3 h | 4k, 5a | fatta (2026-11-05) |
-| 4l | Modello ibrido: esterno di terzi, scomposizione e catena di esportazione | Opus | high | 3 h | D20–D23; Marco al Mac con Blender aperto | da fare |
+| 4l | Modello ibrido: esterno di terzi, scomposizione e catena di esportazione | Opus | high | 3 h | D20–D23; Marco al Mac con Blender aperto | fatta (2026-11-05) |
 | 4m | Modello ibrido: l’interno allo stesso livello dell’esterno | Sonnet | high | 3,5 h | 4l; Marco al Mac con Blender aperto | da fare |
 | 4n | Modello ibrido: smontaggio, anteprima e chiusura | Sonnet | high | 2 h | 4m; Marco al Mac con Blender aperto | da fare |
 | G5 | Pagina 3D: riprogettazione su Claude Design | Opus | high | 2 h | —; Marco presente per scegliere | da fare |
