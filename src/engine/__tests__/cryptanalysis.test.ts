@@ -314,13 +314,15 @@ describe('Bletchley Park: crib e menu', () => {
       wrong.filter(
         (partner) => !testHypothesis(machine, start, menu, { letter, partner }, { diagonalBoard }).consistent,
       ).length;
-    expect(rejected(true)).toBe(wrong.length);
-    expect(rejected(true)).toBeGreaterThanOrEqual(rejected(false));
+    const rejectedWithBoard = rejected(true);
+    expect(rejectedWithBoard).toBe(wrong.length);
+    expect(rejectedWithBoard).toBeGreaterThanOrEqual(rejected(false));
 
     // Nelle posizioni sbagliate dei rotori, senza diagonal board qualche ipotesi resta in piedi.
+    // k, 7k e 11k si ripetono modulo 26: le 26 posizioni di k fra 0 e 25 sono tutte quelle della sequenza.
     const survivors = (diagonalBoard: boolean) => {
       let count = 0;
-      for (let k = 0; k < 200; k++) {
+      for (let k = 0; k < 26; k++) {
         const positions = toLetter(k) + toLetter(7 * k) + toLetter(11 * k);
         if (positions === config.positions) continue;
         const guess = createMachine({ ...config, positions });
