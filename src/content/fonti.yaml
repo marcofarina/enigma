@@ -117,6 +117,11 @@
   titolo: Crypto Museum — Enigma I
   url: https://www.cryptomuseum.com/crypto/enigma/i/index.htm
   note: 'Sviluppata nel 1927–1929, introdotta nel 1930; esercito e aviazione. Fonte della frase sul pannello a spine esclusivo delle forze armate tedesche. Consultata il 4 novembre 2026 per gli anni e gli utilizzatori della lezione 11.'
+- id: technikmuseum-enigma
+  autori: Deutsches Technikmuseum
+  titolo: Elektrische Chiffriermaschine Enigma
+  url: https://berlin.museum-digital.de/object/9081
+  note: 'Scheda dell’esemplare con inventario 1/2000/0146 0, Chiffriermaschinen AG, 1937–1939. A cassa chiusa misura 340 × 280 × 160 mm (profondità × larghezza × altezza), aperta 340 × 280 × 340 mm. Consultata il 5 novembre 2026 per le dimensioni del modello 3D: la pagina del Crypto Museum sull’Enigma I non le riporta.'
 - id: crypto-museum-enigma-d
   autori: Paul Reuvers, Marc Simons
   titolo: Crypto Museum — Enigma D

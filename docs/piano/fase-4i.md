@@ -47,7 +47,8 @@ se non lo sono, fermati e dimmi che cosa manca (Blender, l’addon, il server).
    Le modifiche fatte a mano nella GUI di Blender si perdono, perché il `.blend` non va in git:
    riportale negli script.
 3. **Comando di ricostruzione.** In `package.json`, lo script `modello`:
-   `${BLENDER:-/Applications/Blender.app/Contents/MacOS/Blender} -b --factory-startup -P scripts/blender/costruisci.py`.
+   `${BLENDER:-/Applications/Blender.app/Contents/MacOS/Blender} -b --factory-startup --python-exit-code 1 -P scripts/blender/costruisci.py`
+   (senza `--python-exit-code 1` Blender esce con 0 anche se lo script si ferma con un errore).
 4. **Abbozzo.** Dimensioni della cassa dalla fonte `crypto-museum-enigma-i` (annotale
    nell’«Esito»); geometria semplice; tutti i nodi marcati «4i» nella convenzione, con le origini e
    gli assi giusti e `raggio_contatti` dove serve; materiali piani; tasti e lampade come copie
@@ -83,6 +84,43 @@ exit 0: il `.glb` si rigenera da una scena vuota e passa la verifica.
 pnpm verify
 ```
 
-**Esito.** Da compilare: versioni di Blender e di `blender-mcp`, modello di terzi (sì o no, con
-licenza e URL), dimensioni usate con la fonte, peso, numero di poligoni, correzioni fatte alla
-convenzione, che cosa ha richiesto più tempo con l’MCP e che cosa conviene sapere per PQuest.
+**Esito (2026-11-05)**
+
+- **Strumenti.** Blender 5.2.3 LTS (esportatore glTF 5.2.41), addon «MCP for Blender» 1.8
+  (protocollo 15), telemetria spenta (`get_addon_status` → `telemetry_consent: false`). Il server
+  non è registrato con `claude mcp add`: sta in `claude_desktop_config.json` dell’app desktop come
+  `uvx mcp-for-blender`, senza versione fissata. Il pacchetto su PyPI oggi si chiama
+  `mcp-for-blender`, non `blender-mcp`. Per fissarlo, scrivi `mcp-for-blender==<versione>` in quel
+  file.
+- **Modello di terzi.** No: Marco non ne ha trovato uno (2026-11-05). La geometria è nostra,
+  CC BY-NC-SA 4.0 come i contenuti, ed è scritta nella riga D14 dell’indice.
+- **Dimensioni.** La pagina `crypto-museum-enigma-i` non dà misure (verificato il 2026-11-05).
+  Ho usato la scheda del Deutsches Technikmuseum, inv. 1/2000/0146 0, nuova voce
+  `technikmuseum-enigma` di `fonti.yaml`: 280 mm di larghezza, 340 di profondità, 160 di altezza a
+  coperchio chiuso. La cassa senza coperchio è alta 115 mm, una stima. Concordano la scheda del
+  Computer History Museum (11,0 × 13,4 × 5,9 pollici nei risultati di ricerca; la pagina oggi non li mostra) e una lezione
+  dell’Università di Tubinga (340 × 280 × 150 mm). `verifica-modello.ts` controlla larghezza e
+  profondità entro il 10 %, e l’altezza fra metà e tutta l’altezza chiusa.
+- **Numeri.** `pnpm verifica:modello`: 46 KB, 69 nodi, 684 triangoli nelle mesh, 4 608 disegnati
+  (tasti, lampade e anelli sono copie collegate). L’anteprima WebP pesa 19 KB. `pnpm modello`
+  impiega circa 8 secondi.
+- **Correzioni alla convenzione.** Aggiunte le misure, la gerarchia e le origini, e la regola che i
+  nodi mossi dal codice hanno rotazione e scala nulle a riposo. `fase` e `raggio_contatti` stanno
+  solo sui nodi che li richiedono. `FASE_MODELLO` dice quali nodi cercare, e la 4j lo porta a
+  `'4j'`. La verifica controlla anche le copie collegate e la regola «chi muove che cosa» sulle
+  animazioni. L’ho provata su un `.glb` guastato apposta: sette guasti, che hanno dato tutti e undici gli errori attesi.
+- **Che cosa ha richiesto più tempo con l’MCP.** Il collegamento: l’addon era installato, ma il
+  server non era avviato dal pannello. La conferma che i rotori girano su X: nelle schermate le
+  pareti della cassa li nascondevano, quindi ho misurato la posizione della tacca nel mondo dopo
+  la rotazione. Quella misura ha trovato anche un difetto, una tacca che spostava un solo vertice
+  su due, che nelle schermate non si vedeva.
+- **Per PQuest.**
+  - Scrivi il pezzo in un file ed eseguilo con `exec(open(P).read(), {"__file__": P, "__name__": …})`.
+    Con un `__name__` diverso da `"__main__"` lo script definisce le funzioni senza esportare.
+  - Nella sessione aperta i moduli restano importati: ricaricali con `importlib.reload`, prima
+    quelli comuni e poi quelli che li usano.
+  - Per ripartire da zero, `svuota()` toglie i dati del file; `read_factory_settings` toccherebbe
+    anche le preferenze e l’addon dell’MCP, quindi non lo uso.
+  - Esporta prima di creare la camera e la luce dell’anteprima: nel `.glb` entra solo il modello.
+  - Lancia Blender in background sempre con `--python-exit-code 1`.
+  - Per controllare una rotazione, misura le coordinate: è più affidabile della schermata.
