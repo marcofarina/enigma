@@ -2,7 +2,9 @@
 
 Convenzione fissata il 2026-11-05 nella revisione delle fasi 3D; valgono D14 e D15. La 4i la mette alla prova
 e la può correggere; dopo la 4i cambia solo con una modifica di questa sezione e di `NODI_ATTESI`
-in `scripts/verifica-modello.ts`, nello stesso commit.
+in `scripts/verifica-modello.ts`, nello stesso commit. `FASE_MODELLO`, nello stesso file, dice fin
+dove è arrivato il modello: `pnpm verifica:modello` cerca solo i nodi delle fasi fino a quella, e la
+4j la porta a `'4j'` (il tetto del peso passa da 300 KB a 1 MB).
 
 **Unità e assi.** Un’unità è un metro, con le dimensioni reali della macchina. L’origine sta al
 centro del fondo della cassa. glTF ha Y in alto: l’esportatore converte le trasformazioni da
@@ -10,6 +12,21 @@ centro del fondo della cassa. glTF ha Y in alto: l’esportatore converte le tra
 vanno solo numeri senza direzione. Il fronte della macchina, il lato della tastiera, guarda verso
 +Z in glTF, cioè −Y in Blender. L’asse dei rotori è X, che l’esportatore lascia com’è: girare un
 rotore in three.js è una sola proprietà.
+
+**Misure.** La cassa è larga 280 mm e profonda 340, dalla scheda del Deutsches Technikmuseum
+(fonte `technikmuseum-enigma`; la pagina `crypto-museum-enigma-i` non dà misure). La scheda dà
+160 mm di altezza a coperchio chiuso; il coperchio di legno non è un nodo, e l’altezza della cassa
+senza coperchio, 115 mm, è una stima della 4i. Le altre misure dell’abbozzo stanno in
+`scripts/blender/comune.py` e la 4j le può cambiare.
+
+**Gerarchia e origini.** I nodi sono figli della radice della scena, tranne i tasti, figli di
+`tastiera`, e i pezzi di un rotore (`<rotore>_anello`, `_nucleo`, `_contatti_molla`,
+`_contatti_piani`, `_cricchetto`, `_rotella`), figli del rotore; `<rotore>_tacca` è figlio
+dell’anello, perché gira con lui. Un nodo che il codice muove ha, a riposo, rotazione e scala
+nulle. Le origini: i rotori, gli anelli, la ruota d’ingresso, il riflettore e l’asse sull’asse dei
+rotori; i nottolini sul perno; tasti e lampade alla base, sul piano; `coperchio_interno` e
+`sportello_spine` sulla cerniera (lo spigolo posteriore del coperchio, quello inferiore dello
+sportello).
 
 **Nodi.** Nomi in minuscolo, con `_`. La colonna «Chi lo muove» dice chi può muovere il nodo e in
 quale proprietà; la colonna «Da» dice la fase che lo crea.
@@ -49,7 +66,8 @@ sulle facce dei rotori, della ruota d’ingresso e del riflettore non hanno anco
 codice su un cerchio, dalla posizione del nodo e da `raggio_contatti`.
 
 **`extras`.** Solo due proprietà: `fase`, un intero da 1 a 4 su ogni nodo che la clip muove, e
-`raggio_contatti`, in metri, sui tre rotori, sulla ruota d’ingresso e sul riflettore. Le proprietà
+`raggio_contatti`, in metri, sui tre rotori, sulla ruota d’ingresso e sul riflettore; gli altri
+nodi non le hanno (l’abbozzo usa 0,035 m). Le proprietà
 personalizzate di Blender finiscono in `extras` solo con l’opzione `export_extras=True`
 dell’esportatore.
 

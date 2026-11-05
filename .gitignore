@@ -13,3 +13,4 @@ playwright-report/
 
 # Libri coperti da copyright, solo in locale
 docs/books/
+__pycache__/

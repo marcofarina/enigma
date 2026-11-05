@@ -22,7 +22,9 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:lighthouse": "node scripts/lighthouse.ts",
-    "verify": "pnpm lint && pnpm format:check && pnpm lint:content && pnpm check && pnpm test && pnpm build"
+    "modello": "${BLENDER:-/Applications/Blender.app/Contents/MacOS/Blender} -b --factory-startup --python-exit-code 1 -P scripts/blender/costruisci.py",
+    "verifica:modello": "node scripts/verifica-modello.ts",
+    "verify": "pnpm lint && pnpm format:check && pnpm lint:content && pnpm check && pnpm test && pnpm verifica:modello && pnpm build"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.1.2",
