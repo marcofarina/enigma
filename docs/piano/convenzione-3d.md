@@ -3,8 +3,8 @@
 Convenzione fissata il 2026-11-05 nella revisione delle fasi 3D; valgono D14 e D15. La 4i la mette alla prova
 e la può correggere; dopo la 4i cambia solo con una modifica di questa sezione e di `NODI_ATTESI`
 in `scripts/verifica-modello.ts`, nello stesso commit. `FASE_MODELLO`, nello stesso file, dice fin
-dove è arrivato il modello: `pnpm verifica:modello` cerca solo i nodi delle fasi fino a quella, e la
-4j la porta a `'4j'` (il tetto del peso passa da 300 KB a 1 MB).
+dove è arrivato il modello: `pnpm verifica:modello` cerca solo i nodi delle fasi fino a quella. La
+4j l’ha portata a `'4j'` (il tetto del peso è passato da 300 KB a 1 MB).
 
 **Unità e assi.** Un’unità è un metro, con le dimensioni reali della macchina. L’origine sta al
 centro del fondo della cassa. glTF ha Y in alto: l’esportatore converte le trasformazioni da
@@ -13,11 +13,26 @@ vanno solo numeri senza direzione. Il fronte della macchina, il lato della tasti
 +Z in glTF, cioè −Y in Blender. L’asse dei rotori è X, che l’esportatore lascia com’è: girare un
 rotore in three.js è una sola proprietà.
 
+**Misure della 4j.** I pezzi dei rotori stanno impilati lungo X in un passo di 30 mm: vedi l’intestazione
+di `scripts/blender/rotori.py`. Il riflettore sta in x = −60 mm, la ruota d’ingresso in +55 mm, i nottolini
+in x = −18, +12 e +42 mm (a destra del rotore che spingono, sotto il cricchetto), con il perno in comune a
+y = 12 mm, z = 30 mm; la leva (`leva_tasti`) ha l’origine in (0, −30, 85) mm e la batteria in
+(108, 75, 10) mm. Il vano dei rotori ha il riflettore e la ruota d’ingresso alti meno dei rotori
+(raggio 40 mm contro 50) per non toccare il coperchio.
+
 **Misure.** La cassa è larga 280 mm e profonda 340, dalla scheda del Deutsches Technikmuseum
 (fonte `technikmuseum-enigma`; la pagina `crypto-museum-enigma-i` non dà misure). La scheda dà
 160 mm di altezza a coperchio chiuso; il coperchio di legno non è un nodo, e l’altezza della cassa
 senza coperchio, 115 mm, è una stima della 4i. Le altre misure dell’abbozzo stanno in
 `scripts/blender/comune.py` e la 4j le può cambiare.
+
+**Angoli.** Il contatto *i* di un rotore, della ruota d’ingresso o del riflettore (la lettera *i*,
+con A = 0) sta all’angolo *i* · 360° / 26 attorno all’asse X, misurato da +Z verso +Y, cioè verso
+il retro, sul cerchio di raggio `raggio_contatti`. La faccia *k* dell’anello, il numero *k*, sta
+all’angolo (*k* − 1) · 360° / 26, dalla stessa origine: a riposo il numero 01 guarda in alto e
+l’anello è alla posizione A. La rotazione su X in verso positivo porta in alto il numero
+successivo, ed è il passo del rotore; a +360° / 26 in finestra c’è il 02. Il codice trova così
+posizione e anello con la sola rotazione dei nodi. Fissata nella 4j sulle foto della galleria.
 
 **Gerarchia e origini.** I nodi sono figli della radice della scena, tranne i tasti, figli di
 `tastiera`, e i pezzi di un rotore (`<rotore>_anello`, `_nucleo`, `_contatti_molla`,
@@ -37,7 +52,7 @@ quale proprietà; la colonna «Da» dice la fase che lo crea.
 | `coperchio_interno` | il coperchio metallico con le tre finestrelle | clip, fase 1 | 4i |
 | `sportello_spine` | lo sportello davanti al pannello a spine | clip, fase 1 | 4i |
 | `pannello_spine` | il pannello a spine | — | 4i |
-| `tastiera` | il gruppo dei tasti | clip, fase 4 | 4i |
+| `tastiera` | la piastra dei tasti, con i 26 tasti per figli (dalla 4j ha una mesh: copre l’apertura sopra la leva) | clip, fase 4 | 4i |
 | `tasto_a` … `tasto_z` | i 26 tasti, figli di `tastiera`, nell’ordine QWERTZ dell’Enigma I | codice, traslazione | 4i |
 | `lampada_a` … `lampada_z` | le 26 lampade con il vetro e la lettera | codice, materiale | 4i |
 | `ruota_ingresso` | la ruota d’ingresso, a destra dei rotori | — | 4i |
@@ -53,6 +68,11 @@ quale proprietà; la colonna «Da» dice la fase che lo crea.
 | `nottolino_destro`, `nottolino_centrale`, `nottolino_sinistro` | i tre nottolini, chiamati con il rotore che spingono, con l’origine sul perno | codice, rotazione | 4i |
 | `leva_tasti` | la barra comune sotto i tasti che muove i nottolini | codice, rotazione | 4j |
 | `batteria` | la batteria da 4,5 volt, nel vano accanto ai rotori (lezione 3) | clip, fase 4 | 4j |
+
+**Tacca.** I tre anelli hanno la stessa mesh, con la tacca nel bordo di destra sotto il numero 01, e
+`<rotore>_tacca` sta sul fondo della tasca. Nella macchina vera la tacca cambia posto con il tipo di
+rotore (Q, E, V, J, Z): il modello non lo sa, e la 5b dovrà decidere come mostrarlo (vedi
+l’«Esito» della 4j).
 
 `<rotore>` sta per `rotore_destro`, `rotore_centrale` o `rotore_sinistro`. Il `nottolino_centrale`
 appoggia sull’anello del rotore destro; il `nottolino_sinistro` appoggia sull’anello del centrale,
@@ -73,6 +93,22 @@ dell’esportatore.
 
 **Lettere e numeri.** Un solo atlante di glifi per le lettere dei tasti e delle lampade e per i
 numeri degli anelli, creato nella 4j; niente testo convertito in mesh.
+
+L’atlante è un PNG di 512 × 512 pixel incorporato nel `.glb`, nero su una tessera crema, in Archivo
+(SIL OFL 1.1). Ha 8 colonne di celle da 64 pixel, numerate per righe dall’alto a sinistra: le celle
+da 0 a 25 portano le lettere da A a Z, quelle da 26 a 51 i numeri da 01 a 26. In coordinate glTF
+(origine in alto a sinistra) la cella (colonna, riga) comincia in (colonna / 8, riga / 8).
+
+- **Anelli.** Il numero *k* è già sulla faccia *k* dell’anello (cella 25 + *k*): nessun lavoro per la
+  pagina. La tessera è il materiale `tessera`.
+- **Tasti e lampade.** Sono copie collegate di una sola mesh, quindi tutte puntano alla cella 0, la A.
+  Per mostrare la lettera giusta la pagina clona il materiale e la sua texture (l’immagine resta
+  una) e sposta `offset` di (colonna / 8, riga / 8) della lettera: per il tasto il materiale è
+  `cima_tasto` (la mesh `tasto` ha tre materiali: gambo, bordo, cima), per la lampada `vetro`.
+  Il colore della lampada accesa lo mette la pagina, come emissivo.
+
+**Materiali.** Piani: `legno`, `vernice`, `metallo`, `metallo_scuro`, `ottone`, `bachelite`,
+`batteria`, più i tre con l’atlante (`tessera`, `cima_tasto`, `vetro`). Nessuna normal map.
 
 **Chi muove che cosa.** Il codice della pagina muove solo i nodi della tabella marcati «codice», e
 solo nella proprietà indicata. La clip `smontaggio` (4k) muove solo i nodi marcati «clip»: su un nodo
