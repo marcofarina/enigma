@@ -89,7 +89,7 @@ verdi, con i test nuovi del passo 6. L’«Esito» riporta il giudizio di Marco 
 - Schermate in `docs/screenshot/3d/layout/`: 1280 × 720 e 375 px (pagina intera), fasi 0 e 4, tema
   chiaro e scuro (8 file), prese come in G5 con Playwright su `astro preview`. A fase 4 la macchina
   esplosa sta tutta nella scena, coperchio e pannello frontale compresi.
-- **Giudizio di Marco sulle immagini: da registrare.**
+- **Giudizio di Marco sulle immagini (2026-11-05): approvate, nessuna correzione.**
 - Da sapere: la prima inquadratura a fase 0 è più stretta dell’anteprima statica (margine del 6 %
   invece dell’inquadratura di Blender), quindi quando la scena parte la macchina si ingrandisce un
   po’. La 5f
