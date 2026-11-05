@@ -65,6 +65,7 @@ def svuota():
         bpy.data.collections,
         bpy.data.curves,
         bpy.data.fonts,
+        bpy.data.node_groups,
     ):
         for blocco in list(raccolta):
             raccolta.remove(blocco)
@@ -104,7 +105,8 @@ def materiali(atlante):
         "vernice": materiale("vernice", (0.02, 0.02, 0.02), ruvidita=0.8),
         "metallo": materiale("metallo", (0.62, 0.62, 0.64), metallico=1.0, ruvidita=0.35),
         "metallo_scuro": materiale("metallo_scuro", (0.10, 0.10, 0.11), metallico=0.7, ruvidita=0.5),
-        "ottone": materiale("ottone", (0.71, 0.55, 0.22), metallico=1.0, ruvidita=0.3),
+        # Come l'ottone cotto di cottura.py: il perno dei nottolini, nella cassa, resta con il materiale piano.
+        "ottone": materiale("ottone", (0.62, 0.40, 0.11), metallico=1.0, ruvidita=0.28),
         "bachelite": materiale("bachelite", (0.03, 0.03, 0.03), ruvidita=0.4),
         "batteria": materiale("batteria", (0.55, 0.50, 0.38), ruvidita=0.7),
         # La tessera con i numeri degli anelli. Tasti e lampade hanno i materiali di ASHISH.

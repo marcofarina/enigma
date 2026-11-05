@@ -10,8 +10,9 @@ e la può correggere; dopo la 4i cambia solo con una modifica di questa sezione 
 in `scripts/verifica-modello.ts`, nello stesso commit. `FASE_MODELLO`, nello stesso file, dice fin
 dove è arrivato il modello: `pnpm verifica:modello` cerca solo i nodi delle fasi fino a quella. La
 4j l’ha portata a `'4j'` (il tetto del peso è passato da 300 KB a 1 MB), la 4k a `'4k'` (la verifica
-controlla anche la clip `smontaggio`) e la 4l a `'4l'` (tetto di 6 MB, `coperchio_legno`, texture
-WebP).
+controlla anche la clip `smontaggio`), la 4l a `'4l'` (tetto di 6 MB, `coperchio_legno`, texture
+WebP) e la 4m a `'4m'` (la verifica controlla il materiale `interno` e che i materiali piani dei pezzi
+interni non ci siano più).
 
 **Unità e assi.** Un’unità è un metro, con le dimensioni reali della macchina. L’origine sta al
 centro del fondo della cassa. glTF ha Y in alto: l’esportatore converte le trasformazioni da
@@ -33,7 +34,7 @@ meno dei rotori (raggio 40 mm contro 50) per non toccare il coperchio.
 Il passo fra le finestrelle di ASHISH è 28,1 mm, quello fra i nostri rotori 30: gli anelli di destra
 e di sinistra stanno 2 mm fuori dal centro della loro finestrella. Le rotelle zigrinate stanno a
 destra dell’anello, mentre ASHISH ha le coperture delle rotelle a sinistra delle finestrelle. La
-leva sta più avanti dei tasti di ASHISH. Sono tutte cose della 4m.
+leva sta più avanti dei tasti di ASHISH. La 4m, che ha lavorato sui materiali e non sulla geometria, non le ha toccate: restano aperte.
 
 **Misure.** La cassa è larga 280 mm e profonda 340, dalla scheda del Deutsches Technikmuseum
 (fonte `technikmuseum-enigma`; la pagina `crypto-museum-enigma-i` non dà misure); a coperchio
@@ -149,9 +150,22 @@ occlusione (il canale rosso della texture di metallicità e ruvidità): `low_box
 la ferramenta della cassa e del coperchio, `low_mec.002` per piastra, tastiera, pannello e
 coperchio interno, `glass` per i vetri delle finestrelle, `vetro` per le lampade. `w1_low_box`
 diventa `low_box.001` e `glass` perde la sua texture: pochi pezzi, 600 KB di texture ciascuno.
-L’interno ha i materiali piani della 4j: `vernice`, `metallo`, `metallo_scuro`, `ottone`,
-`bachelite`, `batteria` e `tessera`, con l’atlante. Il perno dei nottolini, nella cassa, è
-`ottone`.
+L’interno (4m) ha un materiale solo, `interno`: tre immagini di 1024 × 1024 pixel cotte in Blender
+con Cycles da materiali procedurali (alluminio zigrinato della rotella, bachelite del nucleo e del
+cricchetto, bachelite lucida dell’anello, ottone dei contatti, vernice raggrinzita del riflettore e
+della ruota d’ingresso, acciaio dell’asse, dei nottolini e della leva, cartone della batteria). Sono
+il colore base (sRGB), un’immagine ORM (occlusione nel rosso, ruvidità nel verde, metallicità nel blu,
+come vuole glTF: `occlusionTexture` e `metallicRoughnessTexture` puntano alla stessa immagine) e la
+normal map. L’occlusione è cotta un pezzo alla volta, da solo: dà le ombre dentro il pezzo (fra i denti,
+nei fori, negli smussi) e resta giusta a macchina smontata; cotta con i pezzi montati darebbe nero alle
+facce che si toccano e che lo smontaggio scopre. Le facce numerate degli anelli restano a `tessera`,
+con l’atlante dei glifi: un anello ha quindi due materiali, `interno` e `tessera`. Ogni pezzo interno
+ha uno smusso (Bevel da 0,3 a 0,6 mm sugli spigoli oltre 30°, un segmento sui pezzi piccoli e a denti,
+due sugli altri) con normali pesate, applicato prima dell’esportazione (`smussi.py`); i contatti e
+l’asse hanno solo le normali morbide. Il perno dei nottolini, nella cassa, resta `ottone` piatto, con
+lo stesso colore dell’ottone cotto. Gli script sono `smussi.py` e `cottura.py`, chiamati da
+`costruisci.py`; la pagina non li conosce: il nucleo si clona come prima per diventare trasparente.
+L’atlante a 2048 pixel pesava 960 KB e portava il file a 6650 KB: oltre il tetto.
 
 **Peso** (D23). Le texture di ASHISH (4096 px) si riducono a 2048 px in Blender e si esportano in
 WebP, qualità 85, con l’estensione `EXT_texture_webp`; l’atlante dei numeri resta di 512 px, anche
@@ -160,8 +174,10 @@ lui in WebP. `pnpm modello` esporta da Blender un `.glb` grezzo in `scripts/blen
 `public/modelli/enigma-i.glb`. Il metodo QUANTIZE di gltf-transform non va bene: compensa la scala
 delle posizioni cambiando traslazione e scala dei nodi, e allora gli anelli non girerebbero più
 attorno alla loro origine. Il filtro di meshopt arrotonda le traslazioni della clip fino a 0,05 mm:
-la verifica le confronta con una tolleranza di 0,1 mm. Il tetto è 6 MB; il 2026-11-05 il file pesa
-5479 KB, di cui circa 3,9 MB di texture, con 113 723 triangoli.
+la verifica le confronta con una tolleranza di 0,1 mm. Il tetto è 6 MB; con la 4m il file pesa
+6106 KB (margine di 38 KB), di cui 4449 KB di texture (442 KB l’atlante dell’interno, 3995 KB le
+texture di ASHISH, 12 KB l’atlante dei glifi) e 1657 KB di geometria, animazione e JSON, con 125 539
+triangoli nelle mesh (133 411 disegnati). Chi aggiunge geometria o texture deve prima toglierne.
 
 **Chi muove che cosa.** Il codice della pagina muove solo i nodi della tabella marcati «codice», e
 solo nella proprietà indicata. La clip `smontaggio` (4k) muove solo i nodi marcati «clip»: su un nodo

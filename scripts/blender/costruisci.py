@@ -18,6 +18,7 @@ GUI va riportata qui.
 
 import importlib
 import math
+import os
 import sys
 from pathlib import Path
 
@@ -35,16 +36,20 @@ if str(QUI) not in sys.path:
 
 import atlante  # noqa: E402
 import comune  # noqa: E402
+import cottura  # noqa: E402
 import esterno  # noqa: E402
 import meccanica  # noqa: E402
 import rotori  # noqa: E402
 import smontaggio  # noqa: E402
+import smussi  # noqa: E402
 
 # Nella sessione aperta dell'MCP i moduli restano importati fra un'esecuzione e l'altra: si
 # ricaricano, prima comune e poi i pezzi che lo usano. Prima l'interno, poi l'esterno, che mette il
 # perno dei nottolini nella cassa e sposta l'interno sotto le finestrelle.
 importlib.reload(comune)
 importlib.reload(atlante)
+importlib.reload(smussi)
+importlib.reload(cottura)
 PEZZI = [importlib.reload(modulo) for modulo in (rotori, meccanica)]
 importlib.reload(esterno)
 importlib.reload(smontaggio)
@@ -57,6 +62,7 @@ def costruisci():
     mats = comune.materiali(immagine)
     for pezzo in PEZZI:
         pezzo.costruisci(mats)
+    interno()
     esterno.costruisci(mats)
     esterno.allinea_interno()
     bpy.context.view_layer.update()
@@ -64,6 +70,29 @@ def costruisci():
     problemi = smontaggio.sovrapposizioni()
     if problemi:
         raise RuntimeError(f"a smontaggio finito si sovrappongono: {problemi}")
+
+
+def interno():
+    """Smussi e materiali cotti dei pezzi dell'interno (4m), prima che arrivi l'esterno: l'occlusione
+    si cuoce con i pezzi dell'interno soli. Scrive le statistiche in `STATISTICHE`."""
+    meshes = [o for o in bpy.data.objects if o.type == "MESH"]
+    prima, dopo = smussi.smussa_interno(meshes)
+    rapp = [bpy.data.objects[nome] for nome in cottura.RAPPRESENTANTI]
+    colore, orm, normale, stat = cottura.cuoci(meshes)
+    scarico = os.environ.get("COTTURA_SCARICO")  # per guardare l'atlante: una cartella dove salvarlo
+    if scarico:
+        for immagine in (colore, orm, normale):
+            immagine.filepath_raw = f"{scarico}/{immagine.name}.png"
+            immagine.file_format = "PNG"
+            immagine.save()
+    cottura.assegna(rapp, cottura.materiale_interno(colore, orm, normale), stat["originali"])
+    cottura.toglie_procedurali()
+    STATISTICHE.update(triangoli_prima=prima, triangoli_dopo=dopo, densita=stat["densita"])
+    print(f"smussi: {prima} → {dopo} triangoli nelle mesh dell'interno; atlante {cottura.LATO} px")
+    print("densità UV / 3D:", {k: round(v, 1) for k, v in stat["densita"].items()})
+
+
+STATISTICHE = {}
 
 
 def esporta():

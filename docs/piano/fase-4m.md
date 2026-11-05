@@ -72,5 +72,60 @@ pnpm verify && pnpm build && pnpm test:e2e
 ```
 verdi. L’«Esito» riporta il giudizio di Marco sulle immagini del passo 5.
 
-**Esito.** Da compilare: materiali e risoluzione dell’atlante, peso prima e dopo, facce aggiunte
-dagli smussi, giudizio di Marco.
+**Esito** (2026-11-05, Sonnet): **parziale**. Il modello è fatto e verificato; mancano gli e2e (vedi
+sotto) e il giudizio di Marco sulle immagini del passo 5.
+
+L’interno ha smussi, un materiale solo cotto in un atlante e occlusione. Sorgenti nuovi in
+`scripts/blender/`: `smussi.py` (Bevel + Weighted Normal sulle mesh interne, una volta per mesh),
+`cottura.py` (materiali procedurali, UV in un atlante, cottura con Cycles, materiale `interno`) e
+`confronto.py` (rende i confronti dal `.glb` grezzo). `costruisci.py` li chiama prima dell’esterno.
+`FASE_MODELLO` è `'4m'` e `verifica-modello.ts` controlla il materiale `interno` (le quattro texture,
+al più 1024 px, occlusione e ruvidità nella stessa immagine) e l’assenza dei materiali piani.
+
+- **Materiali e atlante:** `interno`, tre immagini WebP di 1024 × 1024 (colore 141 KB, ORM 172 KB,
+  normal map 129 KB). Colori e finiture dalle foto della galleria (`rotori-con-anelli`) e dalla texture
+  di ASHISH `low_mec.002`: bachelite nera, alluminio satinato con zigrinatura per la rotella, ottone,
+  vernice raggrinzita con il ferro agli spigoli, cartone per la batteria. La densità è circa 10 pixel
+  per mm. A 2048 px l’atlante pesava 960 KB e il file 6650 KB: oltre il tetto, quindi 1024 (il ripiego
+  del passo 6).
+- **Occlusione:** cotta un pezzo alla volta, non a pezzi montati come diceva il passo 3: montati, le
+  facce che si toccano (rotella sull’anello, cricchetto nel nucleo) uscivano nere, e lo smontaggio le
+  scopre. Così le ombre sono quelle dentro il pezzo (fra i denti, nei fori, negli smussi).
+  three.js usa la mappa di occlusione solo con la luce d’ambiente: la resa è della 5f.
+- **Smussi:** 0,3–0,6 mm sugli spigoli oltre 30°, un segmento sui pezzi a denti e piccoli, due sugli
+  altri. Le mesh interne passano da 3844 a 15 660 triangoli (+11 816); le mesh del file da 113 723 a
+  125 539, i triangoli disegnati da 118 027 a 133 411. Con due segmenti dappertutto erano 17 996.
+- **Peso:** da 5479 KB a 6106 KB (tetto 6144): texture 4449 KB (interno 442, ASHISH 3995, glifi 12),
+  geometria, animazione e JSON 1657 KB. Il margine è di 38 KB: chi aggiunge geometria o texture deve
+  prima toglierne (per esempio le normal map di ASHISH a qualità 80).
+- **Immagini del passo 5** in `docs/screenshot/modello/`: `rotore-aperto`, `rotori-estratti`,
+  `riflettore`, `nottolini` e `batteria`, rese dal `.glb` esportato con la luce dell’anteprima. Le ho
+  riguardate anche nel Blender aperto, importando il `.glb` in una scena provvisoria poi tolta, con
+  l’ombreggiatura dei materiali. L’interno e la piastra di ASHISH stanno bene insieme; il pezzo più
+  debole è la batteria, un parallelepipedo di cartone senza dettagli.
+- **Giudizio di Marco sulle immagini:** da riportare qui.
+
+Non fatto, perché non è fra i passi della 4m (la 4l li aveva assegnati a questa fase, ma il suo file
+non li elenca) e cambia la geometria e le posizioni della convenzione: il passo dei rotori (30 mm
+contro i 28,1 delle finestrelle di ASHISH), le rotelle a destra dell’anello mentre ASHISH ha le
+coperture a sinistra, la leva più avanti dei tasti. Restano aperti; servono una decisione di Marco e,
+se si fanno, una fase di geometria. Il perno dei nottolini nella cassa resta `ottone` piatto, dello
+stesso colore di quello cotto.
+
+Comandi eseguiti:
+
+```bash
+pnpm modello && pnpm verifica:modello
+grep -l "BEVEL" scripts/blender/*.py | wc -l
+ls docs/screenshot/modello/*.png | wc -l
+pnpm verify
+pnpm build && pnpm test:e2e
+```
+
+Esiti: `pnpm modello` e `verifica:modello` verdi (`fase 4m: 6106 KB … 0 errori.`, la build in circa
+2,5 minuti per la cottura); `grep` dà 1; `ls` dà 5; `pnpm verify` verde. **`pnpm test:e2e` non verde:**
+158 passati e 24 saltati, ma i fallimenti sono dovuti a un `pnpm dev` rimasto acceso sulla porta 4321
+(avviato alle 11:23 nella cartella del progetto), che Playwright ha riusato al posto della build: i
+messaggi di errore citano la barra di sviluppo di Astro (`data-app-id="astro:home"`). Non ho potuto
+fermarlo (il permesso è stato negato) e la porta è fissa in `playwright.config.ts`; vanno rifatti
+dopo averlo fermato.
