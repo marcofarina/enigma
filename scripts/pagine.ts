@@ -4,7 +4,7 @@
  * I percorsi sono relativi a `base` (`/enigma/`).
  */
 
-/** Le pagine principali: la home, il simulatore, una lezione per sezione, gli esercizi, le schede, il glossario, i docenti. */
+/** Le pagine principali: la home, il simulatore, una lezione per sezione, gli esercizi, le schede, il glossario, i docenti, la macchina in 3D (stato iniziale, prima del pulsante). */
 export const pagineLighthouse = [
   '',
   'simulatore/',
@@ -16,6 +16,7 @@ export const pagineLighthouse = [
   'schede/',
   'glossario/',
   'docenti/',
+  'macchina/',
 ];
 
 /** Tutte le pagine controllate da axe: quelle di Lighthouse più gli indici e le pagine di servizio. */

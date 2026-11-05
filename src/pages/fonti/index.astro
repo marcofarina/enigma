@@ -1,8 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { t } from '@/i18n';
+import { t, tf } from '@/i18n';
 import { licenseLabel } from '@/lib/images';
+import { modello3d } from '@/lib/modello3d';
 
 const fonti = (await getCollection('fonti')).sort((a, b) => a.data.autori.localeCompare(b.data.autori, 'it'));
 const immagini = await getCollection('immagini');
@@ -35,5 +36,12 @@ const immagini = await getCollection('immagini');
         ))}
       </ul>
     )}
+    <h2 id="modello-3d">{t('sources.model3d')}</h2>
+    <p>
+      {tf('sources.model3dText', {
+        license: licenseLabel(modello3d.licenza),
+        font: modello3d.carattere.licenza,
+      })}
+    </p>
   </section>
 </BaseLayout>

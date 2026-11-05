@@ -44,5 +44,18 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      rolldownOptions: {
+        output: {
+          // three.js in un chunk riconoscibile, scaricato solo dalla pagina 3D dopo «Avvia la vista 3D»
+          // (fase 5a di docs/piano.md: lo controllano i test di rete). Solo il pacchetto `three`, che
+          // non ha dipendenze: un gruppo trascina con sé le dipendenze dei suoi moduli, e con React
+          // Three Fiber ci finirebbe React, che serve a tutte le pagine.
+          codeSplitting: {
+            groups: [{ name: 'three', test: /[\\/]node_modules[\\/]three[\\/]/ }],
+          },
+        },
+      },
+    },
   },
 });

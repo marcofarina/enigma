@@ -248,9 +248,10 @@ nuovo, e il nastro non perde lettere.
 ## Pagine del sito
 
 - **Intestazione.** Stessa barra della macchina, vernice e alluminio, in entrambi i temi. Senza i
-  controlli della macchina: marchio a sinistra, poi «Simulatore» (la home), «Come funziona»,
-  «Storia», «Esercizi», «Glossario», a destra il tema. A 375 px: marchio e pulsante del menu da
-  44 px su una riga; il menu si apre come foglio sotto la barra.
+  controlli della macchina: marchio a sinistra, poi «Simulatore» (la home), «Macchina 3D», «Come
+  funziona», «Storia», «Crittoanalisi», «Esercizi», «Glossario», «Docenti», a destra il tema. Sotto
+  i 1024 px (fase 5a: con otto voci la barra non ci sta a 768): marchio e pulsante del menu da 44 px
+  su una riga; il menu si apre come foglio sotto la barra.
 - **Fondo e testo.** Le pagine sono foglio: `--paper`, `--ink`, Archivo 17/1,6.
 - **Tabelle** (`.prose-it table`). Intestazione in `--print-red`, 13 px, peso 600; filetto sopra
   la tabella e sotto l’intestazione in `--print-red` da 1,5 px; righe separate da
