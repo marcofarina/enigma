@@ -1,31 +1,63 @@
 /*
- * La pagina 3D (fase 5a di docs/piano.md). Il palco ha i colori della macchina in entrambi i temi,
- * come il vano dello schema del simulatore; intorno c’è il foglio della pagina.
+ * La pagina 3D (fasi 5a e 5g di docs/piano.md; docs/design.md, «Pagina 3D»). Direzione «Banco e
+ * foglio»: il vano della scena a sinistra, il foglio a destra, e nessun pannello sopra la scena.
+ *
+ * Come la home, la griglia è disegnata a 1280×720 con radice 16 px e tutte le misure sono in rem:
+ * da 1024×576 in su la radice segue la finestra (min(100vw / 80, 100vh / 45), fra 12,8 e 24 px) e la
+ * griglia si scala intera. Sotto, vale la colonna a 375 px. I commenti danno le misure in px a
+ * 1280×720.
  */
 
+@media (min-width: 1024px) and (min-height: 576px) {
+  html.macchina-root {
+    font-size: clamp(12.8px, min(100vw / 80, 100vh / 45), 24px);
+  }
+}
+
+/* L'intestazione del sito segue la griglia della pagina: margine di 20 px, non la colonna centrale. */
+html.macchina-root .site-header > .machine-paint > div {
+  max-width: none;
+}
+
+/* Sopra la piega il fondo è la vernice della macchina, in entrambi i temi. */
+.macchina-banco {
+  /* Alto quanto la finestra meno l'intestazione (52): a 1280×720 il vano e il foglio finiscono a 706. */
+  height: calc(100dvh - 3.3rem);
+  min-height: 30rem;
+  padding: 0.75rem 1.25rem 0.875rem;
+}
+
 .macchina {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 22.75rem; /* 364 */
   gap: 1rem;
+  height: 100%;
+}
+
+/* ── Il vano: la scena e, nel piede, la pulsantiera ─────────────────────────────────────────── */
+
+.macchina-vano {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 3.5rem; /* il piede è alto 56 */
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-well);
+  background: var(--machine-well);
 }
 
 .macchina-palco {
   position: relative;
+  min-height: 0;
   overflow: hidden;
-  aspect-ratio: 16 / 9;
-  /* Su uno schermo basso il palco non supera tre quarti della finestra: la scena si allarga invece di alzarsi. */
-  max-height: 75vh;
-  border-radius: var(--radius);
-  background: var(--machine-well);
   color: var(--alu);
 }
 
 .macchina-palco:focus-visible {
   outline: 3px solid var(--focus-machine);
-  outline-offset: 2px;
+  outline-offset: -3px;
 }
 
-/* L’anteprima e la scena occupano tutto il palco, una sopra l’altra. */
+/* L'anteprima e la scena occupano tutto il palco, una sopra l'altra. */
 .macchina-palco > img,
 .macchina-palco > div:not(.macchina-avvio) {
   position: absolute;
@@ -39,7 +71,7 @@
 }
 
 .macchina-avvio {
-  /* Una targhetta al centro del palco: la nota non si legge sopra l’anteprima. */
+  /* Una targhetta al centro del palco: la nota non si legge sopra l'anteprima. */
   position: absolute;
   inset: 0;
   width: fit-content;
@@ -89,22 +121,287 @@
   color: var(--alu);
 }
 
+/* Senza WebGL, o se la scena non parte, l'avviso sta nel vano al posto della scena. */
+.macchina-palco > .macchina-avviso {
+  position: absolute;
+  inset-inline: 1rem;
+  bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--machine-control-border);
+  border-radius: var(--radius);
+  background: var(--machine-well);
+  color: var(--alu);
+  font-size: var(--type-ui);
+}
+
+.macchina-palco > .macchina-avviso a {
+  color: var(--alu-bright);
+}
+
+/* Il piede: viste, zoom e ripristino a sinistra, l'aiuto sui gesti a destra. */
+.macchina-piede {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.75rem;
+  border-top: 1px solid var(--machine-line);
+  font-size: var(--type-ui);
+}
+
+.macchina-viste,
+.macchina-zoom {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.macchina-menu-vista {
+  display: none;
+}
+
+.macchina-comando {
+  min-height: 2rem; /* 32 */
+  padding: 0 0.75rem;
+  border: 1.5px solid var(--machine-control-border);
+  border-radius: var(--radius);
+  background: var(--machine-control);
+  color: var(--alu);
+  font-family: var(--font-sans);
+  font-size: var(--type-ui);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.macchina-comando:hover:not(:disabled) {
+  border-color: var(--machine-control-border-hover);
+  color: var(--alu-bright);
+}
+
+.macchina-comando[aria-pressed='true'] {
+  border-color: var(--alu);
+  background: var(--alu);
+  color: var(--machine-well);
+}
+
+.macchina-comando:disabled {
+  border-color: var(--machine-line);
+  color: var(--alu-muted);
+  cursor: not-allowed;
+}
+
+.macchina-quadrato {
+  width: 2rem;
+  padding: 0;
+  font-size: 1.125rem;
+}
+
+.macchina-piede select {
+  width: 100%;
+  min-height: 2rem;
+  padding: 0 0.5rem;
+  border: 1.5px solid var(--machine-control-border);
+  border-radius: var(--radius);
+  background: var(--machine-control);
+  color: var(--alu);
+  font-family: var(--font-sans);
+  font-size: var(--type-ui);
+  font-weight: 600;
+}
+
+.macchina-piede :focus-visible {
+  outline: 2px solid var(--focus-machine);
+  outline-offset: 2px;
+}
+
+.macchina-gesti {
+  /* Su due righe, se serve: lo spazio che resta cambia con la scala. */
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0 0 0 auto;
+  text-align: right;
+  font-size: var(--type-caption);
+  line-height: 1.3;
+  color: var(--alu-muted);
+}
+
+.macchina-gesti-tocco {
+  display: none;
+}
+
+/* Col tocco, e su uno schermo da telefono, l'aiuto parla di dita. */
+@media (pointer: coarse), (max-width: 30rem) {
+  .macchina-gesti-mouse {
+    display: none;
+  }
+
+  .macchina-gesti-tocco {
+    display: inline;
+  }
+}
+
+/* ── Il foglio ──────────────────────────────────────────────────────────────────────────────── */
+
+.macchina-foglio {
+  /* Inchiostri del foglio del simulatore: del tema chiaro anche nel tema scuro, dove la carta si attenua. */
+  --ink: var(--sheet-ink);
+  --ink-muted: var(--sheet-ink-muted);
+  --paper: var(--sheet);
+  --field-border: var(--sheet-field-border);
+  --print-red: var(--sheet-red);
+  --print-red-soft: var(--sheet-red-soft);
+  --color-focus: var(--focus-paper);
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem; /* 14 */
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1.125rem 1.25rem;
+  border-radius: var(--radius-sheet);
+  background: var(--sheet);
+  box-shadow: 0 0.625rem 1.5rem var(--shadow-sheet);
+  color: var(--sheet-ink);
+  font-size: var(--type-ui);
+  line-height: 1.4;
+}
+
+.macchina-titolo {
+  margin: 0;
+  font-size: 1.375rem; /* 22 */
+  font-weight: 800;
+  font-stretch: 112%;
+  line-height: 1.15;
+}
+
+.macchina-config {
+  margin: -0.5rem 0 0;
+  font-size: var(--type-caption);
+  color: var(--sheet-ink-muted);
+}
+
 .macchina-avviso {
   margin: 0;
   border-block: 1px solid var(--print-red-soft);
   padding-block: 0.5rem;
 }
 
+.macchina-sezione h2 {
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1.5px solid var(--sheet-red);
+  color: var(--sheet-red);
+  font-size: 0.8125rem; /* 13 */
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Le cinque fasi dello smontaggio: un pallino per fase su una linea verticale. */
+.macchina-fasi {
+  position: relative;
+}
+
+.macchina-fasi::before {
+  content: '';
+  position: absolute;
+  top: 1.0625rem;
+  bottom: 1.0625rem;
+  left: 0.4375rem;
+  width: 2px;
+  background: var(--sheet-red-soft);
+}
+
+.macchina-fase {
+  position: relative;
+  display: grid;
+  grid-template-columns: 0.875rem 1rem minmax(0, 1fr);
+  align-items: center;
+  column-gap: 0.625rem;
+  min-height: 2.125rem; /* 34 */
+  cursor: pointer;
+}
+
+.macchina-fase input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.macchina-fase:has(input:focus-visible) {
+  outline: 2px solid var(--focus-paper);
+  outline-offset: 1px;
+}
+
+.macchina-pallino {
+  position: relative;
+  box-sizing: border-box;
+  width: 0.875rem; /* 14 */
+  height: 0.875rem;
+  border: 1.5px solid var(--sheet-red);
+  border-radius: 50%;
+  background: var(--sheet);
+}
+
+.macchina-fase[data-scelta='true'] .macchina-pallino {
+  background: var(--sheet-red);
+}
+
+.macchina-numero {
+  font-family: var(--font-mono);
+  font-size: var(--type-caption);
+  color: var(--sheet-ink-muted);
+}
+
+.macchina-nome {
+  font-size: var(--type-ui);
+}
+
+.macchina-fase[data-scelta='true'] .macchina-nome {
+  font-weight: 700;
+}
+
+.macchina-blocco {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--sheet-ink-muted);
+}
+
+/* Il messaggio: i tasti battuti in piccolo sopra, le lampade accese in grassetto sotto. */
+.macchina-intestazione {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1.5px solid var(--sheet-red);
+}
+
+.macchina-intestazione h2 {
+  margin: 0;
+  border: 0;
+}
+
+.macchina-finestrelle {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--type-ui);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
 .macchina-nastro {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-  gap: 0.5rem 1.5rem;
-  margin: 0;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
 }
 
 .macchina-nastro dt {
-  font-size: var(--type-caption);
-  color: var(--ink-muted);
+  font-size: var(--type-micro);
+  color: var(--sheet-ink-faint);
 }
 
 .macchina-nastro dd {
@@ -115,37 +412,141 @@
   word-spacing: 0.3em;
 }
 
+.macchina-nastro [data-nastro='tasti'] {
+  font-size: var(--type-micro);
+  color: var(--sheet-ink-faint);
+}
+
+.macchina-nastro [data-nastro='lampade'] {
+  font-size: var(--type-body);
+  font-weight: 700;
+}
+
 .macchina-azioni {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
-/* Il selettore dello smontaggio e il suo testo. */
-.macchina-smontaggio {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 1rem;
+.macchina-foglio .btn {
+  min-height: 2.25rem; /* 36 */
+  padding-inline: 0.75rem;
+  border-color: var(--sheet-ink);
+  color: var(--sheet-ink);
 }
 
-.macchina-smontaggio label {
-  font-weight: 600;
+.macchina-foglio .btn:hover:not(:disabled) {
+  background: var(--sheet-ink);
+  color: var(--sheet);
 }
 
-.macchina-smontaggio input[type='range'] {
-  flex: 1 1 14rem;
-  min-width: 10rem;
-  min-height: 2.75rem;
-  accent-color: var(--color-accent);
+.macchina-foglio .btn:disabled {
+  border-color: var(--sheet-field-border);
+  color: var(--sheet-ink-muted);
 }
 
-.macchina-fase {
-  /* Larghezza fissa: il testo cambia lunghezza mentre si trascina, e il cursore accanto non deve allargarsi e stringersi. */
-  flex: 0 0 auto;
-  width: 24ch;
-  min-height: 2lh; /* «da rotori aperti a meccanica sotto i tasti» va su due righe: l’altezza non deve saltare */
-  font-family: var(--font-mono);
+/* ── Sotto la piega ─────────────────────────────────────────────────────────────────────────── */
+
+.macchina-sotto {
+  padding: 2.25rem 1.25rem 5rem; /* 36 × 80 */
+}
+
+.macchina-come-si-usa {
+  max-width: 40rem; /* 640 */
+}
+
+.macchina-come-si-usa h2 {
+  margin: 0 0 0.75rem;
+  font-size: var(--type-section);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.macchina-come-si-usa p {
+  margin: 0 0 1rem;
+  font-size: var(--type-body);
+  line-height: 1.6;
+}
+
+.macchina-crediti {
+  max-width: 40rem;
+  margin: 2rem 0 0;
   font-size: var(--type-caption);
-  color: var(--ink-muted);
+  color: var(--color-text-muted);
+}
+
+/* ── Sotto 1024×576: la colonna a 375 px ────────────────────────────────────────────────────── */
+
+@media not ((min-width: 1024px) and (min-height: 576px)) {
+  .macchina-banco {
+    height: auto;
+    min-height: 0;
+    padding: 0 0 0.5rem;
+  }
+
+  .macchina {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: auto;
+  }
+
+  /* La scena a tutta larghezza, senza raggio. */
+  .macchina-vano {
+    grid-template-rows: 20rem auto; /* 320 */
+    border-radius: 0;
+  }
+
+  .macchina-piede {
+    flex-wrap: wrap;
+    row-gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .macchina-viste {
+    display: none;
+  }
+
+  .macchina-menu-vista {
+    display: block;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .macchina-piede select,
+  .macchina-comando {
+    min-height: 2.75rem; /* 44 */
+  }
+
+  .macchina-quadrato {
+    width: 2.75rem;
+  }
+
+  .macchina-gesti {
+    flex: 1 0 100%;
+    margin: 0;
+    text-align: left;
+  }
+
+  .macchina-foglio {
+    margin: 0 0.5rem;
+    overflow-y: visible;
+    padding: 1rem;
+  }
+
+  .macchina-titolo {
+    font-size: 1.5rem; /* 24 */
+  }
+
+  .macchina-fase {
+    min-height: 2.75rem;
+  }
+
+  .macchina-foglio .btn {
+    min-height: 2.75rem;
+  }
+
+  .macchina-sotto {
+    padding-inline: 1rem;
+  }
 }

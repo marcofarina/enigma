@@ -7,42 +7,55 @@ import { licenseLabel } from '@/lib/images';
 import { modello3d } from '@/lib/modello3d';
 
 /*
- * La macchina in 3D (fase 5a di docs/piano.md, decisione D15). Finché React non parte, e senza
- * JavaScript, la pagina mostra l’anteprima resa da Blender; three.js e il modello arrivano solo
- * dopo «Avvia la vista 3D».
+ * La macchina in 3D (fasi 5a e 5g di docs/piano.md, decisione D15; layout in docs/design.md,
+ * «Pagina 3D»). Finché React non parte, e senza JavaScript, la pagina mostra l’anteprima resa da
+ * Blender; three.js e il modello arrivano solo dopo «Avvia la vista 3D». Sopra la piega ci sono
+ * solo la scena e il foglio; il resto della pagina sta sotto.
  */
 ---
 
-<BaseLayout title={t('machine3d.title')} description={t('machine3d.description')}>
-  <section class="prose-it mb-6">
-    <h1>{t('machine3d.title')}</h1>
-    <p>{t('machine3d.intro')}</p>
-  </section>
-
-  <Macchina client:only="react">
-    <div slot="fallback" class="macchina">
-      <div class="macchina-palco machine">
-        <img
-          class="macchina-anteprima"
-          src={modello3d.anteprima}
-          width={modello3d.larghezzaAnteprima}
-          height={modello3d.altezzaAnteprima}
-          alt={t('machine3d.previewAlt')}
-        />
+<BaseLayout title={t('machine3d.title')} description={t('machine3d.description')} htmlClass="macchina-root" largo>
+  <div class="macchina-banco machine machine-paint">
+    <Macchina client:only="react">
+      <div slot="fallback" class="macchina">
+        <div class="macchina-vano">
+          <div class="macchina-palco machine">
+            <img
+              class="macchina-anteprima"
+              src={modello3d.anteprima}
+              width={modello3d.larghezzaAnteprima}
+              height={modello3d.altezzaAnteprima}
+              alt={t('machine3d.previewAlt')}
+            />
+          </div>
+          <div class="macchina-piede">
+            <noscript>
+              <p class="macchina-gesti">{t('sim.noscript')}</p>
+            </noscript>
+          </div>
+        </div>
+        <div class="macchina-foglio">
+          <h1 class="macchina-titolo">{t('machine3d.title')}</h1>
+        </div>
       </div>
-    </div>
-  </Macchina>
-  <noscript>
-    <p class="mt-4">{t('sim.noscript')}</p>
-  </noscript>
+    </Macchina>
+  </div>
 
-  <p class="mt-8 text-caption text-text-muted">
-    {t('machine3d.credit')}{' '}
-    <cite>
-      <a href={modello3d.esterno.url}>{modello3d.esterno.titolo}</a>
-    </cite>
-    {t('machine3d.creditAuthor')} <a href={modello3d.esterno.urlAutore}>ASHISH</a> (
-    <a href={modello3d.esterno.urlLicenza}>{licenseLabel(modello3d.esterno.licenza)}</a>).{' '}
-    <a href={modello3d.crediti}>{t('machine3d.creditLink')}</a>
-  </p>
+  <div class="macchina-sotto">
+    <section class="macchina-come-si-usa">
+      <h2>{t('machine3d.howTo')}</h2>
+      <p>{t('machine3d.intro')}</p>
+      <p>{t('machine3d.howToExplode')}</p>
+    </section>
+
+    <p class="macchina-crediti">
+      {t('machine3d.credit')}{' '}
+      <cite>
+        <a href={modello3d.esterno.url}>{modello3d.esterno.titolo}</a>
+      </cite>{' '}
+      {t('machine3d.creditAuthor')} <a href={modello3d.esterno.urlAutore}>ASHISH</a> (
+      <a href={modello3d.esterno.urlLicenza}>{licenseLabel(modello3d.esterno.licenza)}</a>).{' '}
+      <a href={modello3d.crediti}>{t('machine3d.creditLink')}</a>
+    </p>
+  </div>
 </BaseLayout>

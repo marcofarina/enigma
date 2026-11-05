@@ -9,13 +9,17 @@ import { t } from '@/i18n';
 interface Props {
   title?: string;
   description?: string;
+  /** Una classe per `<html>`: la pagina 3D scala la radice come la home. */
+  htmlClass?: string;
+  /** Il contenuto occupa tutta la larghezza, senza colonna né margini: la pagina disegna da sé la propria griglia. */
+  largo?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, htmlClass, largo = false } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="it">
+<html lang="it" class={htmlClass}>
   <head>
     <Head title={title} description={description} />
   </head>
@@ -27,7 +31,7 @@ const { title, description } = Astro.props;
       {t('a11y.skipToContent')}
     </a>
     <SiteHeader />
-    <main id="contenuto" class="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
+    <main id="contenuto" class={largo ? 'w-full flex-1' : 'mx-auto w-full max-w-6xl flex-1 px-4 py-8'}>
       <slot />
     </main>
     <SiteFooter />

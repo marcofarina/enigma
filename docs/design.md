@@ -430,6 +430,29 @@ aperta, perché la scheda sta nel foglio.
   animata parte «A passi, senza voce», come «Passo passo» al posto di «Al rallentatore» nel
   simulatore.
 
+### Come l’ha realizzata la 5g
+
+Dove la realizzazione di `docs/piano/fase-5g.md` si scosta dalla lettera del canvas:
+
+- **Inquadratura.** Nessuna chiamata a `fitToBox`: arrotonda la direzione della camera all’asse più
+  vicino, quindi cancellerebbe l’angolo scelto con il mouse. `inquadra()` in `geometria.ts` fa lo
+  stesso conto (distanza minima per cui gli otto spigoli dell’ingombro stanno nella scena meno due
+  margini del 6 %, con il campo e la forma della scena) senza toccare la direzione, ed è provata da
+  un test unitario che proietta gli spigoli.
+- **Viste predefinite.** Ogni vista è una direzione (azimut e angolo polare) e i nodi che inquadra
+  alla fase corrente (`VISTE` in `geometria.ts`): «Rotori» inquadra i rotori anche quando sono
+  estratti. `data-vista` sulla scena vale l’id della vista, `fase` (inquadratura della fase) o
+  `libera` (camera mossa a mano o con il doppio clic).
+- **Gesti.** `camera-controls` non prevede Shift fra i tasti del mouse: il tasto sinistro con Shift
+  si assegna allo spostamento a ogni pressione. Lo spostamento è limitato all’ingombro della
+  macchina in tutte le fasi, più 3 cm di aria.
+- **Doppio clic.** Centra la camera sul pezzo (`pezzoDelNodo`), tenendo la direzione di adesso; sui
+  tasti non fa niente, perché i due clic li hanno già battuti.
+- **Intestazione.** Nella pagina 3D il margine dell’intestazione del sito è di 20 px, come nel
+  simulatore, invece della colonna centrale.
+- **Aiuto sui gesti.** Il testo per il tocco compare con `(pointer: coarse)` o sotto i 480 px; per
+  il resto vale quello per il mouse.
+
 ## Da confermare con Marco
 
 1. Il simulatore resta scuro anche nel tema chiaro; il tema cambia solo il foglio e le pagine.

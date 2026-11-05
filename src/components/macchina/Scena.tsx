@@ -1,8 +1,9 @@
-import { Environment, Lightformer, OrbitControls, useGLTF } from '@react-three/drei';
+import { CameraControls, CameraControlsImpl, Environment, Lightformer, useGLTF } from '@react-three/drei';
 import { Canvas, createPortal, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
-import { Suspense, useEffect, useMemo, useRef } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import {
   AnimationMixer,
+  Box3,
   CatmullRomCurve3,
   Color,
   LineCurve3,
@@ -14,6 +15,7 @@ import {
   type AnimationClip,
   type Material,
   type Object3D,
+  type PerspectiveCamera,
 } from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { useStore } from 'zustand';
@@ -23,14 +25,26 @@ import { currentState } from '../simulator/session.ts';
 import type { SimulatorState, SimulatorStore } from '../simulator/store.ts';
 import {
   angoloNottolino,
-  inquadratura,
+  angoloPiuVicinoA,
+  DIREZIONE_PREDEFINITA,
+  DISTANZA_MASSIMA,
+  DISTANZA_MINIMA,
+  distanzaDopoLoZoom,
+  inquadra,
   letteraDelNodo,
   NODI_ROTORI,
   OSCILLAZIONE_LEVA,
+  pezzoDelNodo,
+  POLARE_MASSIMO,
   rampa,
   rotazioniRotore,
   segmentiCablaggio,
   tempoClip,
+  velocitaSmontaggio,
+  VISTE,
+  type ComandiCamera,
+  type Direzione,
+  type StatoZoom,
 } from './geometria.ts';
 
 /*
@@ -41,13 +55,10 @@ import {
  * un CDN); la luce la fanno i Lightformer.
  */
 
-/** Il punto che la camera guarda: il centro della macchina, poco sopra il fondo (come l’anteprima). */
-const BERSAGLIO: [number, number, number] = [0, 0.055, 0];
-
 /**
  * La camera dell’anteprima di `scripts/blender/costruisci.py`, convertita in glTF: obiettivo da
- * 50 mm su sensore da 36 mm, cioè 22,9° di campo verticale a 16:9. Così l’anteprima e la prima
- * immagine della scena coincidono.
+ * 50 mm su sensore da 36 mm, cioè 22,9° di campo verticale. Il campo resta questo; la posizione la
+ * decide `Regia` (a partire da `DIREZIONE_PREDEFINITA`, che è quella dell’anteprima).
  */
 const CAMERA = { position: [0.52, 0.6, 0.8] as [number, number, number], fov: 22.9, near: 0.01, far: 10 };
 
@@ -450,53 +461,190 @@ function CaviPannello({
   );
 }
 
+/** I comandi che `Regia` dà alla pagina, più il centraggio su un pezzo per il doppio clic. */
+interface ComandiScena extends ComandiCamera {
+  centraSu: (nodo: Object3D) => void;
+}
+
+const { ACTION } = CameraControlsImpl;
+
 /**
- * La camera segue lo smontaggio: sale e si allontana per tenere nel quadro i pezzi che escono.
- * Cambia solo il punto guardato e la distanza, non l'angolo: la direzione scelta con il mouse resta.
- * Con `prefers-reduced-motion` salta alla nuova inquadratura senza transizione.
+ * Il pezzo di macchina sotto un clic: risale dalla mesh colpita al nodo che `pezzoDelNodo` riconosce.
+ * Un tasto non è un pezzo da centrare (il doppio clic lo ha già battuto due volte).
  */
-/** Lo stato della camera rispetto all'inquadratura della macchina chiusa: dove guarda e di quanto si è allontanata. */
-interface QuadroCamera {
-  y: number;
-  scala: number;
+function pezzoSotto(oggetto: Object3D | null): Object3D | null {
+  for (let nodo = oggetto; nodo; nodo = nodo.parent) {
+    if (letteraDelNodo(nodo.name, 'tasto')) return null;
+    if (pezzoDelNodo(nodo.name)) return nodo;
+  }
+  return null;
 }
 
-/** Porta la camera di un tratto `k` (da 0 a 1) verso `voluta`, e dice se manca ancora strada. */
-function avvicinaCamera(
-  controlli: { target: Vector3; update: () => void },
-  camera: Object3D,
-  quadro: QuadroCamera,
-  voluta: QuadroCamera,
-  k: number,
-): boolean {
-  const y = quadro.y + (voluta.y - quadro.y) * k;
-  const scala = quadro.scala + (voluta.scala - quadro.scala) * k;
-  const dy = y - quadro.y;
-  controlli.target.y += dy;
-  camera.position.y += dy;
-  // La distanza cambia di quanto cambia la scala, così lo zoom scelto con la rotella resta.
-  const scarto = camera.position
-    .clone()
-    .sub(controlli.target)
-    .multiplyScalar(scala / quadro.scala);
-  camera.position.copy(controlli.target).add(scarto);
-  quadro.y = y;
-  quadro.scala = scala;
-  controlli.update();
-  return Math.abs(voluta.y - y) > 1e-4 || Math.abs(voluta.scala - scala) > 1e-3;
-}
-
-function CameraSullo({ smontaggio, ridotto }: { smontaggio: number; ridotto: boolean }) {
-  const controlli = useThree((s) => s.controls) as { target: Vector3; update: () => void } | null;
-  const camera = useThree((s) => s.camera);
-  const invalidate = useThree((s) => s.invalidate);
-  const quadro = useRef<QuadroCamera>({ y: BERSAGLIO[1], scala: 1 });
-  useEffect(() => invalidate(), [smontaggio, invalidate]);
-  useFrame((_, dt) => {
-    if (!controlli) return;
-    const k = ridotto ? 1 : 1 - Math.exp(-dt * 7);
-    if (avvicinaCamera(controlli, camera, quadro.current, inquadratura(smontaggio), k)) invalidate();
+/** Gesti, limiti e morbidezza della camera. Con `prefers-reduced-motion` niente morbidezza: la camera si ferma dove si lascia. */
+function configuraControlli(controlli: CameraControlsImpl, ridotto: boolean) {
+  Object.assign(controlli.mouseButtons, {
+    left: ACTION.ROTATE,
+    middle: ACTION.DOLLY,
+    right: ACTION.TRUCK,
+    wheel: ACTION.DOLLY,
   });
+  Object.assign(controlli.touches, {
+    one: ACTION.TOUCH_ROTATE,
+    two: ACTION.TOUCH_DOLLY_TRUCK,
+    three: ACTION.TOUCH_TRUCK,
+  });
+  controlli.minDistance = DISTANZA_MINIMA;
+  controlli.maxDistance = DISTANZA_MASSIMA;
+  controlli.minPolarAngle = 0;
+  controlli.maxPolarAngle = POLARE_MASSIMO;
+  controlli.dollyToCursor = false;
+  controlli.smoothTime = ridotto ? 0 : 0.35;
+  controlli.draggingSmoothTime = ridotto ? 0 : 0.08;
+}
+
+/** Trascinare con il tasto sinistro ruota; con Shift sposta. */
+function sceltaDelTrascinamento(controlli: CameraControlsImpl, conShift: boolean) {
+  controlli.mouseButtons.left = conShift ? ACTION.TRUCK : ACTION.ROTATE;
+}
+
+/** La camera come la leggono i test: azimut, angolo polare e distanza, sulla tela. */
+function segnalaCamera(tela: HTMLElement, controlli: CameraControlsImpl) {
+  tela.dataset['camera'] = [controlli.azimuthAngle, controlli.polarAngle, controlli.distance]
+    .map((n) => n.toFixed(3))
+    .join(' ');
+}
+
+/**
+ * La regia della camera (fase 5g). Trascinare ruota, Shift o tasto destro spostano, rotella e pizzico
+ * avvicinano; sul tocco un dito ruota e due spostano e pizzicano. Ad ogni fase dello smontaggio, e
+ * con «Ripristina», la camera inquadra l'ingombro dei pezzi alla fase con un margine del 6 % della
+ * scena su ogni lato; le viste predefinite fanno lo stesso da un'altra direzione. Lo spostamento è
+ * limitato all'ingombro della macchina smontata. Con `prefers-reduced-motion` ogni passaggio salta.
+ */
+function Regia({
+  fase,
+  ridotto,
+  ingombro,
+  comandiRef,
+  onCameraLibera,
+  onZoom,
+}: {
+  fase: number;
+  ridotto: boolean;
+  /** L'ingombro dei nodi (tutta la macchina se `null`) quando lo smontaggio è alla fase intera `fase`. */
+  ingombro: (fase: number, nodi: readonly string[] | null) => Box3;
+  comandiRef: MutableRefObject<ComandiScena | null>;
+  onCameraLibera: () => void;
+  onZoom: (stato: StatoZoom) => void;
+}) {
+  const controlli = useThree((s) => s.controls) as CameraControlsImpl | null;
+  const camera = useThree((s) => s.camera) as PerspectiveCamera;
+  const { width, height } = useThree((s) => s.size);
+  const tela = useThree((s) => s.gl.domElement);
+  const invalidate = useThree((s) => s.invalidate);
+  // Le funzioni che rispondono ai pulsanti leggono sempre i valori di adesso.
+  const corrente = useRef({ fase, ridotto, aspetto: width / height });
+  useEffect(() => {
+    corrente.current = { fase, ridotto, aspetto: width / height };
+  });
+
+  const vai = useCallback(
+    (direzione: Direzione, scatola: Box3, transizione: boolean) => {
+      if (!controlli || scatola.isEmpty()) return;
+      const { bersaglio, distanza } = inquadra(
+        { min: scatola.min.toArray(), max: scatola.max.toArray() },
+        direzione,
+        (camera.fov * Math.PI) / 180,
+        corrente.current.aspetto,
+      );
+      void controlli.rotateTo(
+        angoloPiuVicinoA(controlli.azimuthAngle, direzione.azimut),
+        direzione.polare,
+        transizione,
+      );
+      void controlli.moveTo(...bersaglio, transizione);
+      void controlli.dollyTo(Math.min(Math.max(distanza, DISTANZA_MINIMA), DISTANZA_MASSIMA), transizione);
+      if (!transizione) controlli.update(0);
+      invalidate();
+    },
+    [controlli, camera, invalidate],
+  );
+
+  // Gesti, limiti e morbidezza.
+  useEffect(() => {
+    if (!controlli) return;
+    configuraControlli(controlli, ridotto);
+    // Shift + trascinare sposta: camera-controls non ha il tasto fra le opzioni, quindi si sceglie l'azione a ogni pressione.
+    const allaPressione = (event: PointerEvent) => {
+      if (event.pointerType !== 'mouse' || !(event.target instanceof Node) || !tela.contains(event.target)) return;
+      sceltaDelTrascinamento(controlli, event.shiftKey);
+    };
+    window.addEventListener('pointerdown', allaPressione, true);
+    const quandoSiTocca = () => onCameraLibera();
+    controlli.addEventListener('controlstart', quandoSiTocca);
+    return () => {
+      window.removeEventListener('pointerdown', allaPressione, true);
+      controlli.removeEventListener('controlstart', quandoSiTocca);
+    };
+  }, [controlli, ridotto, tela, onCameraLibera]);
+
+  // Il limite dello spostamento: l'ingombro della macchina in tutte le fasi, con un po' d'aria.
+  useEffect(() => {
+    if (!controlli) return;
+    const tutto = new Box3();
+    for (let f = 0; f <= 4; f++) tutto.union(ingombro(f, null));
+    controlli.setBoundary(tutto.expandByScalar(0.03));
+  }, [controlli, ingombro]);
+
+  // Il pulsante dello zoom si spegne ai limiti; il test legge la camera da `data-camera`.
+  useEffect(() => {
+    if (!controlli) return;
+    let ultimo = '';
+    const segnala = () => {
+      const stato = {
+        puoAvvicinare: controlli.distance > DISTANZA_MINIMA + 1e-3,
+        puoAllontanare: controlli.distance < DISTANZA_MASSIMA - 1e-3,
+      };
+      const chiave = `${stato.puoAvvicinare}${stato.puoAllontanare}`;
+      if (chiave !== ultimo) onZoom(stato);
+      ultimo = chiave;
+      segnalaCamera(tela, controlli);
+    };
+    segnala();
+    controlli.addEventListener('update', segnala);
+    return () => controlli.removeEventListener('update', segnala);
+  }, [controlli, onZoom, tela]);
+
+  // Ad ogni fase la camera torna all'inquadratura di quella fase; la prima volta senza transizione.
+  const giaInquadrata = useRef(false);
+  useEffect(() => {
+    if (!controlli) return;
+    vai(DIREZIONE_PREDEFINITA, ingombro(fase, null), giaInquadrata.current && !ridotto);
+    giaInquadrata.current = true;
+  }, [controlli, fase, ridotto, ingombro, vai]);
+
+  useEffect(() => {
+    if (!controlli) return;
+    const vista = (id: string) => {
+      const v = VISTE.find((x) => x.id === id);
+      if (v) vai(v, ingombro(corrente.current.fase, v.nodi), !corrente.current.ridotto);
+    };
+    comandiRef.current = {
+      vista,
+      ripristina: () => vai(DIREZIONE_PREDEFINITA, ingombro(corrente.current.fase, null), !corrente.current.ridotto),
+      zoom: (verso) => void controlli.dollyTo(distanzaDopoLoZoom(controlli.distance, verso), !corrente.current.ridotto),
+      centraSu: (nodo) => {
+        // Resta la direzione di adesso; cambia il bersaglio e la distanza.
+        const direzione = { azimut: controlli.azimuthAngle, polare: controlli.polarAngle };
+        nodo.updateWorldMatrix(true, true);
+        vai(direzione, new Box3().expandByObject(nodo), !corrente.current.ridotto);
+      },
+    };
+    return () => {
+      comandiRef.current = null;
+    };
+  }, [controlli, comandiRef, ingombro, vai]);
+
   return null;
 }
 
@@ -526,18 +674,24 @@ function useSmontaggio(scena: Object3D, clip: AnimationClip | undefined) {
 
 function Modello({
   store,
-  smontaggio,
+  fase,
   ridotto,
   bloccata,
   onBloccata,
   onPronto,
+  comandiRef,
+  onCameraLibera,
+  onZoom,
 }: {
   store: SimulatorStore;
-  smontaggio: number;
+  fase: number;
   ridotto: boolean;
   bloccata: boolean;
   onBloccata: () => void;
   onPronto: () => void;
+  comandiRef: MutableRefObject<ComandiScena | null>;
+  onCameraLibera: () => void;
+  onZoom: (stato: StatoZoom) => void;
 }) {
   const { scene, animations } = useGLTF(modello3d.file, false, true);
   const invalidate = useThree((s) => s.invalidate);
@@ -548,19 +702,60 @@ function Modello({
   const machine = useStore(store, (s) => s.session.machine);
   const coppie = useStore(store, (s) => s.session.config.plugboard);
 
+  // La fase scelta è un bersaglio: la clip ci arriva in un secondo per fase (subito con `prefers-reduced-motion`).
+  const [valore, setValore] = useState(fase);
+  const corrente = useRef(fase);
+  const velocita = useRef(1);
+  const ultimoMs = useRef(0);
+  useEffect(() => {
+    velocita.current = velocitaSmontaggio(corrente.current, fase);
+    ultimoMs.current = performance.now();
+    invalidate();
+  }, [fase, invalidate]);
+  // Il tempo è quello vero: con pochi fotogrammi al secondo i pezzi non rallentano, fanno meno passi.
+  useFrame(() => {
+    if (corrente.current === fase) return;
+    const ora = performance.now();
+    const secondi = Math.min((ora - ultimoMs.current) / 1000, 0.5);
+    ultimoMs.current = ora;
+    const passo = ridotto ? Infinity : secondi * velocita.current;
+    corrente.current =
+      corrente.current < fase ? Math.min(corrente.current + passo, fase) : Math.max(corrente.current - passo, fase);
+    setValore(corrente.current);
+    if (corrente.current !== fase) invalidate();
+  });
+
   useEffect(() => {
     const sciogli = collegaAlloStore(parti, store, () => invalidate(), ridotto);
     onPronto();
     return sciogli;
   }, [store, parti, invalidate, onPronto, ridotto]);
 
-  // Il selettore è il tempo della clip: l'azione sta in pausa e si porta al punto voluto.
+  // Il valore è il tempo della clip: l'azione sta in pausa e si porta al punto voluto.
   useEffect(() => {
-    portaLaClip(animazione, smontaggio);
-    applicaSmontaggio(parti, smontaggio);
-    segnalaTempo(tela, smontaggio);
+    portaLaClip(animazione, valore);
+    applicaSmontaggio(parti, valore);
+    segnalaTempo(tela, valore);
     invalidate();
-  }, [animazione, parti, smontaggio, tela, invalidate]);
+  }, [animazione, parti, valore, tela, invalidate]);
+
+  // L'ingombro dei pezzi a una fase intera: si porta la clip lì, si misura e si rimette com'era.
+  const ingombro = useCallback(
+    (alla: number, nodi: readonly string[] | null): Box3 => {
+      portaLaClip(animazione, alla);
+      scene.updateMatrixWorld(true);
+      const scatola = new Box3();
+      for (const nome of nodi ?? []) {
+        const nodo = scene.getObjectByName(nome);
+        if (nodo) scatola.expandByObject(nodo);
+      }
+      if (scatola.isEmpty()) scatola.setFromObject(scene);
+      portaLaClip(animazione, corrente.current);
+      scene.updateMatrixWorld(true);
+      return scatola;
+    },
+    [animazione, scene],
+  );
 
   // Il primo pezzo colpito decide: un tasto nascosto dietro la cassa non si preme.
   const onClick = (event: ThreeEvent<MouseEvent>) => {
@@ -570,6 +765,14 @@ function Modello({
     if (!lettera) return;
     if (bloccata) onBloccata();
     else store.getState().press(lettera);
+  };
+  // Un doppio clic su un pezzo porta la camera su di lui.
+  const onDoubleClick = (event: ThreeEvent<MouseEvent>) => {
+    event.stopPropagation();
+    const pezzo = pezzoSotto(event.object);
+    if (!pezzo) return;
+    comandiRef.current?.centraSu(pezzo);
+    onCameraLibera();
   };
   const onPointerMove = (event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
@@ -581,6 +784,7 @@ function Modello({
       <primitive
         object={scene}
         onClick={onClick}
+        onDoubleClick={onDoubleClick}
         onPointerMove={onPointerMove}
         onPointerOut={() => mostraManina(tela, false)}
       />
@@ -588,11 +792,18 @@ function Modello({
         parti.rotori.map((parte, slot) => {
           const rotore = machine.rotors[slot];
           return rotore ? (
-            <CablaggioRotore key={parte.rotore.name} parte={parte} cablaggio={rotore.forward} smontaggio={smontaggio} />
+            <CablaggioRotore key={parte.rotore.name} parte={parte} cablaggio={rotore.forward} smontaggio={valore} />
           ) : null;
         })}
-      <CaviPannello scena={scene} coppie={coppie ?? EMPTY} smontaggio={smontaggio} />
-      <CameraSullo smontaggio={smontaggio} ridotto={ridotto} />
+      <CaviPannello scena={scene} coppie={coppie ?? EMPTY} smontaggio={valore} />
+      <Regia
+        fase={fase}
+        ridotto={ridotto}
+        ingombro={ingombro}
+        comandiRef={comandiRef}
+        onCameraLibera={onCameraLibera}
+        onZoom={onZoom}
+      />
     </>
   );
 }
@@ -601,21 +812,29 @@ const EMPTY: readonly string[] = [];
 
 export default function Scena({
   store,
-  smontaggio,
+  fase,
   ridotto,
   bloccata,
   onBloccata,
   onPronto,
+  comandiRef,
+  onCameraLibera,
+  onZoom,
 }: {
   store: SimulatorStore;
-  /** Il selettore: da 0 (macchina chiusa) a 4 (meccanica sotto i tasti), il tempo in secondi della clip `smontaggio`. */
-  smontaggio: number;
-  /** `prefers-reduced-motion`: la camera si ferma appena si lascia il mouse e salta alle inquadrature, senza animazioni. */
+  /** La fase dello smontaggio da raggiungere: da 0 (macchina chiusa) a 4 (meccanica sotto i tasti). */
+  fase: number;
+  /** `prefers-reduced-motion`: i pezzi e la camera saltano alle posizioni nuove, senza transizioni. */
   ridotto: boolean;
   /** Con la macchina smontata i tasti del modello non cifrano: il clic chiama `onBloccata`. */
   bloccata: boolean;
   onBloccata: () => void;
   onPronto: () => void;
+  /** La scena vi mette i comandi della camera appena è pronta, per i pulsanti della pagina. */
+  comandiRef: MutableRefObject<ComandiCamera | null>;
+  /** La camera è stata mossa a mano (o con il doppio clic): nessuna vista predefinita è più attiva. */
+  onCameraLibera: () => void;
+  onZoom: (stato: StatoZoom) => void;
 }) {
   return (
     <Canvas frameloop="demand" dpr={[1, 2]} flat camera={CAMERA} gl={{ alpha: true, antialias: true }}>
@@ -627,25 +846,20 @@ export default function Scena({
         <Lightformer form="rect" intensity={0.8} position={[-3, 1, 2]} rotation-y={Math.PI / 3} scale={[3, 2, 1]} />
         <Lightformer form="rect" intensity={0.6} position={[3, 1, -2]} rotation-y={-Math.PI / 2} scale={[3, 2, 1]} />
       </Environment>
+      <CameraControls makeDefault />
       <Suspense fallback={null}>
         <Modello
           store={store}
-          smontaggio={smontaggio}
+          fase={fase}
           ridotto={ridotto}
           bloccata={bloccata}
           onBloccata={onBloccata}
           onPronto={onPronto}
+          comandiRef={comandiRef as MutableRefObject<ComandiScena | null>}
+          onCameraLibera={onCameraLibera}
+          onZoom={onZoom}
         />
       </Suspense>
-      <OrbitControls
-        makeDefault
-        target={BERSAGLIO}
-        enablePan={false}
-        enableDamping={!ridotto}
-        minDistance={0.3}
-        maxDistance={3}
-        maxPolarAngle={Math.PI / 2 - 0.05}
-      />
     </Canvas>
   );
 }

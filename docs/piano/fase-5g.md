@@ -64,4 +64,37 @@ pnpm verify && pnpm build && pnpm test:e2e && pnpm test:lighthouse
 ```
 verdi, con i test nuovi del passo 6. L’«Esito» riporta il giudizio di Marco sulle immagini.
 
-**Esito.** Da compilare.
+**Esito** (2026-11-05)
+
+- Layout «Banco e foglio» di `docs/design.md`: il vano della scena a sinistra con la pulsantiera nel
+  piede, il foglio a destra (titolo, riga della configurazione, elenco delle cinque fasi, messaggio),
+  «Come si usa» e crediti sotto la piega. Scala a 1280 × 720 come la home; sotto 1024 × 576 la
+  colonna a 375 px, con le viste in un menu. Riscritti `Macchina.tsx`, `macchina.css`,
+  `src/pages/macchina/index.astro`; `BaseLayout.astro` ha due proprietà nuove (`htmlClass`, `largo`).
+- Camera: `OrbitControls` sostituito da `CameraControls` di drei (`grep -c OrbitControls` → `0`).
+  Trascinare ruota, Shift o tasto destro spostano, rotella e pizzico avvicinano, sul tocco un dito
+  ruota e due spostano e pizzicano; lo spostamento è limitato all’ingombro della macchina in tutte
+  le fasi. Con `prefers-reduced-motion` ogni passaggio è istantaneo.
+- Scarti dal piano, in `docs/design.md`, «Come l’ha realizzata la 5g»: niente `fitToBox`, che
+  arrotonda la direzione all’asse più vicino; `inquadra()` in `geometria.ts` fa lo stesso conto
+  senza toccare la direzione. Le viste sono una direzione più i nodi inquadrati alla fase corrente,
+  non coordinate fisse: i pezzi si spostano con lo smontaggio.
+- Lo smontaggio è un elenco di cinque opzioni: la clip ci arriva a un secondo per fase (al più 2,5 s),
+  con il tempo vero e non per fotogramma. Spariscono `machine3d.phaseBetween`, `machine3d.reassemble`
+  e `testoSelettore`. Il doppio clic su un pezzo (non sui tasti) centra la camera.
+- Test: unitari nuovi in `src/components/macchina/macchina.test.ts` (inquadratura con proiezione degli
+  spigoli, viste, zoom, pezzi); e2e in `tests/e2e/macchina.spec.ts`: «Dall’alto» e `data-vista`,
+  pulsantiera con Tab, lettere che accendono la lampada senza muovere la camera, zoom. I test dello
+  smontaggio scelgono l’opzione invece di fare `fill` sul cursore.
+- Schermate in `docs/screenshot/3d/layout/`: 1280 × 720 e 375 px (pagina intera), fasi 0 e 4, tema
+  chiaro e scuro (8 file), prese come in G5 con Playwright su `astro preview`. A fase 4 la macchina
+  esplosa sta tutta nella scena, coperchio e pannello frontale compresi.
+- **Giudizio di Marco sulle immagini: da registrare.**
+- Da sapere: la prima inquadratura a fase 0 è più stretta dell’anteprima statica (margine del 6 %
+  invece dell’inquadratura di Blender), quindi quando la scena parte la macchina si ingrandisce un
+  po’. La 5f
+  tocca ancora `Scena.tsx`: dopo questa fase va fatta partendo da `main`.
+- Comandi eseguiti: `grep -c 'OrbitControls' src/components/macchina/Scena.tsx` → `0`;
+  `pnpm verify` verde; `pnpm build && pnpm test:e2e` → 206 passati, 24 saltati (test di
+  altri file che girano solo su desktop o solo su un progetto); `pnpm test:lighthouse` → budget rispettato su tutte le pagine, `/macchina/`
+  prestazioni 100 a desktop e 91 a 375 px, accessibilità 100.
