@@ -154,6 +154,11 @@ Q, K, M, Y dei tasti spariscono proprio quelle lettere.
   vista in `/macchina/` e in «Fonti e crediti», con l’elenco delle modifiche. Il pulsante dice
   «circa 6 MB».
 
+Correzione dello stesso giorno, dopo la prova di Marco: nella fila di sopra del pannello gli anelli
+copiati erano sdoppiati, perché stavano su una griglia stimata dalle altre due file, fino a 1,4 mm
+sopra gli anelli che la texture della lastra ha nel punto giusto. Ora ogni presa copiata sta a metà
+fra i due puntali della spina tolta (`_centri_prese` in `esterno.py`).
+
 Resta per le fasi dopo:
 
 - 4m: il passo dei rotori (30 mm) contro quello delle finestrelle di ASHISH (28,1 mm), le rotelle a

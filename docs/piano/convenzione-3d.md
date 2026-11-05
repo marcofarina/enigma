@@ -110,7 +110,9 @@ codice su un cerchio, dalla posizione del nodo e da `raggio_contatti`.
 
 **Il pannello a spine.** ASHISH ha 18 spine inserite (nove cavi) e disegna la presa solo dove non
 c’è una spina, cioè in 9 posti su 26. La 4l toglie spine e cavi (li disegna la pagina, D15) e copia
-una presa di ASHISH negli altri 17 posti. Le file sono 9, 8 e 9, nell’ordine di `FILE_QWERTZ`, a
+una presa di ASHISH negli altri 17 posti, ciascuna nel punto a metà fra i due puntali della spina
+tolta: la lastra è un po’ inclinata e le sue texture hanno gli anelli già nel punto giusto, quindi
+una griglia stimata li sdoppierebbe. Le file sono 9, 8 e 9, nell’ordine di `FILE_QWERTZ`, a
 26,2 mm di passo; la fila di sopra e quella di sotto sono spostate di mezzo passo rispetto a quella di
 mezzo.
 
