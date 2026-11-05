@@ -1,10 +1,11 @@
 import { Component, lazy, Suspense, useCallback, useEffect, useState, type ReactNode } from 'react';
 import { useStore } from 'zustand';
 import { groupLetters, windowLetters } from '@/engine';
-import { t, tf } from '@/i18n';
+import { t, tf, type UiKey } from '@/i18n';
 import { modello3d } from '@/lib/modello3d';
 import { url } from '@/lib/url';
 import { currentState } from '../simulator/session.ts';
+import { FASI, posizioneSelettore } from './geometria.ts';
 import { createSimulatorStore, useKeyCapture } from '../simulator/store.ts';
 import { queryPerIlSimulatore, sessioneDallaQuery } from './configurazione.ts';
 
@@ -50,6 +51,22 @@ function Avviso({ children }: { children: ReactNode }) {
   );
 }
 
+/** Il testo del selettore: la fase in parole, oppure «da … a …» quando sta a metà fra due. */
+function testoSelettore(valore: number): string {
+  const posizione = posizioneSelettore(valore);
+  const fase = (n: number) => t(`machine3d.phase.${n}` as UiKey);
+  return 'fase' in posizione
+    ? fase(posizione.fase)
+    : tf('machine3d.phaseBetween', { from: fase(posizione.da), to: fase(posizione.a) });
+}
+
+/**
+ * Un tasto rifiutato perché la macchina è smontata: quante volte, a quale tasto (`pulse`) era la
+ * macchina, e se il selettore è già tornato a zero (`ritirato`: il messaggio visibile sparisce, ma
+ * l'annuncio resta com'è e non si ripete).
+ */
+type Blocco = { n: number; pulse: number; ritirato: boolean } | null;
+
 function initialStore() {
   const { session, avviso } = sessioneDallaQuery(window.location.search);
   return { store: createSimulatorStore(session), avviso };
@@ -64,10 +81,24 @@ export default function Macchina() {
   const [{ store, avviso }] = useState(initialStore);
   const [fase, setFase] = useState<Fase>('anteprima');
   const [ridotto] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const palco = useKeyCapture(store);
+  const [smontaggio, setSmontaggio] = useState(0);
+  const [blocco, setBlocco] = useState<Blocco>(null);
+  const smontata = smontaggio > 0;
   const session = useStore(store, (s) => s.session);
   const pulse = useStore(store, (s) => s.pulse);
+  // A macchina smontata la tastiera non cifra: né quella fisica né i tasti del modello. Il rifiuto si annuncia.
+  const rifiuta = useCallback(() => setBlocco((b) => ({ n: (b?.n ?? 0) + 1, pulse, ritirato: false })), [pulse]);
+  const palco = useKeyCapture(store, () => {
+    if (!smontata) return false;
+    rifiuta();
+    return true;
+  });
   const attiva = fase === 'caricamento' || fase === 'pronta';
+
+  const muoviSelettore = (valore: number) => {
+    setSmontaggio(valore);
+    if (valore === 0) setBlocco((b) => (b ? { ...b, ritirato: true } : b));
+  };
 
   const avvia = () => setFase(haWebGL2() ? 'caricamento' : 'senza-webgl');
   const onPronto = useCallback(() => setFase('pronta'), []);
@@ -116,7 +147,14 @@ export default function Macchina() {
         {attiva && (
           <Confine onErrore={onErrore}>
             <Suspense fallback={null}>
-              <Scena store={store} ridotto={ridotto} onPronto={onPronto} />
+              <Scena
+                store={store}
+                smontaggio={smontaggio}
+                ridotto={ridotto}
+                bloccata={smontata}
+                onBloccata={rifiuta}
+                onPronto={onPronto}
+              />
             </Suspense>
           </Confine>
         )}
@@ -135,6 +173,41 @@ export default function Macchina() {
         )}
       </div>
 
+      {fase === 'pronta' && (
+        <div className="macchina-smontaggio">
+          <label htmlFor="smontaggio">{t('machine3d.explode.label')}</label>
+          <input
+            id="smontaggio"
+            type="range"
+            min={0}
+            max={FASI}
+            step="any"
+            value={smontaggio}
+            aria-valuetext={testoSelettore(smontaggio)}
+            onChange={(event) => muoviSelettore(Number(event.target.value))}
+            onKeyDown={(event) => {
+              // Con `step="any"` i tasti freccia non hanno un passo: ogni pressione va alla fase vicina.
+              const verso = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[event.key];
+              if (verso === undefined) return;
+              event.preventDefault();
+              const vicina = verso > 0 ? Math.floor(smontaggio + 0.01) + 1 : Math.ceil(smontaggio - 0.01) - 1;
+              muoviSelettore(Math.min(Math.max(vicina, 0), FASI));
+            }}
+          />
+          <span className="macchina-fase" aria-hidden="true">
+            {testoSelettore(smontaggio)}
+          </span>
+          <button type="button" className="btn" disabled={!smontata} onClick={() => muoviSelettore(0)}>
+            {t('machine3d.reassemble')}
+          </button>
+        </div>
+      )}
+      {smontata && blocco && !blocco.ritirato && (
+        <p className="macchina-avviso" data-blocco>
+          {t('machine3d.locked')}
+        </p>
+      )}
+
       {(fase === 'senza-webgl' || fase === 'errore') && (
         <Avviso>
           {t(fase === 'errore' ? 'machine3d.error' : 'machine3d.noWebgl')}{' '}
@@ -144,7 +217,11 @@ export default function Macchina() {
 
       {/* Annuncio per chi usa un lettore di schermo, e appiglio per i test: una riga nuova a ogni tasto. */}
       <p className="sr-only" aria-live="polite" aria-atomic="true" data-annuncio>
-        {ultimo && pulse > 0 && <span key={pulse}>{tf('machine3d.live', { letter: ultimo.output })}</span>}
+        {blocco && blocco.pulse === pulse ? (
+          <span key={`blocco-${blocco.n}`}>{t('machine3d.locked')}</span>
+        ) : (
+          ultimo && pulse > 0 && <span key={pulse}>{tf('machine3d.live', { letter: ultimo.output })}</span>
+        )}
       </p>
 
       <dl className="macchina-nastro">

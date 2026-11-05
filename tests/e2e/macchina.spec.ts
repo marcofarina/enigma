@@ -20,6 +20,16 @@ function richieste(page: Page): string[] {
 const avvia = (page: Page) => page.getByRole('button', { name: 'Avvia la vista 3D' });
 const scena = (page: Page) => page.getByRole('application', { name: /Enigma I in 3D/ });
 const annuncio = (page: Page) => page.locator('[data-annuncio]');
+const selettore = (page: Page) => page.getByLabel('Smontaggio', { exact: true });
+const finestrelle = (page: Page) => page.locator('.macchina-nastro dd').first();
+const MESSAGGIO_BLOCCO = 'La macchina è smontata e non cifra: riporta il selettore su «macchina chiusa».';
+
+/** Apre `/macchina/` con l'Enigma I da `positions` (rotori I, II e III) e avvia la vista. */
+async function avviaDa(page: Page, positions: string) {
+  await page.goto(`macchina/?${encodeConfig({ ...defaultConfig('I'), positions })}`);
+  await avvia(page).click();
+  await expect(scena(page)).toHaveAttribute('data-fase', 'pronta', { timeout: 45_000 });
+}
 
 test('né la home né la pagina 3D scaricano three.js o il modello prima del pulsante', async ({ page }) => {
   const urls = richieste(page);
@@ -100,4 +110,95 @@ test('senza WebGL resta un avviso con il rimando al simulatore', async ({ page }
   await expect(page.getByRole('note').filter({ hasText: 'non ha WebGL' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Apri il simulatore' })).toHaveAttribute('href', /^\/enigma\/\?v=1/);
   expect(urls.filter(pesante)).toEqual([]);
+});
+
+test.describe('smontaggio', () => {
+  test.setTimeout(60_000);
+
+  test('il selettore a 4 dice la fase in parole e porta la clip alla fine', async ({ page }) => {
+    await avviaDa(page, 'AAA');
+    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'macchina chiusa');
+    await selettore(page).fill('4');
+    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'meccanica sotto i tasti');
+    // La clip dura 4 s e si ferma un attimo prima, dove un'azione che si ripete tornerebbe a zero.
+    await expect(page.locator('canvas')).toHaveAttribute('data-tempo-clip', /^3\.99/);
+    await selettore(page).fill('2.5');
+    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'da rotori estratti a rotori aperti');
+    await expect(page.locator('canvas')).toHaveAttribute('data-tempo-clip', '2.5');
+    await page.getByRole('button', { name: 'Rimonta la macchina' }).click();
+    await expect(selettore(page)).toHaveValue('0');
+    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'macchina chiusa');
+  });
+
+  test('con i tasti freccia il selettore passa da una fase all’altra', async ({ page }) => {
+    await avviaDa(page, 'AAA');
+    await selettore(page).focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'macchina aperta');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'rotori aperti');
+    await page.keyboard.press('ArrowLeft');
+    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'rotori estratti');
+  });
+
+  test('a macchina smontata la tastiera non cifra e il messaggio viene annunciato', async ({ page }) => {
+    await avviaDa(page, 'AAA');
+    await selettore(page).fill('2');
+    await scena(page).focus();
+    await page.keyboard.press('a');
+    await expect(annuncio(page)).toHaveText(MESSAGGIO_BLOCCO);
+    await expect(page.locator('[data-blocco]')).toHaveText(MESSAGGIO_BLOCCO);
+    await expect(page.locator('[data-nastro="tasti"]')).toHaveText('');
+    await expect(finestrelle(page)).toHaveText('A A A');
+    await page.keyboard.press('Backspace');
+    await expect(annuncio(page)).toHaveText(MESSAGGIO_BLOCCO);
+
+    // Rimontata, la macchina cifra di nuovo, e l'annuncio torna a essere la lampada.
+    await page.getByRole('button', { name: 'Rimonta la macchina' }).click();
+    await expect(page.locator('[data-blocco]')).toHaveCount(0);
+    await scena(page).focus();
+    await page.keyboard.press('a');
+    await expect(annuncio(page)).toHaveText(`Lampada ${encipherWith(defaultConfig('I'), 'A')}`);
+    await expect(finestrelle(page)).toHaveText('A A B');
+  });
+
+  test('da ADU i rotori mostrano il doppio passo: ADV, AEW, BFX', async ({ page }) => {
+    await avviaDa(page, 'ADU');
+    await expect(finestrelle(page)).toHaveText('A D U');
+    await scena(page).focus();
+    for (const [lettera, attese] of [
+      ['a', 'A D V'],
+      ['b', 'A E W'], // il rotore III era sulla tacca: avanza anche il centrale
+      ['c', 'B F X'], // il centrale è sulla tacca: avanzano insieme il centrale e quello di sinistra
+      ['d', 'B F Y'],
+    ] as const) {
+      await page.keyboard.press(lettera);
+      await expect(finestrelle(page)).toHaveText(attese);
+    }
+    expect(await page.locator('[data-nastro="lampade"]').textContent()).toBe(
+      encipherWith({ ...defaultConfig('I'), positions: 'ADU' }, 'ABCD'),
+    );
+  });
+
+  test('con prefers-reduced-motion il selettore sposta lo stesso i pezzi', async ({ browser, baseURL }) => {
+    const context = await browser.newContext({ reducedMotion: 'reduce', baseURL: baseURL ?? '' });
+    const page = await context.newPage();
+    await avviaDa(page, 'AAA');
+    await selettore(page).fill('3');
+    await expect(page.locator('canvas')).toHaveAttribute('data-tempo-clip', '3');
+    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'rotori aperti');
+    await context.close();
+  });
+
+  test('i cavi del pannello e il cablaggio non cambiano l’accessibilità', async ({ page }) => {
+    const config = { ...defaultConfig('I'), plugboard: ['AF', 'TV', 'KO'] };
+    await page.goto(`macchina/?${encodeConfig(config)}`);
+    await avvia(page).click();
+    await expect(scena(page)).toHaveAttribute('data-fase', 'pronta', { timeout: 45_000 });
+    await selettore(page).fill('3');
+    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'rotori aperti');
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(results.violations).toEqual([]);
+  });
 });

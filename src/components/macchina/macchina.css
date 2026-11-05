@@ -120,3 +120,29 @@
   flex-wrap: wrap;
   gap: 0.75rem;
 }
+
+/* Il selettore dello smontaggio e il suo testo. */
+.macchina-smontaggio {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+.macchina-smontaggio label {
+  font-weight: 600;
+}
+
+.macchina-smontaggio input[type='range'] {
+  flex: 1 1 14rem;
+  min-width: 10rem;
+  min-height: 2.75rem;
+  accent-color: var(--color-accent);
+}
+
+.macchina-fase {
+  min-width: 10rem;
+  font-family: var(--font-mono);
+  font-size: var(--type-caption);
+  color: var(--ink-muted);
+}

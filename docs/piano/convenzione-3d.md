@@ -72,8 +72,8 @@ quale proprietà; la colonna «Da» dice la fase che lo crea.
 
 **Tacca.** I tre anelli hanno la stessa mesh, con la tacca nel bordo di destra sotto il numero 01, e
 `<rotore>_tacca` sta sul fondo della tasca. Nella macchina vera la tacca cambia posto con il tipo di
-rotore (Q, E, V, J, Z): il modello non lo sa, e la 5b dovrà decidere come mostrarlo (vedi
-l’«Esito» della 4j).
+rotore (Q, E, V, J, Z): il modello non lo sa. La 5b ha deciso di accettare la discrepanza: la tacca
+visibile sta sempre sotto il 01, e se un nottolino è in presa lo dice il motore (`engagedPawls`).
 
 `<rotore>` sta per `rotore_destro`, `rotore_centrale` o `rotore_sinistro`. Il `nottolino_centrale`
 appoggia sull’anello del rotore destro; il `nottolino_sinistro` appoggia sull’anello del centrale,

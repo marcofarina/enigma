@@ -118,13 +118,27 @@ export function handlePhysicalKey(store: SimulatorStore, event: KeyboardEvent | 
  * dentro di esso (per esempio dopo un clic su un tasto). L’ascoltatore sta qui e non su un
  * attributo `onKeyDown`, perché il contenitore non è un controllo: i tasti li gestiscono i
  * controlli che contiene, e il contenitore li raccoglie quando risalgono.
+ *
+ * `bloccata`, se c’è, è chiamata a ogni tasto che la macchina userebbe (lettere e Backspace): se
+ * risponde `true` il tasto è assorbito e la macchina non cifra. Serve alla vista 3D, che con la
+ * macchina smontata non ha niente da far girare.
  */
-export function useKeyCapture(store: SimulatorStore) {
+export function useKeyCapture(store: SimulatorStore, bloccata?: () => boolean) {
   const ref = useRef<HTMLDivElement>(null);
+  const guard = useRef(bloccata);
+  guard.current = bloccata;
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
-    const onKeyDown = (event: KeyboardEvent) => handlePhysicalKey(store, event);
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (guard.current && !event.defaultPrevented && !isEditableTarget(event.target) && keyAction(event)) {
+        if (guard.current()) {
+          event.preventDefault();
+          return;
+        }
+      }
+      handlePhysicalKey(store, event);
+    };
     element.addEventListener('keydown', onKeyDown);
     return () => element.removeEventListener('keydown', onKeyDown);
   }, [store]);

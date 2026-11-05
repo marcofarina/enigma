@@ -76,7 +76,7 @@ indice e il proprio file in `docs/piano/` (tabella in fondo).
 | 4j | Modello 3D: geometria completa e ancore | Sonnet | high | 3 h | 4i; Marco al Mac con Blender aperto | fatta (2026-11-05) |
 | 4k | Modello 3D: animazione dello smontaggio | Sonnet | high | 2 h | 4j; Marco al Mac con Blender aperto | fatta (2026-11-05) |
 | 5a | Pagina 3D: architettura, caricamento e digitazione | Opus | high | 3 h | 4h, 4i | fatta (2026-11-05) |
-| 5b | Pagina 3D: vista esplosa, cablaggio e nottolini | Sonnet | high | 3 h | 4k, 5a | da fare |
+| 5b | Pagina 3D: vista esplosa, cablaggio e nottolini | Sonnet | high | 3 h | 4k, 5a | fatta (2026-11-05) |
 | 5c | Pagina 3D: schede dei pezzi | Opus | high | 2,5 h | 5b | da fare |
 | 5d | Lezione animata: copione, lettore e scena | Opus | high | 3 h | 5b, D16–D19 | da fare |
 | 5e | Lezione animata: testo, voce e crediti | Opus | high | 2,5 h | 5d; Marco ha scelto la voce (D17) | da fare |
