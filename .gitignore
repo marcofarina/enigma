@@ -14,3 +14,6 @@ playwright-report/
 # Libri coperti da copyright, solo in locale
 docs/books/
 __pycache__/
+
+# Anteprime delle fasi dello smontaggio, rese da scripts/blender/costruisci.py
+scripts/blender/anteprime/

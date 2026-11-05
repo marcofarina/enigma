@@ -33,6 +33,7 @@ import cassa  # noqa: E402
 import lampade  # noqa: E402
 import meccanica  # noqa: E402
 import rotori  # noqa: E402
+import smontaggio  # noqa: E402
 import tastiera  # noqa: E402
 
 # Nella sessione aperta dell'MCP i moduli restano importati fra un'esecuzione e l'altra: si
@@ -41,6 +42,8 @@ import tastiera  # noqa: E402
 importlib.reload(comune)
 importlib.reload(atlante)
 PEZZI = [importlib.reload(modulo) for modulo in (cassa, tastiera, lampade, rotori, meccanica)]
+importlib.reload(smontaggio)
+ANTEPRIME = QUI / "anteprime"  # un'immagine per fase dello smontaggio; non va in git
 
 
 def costruisci():
@@ -50,11 +53,20 @@ def costruisci():
     for pezzo in PEZZI:
         pezzo.costruisci(mats)
     bpy.context.view_layer.update()
+    smontaggio.costruisci()
+    problemi = smontaggio.sovrapposizioni()
+    if problemi:
+        raise RuntimeError(f"a smontaggio finito si sovrappongono: {problemi}")
 
 
 def esporta():
-    """Esporta tutta la scena, prima che ci siano la camera e la luce dell'anteprima."""
+    """Esporta tutta la scena, prima che ci siano la camera e la luce dell'anteprima.
+
+    La scena è sul fotogramma 0, quindi i nodi escono con la macchina chiusa. Le tracce di `location`
+    diventano un'unica animazione, `smontaggio`, col tempo della scena (24 fotogrammi al secondo).
+    """
     CARTELLA.mkdir(parents=True, exist_ok=True)
+    bpy.context.scene.frame_set(0)
     bpy.ops.export_scene.gltf(
         filepath=str(GLB),
         export_format="GLB",
@@ -64,6 +76,10 @@ def esporta():
         export_cameras=False,
         export_lights=False,
         export_materials="EXPORT",
+        export_animations=True,
+        export_animation_mode="SCENE",
+        export_anim_scene_split_object=False,
+        export_frame_range=False,
     )
     print(f"esportato {GLB} ({GLB.stat().st_size} byte)")
 
@@ -120,7 +136,30 @@ def anteprima():
     print(f"anteprima in {ANTEPRIMA}.{impostazioni.file_format.lower()}")
 
 
+def anteprime_fasi():
+    """Rende un'immagine per fase dello smontaggio in anteprime/: fase-0.png è la macchina chiusa,
+    fase-1.png … fase-4.png la fine di ciascuna fase. Servono a guardare il risultato prima di
+    esportare; si chiama dopo anteprima(), che mette camera e luce."""
+    scena = bpy.context.scene
+    camera = scena.camera
+    bersaglio = (0.0, 0.0, 0.13)
+    camera.location = (0.62, -1.00, 0.72)
+    _guarda(camera, bersaglio)
+    scena.render.resolution_x, scena.render.resolution_y = 960, 540
+    scena.render.film_transparent = False
+    scena.render.image_settings.file_format = "PNG"
+    scena.render.image_settings.color_mode = "RGB"
+    ANTEPRIME.mkdir(exist_ok=True)
+    for fase in range(5):
+        scena.frame_set(fase * smontaggio.FOTOGRAMMI_FASE)
+        scena.render.filepath = str(ANTEPRIME / f"fase-{fase}")
+        bpy.ops.render.render(write_still=True)
+    scena.frame_set(0)
+    print(f"anteprime delle fasi in {ANTEPRIME}")
+
+
 if __name__ == "__main__":
     costruisci()
     esporta()
     anteprima()
+    anteprime_fasi()

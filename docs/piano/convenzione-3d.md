@@ -4,7 +4,8 @@ Convenzione fissata il 2026-11-05 nella revisione delle fasi 3D; valgono D14 e D
 e la può correggere; dopo la 4i cambia solo con una modifica di questa sezione e di `NODI_ATTESI`
 in `scripts/verifica-modello.ts`, nello stesso commit. `FASE_MODELLO`, nello stesso file, dice fin
 dove è arrivato il modello: `pnpm verifica:modello` cerca solo i nodi delle fasi fino a quella. La
-4j l’ha portata a `'4j'` (il tetto del peso è passato da 300 KB a 1 MB).
+4j l’ha portata a `'4j'` (il tetto del peso è passato da 300 KB a 1 MB) e la 4k a `'4k'` (la verifica
+controlla anche la clip `smontaggio`).
 
 **Unità e assi.** Un’unità è un metro, con le dimensioni reali della macchina. L’origine sta al
 centro del fondo della cassa. glTF ha Y in alto: l’esportatore converte le trasformazioni da
@@ -60,7 +61,7 @@ quale proprietà; la colonna «Da» dice la fase che lo crea.
 | `asse_rotori` | l’asse su cui stanno i rotori | clip, fase 2 | 4i |
 | `rotore_destro`, `rotore_centrale`, `rotore_sinistro` | i rotori, gruppi con l’origine sull’asse | codice, rotazione su X (posizione); clip, traslazione, fase 2 | 4i |
 | `<rotore>_anello` | l’anello con i numeri da 01 a 26 e la tacca | codice, rotazione su X (Ringstellung); clip, traslazione, fase 3 | 4i |
-| `<rotore>_nucleo` | il corpo del rotore; il cablaggio interno non si modella | clip, fase 3 | 4j |
+| `<rotore>_nucleo` | il corpo del rotore; il cablaggio interno non si modella | clip, fase 3: porta `fase` ma resta fermo, gli altri pezzi si aprono attorno a lui | 4j |
 | `<rotore>_contatti_molla`, `<rotore>_contatti_piani` | i 26 puntali a molla di un lato e i 26 contatti piani dell’altro | clip, fase 3 | 4j |
 | `<rotore>_cricchetto` | la ruota a 26 denti su cui spinge il nottolino | clip, fase 3 | 4j |
 | `<rotore>_rotella` | la rotella zigrinata con cui si gira il rotore a mano | clip, fase 3 | 4j |
@@ -126,3 +127,9 @@ tracce. Così `AnimationMixer` e il codice non si sovrascrivono a vicenda. La re
 | 4 | si alza la `tastiera` ed esce la `batteria` | «meccanica sotto i tasti» |
 
 Al valore 0 il selettore dice «macchina chiusa».
+
+**La clip `smontaggio`** (4k). Un’animazione sola di 4 s, un secondo per fase, con tracce
+`translation` e basta; la macchina chiusa è al secondo 0. Ogni nodo si muove solo nel secondo della
+sua fase e resta fermo prima e dopo. Nella fase 2 i rotori salgono fino a 1,5 s e si allargano lungo X
+fino a 2 s: il passo fra i rotori diventa di 70 mm (e l’asse è lungo 210 mm, per tenerli infilati). Gli
+spostamenti sono in `scripts/blender/smontaggio.py`. Le ancore non seguono lo smontaggio.

@@ -9,12 +9,16 @@
 import { readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
-const FASI = ['4i', '4j'] as const;
+const FASI = ['4i', '4j', '4k'] as const;
 type Fase = (typeof FASI)[number];
-const FASE_MODELLO: Fase = '4j';
+const FASE_MODELLO: Fase = '4k';
 
 /** Tetto del peso: 300 KB per l’abbozzo della 4i, 1 MB per il modello completo (D15). */
-const TETTO: Record<Fase, number> = { '4i': 300 * 1024, '4j': 1024 * 1024 };
+const TETTO: Record<Fase, number> = { '4i': 300 * 1024, '4j': 1024 * 1024, '4k': 1024 * 1024 };
+
+/** La clip dello smontaggio (fase 4k): un’animazione sola, un secondo per ciascuna delle quattro fasi. */
+const CLIP = { nome: 'smontaggio', secondiPerFase: 1, fasi: 4 };
+const EPSILON = 1e-4;
 
 /**
  * La cassa dell’Enigma I secondo la scheda del Deutsches Technikmuseum (fonte «technikmuseum-enigma»
@@ -98,6 +102,15 @@ interface Accessor {
   count: number;
   min?: number[];
   max?: number[];
+  bufferView?: number;
+  byteOffset?: number;
+  componentType?: number;
+  type?: string;
+}
+interface Animazione {
+  name?: string;
+  channels: { sampler: number; target: { node?: number; path: string } }[];
+  samplers: { input: number; output: number; interpolation?: string }[];
 }
 interface Materiale {
   name?: string;
@@ -111,7 +124,7 @@ interface Gltf {
   bufferViews?: { byteOffset?: number; byteLength: number }[];
   meshes?: { name?: string; primitives: Primitiva[] }[];
   accessors?: Accessor[];
-  animations?: { name?: string; channels: { target: { node?: number; path: string } }[] }[];
+  animations?: Animazione[];
 }
 
 /**
@@ -261,6 +274,64 @@ function verifica(gltf: Gltf, bin: Buffer, peso: number) {
     }
   }
 
+  // La clip dello smontaggio (dalla 4k): una sola animazione lunga quattro secondi; ogni nodo che
+  // muove ha `fase` da 1 a 4 e si muove solo nel secondo della sua fase; ogni fase ha almeno un nodo.
+  const nodiPerFase = new Map<number, number>();
+  let durata = 0;
+  if (fasi.includes('4k')) {
+    const animazioni = gltf.animations ?? [];
+    const clip = animazioni[0];
+    if (animazioni.length !== 1 || clip?.name !== CLIP.nome) {
+      errori.push(
+        `le animazioni sono [${animazioni.map((a) => a.name ?? '?').join(', ')}]: deve esserci solo «${CLIP.nome}»`,
+      );
+    }
+    if (clip !== undefined) {
+      for (const campionatore of clip.samplers) {
+        durata = Math.max(durata, accessors[campionatore.input]?.max?.[0] ?? 0);
+      }
+      if (Math.abs(durata - CLIP.fasi * CLIP.secondiPerFase) > EPSILON) {
+        errori.push(`la clip dura ${durata} s, deve durare ${CLIP.fasi * CLIP.secondiPerFase}`);
+      }
+      for (const canale of clip.channels) {
+        const nodoMosso = canale.target.node === undefined ? undefined : nodi[canale.target.node];
+        const nome = nodoMosso?.name ?? '?';
+        const fase = nodoMosso?.extras?.['fase'];
+        if (typeof fase !== 'number' || !Number.isInteger(fase) || fase < 1 || fase > CLIP.fasi) {
+          errori.push(`${nome}: muove nella clip ma extras.fase non è un intero da 1 a ${CLIP.fasi}`);
+          continue;
+        }
+        const campionatore = clip.samplers[canale.sampler];
+        if (campionatore === undefined || canale.target.path !== 'translation') continue;
+        const tempi = leggiNumeri(gltf, bin, campionatore.input);
+        const valori = leggiNumeri(gltf, bin, campionatore.output);
+        if (tempi.length * 3 !== valori.length) {
+          errori.push(`${nome}: ${tempi.length} istanti e ${valori.length} valori di translation`);
+          continue;
+        }
+        const punto = (i: number) => valori.slice(3 * i, 3 * i + 3);
+        const inizio = (fase - 1) * CLIP.secondiPerFase;
+        const fine = fase * CLIP.secondiPerFase;
+        if (!uguale(nodoMosso?.translation, punto(0)) && nodoMosso?.translation !== undefined) {
+          errori.push(`${nome}: la translation a riposo non è il primo valore della clip`);
+        }
+        tempi.forEach((t, i) => {
+          if (t <= inizio + EPSILON && !uguale(punto(i), punto(0))) {
+            errori.push(`${nome}: si muove prima della fase ${fase} (a ${t} s)`);
+          }
+          if (t >= fine - EPSILON && !uguale(punto(i), punto(tempi.length - 1))) {
+            errori.push(`${nome}: si muove dopo la fase ${fase} (a ${t} s)`);
+          }
+        });
+        if (uguale(punto(0), punto(tempi.length - 1))) errori.push(`${nome}: la clip non lo sposta`);
+        nodiPerFase.set(fase, (nodiPerFase.get(fase) ?? 0) + 1);
+      }
+      for (let fase = 1; fase <= CLIP.fasi; fase++) {
+        if ((nodiPerFase.get(fase) ?? 0) === 0) errori.push(`nessun nodo si muove nella fase ${fase}`);
+      }
+    }
+  }
+
   // L’atlante dei glifi: un’immagine sola, non più grande di ATLANTE_MAX, usata dai tre materiali con
   // lettera o numero, ognuno con una texture come colore base.
   const immagini = gltf.images ?? [];
@@ -298,7 +369,17 @@ function verifica(gltf: Gltf, bin: Buffer, peso: number) {
   const disegnati = nodi.reduce((somma, n) => somma + (n.mesh === undefined ? 0 : triangoli(n.mesh)), 0);
   const unici = meshes.reduce((somma, _, i) => somma + triangoli(i), 0);
 
-  return { errori, nodi: nodi.length, dimensioni, atlante, triangoli: { unici, disegnati } };
+  return { errori, nodi: nodi.length, dimensioni, atlante, triangoli: { unici, disegnati }, durata, nodiPerFase };
+}
+
+/** I numeri float32 di un accessor, uno dopo l’altro (VEC3 incluso). Gli accessor dell’animazione non hanno stride. */
+function leggiNumeri(gltf: Gltf, bin: Buffer, indice: number): number[] {
+  const accessor = gltf.accessors?.[indice];
+  const vista = gltf.bufferViews?.[accessor?.bufferView ?? -1];
+  if (accessor === undefined || vista === undefined || accessor.componentType !== 5126) return [];
+  const componenti = { SCALAR: 1, VEC3: 3, VEC4: 4 }[accessor.type ?? ''] ?? 0;
+  const inizio = (vista.byteOffset ?? 0) + (accessor.byteOffset ?? 0);
+  return Array.from({ length: accessor.count * componenti }, (_, i) => bin.readFloatLE(inizio + 4 * i));
 }
 
 function uguale(valore: number[] | undefined, riposo: number[]) {
@@ -326,5 +407,9 @@ console.log(
     `atlante ${esito.atlante || 'assente'}, ` +
     `cassa ${cm(x)} × ${cm(z)} × ${cm(y)} (larghezza × profondità × altezza).`,
 );
+if (FASI.indexOf(FASE_MODELLO) >= FASI.indexOf('4k')) {
+  const perFase = [...esito.nodiPerFase].sort(([a], [b]) => a - b).map(([fase, n]) => `fase ${fase}: ${n}`);
+  console.log(`clip ${CLIP.nome}: ${esito.durata} s, nodi mossi per fase (${perFase.join(', ')}).`);
+}
 console.log(`${esito.errori.length} errori.`);
 if (esito.errori.length > 0) process.exitCode = 1;
