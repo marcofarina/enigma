@@ -105,6 +105,7 @@ Valgono solo nel container delle sessioni cloud, dove le norme non sono raggiung
 
 ## Da verificare
 
+- Modello 3D (fase 4j): i dettagli che le foto della galleria non confermano sono scelti, non verificati. Su quale lato del rotore stanno il cricchetto e i puntali a molla (a destra, come nella foto `rotori-e-perno`, dove stanno dallo stesso lato, ma la foto non dice se quel lato guarda la ruota d’ingresso o il riflettore); dove sta la rotella dentata rispetto al cricchetto; la forma del dito del nottolino che poggia sull’anello vicino; la posizione e la forma della batteria nel vano accanto ai rotori (62 × 22 × 67 mm, a destra della ruota d’ingresso, sull’idea della batteria piatta da 4,5 volt; la foto di Milano mostra un vano chiuso, non la batteria). Il modello è per l’occhio e per il percorso della corrente, non è un rilievo.
 - Storia 2: Crypto Museum porta al 1928 la versione definitiva del pannello a spine; Kozaczuk (p. xiii) data al 1930 la versione militare con il pannello. La lezione tiene il 1928 per il progetto e il 1° giugno 1930 per l’entrata in servizio.
 - Storia 4: il primo successo di Knox contro l’Enigma K di Franco «il 4 aprile 1937» viene solo da Crypto Museum; Batey non dà il giorno.
 - Italia: nella tabella del cablaggio D (marina italiana) di Crypto Museum il rotore I contiene due volte la U, quindi non è una permutazione; per questo il modello non è stato aggiunto al motore.

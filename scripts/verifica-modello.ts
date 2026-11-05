@@ -11,7 +11,7 @@ import { join, relative } from 'node:path';
 
 const FASI = ['4i', '4j'] as const;
 type Fase = (typeof FASI)[number];
-const FASE_MODELLO: Fase = '4i';
+const FASE_MODELLO: Fase = '4j';
 
 /** Tetto del peso: 300 KB per l’abbozzo della 4i, 1 MB per il modello completo (D15). */
 const TETTO: Record<Fase, number> = { '4i': 300 * 1024, '4j': 1024 * 1024 };
@@ -74,6 +74,11 @@ const NODI_ATTESI: NodoAtteso[] = [
 
 const EXTRAS_AMMESSI = new Set(['fase', 'raggio_contatti']);
 
+/** Il lato massimo, in pixel, dell’atlante dei glifi (D15: un’immagine sola). */
+const ATLANTE_MAX = 512;
+/** I materiali con lettera o numero: ognuno ha come colore base l’atlante. */
+const MATERIALI_CON_ATLANTE = ['tessera', 'cima_tasto', 'vetro'];
+
 // --- glTF ------------------------------------------------------------------------------------
 
 interface Nodo {
@@ -94,26 +99,40 @@ interface Accessor {
   min?: number[];
   max?: number[];
 }
+interface Materiale {
+  name?: string;
+  pbrMetallicRoughness?: { baseColorTexture?: { index: number } };
+}
 interface Gltf {
   nodes?: Nodo[];
+  materials?: Materiale[];
+  textures?: { source?: number }[];
+  images?: { bufferView?: number; mimeType?: string }[];
+  bufferViews?: { byteOffset?: number; byteLength: number }[];
   meshes?: { name?: string; primitives: Primitiva[] }[];
   accessors?: Accessor[];
   animations?: { name?: string; channels: { target: { node?: number; path: string } }[] }[];
 }
 
-/** Il blocco JSON di un glTF binario: intestazione di 12 byte, poi il primo blocco, che è il JSON. */
-function leggiGlb(file: string): Gltf {
+/**
+ * Un glTF binario: intestazione di 12 byte, poi il blocco JSON e, dopo, il blocco BIN con i dati
+ * (mesh e immagini).
+ */
+function leggiGlb(file: string): { gltf: Gltf; bin: Buffer } {
   const dati = readFileSync(file);
   if (dati.readUInt32LE(0) !== 0x46546c67) throw new Error('non è un glTF binario');
   const lunghezza = dati.readUInt32LE(12);
   if (dati.readUInt32LE(16) !== 0x4e4f534a) throw new Error('il primo blocco non è JSON');
-  return JSON.parse(dati.subarray(20, 20 + lunghezza).toString('utf8')) as Gltf;
+  const gltf = JSON.parse(dati.subarray(20, 20 + lunghezza).toString('utf8')) as Gltf;
+  const inizioBin = 20 + lunghezza;
+  const bin = inizioBin + 8 <= dati.length ? dati.subarray(inizioBin + 8) : Buffer.alloc(0);
+  return { gltf, bin };
 }
 
 // --- Verifica --------------------------------------------------------------------------------
 
 /** Restituisce gli errori trovati e qualche numero da riportare. */
-function verifica(gltf: Gltf, peso: number) {
+function verifica(gltf: Gltf, bin: Buffer, peso: number) {
   const errori: string[] = [];
   const nodi = gltf.nodes ?? [];
   const meshes = gltf.meshes ?? [];
@@ -165,6 +184,25 @@ function verifica(gltf: Gltf, peso: number) {
       if (!uguale(n.rotation, [0, 0, 0, 1]) || !uguale(n.scale, [1, 1, 1])) {
         errori.push(`${atteso.nome}: il codice lo muove, quindi a riposo non ruota e non scala`);
       }
+    }
+  }
+
+  // La gerarchia: i pezzi di un rotore sono suoi figli, la tacca è figlia dell’anello, i tasti stanno
+  // sotto la tastiera, le ancore e gli altri nodi sotto la radice.
+  const padre = new Map<string, string>();
+  nodi.forEach((n) => (n.children ?? []).forEach((f) => padre.set(nodi[f]?.name ?? '?', n.name ?? '?')));
+  for (const atteso of NODI_ATTESI) {
+    const trovato = padre.get(atteso.nome);
+    const rotore = ROTORI.find((r) => atteso.nome.startsWith(`${r}_`));
+    const dovrebbe = atteso.nome.startsWith('tasto_')
+      ? 'tastiera'
+      : rotore === undefined
+        ? undefined
+        : atteso.nome === `${rotore}_tacca`
+          ? `${rotore}_anello`
+          : rotore;
+    if (fasi.includes(atteso.da) && trovato !== dovrebbe) {
+      errori.push(`${atteso.nome}: il padre è ${trovato ?? 'la radice'}, deve essere ${dovrebbe ?? 'la radice'}`);
     }
   }
 
@@ -223,6 +261,35 @@ function verifica(gltf: Gltf, peso: number) {
     }
   }
 
+  // L’atlante dei glifi: un’immagine sola, non più grande di ATLANTE_MAX, usata dai tre materiali con
+  // lettera o numero, ognuno con una texture come colore base.
+  const immagini = gltf.images ?? [];
+  let atlante = '';
+  if (immagini.length !== 1) {
+    errori.push(`le immagini sono ${immagini.length}: deve esserci solo l’atlante dei glifi`);
+  } else {
+    const vista = gltf.bufferViews?.[immagini[0]?.bufferView ?? -1];
+    const inizio = vista?.byteOffset ?? 0;
+    const png = vista === undefined ? undefined : bin.subarray(inizio, inizio + vista.byteLength);
+    if (png === undefined || png.subarray(1, 4).toString() !== 'PNG') {
+      errori.push('l’atlante non è un PNG incorporato nel .glb');
+    } else {
+      const [larghezza, altezza] = [png.readUInt32BE(16), png.readUInt32BE(20)];
+      atlante = `${larghezza} × ${altezza}`;
+      if (larghezza > ATLANTE_MAX || altezza > ATLANTE_MAX) {
+        errori.push(`l’atlante è ${atlante}, oltre ${ATLANTE_MAX} × ${ATLANTE_MAX}`);
+      }
+    }
+  }
+  for (const nome of MATERIALI_CON_ATLANTE) {
+    const materiale = (gltf.materials ?? []).find((m) => m.name === nome);
+    const texture = materiale?.pbrMetallicRoughness?.baseColorTexture?.index;
+    if (materiale === undefined) errori.push(`manca il materiale ${nome}`);
+    else if (texture === undefined || gltf.textures?.[texture]?.source !== 0) {
+      errori.push(`il materiale ${nome} non ha l’atlante come colore base`);
+    }
+  }
+
   const triangoli = (indice: number) =>
     (meshes[indice]?.primitives ?? []).reduce((somma, p) => {
       const conteggio = accessors[p.indices ?? p.attributes['POSITION'] ?? -1]?.count ?? 0;
@@ -231,7 +298,7 @@ function verifica(gltf: Gltf, peso: number) {
   const disegnati = nodi.reduce((somma, n) => somma + (n.mesh === undefined ? 0 : triangoli(n.mesh)), 0);
   const unici = meshes.reduce((somma, _, i) => somma + triangoli(i), 0);
 
-  return { errori, nodi: nodi.length, dimensioni, triangoli: { unici, disegnati } };
+  return { errori, nodi: nodi.length, dimensioni, atlante, triangoli: { unici, disegnati } };
 }
 
 function uguale(valore: number[] | undefined, riposo: number[]) {
@@ -249,12 +316,14 @@ function cm(metri: number) {
 /** Il file da verificare: quello del sito, o quello passato come argomento. */
 const file = process.argv[2] ?? join(import.meta.dirname, '..', 'public', 'modelli', 'enigma-i.glb');
 const peso = statSync(file).size;
-const esito = verifica(leggiGlb(file), peso);
+const { gltf, bin } = leggiGlb(file);
+const esito = verifica(gltf, bin, peso);
 for (const errore of esito.errori) console.log(`✖ ${errore}`);
 const [x = 0, y = 0, z = 0] = esito.dimensioni;
 console.log(
   `${relative(process.cwd(), file)}, fase ${FASE_MODELLO}: ${kb(peso)}, ${esito.nodi} nodi, ` +
     `${esito.triangoli.unici} triangoli nelle mesh (${esito.triangoli.disegnati} disegnati), ` +
+    `atlante ${esito.atlante || 'assente'}, ` +
     `cassa ${cm(x)} × ${cm(z)} × ${cm(y)} (larghezza × profondità × altezza).`,
 );
 console.log(`${esito.errori.length} errori.`);

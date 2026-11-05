@@ -27,21 +27,26 @@ ANTEPRIMA = CARTELLA / "enigma-i-anteprima"  # l'estensione la aggiunge Blender
 if str(QUI) not in sys.path:
     sys.path.insert(0, str(QUI))
 
+import atlante  # noqa: E402
 import comune  # noqa: E402
 import cassa  # noqa: E402
 import lampade  # noqa: E402
+import meccanica  # noqa: E402
 import rotori  # noqa: E402
 import tastiera  # noqa: E402
 
 # Nella sessione aperta dell'MCP i moduli restano importati fra un'esecuzione e l'altra: si
-# ricaricano, prima comune e poi i pezzi che lo usano. I pezzi si costruiscono in quest'ordine.
+# ricaricano, prima comune e poi i pezzi che lo usano (rotori e meccanica usano cassa). I pezzi si
+# costruiscono in quest'ordine.
 importlib.reload(comune)
-PEZZI = [importlib.reload(modulo) for modulo in (cassa, tastiera, lampade, rotori)]
+importlib.reload(atlante)
+PEZZI = [importlib.reload(modulo) for modulo in (cassa, tastiera, lampade, rotori, meccanica)]
 
 
 def costruisci():
     comune.svuota()
-    mats = comune.materiali()
+    immagine = atlante.genera(bpy.app.tempdir or str(RADICE))
+    mats = comune.materiali(immagine)
     for pezzo in PEZZI:
         pezzo.costruisci(mats)
     bpy.context.view_layer.update()
