@@ -11,8 +11,9 @@ in `scripts/verifica-modello.ts`, nello stesso commit. `FASE_MODELLO`, nello ste
 dove è arrivato il modello: `pnpm verifica:modello` cerca solo i nodi delle fasi fino a quella. La
 4j l’ha portata a `'4j'` (il tetto del peso è passato da 300 KB a 1 MB), la 4k a `'4k'` (la verifica
 controlla anche la clip `smontaggio`), la 4l a `'4l'` (tetto di 6 MB, `coperchio_legno`, texture
-WebP) e la 4m a `'4m'` (la verifica controlla il materiale `interno` e che i materiali piani dei pezzi
-interni non ci siano più).
+WebP) la 4m a `'4m'` (la verifica controlla il materiale `interno` e che i materiali piani dei pezzi
+interni non ci siano più) e la 4n a `'4n'` (la verifica controlla che la clip allontani il
+`coperchio_legno` all’indietro di almeno 100 mm e in basso, nella fase 1).
 
 **Unità e assi.** Un’unità è un metro, con le dimensioni reali della macchina. L’origine sta al
 centro del fondo della cassa. glTF ha Y in alto: l’esportatore converte le trasformazioni da
@@ -190,7 +191,7 @@ tracce. Così `AnimationMixer` e il codice non si sovrascrivono a vicenda. La re
 
 | Fase | Che cosa succede | Testo del selettore (`aria-valuetext`) |
 |---|---|---|
-| 1 | si alzano `coperchio_interno` e `sportello_spine`, e `coperchio_legno` si allontana all’indietro | «macchina aperta» |
+| 1 | si alza `coperchio_interno`; `sportello_spine` e `coperchio_legno` si allontanano dalla cassa, il primo in avanti, il secondo all’indietro e in basso | «macchina aperta» |
 | 2 | escono i rotori con `asse_rotori`, e il `riflettore` | «rotori estratti» |
 | 3 | ogni rotore si apre lungo X: anello, cricchetto, rotella e contatti si staccano dal nucleo | «rotori aperti» |
 | 4 | si alza la `tastiera` ed esce la `batteria` | «meccanica sotto i tasti» |
@@ -203,5 +204,11 @@ sua fase e resta fermo prima e dopo. Nella fase 2 i rotori salgono fino a 1,5 s 
 fino a 2 s: il passo fra i rotori diventa di 70 mm (e l’asse è lungo 210 mm, per tenerli infilati). Gli
 spostamenti sono in `scripts/blender/smontaggio.py`. Le ancore non seguono lo smontaggio. La 4l ha
 alzato la salita dei rotori a 135 mm e quella del coperchio interno a 190 mm, perché la cassa di
-ASHISH è più alta, e allontana il coperchio di legno di 150 mm all’indietro; il resto dello
-smontaggio sull’esterno nuovo lo rivede la 4n.
+ASHISH è più alta. La 4n ha rivisto la fase 1 sull’esterno nuovo: il coperchio di legno si allontana di
+170 mm all’indietro e scende di 40 (resta sopra il piano z = 0), a più di 50 mm dal coperchio interno
+sollevato; lo sportello, che in ASHISH pende già aperto davanti alla cassa e sotto il pannello a spine,
+non sale più (copriva il pannello): si sposta di 70 mm in avanti. Gli spostamenti delle altre fasi
+restano quelli della 4k e della 4l. `sovrapposizioni()`, in `scripts/blender/smontaggio.py`, confronta
+dopo ogni costruzione le scatole dei pezzi alla fine di ciascuna fase, non solo dell’ultima; la striscia
+rossa che si vede sotto il coperchio di legno è un pezzo suo (una cinghia di ASHISH, `coperchio_legno`),
+nascosto dalla cassa a macchina chiusa.

@@ -13,14 +13,14 @@ import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { MeshoptDecoder } from 'meshoptimizer';
 
-const FASI = ['4i', '4j', '4k', '4l', '4m'] as const;
+const FASI = ['4i', '4j', '4k', '4l', '4m', '4n'] as const;
 type Fase = (typeof FASI)[number];
-const FASE_MODELLO: Fase = '4m';
+const FASE_MODELLO: Fase = '4n';
 
 /**
  * Tetto del peso: 300 KB per l’abbozzo della 4i, 1 MB per il modello completo (D15), 6 MB per il
  * modello ibrido con l’esterno di ASHISH, texture comprese (D23); il tetto resta quello dalla 4m, con
- * l’interno cotto in un atlante.
+ * l’interno cotto in un atlante (4m) e con lo smontaggio rivisto (4n).
  */
 const TETTO: Record<Fase, number> = {
   '4i': 300 * 1024,
@@ -28,12 +28,15 @@ const TETTO: Record<Fase, number> = {
   '4k': 1024 * 1024,
   '4l': 6 * 1024 * 1024,
   '4m': 6 * 1024 * 1024,
+  '4n': 6 * 1024 * 1024,
 };
 /** Dalla 4l: il lato massimo delle texture (D23) e il loro formato. */
 const TEXTURE_MAX = 2048;
 
 /** La clip dello smontaggio (fase 4k): un’animazione sola, un secondo per ciascuna delle quattro fasi. */
 const CLIP = { nome: 'smontaggio', secondiPerFase: 1, fasi: 4 };
+/** Quanto il coperchio di legno si allontana all’indietro nella fase 1 (D22), al minimo, in metri. */
+const COPERCHIO_LEGNO = { indietro: 0.1 };
 const EPSILON = 1e-4;
 /**
  * Il filtro di meshopt (scripts/comprimi-modello.ts) arrotonda le traslazioni della clip: la
@@ -373,6 +376,20 @@ function verifica(gltf: Gltf, bin: Buffer, peso: number) {
           }
         });
         if (uguale(punto(0), punto(tempi.length - 1))) errori.push(`${nome}: la clip non lo sposta`);
+        if (fasi.includes('4n') && nome === 'coperchio_legno') {
+          // D22: il coperchio di legno, aperto dietro la macchina, si allontana all’indietro e in
+          // basso nella fase 1. In glTF il retro è −Z e il basso è −Y.
+          const ultimo = punto(tempi.length - 1);
+          const dy = (ultimo[1] ?? 0) - (punto(0)[1] ?? 0);
+          const dz = (ultimo[2] ?? 0) - (punto(0)[2] ?? 0);
+          if (fase !== 1) errori.push(`${nome}: la clip lo muove nella fase ${fase}, deve essere la 1`);
+          if (dz > -COPERCHIO_LEGNO.indietro) {
+            errori.push(
+              `${nome}: si allontana all’indietro di ${(-dz * 1000).toFixed(0)} mm, ne servono almeno ${COPERCHIO_LEGNO.indietro * 1000}`,
+            );
+          }
+          if (dy >= 0) errori.push(`${nome}: non scende (${(dy * 1000).toFixed(0)} mm)`);
+        }
         nodiPerFase.set(fase, (nodiPerFase.get(fase) ?? 0) + 1);
       }
       for (let fase = 1; fase <= CLIP.fasi; fase++) {

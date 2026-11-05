@@ -10,10 +10,11 @@ Le tracce sono solo `location` (in glTF `translation`): sui nodi che il codice d
 
 Il disegno dello smontaggio, in metri e con gli assi di Blender (Z in alto, −Y verso chi scrive):
 
-    fase 1  il coperchio sale di 190 mm, più in alto dei rotori che usciranno; lo sportello sale di
-            100 mm e viene in avanti di 30; il coperchio di legno, aperto dietro la macchina, si
-            allontana di 150 mm all'indietro (D22; la 4n rivede tutto lo smontaggio sull'esterno di
-            ASHISH)
+    fase 1  il coperchio interno sale di 190 mm, più in alto dei rotori che usciranno; lo sportello,
+            che in ASHISH pende già aperto davanti alla cassa, si allontana di 70 mm in avanti, senza
+            salire, perché non copra il pannello a spine; il coperchio di legno, aperto dietro la
+            macchina, si allontana di 170 mm all'indietro e scende di 40 (D22), a distanza dal
+            coperchio interno e fuori dalla vista dei rotori
     fase 2  prima i rotori, l'asse e il riflettore salgono di 135 mm, fuori dalla cassa (primo mezzo
             secondo); poi si allargano lungo X, sempre sul loro asse, per fare posto alla fase 3: il
             riflettore di 62 mm a sinistra, il rotore sinistro di 40 a sinistra e il destro di 40 a destra
@@ -47,8 +48,8 @@ FASI = {
 }
 SPOSTAMENTI = {
     "coperchio_interno": (0.0, 0.0, 0.190),
-    "sportello_spine": (0.0, -0.030, 0.100),
-    "coperchio_legno": (0.0, 0.150, 0.0),
+    "sportello_spine": (0.0, -0.070, 0.0),
+    "coperchio_legno": (0.0, 0.170, -0.040),
     "asse_rotori": (0.0, 0.0, 0.135),
     "riflettore": (-0.062, 0.0, 0.135),
     "rotore_sinistro": (-0.040, 0.0, 0.135),
@@ -131,38 +132,42 @@ def _scatola(ogg):
 
 
 def sovrapposizioni():
-    """I pezzi che alla fine dello smontaggio si sovrappongono, come coppie di nomi.
+    """I pezzi che si sovrappongono alla fine di ciascuna fase, come terne (fase, pezzo, pezzo).
 
-    Il confronto è fra le scatole che racchiudono i pezzi, con un margine: a macchina smontata ogni
-    pezzo ha il suo posto e le scatole non si toccano (l'asse dei rotori è escluso: attraversa i pezzi
-    infilati su di lui). Tasti e lampade non contano (i tasti seguono la
-    tastiera), e la cassa è confrontata solo per l'altezza: i pezzi che escono devono stare sopra il suo
-    bordo (tranne la tastiera, che sta sul piano, lo sportello, che sta fuori davanti, e il coperchio di
-    legno, che sta fuori dietro).
+    Il confronto è fra le scatole che racchiudono i pezzi, con un margine. A fine fase *k* si
+    confrontano i pezzi già mossi (quelli con `fase` ≤ *k*) con tutti gli altri: i pezzi che stanno
+    ancora al loro posto fra loro non contano, perché a macchina chiusa si toccano. L'asse dei rotori
+    è escluso: attraversa i pezzi infilati su di lui. Tasti e lampade non contano (i tasti seguono la
+    tastiera), e la cassa è confrontata solo per l'altezza: i pezzi che escono devono stare sopra il
+    suo bordo (tranne la tastiera, che sta sul piano, lo sportello, che sta fuori davanti, e il
+    coperchio di legno, che sta fuori dietro).
     """
     scena = bpy.context.scene
-    scena.frame_set(FINE)
+    problemi = []
     try:
-        mossi = [bpy.data.objects[n] for n in FASI if bpy.data.objects[n].type == "MESH"]
+        tutti = [bpy.data.objects[n] for n in FASI if bpy.data.objects[n].type == "MESH"]
         fissi = [bpy.data.objects[n] for n in FISSI]
         fissi += [o for o in bpy.data.objects if o.name.startswith("lampada_")]
-        problemi = []
-        scatole = {o.name: _scatola(o) for o in mossi + fissi}
+        for fase in range(1, 5):
+            scena.frame_set(fase * FOTOGRAMMI_FASE)
+            mossi = [o for o in tutti if FASI[o.name] <= fase]
+            altri = [o for o in tutti if FASI[o.name] > fase] + fissi
+            scatole = {o.name: _scatola(o) for o in mossi + altri}
 
-        def si_toccano(a, b):
-            (amin, amax), (bmin, bmax) = scatole[a.name], scatole[b.name]
-            return all(amin[i] < bmax[i] - MARGINE and bmin[i] < amax[i] - MARGINE for i in range(3))
+            def si_toccano(a, b):
+                (amin, amax), (bmin, bmax) = scatole[a.name], scatole[b.name]
+                return all(amin[i] < bmax[i] - MARGINE and bmin[i] < amax[i] - MARGINE for i in range(3))
 
-        for i, a in enumerate(mossi):
-            for b in mossi[i + 1 :] + fissi:
-                if "asse_rotori" in (a.name, b.name):
-                    continue  # l'asse attraversa i pezzi dei rotori: è fatto apposta
-                if si_toccano(a, b):
-                    problemi.append((a.name, b.name))
-        bordo = _scatola(bpy.data.objects["cassa"])[1][2]
-        for ogg in mossi:
-            if ogg.name not in ("tastiera", "sportello_spine", "coperchio_legno") and scatole[ogg.name][0][2] < bordo - MARGINE:
-                problemi.append((ogg.name, "cassa"))
+            for i, a in enumerate(mossi):
+                for b in mossi[i + 1 :] + altri:
+                    if "asse_rotori" in (a.name, b.name):
+                        continue  # l'asse attraversa i pezzi dei rotori: è fatto apposta
+                    if si_toccano(a, b):
+                        problemi.append((fase, a.name, b.name))
+            bordo = _scatola(bpy.data.objects["cassa"])[1][2]
+            for ogg in mossi:
+                if ogg.name not in ("tastiera", "sportello_spine", "coperchio_legno") and scatole[ogg.name][0][2] < bordo - MARGINE:
+                    problemi.append((fase, ogg.name, "cassa"))
         return problemi
     finally:
         scena.frame_set(0)
