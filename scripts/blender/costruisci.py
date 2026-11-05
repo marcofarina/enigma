@@ -4,7 +4,13 @@ Da terminale, con Blender in background:   pnpm modello
 Dall'MCP di Blender, nella sessione aperta:
     exec(open(P).read(), {"__file__": P, "__name__": "__main__"})
 con P il percorso assoluto di questo file. Con un altro __name__ definisce le funzioni e non esegue
-nulla, così si può chiamare costruisci() da solo e guardare la scena.
+nulla, così si può chiamare costruisci() da solo e guardare la scena. Attenzione: costruisci() parte
+da comune.svuota(), che toglie dal file tutti gli oggetti, i materiali e le immagini, anche quelli
+delle altre scene.
+
+L'esterno viene dal modello di ASHISH (esterno.py), che sta fuori da git: vedi sorgenti.md. Blender
+esporta un .glb grezzo in sorgenti/; `pnpm modello` lo comprime poi con meshopt
+(scripts/comprimi-modello.ts) e lo scrive in public/modelli/.
 
 Gli script sono la fonte del modello: il .blend non va in git, e una modifica fatta a mano nella
 GUI va riportata qui.
@@ -21,7 +27,7 @@ from mathutils import Vector
 QUI = Path(__file__).resolve().parent
 RADICE = QUI.parent.parent
 CARTELLA = RADICE / "public" / "modelli"
-GLB = CARTELLA / "enigma-i.glb"
+GLB = QUI / "sorgenti" / "enigma-i-grezzo.glb"  # lo comprime scripts/comprimi-modello.ts
 ANTEPRIMA = CARTELLA / "enigma-i-anteprima"  # l'estensione la aggiunge Blender
 
 if str(QUI) not in sys.path:
@@ -29,19 +35,18 @@ if str(QUI) not in sys.path:
 
 import atlante  # noqa: E402
 import comune  # noqa: E402
-import cassa  # noqa: E402
-import lampade  # noqa: E402
+import esterno  # noqa: E402
 import meccanica  # noqa: E402
 import rotori  # noqa: E402
 import smontaggio  # noqa: E402
-import tastiera  # noqa: E402
 
 # Nella sessione aperta dell'MCP i moduli restano importati fra un'esecuzione e l'altra: si
-# ricaricano, prima comune e poi i pezzi che lo usano (rotori e meccanica usano cassa). I pezzi si
-# costruiscono in quest'ordine.
+# ricaricano, prima comune e poi i pezzi che lo usano. Prima l'interno, poi l'esterno, che mette il
+# perno dei nottolini nella cassa e sposta l'interno sotto le finestrelle.
 importlib.reload(comune)
 importlib.reload(atlante)
-PEZZI = [importlib.reload(modulo) for modulo in (cassa, tastiera, lampade, rotori, meccanica)]
+PEZZI = [importlib.reload(modulo) for modulo in (rotori, meccanica)]
+importlib.reload(esterno)
 importlib.reload(smontaggio)
 ANTEPRIME = QUI / "anteprime"  # un'immagine per fase dello smontaggio; non va in git
 
@@ -52,6 +57,8 @@ def costruisci():
     mats = comune.materiali(immagine)
     for pezzo in PEZZI:
         pezzo.costruisci(mats)
+    esterno.costruisci(mats)
+    esterno.allinea_interno()
     bpy.context.view_layer.update()
     smontaggio.costruisci()
     problemi = smontaggio.sovrapposizioni()
@@ -65,7 +72,6 @@ def esporta():
     La scena è sul fotogramma 0, quindi i nodi escono con la macchina chiusa. Le tracce di `location`
     diventano un'unica animazione, `smontaggio`, col tempo della scena (24 fotogrammi al secondo).
     """
-    CARTELLA.mkdir(parents=True, exist_ok=True)
     bpy.context.scene.frame_set(0)
     bpy.ops.export_scene.gltf(
         filepath=str(GLB),
@@ -76,6 +82,9 @@ def esporta():
         export_cameras=False,
         export_lights=False,
         export_materials="EXPORT",
+        # Texture in WebP (D23): le immagini di ASHISH, già ridotte a 2048 px, e l'atlante.
+        export_image_format="WEBP",
+        export_image_quality=85,
         export_animations=True,
         export_animation_mode="SCENE",
         export_anim_scene_split_object=False,

@@ -1,29 +1,48 @@
 /**
  * Verifica public/modelli/enigma-i.glb contro la «Convenzione del modello 3D»
- * (docs/piano/convenzione-3d.md). Legge solo il blocco JSON del glTF binario: nessuna dipendenza.
+ * (docs/piano/convenzione-3d.md). Dalla 4l il file è compresso con meshopt: lo si decodifica con
+ * gltf-transform, lo si riscrive senza compressione in memoria e si leggono il blocco JSON e i dati.
  *
  * NODI_ATTESI è la tabella dei nodi della convenzione: se cambia l’una, cambia l’altra, nello
  * stesso commit. FASE_MODELLO dice fin dove è arrivato il modello: si controllano i nodi delle fasi
  * fino a quella, e la fase che crea nodi nuovi la fa avanzare.
  */
-import { readFileSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { NodeIO } from '@gltf-transform/core';
+import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
+import { MeshoptDecoder } from 'meshoptimizer';
 
-const FASI = ['4i', '4j', '4k'] as const;
+const FASI = ['4i', '4j', '4k', '4l'] as const;
 type Fase = (typeof FASI)[number];
-const FASE_MODELLO: Fase = '4k';
+const FASE_MODELLO: Fase = '4l';
 
-/** Tetto del peso: 300 KB per l’abbozzo della 4i, 1 MB per il modello completo (D15). */
-const TETTO: Record<Fase, number> = { '4i': 300 * 1024, '4j': 1024 * 1024, '4k': 1024 * 1024 };
+/**
+ * Tetto del peso: 300 KB per l’abbozzo della 4i, 1 MB per il modello completo (D15), 6 MB per il
+ * modello ibrido con l’esterno di ASHISH, texture comprese (D23).
+ */
+const TETTO: Record<Fase, number> = {
+  '4i': 300 * 1024,
+  '4j': 1024 * 1024,
+  '4k': 1024 * 1024,
+  '4l': 6 * 1024 * 1024,
+};
+/** Dalla 4l: il lato massimo delle texture (D23) e il loro formato. */
+const TEXTURE_MAX = 2048;
 
 /** La clip dello smontaggio (fase 4k): un’animazione sola, un secondo per ciascuna delle quattro fasi. */
 const CLIP = { nome: 'smontaggio', secondiPerFase: 1, fasi: 4 };
 const EPSILON = 1e-4;
+/**
+ * Il filtro di meshopt (scripts/comprimi-modello.ts) arrotonda le traslazioni della clip: la
+ * posizione a riposo di un nodo e il primo valore della sua traccia differiscono fino a 0,05 mm.
+ */
+const TOLLERANZA_CLIP = 1e-4;
 
 /**
  * La cassa dell’Enigma I secondo la scheda del Deutsches Technikmuseum (fonte «technikmuseum-enigma»
  * di src/content/fonti.yaml): 280 mm di larghezza, 340 di profondità, 160 di altezza a coperchio
- * chiuso. Il coperchio di legno non è un nodo, quindi l’altezza ha solo un intervallo.
+ * chiuso. Il coperchio di legno è un nodo a sé (dalla 4l), quindi l’altezza ha solo un intervallo.
  */
 const CASSA = { larghezza: 0.28, profondita: 0.34, altezzaChiusa: 0.16 };
 const TOLLERANZA = 0.1;
@@ -48,6 +67,7 @@ const ROTORI = ['rotore_destro', 'rotore_centrale', 'rotore_sinistro'];
 
 const NODI_ATTESI: NodoAtteso[] = [
   nodo('cassa', '4i'),
+  nodo('coperchio_legno', '4l', { clip: 1 }),
   nodo('coperchio_interno', '4i', { clip: 1 }),
   nodo('sportello_spine', '4i', { clip: 1 }),
   nodo('pannello_spine', '4i'),
@@ -80,8 +100,11 @@ const EXTRAS_AMMESSI = new Set(['fase', 'raggio_contatti']);
 
 /** Il lato massimo, in pixel, dell’atlante dei glifi (D15: un’immagine sola). */
 const ATLANTE_MAX = 512;
-/** I materiali con lettera o numero: ognuno ha come colore base l’atlante. */
-const MATERIALI_CON_ATLANTE = ['tessera', 'cima_tasto', 'vetro'];
+/**
+ * I materiali con lettera o numero: ognuno ha come colore base l’atlante. Dalla 4l tasti e lampade
+ * hanno le lettere di ASHISH e l’atlante resta ai soli numeri degli anelli.
+ */
+const MATERIALI_CON_ATLANTE = FASE_MODELLO === '4l' ? ['tessera'] : ['tessera', 'cima_tasto', 'vetro'];
 
 // --- glTF ------------------------------------------------------------------------------------
 
@@ -119,8 +142,8 @@ interface Materiale {
 interface Gltf {
   nodes?: Nodo[];
   materials?: Materiale[];
-  textures?: { source?: number }[];
-  images?: { bufferView?: number; mimeType?: string }[];
+  textures?: { source?: number; extensions?: { EXT_texture_webp?: { source?: number } } }[];
+  images?: { name?: string; bufferView?: number; mimeType?: string }[];
   bufferViews?: { byteOffset?: number; byteLength: number }[];
   meshes?: { name?: string; primitives: Primitiva[] }[];
   accessors?: Accessor[];
@@ -129,10 +152,19 @@ interface Gltf {
 
 /**
  * Un glTF binario: intestazione di 12 byte, poi il blocco JSON e, dopo, il blocco BIN con i dati
- * (mesh e immagini).
+ * (mesh e immagini). Il file si decodifica prima da meshopt: gltf-transform lo legge e lo riscrive
+ * in memoria senza compressione.
  */
-function leggiGlb(file: string): { gltf: Gltf; bin: Buffer } {
-  const dati = readFileSync(file);
+async function leggiGlb(file: string): Promise<{ gltf: Gltf; bin: Buffer }> {
+  await MeshoptDecoder.ready;
+  const io = new NodeIO()
+    .registerExtensions(ALL_EXTENSIONS)
+    .registerDependencies({ 'meshopt.decoder': MeshoptDecoder });
+  const documento = await io.read(file);
+  for (const estensione of documento.getRoot().listExtensionsUsed()) {
+    if (estensione.extensionName === 'EXT_meshopt_compression') estensione.dispose();
+  }
+  const dati = Buffer.from(await io.writeBinary(documento));
   if (dati.readUInt32LE(0) !== 0x46546c67) throw new Error('non è un glTF binario');
   const lunghezza = dati.readUInt32LE(12);
   if (dati.readUInt32LE(16) !== 0x4e4f534a) throw new Error('il primo blocco non è JSON');
@@ -219,10 +251,13 @@ function verifica(gltf: Gltf, bin: Buffer, peso: number) {
     }
   }
 
-  // Tasti e lampade sono copie collegate: tutti i tasti usano una mesh, tutte le lampade un’altra.
+  // Fino alla 4k tasti e lampade sono copie collegate: tutti i tasti usano una mesh, tutte le
+  // lampade un’altra. Dalla 4l vengono da ASHISH, ognuno con la sua lettera: basta che abbiano una mesh.
   for (const prefisso of ['tasto_', 'lampada_']) {
     const usate = new Set(LETTERE.map((l) => perNome.get(prefisso + l)?.mesh));
-    if (usate.size !== 1 || usate.has(undefined)) {
+    if (fasi.includes('4l')) {
+      if (usate.has(undefined)) errori.push(`i nodi ${prefisso}* devono avere tutti una mesh`);
+    } else if (usate.size !== 1 || usate.has(undefined)) {
       errori.push(`i nodi ${prefisso}* devono usare tutti la stessa mesh`);
     }
   }
@@ -312,7 +347,7 @@ function verifica(gltf: Gltf, bin: Buffer, peso: number) {
         const punto = (i: number) => valori.slice(3 * i, 3 * i + 3);
         const inizio = (fase - 1) * CLIP.secondiPerFase;
         const fine = fase * CLIP.secondiPerFase;
-        if (!uguale(nodoMosso?.translation, punto(0)) && nodoMosso?.translation !== undefined) {
+        if (!uguale(nodoMosso?.translation, punto(0), TOLLERANZA_CLIP) && nodoMosso?.translation !== undefined) {
           errori.push(`${nome}: la translation a riposo non è il primo valore della clip`);
         }
         tempi.forEach((t, i) => {
@@ -332,31 +367,42 @@ function verifica(gltf: Gltf, bin: Buffer, peso: number) {
     }
   }
 
-  // L’atlante dei glifi: un’immagine sola, non più grande di ATLANTE_MAX, usata dai tre materiali con
-  // lettera o numero, ognuno con una texture come colore base.
+  // Le immagini. Fino alla 4k c’è solo l’atlante dei glifi, un PNG non più grande di ATLANTE_MAX.
+  // Dalla 4l ci sono anche le texture di ASHISH: tutte in WebP, non più grandi di TEXTURE_MAX, e
+  // l’atlante è quella del materiale `tessera`.
   const immagini = gltf.images ?? [];
-  let atlante = '';
-  if (immagini.length !== 1) {
-    errori.push(`le immagini sono ${immagini.length}: deve esserci solo l’atlante dei glifi`);
-  } else {
-    const vista = gltf.bufferViews?.[immagini[0]?.bufferView ?? -1];
+  const lati = immagini.map((immagine) => {
+    const vista = gltf.bufferViews?.[immagine.bufferView ?? -1];
     const inizio = vista?.byteOffset ?? 0;
-    const png = vista === undefined ? undefined : bin.subarray(inizio, inizio + vista.byteLength);
-    if (png === undefined || png.subarray(1, 4).toString() !== 'PNG') {
-      errori.push('l’atlante non è un PNG incorporato nel .glb');
-    } else {
-      const [larghezza, altezza] = [png.readUInt32BE(16), png.readUInt32BE(20)];
-      atlante = `${larghezza} × ${altezza}`;
-      if (larghezza > ATLANTE_MAX || altezza > ATLANTE_MAX) {
-        errori.push(`l’atlante è ${atlante}, oltre ${ATLANTE_MAX} × ${ATLANTE_MAX}`);
-      }
-    }
+    return vista === undefined ? undefined : latoImmagine(bin.subarray(inizio, inizio + vista.byteLength));
+  });
+  const tessera = (gltf.materials ?? []).find((m) => m.name === 'tessera');
+  const indiceAtlante = sorgente(gltf, tessera?.pbrMetallicRoughness?.baseColorTexture?.index);
+  let atlante = '';
+  if (!fasi.includes('4l') && immagini.length !== 1) {
+    errori.push(`le immagini sono ${immagini.length}: deve esserci solo l’atlante dei glifi`);
   }
+  immagini.forEach((immagine, i) => {
+    const lato = lati[i];
+    const nome = immagine.name ?? `immagine ${i}`;
+    if (lato === undefined) {
+      errori.push(`${nome}: non è un PNG né un WebP incorporato nel .glb`);
+      return;
+    }
+    if (fasi.includes('4l') && lato.formato !== 'WebP') errori.push(`${nome}: è un ${lato.formato}, deve essere WebP`);
+    if (!fasi.includes('4l') && lato.formato !== 'PNG') errori.push(`${nome}: l’atlante non è un PNG`);
+    const massimo = i === indiceAtlante ? ATLANTE_MAX : TEXTURE_MAX;
+    if (lato.larghezza > massimo || lato.altezza > massimo) {
+      errori.push(`${nome} è ${lato.larghezza} × ${lato.altezza}, oltre ${massimo} × ${massimo}`);
+    }
+    if (i === indiceAtlante) atlante = `${lato.larghezza} × ${lato.altezza}`;
+  });
+  const numeroImmagini = immagini.length;
   for (const nome of MATERIALI_CON_ATLANTE) {
     const materiale = (gltf.materials ?? []).find((m) => m.name === nome);
     const texture = materiale?.pbrMetallicRoughness?.baseColorTexture?.index;
     if (materiale === undefined) errori.push(`manca il materiale ${nome}`);
-    else if (texture === undefined || gltf.textures?.[texture]?.source !== 0) {
+    else if (texture === undefined || sorgente(gltf, texture) !== indiceAtlante) {
       errori.push(`il materiale ${nome} non ha l’atlante come colore base`);
     }
   }
@@ -369,7 +415,16 @@ function verifica(gltf: Gltf, bin: Buffer, peso: number) {
   const disegnati = nodi.reduce((somma, n) => somma + (n.mesh === undefined ? 0 : triangoli(n.mesh)), 0);
   const unici = meshes.reduce((somma, _, i) => somma + triangoli(i), 0);
 
-  return { errori, nodi: nodi.length, dimensioni, atlante, triangoli: { unici, disegnati }, durata, nodiPerFase };
+  return {
+    errori,
+    nodi: nodi.length,
+    dimensioni,
+    atlante,
+    texture: numeroImmagini,
+    triangoli: { unici, disegnati },
+    durata,
+    nodiPerFase,
+  };
 }
 
 /** I numeri float32 di un accessor, uno dopo l’altro (VEC3 incluso). Gli accessor dell’animazione non hanno stride. */
@@ -382,8 +437,34 @@ function leggiNumeri(gltf: Gltf, bin: Buffer, indice: number): number[] {
   return Array.from({ length: accessor.count * componenti }, (_, i) => bin.readFloatLE(inizio + 4 * i));
 }
 
-function uguale(valore: number[] | undefined, riposo: number[]) {
-  return valore === undefined || valore.every((v, i) => Math.abs(v - (riposo[i] ?? 0)) < 1e-6);
+/** L’immagine di una texture: in `source`, o in `EXT_texture_webp` se l’immagine è WebP. */
+function sorgente(gltf: Gltf, texture: number | undefined): number | undefined {
+  const t = texture === undefined ? undefined : gltf.textures?.[texture];
+  return t?.source ?? t?.extensions?.EXT_texture_webp?.source;
+}
+
+/** Formato e lato di un PNG o di un WebP (lossy, lossless o esteso), dall’intestazione. */
+function latoImmagine(dati: Buffer): { formato: 'PNG' | 'WebP'; larghezza: number; altezza: number } | undefined {
+  if (dati.subarray(1, 4).toString() === 'PNG') {
+    return { formato: 'PNG', larghezza: dati.readUInt32BE(16), altezza: dati.readUInt32BE(20) };
+  }
+  if (dati.subarray(0, 4).toString() !== 'RIFF' || dati.subarray(8, 12).toString() !== 'WEBP') return undefined;
+  const blocco = dati.subarray(12, 16).toString();
+  if (blocco === 'VP8 ') {
+    return { formato: 'WebP', larghezza: dati.readUInt16LE(26) & 0x3fff, altezza: dati.readUInt16LE(28) & 0x3fff };
+  }
+  if (blocco === 'VP8L') {
+    const bit = dati.readUInt32LE(21);
+    return { formato: 'WebP', larghezza: (bit & 0x3fff) + 1, altezza: ((bit >> 14) & 0x3fff) + 1 };
+  }
+  if (blocco === 'VP8X') {
+    return { formato: 'WebP', larghezza: dati.readUIntLE(24, 3) + 1, altezza: dati.readUIntLE(27, 3) + 1 };
+  }
+  return undefined;
+}
+
+function uguale(valore: number[] | undefined, riposo: number[], tolleranza = 1e-6) {
+  return valore === undefined || valore.every((v, i) => Math.abs(v - (riposo[i] ?? 0)) < tolleranza);
 }
 
 function kb(byte: number) {
@@ -397,14 +478,14 @@ function cm(metri: number) {
 /** Il file da verificare: quello del sito, o quello passato come argomento. */
 const file = process.argv[2] ?? join(import.meta.dirname, '..', 'public', 'modelli', 'enigma-i.glb');
 const peso = statSync(file).size;
-const { gltf, bin } = leggiGlb(file);
+const { gltf, bin } = await leggiGlb(file);
 const esito = verifica(gltf, bin, peso);
 for (const errore of esito.errori) console.log(`✖ ${errore}`);
 const [x = 0, y = 0, z = 0] = esito.dimensioni;
 console.log(
   `${relative(process.cwd(), file)}, fase ${FASE_MODELLO}: ${kb(peso)}, ${esito.nodi} nodi, ` +
     `${esito.triangoli.unici} triangoli nelle mesh (${esito.triangoli.disegnati} disegnati), ` +
-    `atlante ${esito.atlante || 'assente'}, ` +
+    `atlante ${esito.atlante || 'assente'}, ${esito.texture} immagini, ` +
     `cassa ${cm(x)} × ${cm(z)} × ${cm(y)} (larghezza × profondità × altezza).`,
 );
 if (FASI.indexOf(FASE_MODELLO) >= FASI.indexOf('4k')) {

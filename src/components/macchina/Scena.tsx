@@ -26,7 +26,6 @@ import {
   inquadratura,
   letteraDelNodo,
   NODI_ROTORI,
-  offsetAtlante,
   OSCILLAZIONE_LEVA,
   rampa,
   rotazioniRotore,
@@ -37,8 +36,9 @@ import {
 /*
  * La scena della pagina 3D. Sta in un modulo a sé, importato solo dopo «Avvia la vista 3D»: con lui
  * arrivano three.js, React Three Fiber e drei. Nessuna richiesta esce dal sito: il `.glb` sta in
- * `public/`, niente Draco (drei ne scaricherebbe il decoder da gstatic) e niente `preset` di
- * `<Environment>` (li scarica da un CDN); la luce la fanno i Lightformer.
+ * `public/`, compresso con meshopt, il cui decoder sta nel bundle di drei (dalla 4l); niente Draco
+ * (drei ne scaricherebbe il decoder da gstatic) e niente `preset` di `<Environment>` (li scarica da
+ * un CDN); la luce la fanno i Lightformer.
  */
 
 /** Il punto che la camera guarda: il centro della macchina, poco sopra il fondo (come l’anteprima). */
@@ -89,23 +89,7 @@ function trovaMateriale(nodo: Object3D, nome: string): { mesh: Mesh; materiale: 
   return trovato;
 }
 
-/**
- * Tasti e lampade sono copie della stessa mesh, che punta alla cella della A nell’atlante: ognuno
- * riceve un materiale suo, con la texture clonata (l’immagine resta una) e spostata sulla sua
- * lettera (convenzione-3d, «Lettere e numeri»).
- */
-function materialeConLettera(materiale: MeshStandardMaterial, lettera: string): MeshStandardMaterial {
-  const copia = materiale.clone();
-  if (materiale.map) {
-    const mappa = materiale.map.clone();
-    const { x, y } = offsetAtlante(toIndex(lettera));
-    mappa.offset.set(x, y);
-    copia.map = mappa;
-  }
-  return copia;
-}
-
-/** Trova i nodi che la pagina muove e dà a tasti e lampade la loro lettera. Una volta sola per scena. */
+/** Trova i nodi che la pagina muove e dà a ogni lampada il suo materiale. Una volta sola per scena. */
 function preparaModello(scena: Object3D): Parti {
   const giaPronte = scena.userData['parti'] as Parti | undefined;
   if (giaPronte) return giaPronte;
@@ -117,15 +101,15 @@ function preparaModello(scena: Object3D): Parti {
     if (tasto) {
       tasti.set(tasto, nodo);
       nodo.userData['riposo'] = nodo.position.y;
-      const cima = trovaMateriale(nodo, 'cima_tasto');
-      if (cima) cima.mesh.material = materialeConLettera(cima.materiale, tasto);
     }
+    // Dalla 4l tasti e lampade vengono dal modello di ASHISH e hanno già la loro lettera nella
+    // texture: la lampada riceve solo una copia del materiale `vetro`, da accendere da sola.
     const lampada = letteraDelNodo(nodo.name, 'lampada');
     if (lampada) {
       const vetro = trovaMateriale(nodo, 'vetro');
       if (vetro) {
-        const materiale = materialeConLettera(vetro.materiale, lampada);
-        // La lampada accesa illumina la tessera e lascia scura la lettera.
+        const materiale = vetro.materiale.clone();
+        // La lampada accesa illumina le parti chiare della texture: la lettera bianca sul disco scuro.
         materiale.emissiveMap = materiale.map;
         materiale.userData['tinta'] = materiale.color.clone();
         vetro.mesh.material = materiale;
@@ -555,7 +539,7 @@ function Modello({
   onBloccata: () => void;
   onPronto: () => void;
 }) {
-  const { scene, animations } = useGLTF(modello3d.file, false, false);
+  const { scene, animations } = useGLTF(modello3d.file, false, true);
   const invalidate = useThree((s) => s.invalidate);
   const tela = useThree((s) => s.gl.domElement);
   const parti = useMemo(() => preparaModello(scene), [scene]);

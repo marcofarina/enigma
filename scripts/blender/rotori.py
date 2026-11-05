@@ -23,7 +23,6 @@ import math
 import bmesh
 from mathutils import Matrix, Vector
 
-import cassa
 import comune as c
 
 ROTORI ={"rotore_sinistro": -0.030, "rotore_centrale": 0.0, "rotore_destro": 0.030}
@@ -53,10 +52,10 @@ LUNGHEZZA_FISSI = 0.020
 SPORGENZA_CONTATTI_FISSI = 0.005
 
 # Ogni nottolino sta a destra del rotore che spinge, sotto il cricchetto, e il perno è comune
-# (cassa.py). La leva è una lastra che parte dal perno e punta all'asse del rotore: ruotando il
+# (comune.py). La leva è una lastra che parte dal perno e punta all'asse del rotore: ruotando il
 # nottolino su X la punta si sposta lungo il bordo del cricchetto.
 NOTTOLINI = {"nottolino_sinistro": -0.018, "nottolino_centrale": 0.012, "nottolino_destro": 0.042}
-Y_PERNO, Z_PERNO = cassa.Y_PERNO, cassa.Z_PERNO
+Y_PERNO, Z_PERNO = c.Y_PERNO, c.Z_PERNO
 LARGHEZZA_NOTTOLINO = 0.004
 LUNGHEZZA_DITO = 0.0085  # il dito che appoggia sull'anello del rotore vicino; manca al destro
 
