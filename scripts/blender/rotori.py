@@ -177,7 +177,9 @@ def _ruota_ingresso(bm):
 
 
 def _asse(bm):
-    c.cilindro(bm, (0, 0, 0), 0.004, 0.110, "X", 12)
+    # Lungo 210 mm: a smontaggio finito i rotori si sono allargati lungo X e restano tutti infilati
+    # sull'asse (vedi smontaggio.py). Montato, sta dentro il vano e i dischi lo nascondono.
+    c.cilindro(bm, (0, 0, 0), 0.004, 0.210, "X", 12)
 
 
 def _nottolino(con_dito):
