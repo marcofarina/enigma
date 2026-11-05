@@ -1100,7 +1100,7 @@ docs/piano.md (art. 70 LdA).
    in `stato.md` libro, edizione e pagina, e se il libro contraddice la lezione correggi la
    lezione.
 2. Rimetti la fonte nel frontmatter delle lezioni che usano quel fatto.
-3. Dove Singh diverge dagli specialisti, la lezione lo dice (`docs/piano.md`, «Bibliografia di
+3. Dove Singh diverge dagli specialisti, la lezione lo dice (`docs/piano/archivio.md`, «Bibliografia di
    base»).
 4. Sposta i fatti verificati da «Da verificare» a una sezione «Verificato», con la data.
 

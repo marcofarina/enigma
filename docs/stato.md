@@ -53,34 +53,34 @@ Da leggere insieme a `CLAUDE.md` e `docs/piano.md` all’inizio di ogni sessione
 
 - Fase 4d, branch `fase/4d`: crittoanalisi polacca. Tre lezioni in bozza nella sezione
   Crittoanalisi (Rejewski e la teoria dei cicli, il ciclometro e il catalogo, la bomba e i fogli di
-  Zygalski), pagina indice e voce di menu; dettagli in `docs/piano.md`, fase 4d, «Esito».
+  Zygalski), pagina indice e voce di menu; dettagli in `docs/piano/archivio.md`, fase 4d, «Esito».
 
 - Fase 4e, branch `fase/4e`: Bletchley Park e la M4. Tre lezioni in bozza nella sezione
   Crittoanalisi (il crib e la Bombe, la M4 e Shark, quanto contò Ultra), voci nuove del glossario e
-  pagina di prova delle animazioni tolta; dettagli in `docs/piano.md`, fase 4e, «Esito».
+  pagina di prova delle animazioni tolta; dettagli in `docs/piano/archivio.md`, fase 4e, «Esito».
 
 - Fase 4f, branch `fase/4f`: missioni storiche. Il menu «Carica una chiave» della home ha i
   messaggi di Barbarossa (due parti), U-264 e Scharnhorst da `src/content/missioni.yaml`, ognuno con
-  il pannello «Contesto»; dettagli in `docs/piano.md`, fase 4f, «Esito».
+  il pannello «Contesto»; dettagli in `docs/piano/archivio.md`, fase 4f, «Esito».
 
 - Fase 4g, branch `fase/4g`: guida per i docenti in `/docenti/` (testo in
-  `src/content/docenti/guida.mdx`), «Docenti» di nuovo nei menu; dettagli in `docs/piano.md`,
+  `src/content/docenti/guida.mdx`), «Docenti» di nuovo nei menu; dettagli in `docs/piano/archivio.md`,
   fase 4g, «Esito».
 
 - Fase 4a, branch `fase/4a`: lezione «Modelli a confronto» (11 di «Come funziona», in bozza) con
   il componente `ConfrontoModelli` (tabella e linea del tempo dai dati del motore); `period` e
-  `users` dei modelli verificati; dettagli in `docs/piano.md`, fase 4a, «Esito».
+  `users` dei modelli verificati; dettagli in `docs/piano/archivio.md`, fase 4a, «Esito».
 
 - Fase 4h, branch `fase/4h`: `pnpm test:lighthouse` (prestazioni ≥ 90, accessibilità 100, a desktop e
   a 375 px sulle pagine di `scripts/pagine.ts`), anche in CI; axe sulle stesse pagine; stack dei
   caratteri senza `ui-monospace`, preload dei due font della prima schermata e segnaposto a schermo
-  intero per i componenti `client:only`; dettagli in `docs/piano.md`, fase 4h, «Esito».
+  intero per i componenti `client:only`; dettagli in `docs/piano/archivio.md`, fase 4h, «Esito».
 
 ## Prossimo passo
 
 - Revisione delle bozze delle lezioni da parte dell’autore.
 - Le fasi rimaste (dalla 4i alla 5e: modello 3D, pagina `/macchina/`, lezione animata) sono in
-  `docs/piano.md`, sezione «Fasi», ognuna con il suo prompt di apertura; le decisioni sono D14–D19. La vista 2.5D e i rinviati della 1b sono usciti dal piano il 2026-11-04
+  `docs/piano.md`, sezione «Fasi», ognuna con il suo file in `docs/piano/` e il suo prompt di apertura; le decisioni sono D14–D19. La vista 2.5D e i rinviati della 1b sono usciti dal piano il 2026-11-04
   (decisioni D9 e D11).
 
 ## Note operative

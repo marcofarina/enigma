@@ -1,0 +1,709 @@
+# Archivio del piano
+
+Le fasi 4a–4h sono chiuse (2026-11-04) e qui restano come storia, non come istruzioni: i loro prompt citano `docs/piano.md` com’era prima della divisione, e «Architettura» descrive il progetto iniziale, non lo stato attuale del codice (per quello vedi `docs/stato.md` e `src/engine/README.md`).
+
+## Fasi chiuse 4a–4h
+
+### Fase 4a — Lezione «Modelli a confronto»
+
+**Modello: Opus · Effort: high · Durata: 2 h · Dipende da: G4**
+
+**Obiettivo.** «Come funziona» ha una lezione che mette a confronto i 15 modelli del motore con
+una tabella e una linea del tempo, costruite dai dati di `src/engine/models.ts`.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase 4a di docs/piano.md. Leggi docs/stato.md (sezione «Da verificare», voce su
+`period` e `users`) e .claude/norms/scrittura-didattica.md. Avvia il sito con il server
+«astro-dev» di .claude/launch.json e verifica la lezione nel browser, a desktop e a 375 px, in
+tema chiaro e scuro.
+```
+
+**Passi**
+
+1. Verifica `period` e `users` di ogni modello su Crypto Museum (con `curl`, vedi «Note
+   operative» di `docs/stato.md`); correggi `models.ts` e aggiungi a `fonti.yaml` le pagine
+   consultate. Un valore che non trovi resta fuori dalla tabella, e la lezione lo dice.
+2. Componente `ConfrontoModelli` in `src/components/lesson/`: tabella (rotori, tacche, pannello,
+   Uhr, riflettore regolabile o rotante, ruota d’ingresso) e linea del tempo, generate dai dati.
+3. Lezione `11-modelli-a-confronto.mdx` con lo scheletro completo (decisione D3); la citazione
+   d’apertura la sceglie Marco fra tre proposte vere.
+
+**Criteri di accettazione**
+
+```bash
+ls src/content/lezioni/it/11-*.mdx && grep -c 'stato: bozza' src/content/lezioni/it/11-*.mdx
+```
+un file, e `1`.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+**Esito (2026-11-04)**
+
+- `period` e `users` di tutti i 15 modelli verificati sulle pagine di Crypto Museum (con `curl`).
+  `period` è ora `{ from, to?, basis }`: `basis` distingue gli anni d’uso da quelli di produzione
+  (D, K, A28, G31), e `to` manca quando la fonte non dà la fine (norvegese). G111, G260 e G312 non
+  hanno `period`: sono esemplari singoli, la fonte dà solo l’anno di fabbricazione o del
+  sequestro. Corretti fra l’altro D (1926–1927, non «anni Trenta», niente uso diplomatico), T
+  (1943–1945, dalla procedura TIRPITZ), KD (Mil Amt dal 1944, non «anni Quaranta»), G111 (esercito
+  ungherese: «Monaco» era l’asta del 2009), G260 (probabilmente il Sicherheitsdienst, non
+  l’Abwehr), M3 (dal 1934, perché vale anche per M1 e M2). Undici voci nuove in `fonti.yaml`.
+- `src/lib/modelli.ts` (con `modelli.test.ts`) ricava dal catalogo famiglie, tacche, riflettore,
+  ruota d’ingresso e barre della linea del tempo; `ALPHABETIC_ETW` e `QWERTZ_ETW` sono esportate dal
+  motore. `ConfrontoModelli.astro` è statico (nessuna isola), con `vista="tabella"` o
+  `vista="linea"`; stringhe in `lesson.models.*`.
+- Lezione `11-modelli-a-confronto.mdx` in bozza, scheletro completo. Citazione d’apertura scelta da
+  Marco fra tre proposte: Crypto Museum, pagina della Reichsbahn Enigma, sul traffico Rocket I.
+  Previsione: da quale macchina deriva l’Enigma T.
+- Provata nel browser con «astro-dev» a 1024 px e a 375 px, in tema chiaro e scuro: a 1024 px la
+  tabella sta nella colonna, a 375 px scorre da sola senza allargare la pagina.
+- `tests/e2e/smoke.spec.ts`: i link «Simulatore» e «Come funziona» del menu si cercano con
+  `exact: true`, perché la descrizione della lezione 11 contiene «simulatore» e la ricerca per
+  sottostringa trovava due link.
+- Trovato e non corretto: il rotore IV della norvegese nel motore ha il cablaggio dell’Enigma I,
+  mentre Crypto Museum ne dà un altro (in «Da verificare» di `docs/stato.md`).
+- Comandi: `pnpm verify` (218 unit test, 43 pagine), `pnpm test:e2e` (160 passati, 24 saltati).
+
+### Fase 4b — Motore della crittoanalisi
+
+**Modello: Opus · Effort: high · Durata: 2,5 h · Dipende da: —**
+
+**Obiettivo.** `src/engine/` sa calcolare ciò che le animazioni e le lezioni di crittoanalisi
+mostrano: le permutazioni AD, BE, CF dagli indicatori doppi e la loro struttura in cicli (la
+«caratteristica» di Rejewski); il menu di un crib e i suoi anelli; il controllo di una ipotesi
+sul pannello come nella Bombe con il diagonal board.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase 4b di docs/piano.md. Leggi src/engine/README.md e la traduzione di Rejewski 1980
+indicata in src/content/fonti.yaml (voce rejewski-1980). src/engine resta TypeScript puro.
+```
+
+**Passi**
+
+1. `src/engine/cryptanalysis.ts`: dagli indicatori doppi di una giornata (generati con il motore
+   e una chiave del giorno) le permutazioni AD, BE, CF e la loro struttura in cicli, riusando
+   `cycles()` e `cycleType()`.
+2. Menu di un crib: grafo delle coppie lettera in chiaro–lettera cifrata con la posizione,
+   anelli del grafo, scarto delle posizioni in cui una lettera cifrerebbe sé stessa.
+3. Prova di un’ipotesi sul pannello lungo il menu, con e senza diagonal board, che restituisce le
+   contraddizioni trovate.
+4. Test di proprietà: i cicli di AD, BE e CF hanno lunghezze a coppie uguali (teorema di
+   Rejewski); con la chiave giusta l’ipotesi corretta non dà contraddizioni.
+
+**Criteri di accettazione**
+
+```bash
+pnpm exec vitest run src/engine/__tests__/cryptanalysis.test.ts
+```
+exit 0.
+
+```bash
+grep -rnE "from '(react|astro)|document\.|window\." src/engine | wc -l
+```
+`0`.
+
+```bash
+pnpm verify
+```
+
+**Esito (2026-11-04)**
+
+- Nuovo `src/engine/cryptanalysis.ts`, esportato da `src/engine/index.ts` e descritto in
+  `src/engine/README.md` (sezione «Crittoanalisi»). Per la fase 4c servono: `addIndicator` e
+  `chains` (un indicatore alla volta, cicli chiusi e catene aperte); `buildMenu`, `menuLoops`,
+  `menuCentre` e `testHypothesis`, le cui deduzioni ricordano da quale sono nate, così
+  l’animazione può ripercorrere la propagazione fino alla contraddizione.
+- In più rispetto ai passi: `transpositionsFromPair` e `secondFactorTranspositions` per l’esempio
+  «jjj» di Rejewski 1980, p. 10 (utile alla fase 4d), e `loopPermutation`, il punto fisso di un
+  anello su cui Turing costruì la Bombe.
+- I test usano come vettori fissi gli esempi di Rejewski 1980 (traduzione CryptoCellar): la
+  caratteristica (1) di p. 5, i frammenti dvpf, oumb, cqny di p. 6 e la deduzione di ppp e zzz da
+  jjj di p. 10. Tutti e tre tornano con il motore.
+- Sul menu di prova (crib WETTERVORHERSAGE, chiave M3 del README del motore), su 200 posizioni
+  sbagliate dei rotori × 26 ipotesi ne restano coerenti 7 senza diagonal board e nessuna con: il
+  test lo controlla.
+- Differenza dalla Bombe vera, scritta nel README: le permutazioni dei rotori seguono il passo
+  esatto della macchina, doppio passo compreso.
+- Comandi eseguiti: `pnpm exec vitest run src/engine/__tests__/cryptanalysis.test.ts` (22 test
+  verdi), il `grep` di purezza (`0`), `pnpm verify` (214 test, 0 errori; i 4 avvisi di
+  `lint:content` su `src/i18n/it.json` c’erano già), `pnpm test:e2e` (125 passati, 19 saltati).
+
+### Fase 4c — Animazioni della crittoanalisi
+
+**Modello: Sonnet · Effort: high · Durata: 2,5 h · Dipende da: 4b, G4**
+
+**Obiettivo.** Due componenti interattivi per le lezioni di crittoanalisi: la struttura in cicli
+di AD, BE, CF che si costruisce indicatore dopo indicatore, e il menu di un crib con un anello
+che la Bombe percorre.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Sonnet con effort high. Se non stai girando su Sonnet,
+fermati e dimmelo senza fare altro.
+
+Esegui la fase 4c di docs/piano.md, usando le funzioni di src/engine/cryptanalysis.ts e il
+catalogo delle animazioni di docs/design.md. Avvia il sito con il server «astro-dev» di
+.claude/launch.json e verifica ogni modifica nel browser, a desktop e a 375 px, in tema chiaro e
+scuro.
+```
+
+**Passi**
+
+1. `src/components/lesson/CicliIndicatori.tsx`: aggiunge un indicatore alla volta e disegna i
+   cicli che si chiudono; con `prefers-reduced-motion` lo stato cambia senza movimento.
+2. `src/components/lesson/MenuBombe.tsx`: crib e testo cifrato allineati, grafo del menu, un
+   anello evidenziato, ipotesi sul pannello che si propaga e si contraddice.
+3. Colori del segnale (`--signal-forward-paper`, `--signal-return-paper`) per i due versi, come
+   nelle altre figure; solo `transform`, `opacity` e `stroke-dashoffset`.
+4. Test e2e con axe in chiaro e in scuro su una pagina di prova o sulla prima lezione che li usa.
+
+**Criteri di accettazione**
+
+```bash
+ls src/components/lesson/CicliIndicatori.tsx src/components/lesson/MenuBombe.tsx
+```
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+**Esito (2026-11-04)**
+
+- Nuovi `src/components/lesson/CicliIndicatori.tsx` e `MenuBombe.tsx`, usati con `client:visible`
+  come gli altri componenti delle lezioni. Le stringhe stanno in `src/i18n/it.json`
+  (`lesson.indicators.*` e `lesson.menu.*`).
+- `CicliIndicatori`: una giornata d’esempio fissa (Enigma I, rotori II-I-III, posizione KUL, sei
+  cavi) e una sequenza fissa di chiavi di messaggio, che si fermano quando AD, BE e CF sono
+  complete (110 indicatori). Ogni pressione aggiunge un indicatore con `addIndicator`; `chains`
+  separa cicli chiusi, disegnati come anelli, e catene aperte. Alla fine mostra la notazione a cicli
+  e il teorema dei cicli a coppie.
+- `MenuBombe`: crib `WETTERVORHERSAGE` sul messaggio e sulla chiave M3 del README del motore;
+  allineamento crib e testo cifrato, grafo del menu, anello scelto con «Percorri l’anello»,
+  ipotesi sul pannello (lettera, compagna, rotori nella posizione giusta o spostati, diagonal board)
+  che si propaga una deduzione alla volta. La prova si ferma alla prima contraddizione: con i rotori
+  sbagliati `testHypothesis` continua per centinaia di deduzioni, che nell’elenco non servono.
+- Colori: `--signal-forward-paper` per il verso dalla lettera in chiaro alla cifrata (e per le prime tre
+  lettere dell’indicatore), `--signal-return-paper` per il verso opposto; il verso è scritto anche
+  con le frecce → e ←, e le contraddizioni anche a parole.
+- Animazioni: solo `stroke-dashoffset` (nuova classe `.tracciato` in `global.css`, con `--dur` e
+  `--ritardo`) e `inchiostro` (opacità e `translateY`). Nessun timer: ogni nuova azione rimonta
+  l’elemento e riparte. Con `prefers-reduced-motion` `.tracciato` non ha animazione.
+- Pagina di prova `src/pages/prove/crittoanalisi.astro`, non collegata da nessuna parte: serve ai
+  test e2e finché le fasi 4d e 4e non usano i componenti in una lezione; allora va tolta.
+- Test: `tests/e2e/crittoanalisi.spec.ts` (axe in chiaro e in scuro, comportamento dei due
+  componenti, movimento ridotto), a desktop e mobile.
+- Verificato nel browser con il server «astro-dev»: desktop in tema chiaro (entrambe le figure) e
+  375 px per `MenuBombe` in chiaro e in scuro e per `CicliIndicatori` in chiaro, senza scorrimento
+  orizzontale. Non guardati a occhio: desktop in tema scuro e `CicliIndicatori` a 375 px in scuro;
+  li copre solo axe nei test e2e.
+- Comandi eseguiti: `pnpm verify` (214 test, 0 errori; i 4 avvisi di `lint:content` su
+  `src/i18n/it.json` c’erano già) e `pnpm test:e2e` (135 passati, 19 saltati). Con il server di
+  sviluppo acceso sulla porta 4321, Playwright lo usa al posto di `astro preview` e molti test
+  falliscono: va fermato prima.
+
+### Fase 4d — Crittoanalisi polacca
+
+**Modello: Opus · Effort: high · Durata: 3 h · Dipende da: 4c; i fatti che solo Kozaczuk
+conferma aspettano la fase V**
+
+**Obiettivo.** La sezione Crittoanalisi ha le lezioni sul Biuro Szyfrów: Rejewski e la teoria
+dei cicli, il ciclometro, i fogli di Zygalski, la bomba, la riunione di Pyry del luglio 1939.
+Crittoanalisi torna nel menu (decisione D5).
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase 4d di docs/piano.md. Leggi .claude/norms/scrittura-didattica.md, la traduzione di
+Rejewski 1980 (fonti.yaml, rejewski-1980) e docs/stato.md («Da verificare»). Se in
+~/Developer/github/enigma-fonti/ c'è Kozaczuk, usalo; altrimenti i fatti che solo lui conferma
+vanno in «Da verificare» e non nel testo.
+```
+
+**Passi**
+
+1. Collezione delle lezioni di crittoanalisi (`src/content/lezioni/it/crittoanalisi/`) e pagina
+   indice al posto di `ComingSoon` in `src/pages/crittoanalisi/index.astro`.
+2. Due o tre lezioni, con obiettivi e riepilogo come la Storia (decisione D3), che usano
+   `CicliIndicatori`.
+3. «Crittoanalisi» torna nel menu dell’intestazione del sito e della home.
+
+**Criteri di accettazione**
+
+```bash
+ls src/content/lezioni/it/crittoanalisi/*.mdx | wc -l
+```
+almeno `2`.
+
+```bash
+grep -c 'nav.cryptanalysis' src/components/layout/SiteHeader.astro
+```
+almeno `1`.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+**Esito (2026-11-04)**
+
+- Kozaczuk non era in `~/Developer/github/enigma-fonti/` ma in `docs/books/`, con le appendici di
+  Rejewski: i fatti che solo lui conferma sono nel testo, con la pagina nei commenti di
+  `docs/stato.md` («Verificato», fase 4d). Rejewski 1980 riscaricato da CryptoCellar.
+- Tre lezioni in bozza in `src/content/lezioni/it/crittoanalisi/`, con obiettivi e riepilogo come
+  la Storia (D3) e una `Previsione` ciascuna:
+  - `01-rejewski-e-la-teoria-dei-cicli.mdx`: indicatori doppi, AD, BE e CF, teorema dei cicli a
+    coppie, esempio «jjj», chiavi francesi del 1932 e ruota d’ingresso. Usa `CicliIndicatori` e il
+    ritratto `marian-rejewski-1932`, finora solo in galleria.
+  - `02-il-ciclometro-e-il-catalogo.mdx`: griglia, caratteristica con e senza pannello (calcolata
+    con il motore sulla giornata di `CicliIndicatori`), ciclometro, catalogo, riflettore B, 15
+    settembre 1938.
+  - `03-la-bomba-e-i-fogli-di-zygalski.mdx`: femmine, bomba, fogli, rotori IV e V, riunione di Pyry
+    e il disaccordo fra Rejewski e Hinsley sul perché.
+- Numeri calcolati con il motore e scritti nelle lezioni: forme della caratteristica sulle 105 456
+  posizioni (20 680 forme, una posizione su dieci con forma unica, mediana 20 schede), posizioni
+  con punti fissi in AD (6 640 su 17 576, «circa il 40%» di Rejewski).
+- `src/pages/crittoanalisi/index.astro` elenca le lezioni con `ListaLezioni` al posto di
+  `ComingSoon`; nuova `src/pages/crittoanalisi/[...slug].astro`. «Crittoanalisi» torna nel menu
+  (D5) in `SiteHeader.astro`, nella home e nelle due barre del simulatore (`Header.tsx`,
+  `Compact.tsx`). Con sei voci, a 1024 px «Come funziona» andava a capo nella barra del
+  simulatore: `bench.css` ora tiene le voci su una riga e stringe lo spazio sotto i 1200 px.
+- Rimandi aggiornati nella lezione 9 e in storia 3; nomi nuovi in `scripts/nomi-propri.txt`.
+- `src/pages/prove/crittoanalisi.astro` resta: `MenuBombe` non è ancora in una lezione (fase 4e).
+- Test: le tre lezioni in `lessons.spec.ts` (axe in chiaro e in scuro), `crittoanalisi/` in
+  `smoke.spec.ts`. Verificato nel browser: menu del sito a 768 px, barra del simulatore a 1024 px,
+  lezione 1 a 375 px.
+- Comandi eseguiti: i due criteri (`3` lezioni, `1` occorrenza), `pnpm verify` (214 test, 0
+  errori, 40 pagine; i 4 avvisi di `lint:content` su `it.json` c’erano già), `pnpm test:e2e` (143
+  passati, 19 saltati).
+- Per Marco: le lezioni non hanno citazione d’apertura, come la Storia; se la vuole, servono tre
+  proposte. Da rileggere in particolare il paragrafo su Hinsley (lezione 3), che riporta Hinsley
+  solo attraverso la risposta di Rejewski in Kozaczuk.
+
+### Fase 4e — Bletchley Park e la M4
+
+**Modello: Opus · Effort: high · Durata: 3 h · Dipende da: 4c, V (Welchman, Sebag-Montefiore,
+Hinsley)**
+
+**Obiettivo.** Le lezioni su Bletchley Park: Turing e Welchman, la Bombe e il diagonal board, crib
+e menu, la M4 e il blackout di Shark nel 1942, U-110 e U-559, l’impatto di Ultra presentato come
+dibattito storiografico aperto.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase 4e di docs/piano.md. Leggi .claude/norms/scrittura-didattica.md, il trattato di
+Turing (fonti.yaml, turing-treatise), i libri presenti in ~/Developer/github/enigma-fonti/ e
+docs/stato.md («Da verificare»). Ultra si presenta come dibattito: tesi e autori, non una cifra.
+```
+
+**Passi**
+
+1. Tre lezioni circa nella collezione di crittoanalisi, che usano `MenuBombe`.
+2. Dove Singh semplifica o diverge dagli specialisti, la lezione lo dice («Bibliografia di base»).
+3. Sposta in «Verificato» di `docs/stato.md` i fatti controllati sui libri, con libro e pagina.
+
+**Criteri di accettazione**
+
+```bash
+grep -l 'MenuBombe' src/content/lezioni/it/crittoanalisi/*.mdx | wc -l
+```
+almeno `1`.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+**Esito (2026-11-04)**
+
+- Fonti: Welchman e Sebag-Montefiore da `docs/books/`, Singh (edizione italiana e, per la frase di
+  Hinsley, quella inglese per ragazzi), il capitolo 1 del trattato di Turing (riscaricato da
+  CryptoCellar). Hinsley non è fra i libri: le sue tesi arrivano attraverso Sebag-Montefiore,
+  Singh e Welchman, e la lezione lo dice. I fatti controllati sono in «Verificato (fase 4e)» di
+  `docs/stato.md`; le divergenze fra le fonti in «Da verificare». La sezione «Per la fase 4e» è
+  stata assorbita da quelle due.
+- Tre lezioni in bozza in `src/content/lezioni/it/crittoanalisi/`, con obiettivi e riepilogo come
+  la Storia (D3), ognuna con una forma diversa:
+  - `04-il-crib-e-la-bombe.mdx`: crib, menu, anelli che il pannello non cancella, deduzioni da
+    un’ipotesi, diagonal board, fermate. Usa `MenuBombe` con una `Previsione` (ipotesi sbagliata
+    con i rotori giusti) e una citazione breve di Turing (cap. 1, p. 2). Numeri calcolati con il
+    motore sulla chiave del componente: il crib sta in 19 posizioni su 33; un anello lascia
+    11 064 posizioni su 17 576, due ne lasciano 7 117; con il diagonal board la scansione si ferma
+    una volta (BLA), senza 648 volte; le 25 ipotesi sbagliate si contraddicono entro la
+    quattordicesima deduzione.
+  - `05-la-m4-e-shark.mdx`: Enigma della marina, tabella delle catture del 1941, quarto rotore,
+    blackout di Shark, U-559 e 13 dicembre 1942. Una `Previsione` con `MiniSimulatore` su una M4
+    con Beta in A, che cifra WETTER in OOHJSF come la M3 della lezione 4 (verificato nel motore e
+    nel browser).
+  - `06-quanto-conto-ultra.mdx`: casi documentati (PQ12, PQ17, sbarco), stima controfattuale, una
+    sezione per autore (Hinsley, Singh, Sebag-Montefiore, Welchman) e il confronto fra il 1946 e il
+    1948 attribuiti a Hinsley. Niente cifra come risposta.
+- Dove Singh diverge, le lezioni lo dicono: date della prima Bombe e della ripresa del maggio 1940,
+  diagonal board non nominato, progetto attribuito al solo Turing (lezione 4); riflettore navale a
+  26 posizioni (lezione 5); Hinsley con il 1948 (lezione 6).
+- Rimandi aggiornati: «Il riflettore», «Il pannello a spine» e «La bomba e i fogli di Zygalski»
+  ora collegano la lezione 4. Glossario: voci nuove `diagonal-board` e `menu`; `bombe` riscritta
+  (non più «la diagonal board», Turing non più unico autore), `crib` e `ultra` rimandano alle
+  lezioni nuove. Nomi nuovi in `scripts/nomi-propri.txt`.
+- Tolta `src/pages/prove/crittoanalisi.astro`: `tests/e2e/crittoanalisi.spec.ts` prova ora
+  `CicliIndicatori` nella lezione 1 e `MenuBombe` nella lezione 4; l’accessibilità delle due la
+  controlla `lessons.spec.ts`, che ha le tre lezioni nuove.
+- Nella lezione 6 una tabella di prosa a quattro colonne faceva fallire axe a 375 px (regione che
+  scorre senza tastiera): è diventata una sezione per autore.
+- Verificato nel browser con «astro-dev»: lezione 5 a desktop (tabella e simulatore) e a 375 px,
+  lezione 4 a 375 px (`MenuBombe`, «Percorri l’anello»), lezione 6 a 375 px; nessuno scorrimento
+  orizzontale. Non guardato a occhio il tema scuro: lo copre axe.
+- Comandi eseguiti: il criterio (`1` lezione con `MenuBombe`), `pnpm verify` (214 test, 0 errori;
+  i 4 avvisi di `lint:content` su `it.json` c’erano già), `pnpm test:e2e` (147 passati, 19
+  saltati).
+- Per Marco: come in 4d, niente citazione d’apertura; se la vuole, servono tre proposte. Da
+  rileggere in particolare la sezione «Il diagonal board» della lezione 4 (il modello delle
+  fermate senza diagonal board è quello del motore, non la Bombe di Turing del 1940) e le quattro
+  tesi della lezione 6.
+
+### Fase 4f — Missioni storiche
+
+**Modello: Opus · Effort: high · Durata: 2 h · Dipende da: 4e, V (fonti delle chiavi)**
+
+**Obiettivo.** Il menu «Carica una chiave» del foglio della home ha le chiavi storiche
+(Barbarossa, U-264, Scharnhorst), ognuna con il messaggio, un breve contesto e la voce verificata
+in `fonti.yaml`.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase 4f di docs/piano.md. I vettori dei messaggi sono già in
+src/engine/__tests__/historical.test.ts. Leggi docs/design.md («Da confermare con Marco», punto 3)
+e .claude/norms/scrittura-didattica.md.
+```
+
+**Passi**
+
+1. Per ogni missione una voce in `fonti.yaml` consultata davvero (per esempio la trascrizione di
+   Hamer, CryptoCellar o il libro che la riporta), con la pagina.
+2. Dati delle missioni in `src/content/` (chiave, testo cifrato, contesto in prosa), letti dal
+   menu del foglio al posto delle chiavi di prova; le chiavi di prova restano in fondo al menu.
+3. Un test e2e per missione: caricata la chiave e battuto il testo cifrato, il foglio mostra il
+   testo in chiaro atteso.
+
+**Criteri di accettazione**
+
+```bash
+grep -cE 'barbarossa|u-264|scharnhorst' tests/e2e/simulator.spec.ts
+```
+almeno `3`.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+**Esito (2026-11-04)**
+
+- Fonti cercate in rete, perché nessun libro del progetto riporta i tre messaggi. La pagina di
+  Franklin Heath (da Internet Archive: il sito rispondeva con un errore) rimanda alle fonti
+  primarie, che sono le voci nuove di `fonti.yaml`: `ostwald-weierud-1941` (il PDF di CryptoCellar
+  con il modulo n. 20 del 7 luglio 1941, chiave e indicatori) e `sullivan-weierud-2005` per
+  Barbarossa; `krah-m4-first-break` ed `erskine-1996` per U-264; `weierud-scharnhorst` per
+  Scharnhorst. Fatti e pagine in «Verificato (fase 4f)» di `docs/stato.md`.
+- Due correzioni ai vettori di `src/engine/__tests__/historical.test.ts`: la seconda parte di
+  Barbarossa ha 150 lettere e non 135 (le ultime 15 decifrano «KAMENEC X DIV X KDR X»); U-264 fu
+  ricevuto il 19 novembre 1942, non il 25, che è la data del rapporto di HMS Hurricane.
+- `src/content/missioni.yaml`, collezione `missioni` in `src/content.config.ts`: per ogni messaggio
+  chiave del giorno, parti (chiave del messaggio, indicatore se riproducibile, testo cifrato nei
+  gruppi del modulo, testo in chiaro), contesto, «da notare», traduzione nostra, fonti e lezione.
+  La build decifra ogni parte con il motore e controlla l’indicatore: una lettera sbagliata la
+  ferma (provato alterando una lettera). Barbarossa usa l’Enigma I, non la M3 dei test.
+- Menu «Carica una chiave» (`Sheet.tsx`): gruppo «Messaggi storici» in ordine di data (Barbarossa
+  parte 1 e 2, U-264, Scharnhorst) e, in fondo, «Chiavi di prova». Una missione carica la chiave,
+  mette il testo cifrato nel campo «Digita» e mostra la riga «Messaggio storico» con il pulsante
+  «Contesto», che apre un pannello ancorato (`MissionPanel` in `Panels.tsx`). I campi `contesto`,
+  `procedura` e `traduzione` passano da `lint:content`; nomi nuovi in `scripts/nomi-propri.txt`.
+- Barbarossa mostra la procedura del 1940 con un indicatore vero: con i rotori in WXC, KCH dà
+  BLA. Le due missioni della marina caricano direttamente la chiave del messaggio, perché
+  l’indicatore navale passa da tabelle di bigrammi che il simulatore non riproduce.
+- `docs/design.md`, «Da confermare», punto 3 (solo Barbarossa): superato da questa fase, che chiede
+  le tre missioni.
+- Test e2e in `tests/e2e/simulator.spec.ts`: uno per parte (selezionata la missione e premuto
+  «Digita», le lampade danno il testo in chiaro scritto nel test, indipendente dai dati) e uno per
+  l’indicatore di Barbarossa, il pannello con fonti e lezione, axe in chiaro e in scuro, Esc e la
+  chiave di prova che toglie la missione. Verificato nel browser con «astro-dev» a 1280×720: la
+  pagina resta alta 720 px con la riga della missione e il pannello scorre.
+- Comandi eseguiti: il criterio (`6` righe), `pnpm verify` (214 test, 0 errori, 42 pagine; i 4
+  avvisi di `lint:content` su `it.json` c’erano già), `pnpm test:e2e` (152 passati, 24 saltati).
+- Per Marco: da rileggere i testi delle missioni in `src/content/missioni.yaml` e le traduzioni,
+  che sono nostre (le scelte incerte sono in «Da verificare» di `docs/stato.md`). La versione
+  ridotta per il telefono non ha il menu delle chiavi, quindi nemmeno le missioni.
+
+### Fase 4g — Guida per i docenti
+
+**Modello: Opus · Effort: high · Durata: 2 h · Dipende da: G4**
+
+**Obiettivo.** `/docenti/` è una guida per l’uso in classe: modalità LIM, link condivisibili e
+QR, esercizi con il seme, schede stampabili, collegamenti con Informatica, Sistemi e reti e TPSIT.
+Docenti torna nel menu (decisione D5).
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Opus con effort high. Se non stai girando su Opus, fermati e
+dimmelo senza fare altro.
+
+Esegui la fase 4g di docs/piano.md. Leggi .claude/norms/scrittura-istituzionale.md: la guida si
+rivolge ai colleghi docenti. Avvia il sito con il server «astro-dev» e prova nel browser ogni
+procedura che la guida descrive prima di scriverla.
+```
+
+**Passi**
+
+1. Pagina `src/pages/docenti/index.astro` al posto di `ComingSoon`, con i testi in
+   `src/content/` o in `it.json` (che passano da `pnpm lint:content`).
+2. Ogni procedura descritta (aprire la LIM, assegnare la stessa variante alla classe, stampare
+   una serie di schede) è provata nel browser e ha un link diretto.
+3. Se la fase 4f è fatta, la guida cita le missioni; altrimenti l’«Esito» lo dice.
+4. «Docenti» torna nel menu dell’intestazione.
+
+**Criteri di accettazione**
+
+```bash
+grep -c 'ComingSoon' src/pages/docenti/index.astro
+```
+`0`.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+**Esito (2026-11-04)**
+
+- `src/pages/docenti/index.astro` mostra `src/content/docenti/guida.mdx` (avviso di bozza in
+  testa), al posto di `ComingSoon`, che non serviva più ed è stato tolto con la stringa
+  `status.comingSoon`. Il testo sta in `src/content/`, quindi passa da `lint:content`; i link sono
+  relativi a `/docenti/` e rispettano `base`.
+- Registro di `scrittura-istituzionale.md`: il paragrafo d’apertura ha il sito come soggetto, le
+  procedure usano l’infinito («Aprire», «Premere») per non dare del tu ai colleghi. È
+  un’interpretazione della norma, che non parla delle procedure: da confermare con Marco.
+- Sezioni: simulatore alla LIM (con «Digita», «Opzioni», le velocità dello schema e la versione
+  ridotta sotto 1024 × 576), link e QR, messaggi storici (fase 4f fatta, quindi la guida li
+  cita), esercizi e varianti, schede stampabili, collegamenti con il curricolo.
+- Ogni procedura provata nel browser con «astro-dev» a 1280×720: modalità LIM; «Condividi» con e
+  senza «Includi le lettere digitate» e il QR; il link della chiave d’esempio decifra
+  QEZKD XNWJF UKNMF S in ATTACCATEALLALBA anche a 375 px nella versione ridotta; Barbarossa e
+  «Contesto»; variante 4827 di «Decifra un messaggio» riaperta dal link e dal campo «Numero della
+  variante»; serie `schede/?seme=100&copie=25`. La stampa è stata provata con un PDF di Chromium
+  (Playwright) di tre schede: tre pagine A4 per scheda con le opzioni di partenza, soluzioni in
+  pagine separate. La scheda n. 100 ha la stessa variante di `esercizi/posizioni/?seme=100`.
+- Non provato: lo schermo intero della modalità LIM, che il pannello del browser della sessione
+  rifiuta («Permissions check failed»); la guida lo descrive dal codice di `Simulator.tsx`.
+- Collegamenti con il curricolo dalle Linee guida della Direttiva 16 gennaio 2012, n. 4,
+  articolazione Informatica, lette nella copia dell’allegato pubblicata dall’ITIS Fauser
+  (`netlab.fauser.edu/risorse/doc/C4_Informatica.pdf`): Informatica (secondo biennio), Sistemi e
+  reti (quinto anno), TPSIT (secondo biennio e quinto anno). Le voci citate sono testuali.
+- «Docenti» è tornata nei tre menu: `SiteHeader.astro`, `bench/Header.tsx` e `bench/Compact.tsx`.
+  Con sette voci a 768 px «Come funziona» andava a capo: le voci hanno `whitespace-nowrap` e sotto
+  `lg` un margine interno più stretto. A 1024×576 la barra del banco ci sta senza scorrere.
+- Test e2e: `docenti/` fra le pagine di axe in `smoke.spec.ts`; un test che apre la guida dal
+  menu e ne segue i link della serie di schede e della variante 4827; un test sulle sette voci a
+  768 px; «Docenti» nel menu della versione ridotta in `simulator.spec.ts`.
+- Comandi eseguiti: il criterio (`0`), `pnpm verify` (214 test, 0 errori, 42 pagine; i 4 avvisi di
+  `lint:content` su `it.json` c’erano già), `pnpm test:e2e` (158 passati, 24 saltati).
+- Per Marco: rileggere la guida, in particolare i collegamenti con il curricolo. La riforma degli
+  istituti tecnici porta Linee guida nuove; per il triennio di quest’anno valgono ancora quelle del
+  2012, ma il riferimento va aggiornato quando le nuove arriveranno alle terze. Notato in passata,
+  fuori fase: nelle soluzioni delle schede il titolo «Dove saranno i rotori?» è seguito dai due
+  punti («rotori?:»).
+
+### Fase 4h — Accessibilità e prestazioni
+
+**Modello: Sonnet · Effort: high · Durata: 1,5 h · Dipende da: 4a–4g**
+
+**Obiettivo.** Il budget del piano diventa un test: Lighthouse con prestazioni almeno 90 e
+accessibilità 100 sulle pagine principali, axe senza violazioni su tutte.
+
+**Prompt di apertura**
+
+```
+Prima di tutto: questa fase richiede Sonnet con effort high. Se non stai girando su Sonnet,
+fermati e dimmelo senza fare altro.
+
+Esegui la fase 4h di docs/piano.md. Il budget è nella sezione «Verifica» di docs/piano.md.
+```
+
+**Passi**
+
+1. Script `pnpm test:lighthouse` sulla build (home, una lezione per sezione, esercizi, schede,
+   glossario, docenti), a desktop e a 375 px.
+2. Correggi ciò che resta sotto il budget; ciò che non si può correggere in questa fase va
+   nell’«Esito» con il motivo.
+3. Il test di axe di `tests/e2e/smoke.spec.ts` copre tutte le pagine elencate al passo 1.
+
+**Criteri di accettazione**
+
+```bash
+pnpm build && pnpm test:lighthouse
+```
+exit 0.
+
+```bash
+pnpm verify && pnpm test:e2e
+```
+
+**Esito (2026-11-04, branch `fase/4h`)**
+
+- `pnpm test:lighthouse` (`scripts/lighthouse.ts`): avvia `astro preview` su una porta sua (4322),
+  apre il Chromium di Playwright (o `CHROME_PATH`) e misura le dieci pagine di
+  `scripts/pagine.ts` — home, simulatore, «Modelli a confronto», «Enigma e l’Italia», «La bomba e
+  i fogli di Zygalski», indice degli esercizi, «Decifra un messaggio», schede, glossario, docenti —
+  a desktop (preset di Lighthouse) e a 375 px (mobile con schermo 375 × 812, throttling di
+  Lighthouse). Esce con 1 se una misura sta sotto il budget; una pagina sotto soglia si rimisura
+  fino a tre volte e conta la migliore, perché le prestazioni oscillano. Dipendenze nuove:
+  `lighthouse` 13.6.0 e `chrome-launcher` 1.2.2. Il passo è anche in `ci.yml`, dopo gli e2e.
+- Lo stesso elenco serve ad axe: `tests/e2e/smoke.spec.ts` legge `pagineAxe` da `scripts/pagine.ts`
+  (le dieci di Lighthouse più indici di sezione, galleria e fonti); sono entrate `simulatore/`,
+  `esercizi/`, `esercizi/decifra/` e una lezione di Storia, una di Crittoanalisi e «Modelli a
+  confronto».
+- Prima misura: accessibilità 100 ovunque, prestazioni 50–76 a quasi tutte le pagine (18 misure su
+  20 sotto 90). Cause trovate, in ordine di peso:
+  1. **`ui-monospace` nello stack di `--font-mono`**. In Chromium su macOS la prima risoluzione di
+     quel nome blocca il primo rendering per circa 2 s (FCP 2,1 s contro 30 ms, riprodotto con
+     Playwright cambiando solo la famiglia). Tolto da `src/styles/tokens.css`: lo stack è
+     `'Courier Prime', Menlo, Consolas, monospace`. Effetto: prestazioni 95–100 a desktop e 97–100
+     a 375 px; anche la suite e2e passa da 1,4 min a 45 s.
+  2. **Spostamento di layout dei componenti `client:only`** (`esercizi/[id]`, `schede/`): il
+     segnaposto era una riga, il componente porta la pagina a 3000 px e il piè di pagina, già in
+     vista, scivolava (CLS 0,2). Classe `.fallback-schermo` in `global.css` (altezza `100svh`):
+     sempre per gli esercizi con simulatore e per le schede, solo sotto 48 rem per gli altri
+     (a desktop stanno in una schermata). CLS misurato su tutte le 11 pagine di esercizi e le
+     schede a 375, 1350 e 1920 px: 0 ovunque tranne `esercizi/` a 375 px (0,05, sotto la soglia
+     di 0,1).
+  3. **Cambio di carattere**: a seconda che Archivo arrivi prima o dopo il primo rendering, il
+     glossario a 375 px aveva un CLS di 0,25 (prestazioni 87) o 0,02. `Head.astro` ora precarica
+     `archivo-latin-normal` e `courier-prime-latin-400-normal` (importati con `?url`, quindi con
+     lo stesso hash del CSS). Resta un CLS di 0,02 al massimo, dal grassetto della macchina da
+     scrivere.
+- Risultato finale (tre misure di ogni pagina a 375 px più due giri completi del comando): prestazioni da 96
+  a 100, accessibilità 100 in tutte le 20 combinazioni. Non c’è nulla che non si sia potuto
+  correggere. La pagina `simulatore/` ha un reindirizzamento (audit `redirects`): costa pochi
+  punti a 375 px (96–98) e non è stato toccato.
+- Test instabile, trovato per via della velocità nuova: i due test di `simulator.spec.ts` che
+  battono la tastiera fisica (`50 lettere battute in fretta…`, `la tastiera fisica cifra…`)
+  fallivano una volta ogni tre giri completi. Il simulatore registra la tastiera in un effetto
+  dopo il primo disegno e `open()` aspettava solo il titolo; ora `open()` aspetta anche due
+  fotogrammi. Cinque giri completi consecutivi: 172 passati, 24 saltati. Il difetto era del test,
+  non del sito (un lettore non batte 50 tasti in 5 ms).
+- Per Marco: i due compiti di «Fuori dalle fasi» non risultano chiusi (storia 4 ancora da
+  rileggere; i rotori commerciali dell’Enigma D da confrontare con CryptoCellar): il piano li
+  voleva prima della 4h, ma nessuna riga della 4h ne dipende e non li ho toccati. La CI su
+  GitHub (Linux) non è stata provata: i punteggi di Lighthouse cambiano con la macchina; se
+  `pnpm test:lighthouse` fallisse lì per pochi punti, il budget va riletto, non allentato a occhio.
+- Comandi eseguiti: `pnpm build && pnpm test:lighthouse` (exit 0, due volte di fila dopo le
+  correzioni), `pnpm verify` (218 test, 0 errori, 43 pagine), `pnpm test:e2e` (172 passati, 24
+  saltati, cinque giri).
+
+## Analisi della code base esistente
+
+- `enigma.js` — motore: `Plugboard`, `Uhr`, `EntryWheel`, `Rotor`, `ReflectorWheel`, `EnigmaMachine`; catalogo di 15 modelli costruito per ereditarietà con `$.extend` (il motore dipende da jQuery).
+- `enigma-gui.js` — GUI imperativa sul DOM; i fili sono `<div>` ruotati via CSS con correzioni a pixel; lo stato è sparso tra DOM e oggetto `EnigmaMachine`, che viene ricreato a ogni modifica.
+- `test/enigma-tests.js` — ~70 test QUnit con tabelle di cablaggio e messaggi storici (Barbarossa parte 1 e 2, U-264, Scharnhorst): **da riusare come test vector**.
+
+**Verificato come corretto:** cablaggi e tacche di tutti i modelli; formula rotore `(c + pos − ring) mod 26`; doppio passo; movimento a ingranaggi del G con UKW rotante; Uhr reciproca solo alle posizioni multiple di 4 (verificato in Node, coerente con Crypto Museum).
+
+### Bug confermati (riprodotti in Node) → correzione nel nuovo motore
+1. **Validazione dell’input rotta** (`enigma.js:544`): confronta una stringa con un numero, quindi il filtro non scatta mai per lettere o punteggiatura. `"A.B"`, `"L'ENIGMA"`, `"aaa"`, `"È"` lanciano un TypeError **dopo** che i rotori sono già avanzati; “Cipher All” va in crash su qualunque testo italiano con apostrofi o accenti. → normalizzazione esplicita del testo (vedi `text.ts`) e `pressKey` che accetta solo `A–Z` e non modifica lo stato in caso di input non valido.
+2. **Tasti non-lettera nel campo tastiera** (`enigma-gui.js:44`, `String.fromCharCode(e.which)`): Shift, Backspace, frecce, F1–F12 e la virgola fanno avanzare i rotori e poi lanciano un’eccezione. → uso di `KeyboardEvent.key`, ignorando modificatori e ripetizione automatica; Backspace = annulla (riavvolge i rotori), con nota didattica che la macchina reale non lo permetteva.
+3. “Cipher All” aggiorna i select ma non ridisegna i rotori. → unica fonte di verità (store) da cui derivano tutte le viste.
+4. Rotori duplicati solo segnalati. → nella configurazione un rotore può occupare un solo slot.
+5. Uhr con meno di 10 cavi: le lettere spariscono dopo che i rotori sono avanzati. → `validateConfig` blocca la cifratura finché la configurazione non è completa (Uhr: 10 cavi; UKW-D: 12 coppie + J–Y fissa).
+6. Latente (`enigma.js:557`): il controllo sul filo del riflettore ignora la posizione. → riflettore modellato come permutazione completa e validata.
+7. Variabili globali implicite, `e.which` deprecato, link `rawgit` morto, CDN obsolete.
+
+### Inesattezze storiche → correzione nei dati dei modelli
+- **UKW regolabile**: il codice lega la regolazione del riflettore al movimento a ingranaggi e la disabilita su D, K, Swiss-K, Railway e T. Nelle macchine commerciali l’UKW era impostabile a mano su 26 posizioni ma fisso durante la cifratura (Crypto Museum, CryptoCellar). → nuovi flag `reflectorSettable` e `reflectorRotates`.
+- **Uhr** offerta su M3, M4 e Norway: fu usata solo dalla Luftwaffe con l’Enigma I, dal luglio 1944. → `uhrSupported` solo su Enigma I.
+- “M3 (Army / Navy)”: la M3 era della Kriegsmarine; i rotori VI–VIII erano solo della marina. → etichette e schede storiche corrette.
+- **UKW-D**: impiego su M3/M4 e notazione Bletchley (J–Y fisso) rispetto a quella tedesca (B–O) da verificare sulle fonti; la UI mostrerà entrambe le notazioni.
+- **KD**: l’UKW era riconfigurabile (UKW-D); il cablaggio noto viene mantenuto come predefinito, con una nota (da verificare).
+
+## Architettura
+
+Un solo progetto Astro (pnpm, Node LTS, versioni stabili correnti al momento dello scaffold). Il motore sta in `src/engine/`: TypeScript puro, senza dipendenze, senza DOM né React (regola ESLint `no-restricted-imports`), riusabile anche da script Node per generare figure ed esercizi del libro.
+
+```
+enigma/
+├─ src/engine/            alphabet, models, rotor, reflector, plugboard, uhr, stepping,
+│                         machine, trace, validate, config-codec, text, keyspace, random (PRNG con seme)
+├─ src/components/
+│  ├─ simulator/          Simulator.tsx, store.ts (Zustand), ConfigPanel, RotorWheel, PlugboardEditor,
+│  │                      UhrDial, UkwDEditor, Keyboard, Lampboard, Tape, ShareDialog (QR), LimMode
+│  ├─ views/schematic/    SchematicView.tsx + layout.ts (coordinate calcolate, niente correzioni a pixel)
+│  ├─ views/machine/      MachineView.tsx + parts/ (lampade, tasti, finestrelle, Steckerbrett, cavi)
+│  ├─ tracer/             Tracer.tsx (percorso del segnale passo-passo)
+│  ├─ lesson/             Figura, Nota, Approfondimento, Citazione, MiniSimulatore, animations/*
+│  └─ exercises/          ExerciseRunner.tsx, tipi di esercizio, progress.ts (localStorage con try/catch)
+├─ src/content/           lezioni/it, storia/it, crittoanalisi/it, esercizi/it, glossario, fonti, immagini (crediti)
+├─ src/content.config.ts  schemi Zod (un’immagine senza crediti fa fallire la build)
+├─ src/i18n/              it.json + helper (routing Astro, it predefinito senza prefisso)
+├─ src/pages/             index, simulatore, come-funziona/, storia/, crittoanalisi/, esercizi/, schede/,
+│                         glossario, fonti, docenti
+├─ src/styles/            tokens.css (tema neutro chiaro/scuro), global.css, print.css (A4)
+├─ scripts/               lint-content.ts (regole tipografiche), check-credits.ts
+├─ tests/e2e/             Playwright + axe
+├─ fixtures/              legacy-vectors.json (generato dal motore originale, solo dati)
+└─ .github/workflows/     ci.yml (lint, typecheck, test, build), deploy.yml (Pages)
+```
+
+### Motore (`src/engine`)
+- **Dati dichiarativi** in `models.ts`: per ogni modello id, etichetta, anni, arma/ente, `stepping: 'lever' | 'gear'`, `slots`, `reflectorSettable`, `reflectorRotates`, `plugboard`, `uhrSupported`, `ukwDRewirable`, ETW, rotori `{wiring, notches, thin?}`, riflettori. Niente ereditarietà con `$.extend`: oggetti espliciti o un piccolo helper `derive()` tipizzato. Cablaggi e tacche ripresi dal motore originale (già verificati).
+- **API funzionale e immutabile**: `createMachine(config)`, `step(state) → {state, moved[]}`, `pressKey(state, letter) → {state, output, trace}`, `encipherText(state, text)`. La `trace` registra ogni stadio (tasto → plugboard/Uhr → ETW → rotori in andata → UKW → rotori al ritorno → ETW → plugboard → lampada) e alimenta schema, vista 2.5D e tracer. L’immutabilità rende banale annulla/ripeti.
+- **Uhr**: porting delle tabelle `ab_wiring` e `b_plug_order` con percorsi distinti di andata e ritorno (logica originale corretta).
+- **`text.ts`**: normalizzazione per l’italiano (maiuscole, rimozione degli accenti, apostrofi eliminati, numeri trascritti o scartati, opzione convenzionale `X` per il punto), raggruppamento in blocchi da cinque.
+- **`config-codec.ts`**: configurazione ↔ query string versionata e leggibile (es. `?v=1&m=M4&u=Bt&w=b-II-IV-I&r=AAAV&g=VJNA&s=AT.BL.DF…`), con messaggio facoltativo; la usano i link condivisibili, i QR del libro e gli esercizi.
+- **`keyspace.ts`**: calcolo dello spazio delle chiavi con ipotesi esplicite (rotori disponibili, slot, numero di cavi, anelli contati o meno), per spiegare perché le fonti riportano cifre diverse (per esempio la stima di Singh rispetto a ~1,59 × 10²⁰ per l’Enigma I con 10 cavi; cifra di Singh da verificare sulla copia dell’utente).
+- **`random.ts`**: PRNG con seme, così fogli chiave ed esercizi sono riproducibili (“scheda n. 4827”).
+
+### Simulatore (UX/UI)
+- **Layout**: pannello di configurazione (modello; Walzenlage con selezione esclusiva; Ringstellung; Grundstellung con rotelle trascinabili, scroll o frecce; plugboard con cavi trascinabili tra le prese oppure coppie digitate “AB CD…”; quadrante Uhr; editor UKW-D) + area principale con schede **Schema** / **Macchina** / affiancate + tastiera e lampade a disposizione QWERTZ originale + nastro di input e output con gruppi da cinque e pulsante “copia”.
+- **Schema SVG**: colonne di contatti che scorrono con la posizione, fili come path SVG, andata e ritorno con colori adatti ai daltonici e tratteggio diverso.
+- **Vista “Macchina” 2.5D** (tolta il 2026-11-04, decisione D9): illustrazione SVG parametrica dell’Enigma I (finestrelle, lampade che si accendono, tasti animati, scatto dei rotori, Steckerbrett con cavi a curva); varianti M4, G e commerciali generate dai dati del modello. Riusabile come figura nel libro.
+- **Traccia passo-passo**: Avanti/Indietro e velocità regolabile; per ogni stadio la permutazione è mostrata in chiaro.
+- **Link condivisibili + QR**; **missioni storiche** precaricate (Barbarossa, U-264, Scharnhorst).
+- **Modalità LIM**: schermo intero (Fullscreen API), testi grandi, controlli essenziali, target touch ≥ 48 px, alto contrasto.
+- **Accessibilità**: WCAG 2.2 AA, tutto usabile da tastiera, regione `aria-live` che annuncia la lampada accesa, `prefers-reduced-motion` rispettato.
+- **Responsive**: su mobile tastiera, lampade e finestrelle (versione ridotta della fase G3; lo schema in verticale è uscito, decisione D11).
+
+### Contenuti (MDX, bozze di Claude, revisione dell’utente)
+Componenti MDX: `<Figura>` (con crediti obbligatori), `<Animazione>`, `<Nota>`, `<Approfondimento livello="avanzato">`, `<Citazione fonte pagina>`, `<MiniSimulatore config="…">`, formule con KaTeX (remark-math / rehype-katex).
+
+- **Come funziona** — dalla sostituzione monoalfabetica al rotore (Cesare, il disco di Alberti); tastiera, lampade e circuito; rotori (cablaggio, posizione, anello); passo e doppio passo (animazione); riflettore: reciprocità e “nessuna lettera cifra sé stessa”; Steckerbrett e Uhr; matematica (permutazioni, composizione, coniugio, involuzioni, `E = P⁻¹ R⁻¹ U R P` e calcolatore dello spazio delle chiavi); modelli a confronto (tabella + linea del tempo).
+- **Storia e procedure** — Scherbius e le macchine commerciali; adozione militare (Reichsmarine 1926, Reichswehr 1928, Luftwaffe); fogli chiave giornalieri, Kenngruppen, Spruchschlüssel, indicatore doppio fino al 1940; galleria di reperti e documenti.
+- **Enigma e l’Italia** — l’Enigma K della Regia Marina, Knox e Mavis Lever (Batey), Capo Matapan (marzo 1941); dettagli tecnici della K italiana da verificare.
+- **Crittoanalisi (racconto)** — Biuro Szyfrów e Rejewski (teoria dei cicli, ciclometro, fogli di Zygalski, *bomba*), Pyry (luglio 1939), Bletchley Park (Turing, Welchman, Bombe, diagonal board, crib e menu), M4 e Atlantico (U-110, U-559, il blackout di Shark nel 1942), impatto di Ultra presentato come dibattito storiografico aperto (per esempio la tesi dei “due anni” di Hinsley). Animazioni: strutture dei cicli, loop di un menu della Bombe.
+- **Glossario** tedesco–italiano–inglese, **Fonti** e **Crediti immagini** generati automaticamente, **Guida per i docenti** (uso in classe, modalità LIM, link, collegamenti con Informatica, Sistemi e reti e TPSIT).
+- **Bibliografia di base**: Singh, *Codici & segreti*; Rejewski, “An Application of the Theory of Permutations in Breaking the Enigma Cipher” (1980); Welchman, *The Hut Six Story*; Kozaczuk, *Enigma*; Sebag-Montefiore, *Enigma*; Batey, *Dilly*; Bauer, *Decrypted Secrets*; Hinsley et al.; Crypto Museum; CryptoCellar (Weierud); codesandciphers.org.uk (Sale). Dove Singh semplifica o diverge dagli specialisti, lo si dice esplicitamente.
+- **Regole tipografiche automatizzate**: smartypants configurato per l’italiano + `scripts/lint-content.ts` in CI (virgolette e apostrofi diritti nella prosa, titoli in maiuscolo solo iniziale, incisi con trattino lungo, acronimi senza punti).
+- **Immagini**: collezione `immagini` con file, autore, fonte, licenza, URL della licenza e testo di attribuzione; ammesse solo PD, CC0, CC BY e CC BY-SA (Wikimedia Commons, Bundesarchiv, NSA/National Cryptologic Museum). Per l’uso nel libro, le CC BY-SA vanno confermate con l’editore.
+
+### Esercizi (autocorretti, progressi in `localStorage`)
+Varianti generate con seme e verificate dal motore.
+- **Livello 1 — Operatore**: cifra o decifra con impostazioni date; imposta la macchina da un foglio chiave e decifra; segui la procedura dell’indicatore.
+- **Livello 2 — Meccanica**: prevedi le posizioni dopo N tasti (doppio passo); calcola a mano una lettera con le tabelle di cablaggio (simulatore bloccato); “perché questo crittogramma non può venire da un’Enigma?”.
+- **Livello 3 — Matematica**: spazio delle chiavi con vincoli; numero di plugboard con k cavi; verifica di involuzioni; trova la posizione iniziale conoscendo il resto della chiave (ricerca su uno spazio ridotto).
+- **Schede stampabili** (`print.css`, A4): generatore di fogli chiave in stile Heer/Luftwaffe con seme, messaggi da decifrare, soluzioni su una pagina separata, set per classe con semi diversi.
