@@ -92,7 +92,7 @@ const lettere = z
   .pipe(z.string().regex(/^[A-Z]+$/));
 
 /**
- * Messaggi storici del menu «Carica una chiave» della home (fase 4f di docs/piano.md). La build
+ * Messaggi storici del menu «Carica una chiave» della home (fase 4f di docs/piano/archivio.md). La build
  * decifra ogni parte con il motore: una lettera sbagliata nei dati la ferma.
  */
 const missioni = defineCollection({

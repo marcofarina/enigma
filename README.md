@@ -2,7 +2,7 @@
 
 Simulatore didattico della macchina Enigma, con un percorso su storia, funzionamento, matematica e crittoanalisi ed esercizi per gli studenti. Fa parte del progetto **Rainbow Bits**, che accompagna un libro di crittografia.
 
-Il piano di lavoro completo è in [`docs/piano.md`](docs/piano.md); le correzioni in corso, in [`docs/piano-aggiornamento.md`](docs/piano-aggiornamento.md).
+Il piano di lavoro è in [`docs/piano.md`](docs/piano.md) (indice) e in [`docs/piano/`](docs/piano/) (un file per fase); le correzioni in corso, in [`docs/piano-aggiornamento.md`](docs/piano-aggiornamento.md).
 
 ## Stato
 

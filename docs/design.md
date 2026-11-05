@@ -274,6 +274,6 @@ nuovo, e il nastro non perde lettere.
 2. La nota sull’annullare esce dal simulatore e va nella lezione 1.
 3. ~~Le chiavi storiche del foglio partono dalla sola Barbarossa, e solo dopo che ha una voce in
    `fonti.yaml` verificata (fase V); fino ad allora il menu ha soltanto chiavi di prova.~~
-   Superato dalla fase 4f di `docs/piano.md` (2026-11-04), che chiede le tre missioni: Barbarossa,
+   Superato dalla fase 4f di `docs/piano/archivio.md` (2026-11-04), che chiede le tre missioni: Barbarossa,
    U-264 e Scharnhorst sono nel menu, ognuna con le sue voci in `fonti.yaml` consultate, e le
    chiavi di prova restano in fondo.

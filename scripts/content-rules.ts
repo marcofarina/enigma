@@ -1,5 +1,5 @@
 /**
- * Regole tipografiche per la prosa italiana dei contenuti (vedi docs/piano.md).
+ * Regole tipografiche per la prosa italiana dei contenuti (vedi docs/piano/archivio.md).
  * Valgono solo per il testo discorsivo: blocchi di codice, codice inline, import/export
  * e tag JSX vengono ignorati.
  */

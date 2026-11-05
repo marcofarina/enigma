@@ -1,4 +1,4 @@
-# Messaggi storici del menu «Carica una chiave» della home (fase 4f di docs/piano.md).
+# Messaggi storici del menu «Carica una chiave» della home (fase 4f di docs/piano/archivio.md).
 # Il testo cifrato è scritto nei gruppi del modulo originale (cinque lettere per l’esercito,
 # quattro per la marina), senza i gruppi dell’indicatore. La build decifra ogni parte con il
 # motore e si ferma se il testo in chiaro non coincide (src/content.config.ts).

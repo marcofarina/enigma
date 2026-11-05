@@ -19,7 +19,7 @@ Il symlink esiste solo in locale (è in `.gitignore`): nel cloud `norms/` non è
 
 ## Il progetto
 
-Sito Astro + React + TypeScript (Tailwind, MDX), pubblicato su GitHub Pages sotto `/enigma/`. Il piano completo è in `docs/piano.md`.
+Sito Astro + React + TypeScript (Tailwind, MDX), pubblicato su GitHub Pages sotto `/enigma/`. Il piano è in `docs/piano.md` (indice, decisioni, stato delle fasi) e in `docs/piano/` (un file per fase): una fase si esegue leggendo l’indice e il proprio file.
 
 ## Comandi
 
