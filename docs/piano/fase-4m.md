@@ -72,8 +72,8 @@ pnpm verify && pnpm build && pnpm test:e2e
 ```
 verdi. L’«Esito» riporta il giudizio di Marco sulle immagini del passo 5.
 
-**Esito** (2026-11-05, Sonnet): **parziale**. Il modello è fatto e verificato; mancano gli e2e (vedi
-sotto) e il giudizio di Marco sulle immagini del passo 5.
+**Esito** (2026-11-05, Sonnet): il modello è fatto e verificato; manca solo il giudizio di Marco sulle
+immagini del passo 5.
 
 L’interno ha smussi, un materiale solo cotto in un atlante e occlusione. Sorgenti nuovi in
 `scripts/blender/`: `smussi.py` (Bevel + Weighted Normal sulle mesh interne, una volta per mesh),
@@ -123,9 +123,8 @@ pnpm build && pnpm test:e2e
 ```
 
 Esiti: `pnpm modello` e `verifica:modello` verdi (`fase 4m: 6106 KB … 0 errori.`, la build in circa
-2,5 minuti per la cottura); `grep` dà 1; `ls` dà 5; `pnpm verify` verde. **`pnpm test:e2e` non verde:**
-158 passati e 24 saltati, ma i fallimenti sono dovuti a un `pnpm dev` rimasto acceso sulla porta 4321
-(avviato alle 11:23 nella cartella del progetto), che Playwright ha riusato al posto della build: i
-messaggi di errore citano la barra di sviluppo di Astro (`data-app-id="astro:home"`). Non ho potuto
-fermarlo (il permesso è stato negato) e la porta è fissa in `playwright.config.ts`; vanno rifatti
-dopo averlo fermato.
+2,5 minuti per la cottura); `grep` dà 1; `ls` dà 5; `pnpm verify` verde. Il primo `pnpm test:e2e`
+fallì perché un `pnpm dev` acceso sulla porta 4321 era stato riusato da Playwright al posto della
+build (gli errori citavano la barra di sviluppo di Astro); fermato il server su richiesta di Marco,
+`pnpm build && pnpm test:e2e` danno 198 passati e 24 saltati, come nella 4l, compreso «nessuna
+richiesta esce dal sito».
