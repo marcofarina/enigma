@@ -85,7 +85,7 @@ indice e il proprio file in `docs/piano/` (tabella in fondo).
 | 5b | Pagina 3D: vista esplosa, cablaggio e nottolini | Sonnet | high | 3 h | 4k, 5a | fatta (2026-11-05) |
 | 4l | Modello ibrido: esterno di terzi, scomposizione e catena di esportazione | Opus | high | 3 h | D20–D23; Marco al Mac con Blender aperto | fatta (2026-11-05) |
 | 4m | Modello ibrido: l’interno allo stesso livello dell’esterno | Sonnet | high | 3,5 h | 4l; Marco al Mac con Blender aperto | fatta (2026-11-05) |
-| 4n | Modello ibrido: smontaggio, anteprima e chiusura | Sonnet | high | 2 h | 4m; Marco al Mac con Blender aperto | da fare |
+| 4n | Modello ibrido: smontaggio, anteprima e chiusura | Sonnet | high | 2 h | 4m; Marco al Mac con Blender aperto | fatta (2026-11-05) |
 | G5 | Pagina 3D: riprogettazione su Claude Design | Opus | high | 2 h | —; Marco presente per scegliere | da fare |
 | 5f | Pagina 3D: resa | Opus | high | 2,5 h | 4l | da fare |
 | 5g | Pagina 3D: nuovo layout e navigazione | Sonnet | high | 3 h | G5 | da fare |
@@ -153,7 +153,7 @@ dipendono da nessuna fase; vanno chiusi prima della 4h.
 - La rete della sessione blocca `cryptomuseum.com`. Per ricerca e immagini vanno aggiunti agli Allowed domains dell’ambiente almeno `cryptomuseum.com`, `cryptocellar.org`, `codesandciphers.org.uk`, `commons.wikimedia.org`, `upload.wikimedia.org` (https://code.claude.com/docs/en/cloud-environments#network-access).
 - Creazione di `marcofarina/enigma` da parte dell’utente e aggiunta alla sessione prima della fase 0.
 - I testi sono bozze: ogni rilascio passa per una PR di revisione dei contenuti.
-- Fasi 3D (rischi annotati il 2026-11-05, nella revisione di Opus): la qualità visiva dipende da un modello costruito da un LLM con l’MCP di Blender, e le stime di 4j e 4k sono per chi usa l’MCP per la prima volta; le trasparenze della lezione animata pesano sui telefoni (la 5d le misura); le inquadrature della 5d richiedono più giri guardando il risultato, ed è la parte meno prevedibile delle stime.
+- Fasi 3D (rischi annotati il 2026-11-05, nella revisione di Opus): le stime di 4j e 4k erano per chi usa l’MCP di Blender per la prima volta (la qualità visiva dell’interno l’ha approvata Marco nella 4m, 2026-11-05); le trasparenze della lezione animata pesano sui telefoni (la 5d le misura); le inquadrature della 5d richiedono più giri guardando il risultato, ed è la parte meno prevedibile delle stime.
 - Modello ibrido (2026-11-05): la copia di partenza sta fuori da git (D21), quindi se ASHISH
   ritira il modello da Sketchfab resta solo lo zip di Marco. Marco ne tiene una copia nel suo
   backup; lo sha256 è in `docs/piano/fase-4l.md`. La cottura delle texture della 4m è il passo
