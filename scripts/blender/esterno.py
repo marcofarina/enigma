@@ -292,9 +292,7 @@ def importa():
         if ogg.type != "MESH":
             continue
         chiave = _chiave(ogg)
-        if chiave in TOLTI:
-            continue
-        if chiave not in CORRISPONDENZA and chiave not in SPECIALI:
+        if chiave not in CORRISPONDENZA and chiave not in SPECIALI and chiave not in TOLTI:
             raise RuntimeError(f"il pezzo {ogg.name} di ASHISH non è nella tabella CORRISPONDENZA")
         if len(ogg.data.materials) != 1:
             raise RuntimeError(f"{ogg.name}: ci si aspetta un materiale solo")
@@ -399,7 +397,8 @@ def _lampade(bm):
 # --- Pannello a spine ---------------------------------------------------------------------------
 # Una presa è una coppia di fori uno sopra l'altro, con l'anello e il fondo: nove pezzi staccati di
 # `part.086`. ASHISH le disegna solo dove non c'è una spina (9 su 26); le altre 17 si copiano da una
-# di quelle. Il passo fra le prese di una fila è 27 mm in ASHISH, 26,2 mm qui.
+# di quelle, nel punto dove stava la spina. Il passo fra le prese di una fila è 27 mm in ASHISH,
+# 26,2 mm qui.
 PEZZI_PER_PRESA = 9
 
 
@@ -425,41 +424,59 @@ def _prese(bm_prese):
     return prese
 
 
-def _griglia_prese(prese):
-    """Il centro di ciascuna delle 26 prese, per lettera, dalla griglia di quelle di ASHISH.
+# I puntali delle spine tolte (`part.054`): due lame per spina, una accanto all'altra, ciascuna di
+# 135 vertici. Il punto a metà fra le due è il centro della presa in cui la spina è infilata: dove
+# ASHISH ha sia una spina sia una presa (la G), i due centri coincidono entro 0,1 mm.
+VERTICI_PUNTALE = 135
+PUNTALI = 36
 
-    Le file sono quelle della convenzione (9, 8, 9). Le x della fila di mezzo vengono dalle prese
-    di ASHISH, che lì le ha tutte; le file di sopra e di sotto hanno le x a metà fra quelle e il
-    passo stesso. Le z delle file sono quelle delle prese di ASHISH (sotto ce n'è una sola).
+
+def _centri_prese(prese, bm_spine):
+    """Il centro di ciascuna delle 26 prese, per lettera: quello delle prese di ASHISH e, dove c'era
+    una spina, il punto a metà fra i suoi due puntali.
+
+    La lastra del pannello è un po' inclinata (la z scende di 0,1 mm da una presa alla vicina), e le
+    sue texture hanno gli anelli delle prese coperte dalle spine nel punto giusto: per questo i
+    centri si misurano uno per uno invece di stimare una griglia.
     """
-    centri = sorted((p[0] for p in prese), key=lambda v: v.z)
-    mezzo = [v for v in centri if abs(v.z - centri[-1].z) < 0.004]
-    sotto = [v for v in centri if v not in mezzo]
-    if len(mezzo) != 8 or len(sotto) != 1:
-        raise RuntimeError(f"prese di ASHISH: {len(mezzo)} nella fila di mezzo e {len(sotto)} sotto, attese 8 e 1")
-    xs = sorted(v.x for v in mezzo)
-    passo = (xs[-1] - xs[0]) / 7
-    z_mezzo = sum(v.z for v in mezzo) / 8
-    z_sotto = sotto[0].z
-    z_sopra = 2 * z_mezzo - z_sotto
-    y = sum(v.y for v in mezzo) / 8
-    file = {
-        c.FILE_QWERTZ[0]: [xs[0] - passo / 2 + i * passo for i in range(9)],
-        c.FILE_QWERTZ[1]: xs,
-        c.FILE_QWERTZ[2]: [xs[0] - passo / 2 + i * passo for i in range(9)],
-    }
-    zeta = {c.FILE_QWERTZ[0]: z_sopra, c.FILE_QWERTZ[1]: z_mezzo, c.FILE_QWERTZ[2]: z_sotto}
+    puntali = [_centro(p) for p in _componenti(bm_spine) if len({v for f in p for v in f.verts}) == VERTICI_PUNTALE]
+    if len(puntali) != PUNTALI:
+        raise RuntimeError(f"part.054: {len(puntali)} puntali, attesi {PUNTALI}")
+    puntali.sort(key=lambda v: (round(v.z, 2), v.x))
+    centri = [p[0] for p in prese]
+    usati = set()
+    for i, a in enumerate(puntali):
+        if i in usati:
+            continue
+        j = min(
+            (j for j in range(len(puntali)) if j != i and j not in usati),
+            key=lambda j: (puntali[j] - a).length,
+        )
+        usati |= {i, j}
+        centro = (a + puntali[j]) / 2
+        if all(abs(centro.x - c.x) > 0.004 or abs(centro.z - c.z) > 0.004 for c in centri):
+            centri.append(centro)
+    centri.sort(key=lambda v: -v.z)
+    file, attuale = [], [centri[0]]
+    for centro in centri[1:]:
+        if attuale[-1].z - centro.z > 0.010:  # due file distano 22 mm, una fila scende di 1 mm
+            file.append(attuale)
+            attuale = []
+        attuale.append(centro)
+    file.append(attuale)
+    if [len(f) for f in file] != [len(f) for f in c.FILE_QWERTZ]:
+        raise RuntimeError(f"prese per fila: {[len(f) for f in file]}, attese 9, 8 e 9")
     return {
-        lettera.lower(): Vector((x, y, zeta[fila]))
-        for fila, xs_fila in file.items()
-        for lettera, x in zip(fila, xs_fila)
+        lettera.lower(): centro
+        for lettere, fila in zip(c.FILE_QWERTZ, file)
+        for lettera, centro in zip(lettere, sorted(fila, key=lambda v: v.x))
     }
 
 
-def _completa_prese(bm_prese):
+def _completa_prese(bm_prese, bm_spine):
     """Il bmesh delle 26 prese e, per lettera, il punto della presa sulla faccia anteriore."""
     prese = _prese(bm_prese)
-    griglia = _griglia_prese(prese)
+    griglia = _centri_prese(prese, bm_spine)
     modello_centro, modello_facce = prese[0]
     if len(modello_facce) == 0:
         raise RuntimeError("presa di ASHISH vuota")
@@ -469,7 +486,9 @@ def _completa_prese(bm_prese):
         if any((centro - p[0]).length < 0.004 for p in prese):
             continue
         copia = sagoma.copy()
-        bmesh.ops.translate(copia, vec=centro - modello_centro, verts=copia.verts)
+        # Solo sul piano della lastra: la profondità resta quella della presa di ASHISH.
+        spostamento = Vector((centro.x - modello_centro.x, 0.0, centro.z - modello_centro.z))
+        bmesh.ops.translate(copia, vec=spostamento, verts=copia.verts)
         appoggio = bpy.data.meshes.new("appoggio")
         copia.to_mesh(appoggio)
         uscita.from_mesh(appoggio)
@@ -498,7 +517,7 @@ def costruisci(mats):
     nodi["cassa"].aggiungi(davanti, mat_piastra)
     nodi["coperchio_interno"].aggiungi(dietro, mat_piastra)
 
-    prese, ancore_prese = _completa_prese(pezzi["part.086"][0])
+    prese, ancore_prese = _completa_prese(pezzi["part.086"][0], pezzi["part.054"][0])
     nodi["pannello_spine"].aggiungi(prese, pezzi["part.086"][1])
 
     # Il perno dei nottolini: lo regge la cassa (convenzione, «Misure della 4j»), spostato con
