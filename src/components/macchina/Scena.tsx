@@ -1,10 +1,11 @@
-import { Environment, Lightformer, Line, OrbitControls, useGLTF } from '@react-three/drei';
+import { Environment, Lightformer, OrbitControls, useGLTF } from '@react-three/drei';
 import { Canvas, createPortal, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { Suspense, useEffect, useMemo, useRef } from 'react';
 import {
   AnimationMixer,
   CatmullRomCurve3,
   Color,
+  LineCurve3,
   Mesh,
   MeshStandardMaterial,
   TubeGeometry,
@@ -14,6 +15,7 @@ import {
   type Material,
   type Object3D,
 } from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { useStore } from 'zustand';
 import { engagedPawls, initialState, toIndex } from '@/engine';
 import { modello3d } from '@/lib/modello3d';
@@ -373,6 +375,9 @@ function coloreDelToken(nome: string, ripiego: string): Color {
   return new Color(valore || ripiego);
 }
 
+/** Il raggio di un filo del cablaggio, in metri: un filo di rame da un millimetro, più sottile dei cavi del pannello. */
+const RAGGIO_FILO = 0.0005;
+
 /**
  * Il cablaggio di un rotore: una linea per contatto, dalla faccia d’ingresso a quella d’uscita, nel
  * sistema del rotore, quindi gira con lui. Compare dalla fase 3, quando i rotori si aprono, e cambia
@@ -388,25 +393,31 @@ function CablaggioRotore({
   smontaggio: number;
 }) {
   const colore = useMemo(() => coloreDelToken('--alu-bright', '#f2efe6'), []);
-  const punti = useMemo(() => {
+  // Fili con uno spessore vero, in metri: una linea in pixel resta larga uguale a ogni distanza,
+  // quindi da lontano sembra un cavo e da vicino uno stuzzicadenti.
+  const geometria = useMemo(() => {
     const dati = segmentiCablaggio(cablaggio, parte.raggio, parte.facce.ingresso, parte.facce.uscita);
-    return Array.from(
-      { length: dati.length / 3 },
-      (_, i) => new Vector3(dati[i * 3], dati[i * 3 + 1], dati[i * 3 + 2]),
-    );
+    const fili = Array.from({ length: dati.length / 6 }, (_, i) => {
+      const da = new Vector3(dati[i * 6], dati[i * 6 + 1], dati[i * 6 + 2]);
+      const a = new Vector3(dati[i * 6 + 3], dati[i * 6 + 4], dati[i * 6 + 5]);
+      return new TubeGeometry(new LineCurve3(da, a), 1, RAGGIO_FILO, 6);
+    });
+    const unita = mergeGeometries(fili);
+    fili.forEach((filo) => filo.dispose());
+    return unita;
   }, [cablaggio, parte]);
+  useEffect(() => () => geometria.dispose(), [geometria]);
   const visibile = rampa(smontaggio, 2, 3);
   return createPortal(
-    <Line
-      segments
-      points={punti}
-      color={colore}
-      lineWidth={1.4}
-      transparent
-      opacity={visibile}
-      visible={visibile > 0}
-      depthWrite={false}
-    />,
+    <mesh geometry={geometria} visible={visibile > 0}>
+      <meshStandardMaterial
+        color={colore}
+        metalness={0.6}
+        roughness={0.4}
+        transparent={visibile < 1}
+        opacity={visibile}
+      />
+    </mesh>,
     parte.rotore,
   );
 }

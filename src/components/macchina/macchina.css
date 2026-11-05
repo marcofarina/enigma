@@ -141,7 +141,10 @@
 }
 
 .macchina-fase {
-  min-width: 10rem;
+  /* Larghezza fissa: il testo cambia lunghezza mentre si trascina, e il cursore accanto non deve allargarsi e stringersi. */
+  flex: 0 0 auto;
+  width: 24ch;
+  min-height: 2lh; /* «da rotori aperti a meccanica sotto i tasti» va su due righe: l’altezza non deve saltare */
   font-family: var(--font-mono);
   font-size: var(--type-caption);
   color: var(--ink-muted);
