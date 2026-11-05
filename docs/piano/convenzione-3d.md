@@ -194,7 +194,7 @@ tracce. Così `AnimationMixer` e il codice non si sovrascrivono a vicenda. La re
 | 1 | si alza `coperchio_interno`; `sportello_spine` e `coperchio_legno` si allontanano dalla cassa, il primo in avanti, il secondo all’indietro e in basso | «macchina aperta» |
 | 2 | escono i rotori con `asse_rotori`, e il `riflettore` | «rotori estratti» |
 | 3 | ogni rotore si apre lungo X: anello, cricchetto, rotella e contatti si staccano dal nucleo | «rotori aperti» |
-| 4 | si alza la `tastiera` ed esce la `batteria` | «meccanica sotto i tasti» |
+| 4 | la `tastiera` sale e viene in avanti, per lasciare libera la vista sui rotori, ed esce la `batteria` | «meccanica sotto i tasti» |
 
 Al valore 0 il selettore dice «macchina chiusa».
 
@@ -207,8 +207,9 @@ alzato la salita dei rotori a 135 mm e quella del coperchio interno a 190 mm, pe
 ASHISH è più alta. La 4n ha rivisto la fase 1 sull’esterno nuovo: il coperchio di legno si allontana di
 170 mm all’indietro e scende di 40 (resta sopra il piano z = 0), a più di 50 mm dal coperchio interno
 sollevato; lo sportello, che in ASHISH pende già aperto davanti alla cassa e sotto il pannello a spine,
-non sale più (copriva il pannello): si sposta di 70 mm in avanti. Gli spostamenti delle altre fasi
-restano quelli della 4k e della 4l. `sovrapposizioni()`, in `scripts/blender/smontaggio.py`, confronta
+non sale più (copriva il pannello): si sposta di 70 mm in avanti. Nella fase 4 la tastiera, dopo la prova di Marco
+(2026-11-05), sale di 100 mm e viene in avanti di 120, per non coprire i rotori. Gli spostamenti delle altre
+fasi restano quelli della 4k e della 4l. `sovrapposizioni()`, in `scripts/blender/smontaggio.py`, confronta
 dopo ogni costruzione le scatole dei pezzi alla fine di ciascuna fase, non solo dell’ultima; la striscia
 rossa che si vede sotto il coperchio di legno è un pezzo suo (una cinghia di ASHISH, `coperchio_legno`),
 nascosto dalla cassa a macchina chiusa.

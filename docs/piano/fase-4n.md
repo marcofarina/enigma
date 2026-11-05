@@ -50,7 +50,7 @@ pnpm verify && pnpm build && pnpm test:e2e
 verdi, compresi i test dello smontaggio di `tests/e2e/macchina.spec.ts`.
 
 **Esito** (2026-11-05, Sonnet): fatta. Le fasi, viste da tre lati nel Blender aperto e nelle anteprime,
-non mostrano pezzi che si attraversano. Non ho chiesto a Marco un giudizio sulle immagini: va dato.
+non mostrano pezzi che si attraversano. Marco ha guardato le anteprime e ha chiesto una sola modifica, fatta (la tastiera nella fase 4, vedi sotto).
 
 Spostamenti cambiati in `scripts/blender/smontaggio.py` (assi di Blender, in millimetri):
 
@@ -58,6 +58,7 @@ Spostamenti cambiati in `scripts/blender/smontaggio.py` (assi di Blender, in mil
 | --- | --- | --- | --- |
 | `coperchio_legno` | 0, +150, 0 | 0, +170, −40 | D22: indietro e in basso, fuori dai rotori; il fondo resta a z = 2 mm, sopra il piano |
 | `sportello_spine` | 0, −30, +100 | 0, −70, 0 | in ASHISH pende già aperto sotto il pannello: salendo lo copriva |
+| `tastiera` | 0, 0, +100 | 0, −120, +100 | giudizio di Marco sulle anteprime: nella fase 4 copriva i rotori, ora sta davanti alla cassa e li lascia liberi (scatole senza sovrapposizioni) |
 | gli altri | — | invariati | le misure della 4l bastano |
 
 Compenetrazioni: la verifica automatica, dopo ogni costruzione, confrontava solo la fine dell'ultima

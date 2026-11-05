@@ -20,7 +20,8 @@ Il disegno dello smontaggio, in metri e con gli assi di Blender (Z in alto, −Y
             riflettore di 62 mm a sinistra, il rotore sinistro di 40 a sinistra e il destro di 40 a destra
     fase 3  ogni rotore si apre lungo X attorno al nucleo, che resta fermo: a sinistra i contatti piani e
             l'anello, a destra la rotella, il cricchetto e i puntali
-    fase 4  la tastiera sale di 100 mm e scopre la leva; la batteria esce, in alto e verso destra
+    fase 4  la tastiera sale di 100 mm e viene in avanti di 120, verso chi guarda, per lasciare libera
+            la vista sui rotori, e scopre la leva; la batteria esce, in alto e verso destra
 
 Il nucleo porta `fase` 3 (è un nodo della fase) ma non ha tracce: è il pezzo attorno a cui gli altri si
 aprono.
@@ -55,7 +56,7 @@ SPOSTAMENTI = {
     "rotore_sinistro": (-0.040, 0.0, 0.135),
     "rotore_centrale": (0.0, 0.0, 0.135),
     "rotore_destro": (0.040, 0.0, 0.135),
-    "tastiera": (0.0, 0.0, 0.100),
+    "tastiera": (0.0, -0.120, 0.100),
     "batteria": (0.050, 0.0, 0.140),
 }
 SALITA_ROTORI = (0.0, 0.0, 0.135)  # a metà della fase 2: solo la salita, senza l'allargamento
