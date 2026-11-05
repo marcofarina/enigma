@@ -180,6 +180,8 @@ la verifica le confronta con una tolleranza di 0,1 mm. Il tetto è 6 MB; con la 
 6085 KB (margine di 59 KB), di cui 4434 KB di texture (423 KB l’atlante dell’interno, 3999 KB le
 texture di ASHISH, 12 KB l’atlante dei glifi) e 1651 KB di geometria, animazione e JSON, con 125 539
 triangoli nelle mesh (133 411 disegnati). Chi aggiunge geometria o texture deve prima toglierne.
+La luce d’ambiente della pagina non sta nel `.glb`: è `public/ambienti/studio.exr` (96 KB, 5f), e il
+pulsante «Avvia la vista 3D» dice la somma dei due file, letta alla build.
 
 **Chi muove che cosa.** Il codice della pagina muove solo i nodi della tabella marcati «codice», e
 solo nella proprietà indicata. La clip `smontaggio` (4k) muove solo i nodi marcati «clip»: su un nodo

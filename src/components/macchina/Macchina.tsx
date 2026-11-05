@@ -12,12 +12,6 @@ import { queryPerIlSimulatore, sessioneDallaQuery } from './configurazione.ts';
 /** three.js, React Three Fiber, drei e il `.glb` arrivano solo con questo import, dopo il pulsante. */
 const Scena = lazy(() => import('./Scena.tsx'));
 
-/**
- * Peso indicativo di ciò che la vista scarica (modello e libreria), da ricontrollare quando il modello
- * cambia: dalla 4l il `.glb` con l’esterno di ASHISH pesa circa 5,4 MB (D23).
- */
-const PESO_VISTA = '6 MB';
-
 /** Quante lettere del nastro mostra la pagina: le ultime sei gruppi da cinque. */
 const LETTERE_NASTRO = 30;
 
@@ -92,7 +86,11 @@ const anelliInCifre = (anelli: string) =>
  * destra il foglio con l’elenco delle fasi dello smontaggio e il messaggio (docs/design.md,
  * «Pagina 3D»).
  */
-export default function Macchina() {
+export default function Macchina({
+  peso,
+}: {
+  /** Quanto scarica la vista, letto alla build da `pesoVista()`. */ peso: string;
+}) {
   const [{ store, avviso }] = useState(initialStore);
   const [fase, setFase] = useState<Fase>('anteprima');
   const [ridotto] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -188,9 +186,8 @@ export default function Macchina() {
           {fase === 'anteprima' && (
             <div className="macchina-avvio">
               <button type="button" className="macchina-pulsante" onClick={avvia}>
-                {t('machine3d.start')}
+                {tf('machine3d.startWithSize', { size: peso })}
               </button>
-              <span>{tf('machine3d.startNote', { size: PESO_VISTA })}</span>
             </div>
           )}
           {fase === 'caricamento' && (

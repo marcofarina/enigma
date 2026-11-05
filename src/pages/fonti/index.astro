@@ -53,5 +53,8 @@ const immagini = await getCollection('immagini');
       <a href={modello3d.esterno.urlLicenza}>{licenseLabel(modello3d.esterno.licenza)}</a>.{' '}
       {t('sources.model3dExteriorChanges')}
     </p>
+    <p>
+      {t('sources.model3dLight')} <a href={modello3d.ambiente.url}>Poly Haven</a>, {t('sources.model3dLightLicense')}
+    </p>
   </section>
 </BaseLayout>

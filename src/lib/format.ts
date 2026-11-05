@@ -6,6 +6,11 @@ export function groupDigits(value: bigint | number, separator = '\u00a0'): strin
   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator);
 }
 
+/** Il peso di un file in megabyte (1024 × 1024 byte), con un decimale e la virgola: “6,0 MB”. */
+export function megabytes(bytes: number): string {
+  return `${(bytes / 1024 / 1024).toFixed(1).replace('.', ',')}\u00a0MB`;
+}
+
 const SUPERSCRIPT = '⁰¹²³⁴⁵⁶⁷⁸⁹';
 
 /** Notazione scientifica all’italiana con tre cifre significative: “1,07 × 10²³”. */

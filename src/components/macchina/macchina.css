@@ -538,6 +538,15 @@ html.macchina-root .site-header > .machine-paint > div {
     font-size: 1.5rem; /* 24 */
   }
 
+  /*
+   * Il foglio statico, finché React non parte, ha solo il titolo: senza questa altezza, che è quella
+   * del foglio montato senza messaggio, tutto quello che sta sotto scende quando arriva (Lighthouse,
+   * spostamento del layout, fase 5f).
+   */
+  .macchina-foglio-segnaposto {
+    min-height: 16.625rem; /* 266 */
+  }
+
   .macchina-fase {
     min-height: 2.75rem;
   }
