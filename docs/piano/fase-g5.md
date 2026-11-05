@@ -66,4 +66,22 @@ grep -c '^## Pagina 3D' docs/design.md && sed -n '/^## Pagina 3D/,/^## /p' docs/
 
 L’«Esito» dice quale direzione ha scelto Marco e in che data.
 
-**Esito.** Da compilare.
+**Esito** (2026-11-05)
+
+- Direzione scelta da Marco il 2026-11-05: «Banco e foglio» (B), fra «Il palco» (A) e «Vetrina e
+  cassetto» (C), senza modifiche. Canvas: <https://claude.ai/artifact/R69SCDPFsCdLEXa3GExRdJ>.
+  Descritta in `docs/design.md`, sezione «Pagina 3D».
+- Con la direzione B Marco ha accettato tre decisioni che cambiano pezzi di oggi, scritte in
+  `docs/design.md`: lo smontaggio diventa un elenco di cinque fasi al posto del cursore continuo,
+  «Rimonta la macchina» sparisce (si sceglie «macchina chiusa»), il testo d’apertura va sotto la
+  piega. La 5g deve quindi riscrivere i test di `tests/e2e/macchina.spec.ts` che fanno `fill` su
+  `getByLabel('Smontaggio')`.
+- Screenshot «prima» in `docs/screenshot/macchina-prima/`: 8 a finestra (desktop 1280 × 720 e
+  telefono 375 px a pagina intera, fasi 0 e 4, tema chiaro e scuro), 4 a pagina intera a desktop
+  (`*-intera.png`) e 8 ritagli della sola scena in `scena/`. Presi il 2026-11-05 con Playwright
+  (Chromium con `--enable-unsafe-swiftshader`) su `astro preview` della build, non sul server di
+  sviluppo: niente barra di Astro. Tema fissato con `localStorage` `enigma-theme`, fase 4 con
+  `fill('4')` sul selettore e 6 s di attesa per l’animazione. Gli screenshot della 5g vanno presi
+  allo stesso modo, perché si confrontino.
+- Comandi eseguiti: `ls docs/screenshot/macchina-prima/*.png | wc -l` → `12`;
+  `grep -c '^## Pagina 3D' docs/design.md` → `1`; il `grep -c 'claude.ai/'` sulla sezione → `1`.
