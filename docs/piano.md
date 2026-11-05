@@ -27,7 +27,8 @@ Il fork `marcofarina/EnigmaMachine` (Summerside Makerspace, 2016, Apache-2.0) è
 ## Decisioni della revisione
 
 Prese durante la revisione di `docs/piano-aggiornamento.md` (D1–D8, fase A e seguenti) e
-nell’intervista della fase I (D9–D15) e nella revisione delle fasi 3D del 2026-11-05 (D16–D19).
+nell’intervista della fase I (D9–D15), nella revisione delle fasi 3D del 2026-11-05 (D16–D19) e
+nella prova della pagina 3D del 2026-11-05 (D20–D24).
 Valgono per le fasi qui sotto.
 
 | # | Decisione | Raccomandazione | Fasi coinvolte | Risposta |
@@ -51,6 +52,11 @@ Valgono per le fasi qui sotto.
 | D17 | Che voce ha la lezione animata? | Si sceglie nella 5e; la 5d lavora con la voce italiana di macOS (`say -v Alice`) come segnaposto | 5d, 5e | raccomandazione accettata (2026-11-05). Le possibilità sono un servizio di sintesi vocale o la voce di Marco, registrata frase per frase |
 | D18 | Dove sta la lezione animata? | In `/macchina/` e, come componente MDX, nella lezione 3 «Tastiera, lampade e circuito» | 5d, 5e | raccomandazione accettata (2026-11-05) |
 | D19 | La lettera della lezione animata la sceglie lo studente? | No: lettera e configurazione fisse nel copione, perché la voce deve poter dire quale lampada si accende; un passo finale «ora prova tu» passa i comandi allo studente | 5d, 5e | raccomandazione accettata (2026-11-05) |
+| D20 | Il modello 3D resta tutto nostro o parte da un modello di terzi? | — | 4l–4n, 5f | 2026-11-05: Marco, dopo aver provato la pagina, sceglie l’ibrido. L’esterno viene dal modello «Enigma Machine» di ASHISH (<https://sketchfab.com/3d-models/enigma-machine-30b85c037a164174a109ad6f002b9c47>, CC BY 4.0, attribuzione nella pagina e in Fonti); l’interno resta nostro e si porta allo stesso livello. Motivo: fuori il modello di ASHISH è molto più vicino all’oggetto vero del nostro, ma dentro è vuoto (verificato in Blender il 2026-11-05). Supera, della D14, «nessuna base di terzi» e i materiali piani. La geometria derivata resta CC BY-NC-SA 4.0, come permette la CC BY |
+| D21 | Dove sta la copia di partenza del modello di ASHISH (zip di 176 MB, texture 4K)? | Fuori da git, in `scripts/blender/sorgenti/` ignorata; nel repo URL, licenza e sha256 dello zip | 4l | raccomandazione accettata (2026-11-05) |
+| D22 | Che cosa si fa del coperchio di legno, che il modello di ASHISH ha aperto dietro la macchina? | Resta aperto, come nelle foto dei musei, e nella fase 1 dello smontaggio si allontana per non coprire i rotori | 4l, 4n | raccomandazione accettata (2026-11-05) |
+| D23 | Che tetto ha il `.glb` ibrido? | 6 MB, con texture 2K in WebP e geometria compressa con meshopt (il decoder è nel bundle di drei, nessun CDN); il pulsante «Avvia la vista 3D» dice il peso | 4l–4n, 5f | raccomandazione accettata (2026-11-05). Supera il tetto di 1 MB della D15 |
+| D24 | La pagina 3D si riprogetta? | — | G5, 5g, 5c, 5d | 2026-11-05: Marco. Sì, su Claude Design come nella G0, perché la scena non è protagonista, in vista esplosa i pannelli coprono i pezzi e col trackpad non c’è il pan. Ordine: prima il modello (4l–4n) e la resa (5f); la G5 si fa in parallelo, perché non tocca il modello; la 5c e la 5d vengono dopo la 5g |
 
 ## Fasi
 
@@ -77,11 +83,17 @@ indice e il proprio file in `docs/piano/` (tabella in fondo).
 | 4k | Modello 3D: animazione dello smontaggio | Sonnet | high | 2 h | 4j; Marco al Mac con Blender aperto | fatta (2026-11-05) |
 | 5a | Pagina 3D: architettura, caricamento e digitazione | Opus | high | 3 h | 4h, 4i | fatta (2026-11-05) |
 | 5b | Pagina 3D: vista esplosa, cablaggio e nottolini | Sonnet | high | 3 h | 4k, 5a | fatta (2026-11-05) |
-| 5c | Pagina 3D: schede dei pezzi | Opus | high | 2,5 h | 5b | da fare |
-| 5d | Lezione animata: copione, lettore e scena | Opus | high | 3 h | 5b, D16–D19 | da fare |
+| 4l | Modello ibrido: esterno di terzi, scomposizione e catena di esportazione | Opus | high | 3 h | D20–D23; Marco al Mac con Blender aperto | da fare |
+| 4m | Modello ibrido: l’interno allo stesso livello dell’esterno | Sonnet | high | 3,5 h | 4l; Marco al Mac con Blender aperto | da fare |
+| 4n | Modello ibrido: smontaggio, anteprima e chiusura | Sonnet | high | 2 h | 4m; Marco al Mac con Blender aperto | da fare |
+| G5 | Pagina 3D: riprogettazione su Claude Design | Opus | high | 2 h | —; Marco presente per scegliere | da fare |
+| 5f | Pagina 3D: resa | Opus | high | 2,5 h | 4l | da fare |
+| 5g | Pagina 3D: nuovo layout e navigazione | Sonnet | high | 3 h | G5 | da fare |
+| 5c | Pagina 3D: schede dei pezzi | Opus | high | 2,5 h | 4n, 5g | da fare |
+| 5d | Lezione animata: copione, lettore e scena | Opus | high | 3 h | 4n, 5f, 5g, D16–D19 | da fare |
 | 5e | Lezione animata: testo, voce e crediti | Opus | high | 2,5 h | 5d; Marco ha scelto la voce (D17) | da fare |
 
-Totale stimato: circa 40 ore di sessione, di cui 21 dalla 4i alla 5e. 4a, 4b e 4g non si toccano
+Totale stimato: circa 56 ore di sessione, di cui 37 dalla 4i alla 5e. 4a, 4b e 4g non si toccano
 a vicenda e si possono fare in qualunque ordine; 4d e 4e toccano file diversi e sono indipendenti
 fra loro. 4f viene dopo la crittoanalisi per decisione di Marco (D12). 4h chiude la v1.0 e va
 fatta per ultima, perché misura le pagine nuove.
@@ -89,9 +101,14 @@ fatta per ultima, perché misura le pagine nuove.
 4i, 4j e 4k non si fanno nel cloud: serve Blender aperto sul Mac di Marco. La 5a parte dopo la 4i,
 sul modello abbozzato, così caricamento, Lighthouse e WebGL nei test si provano prima di modellare
 il resto; la 4j e la 4k cambiano la geometria ma non la convenzione, quindi la 5a si può fare prima
-o dopo di loro. La 5b parte dopo la 4k e la 5a. La 5c e la 5d dipendono dalla 5b e non l’una
-dall’altra, ma toccano la stessa pagina: si fanno una alla volta. La 5c e la 5e scrivono prosa,
-quindi solo in locale.
+o dopo di loro. La 5b parte dopo la 4k e la 5a.
+
+Dopo la prova del 2026-11-05 (D20–D24): 4l, 4m e 4n vanno in fila, in locale con Blender. La G5 non
+dipende da niente e si può fare subito, in parallelo con il modello; tocca solo `docs/`. La 5f
+parte dopo la 4l, perché le servono le texture, e la 5g dopo la G5; la 5f e la 5g toccano lo stesso
+`Scena.tsx`, quindi una alla volta. La 5c viene dopo la 4n (nomi dei nodi definitivi) e la 5g
+(posto della scheda nel layout); la 5d dopo la 4n, la 5f e la 5g. La 5c e la 5d toccano la stessa
+pagina: si fanno una alla volta. La 5c e la 5e scrivono prosa, quindi solo in locale.
 
 ### Fuori dalle fasi
 
@@ -101,6 +118,7 @@ dipendono da nessuna fase; vanno chiusi prima della 4h.
 | Compito | Chi | Fatto quando |
 |---|---|---|
 | Rileggere storia 4 (`src/content/lezioni/it/storia/04-enigma-e-l-italia.mdx`), riscritta nella fase V sul racconto di Batey: il messaggio senza L non è più legato a Matapan | Marco | la lezione è `stato: rivista` |
+| Barra dello smontaggio che si allargava e si stringeva, fili dei rotori con spessore in pixel (difetti 2 e 4 trovati da Marco il 2026-11-05) | sessione Claude (fatto il 2026-11-05, commit `4600d19`: testo della fase a larghezza fissa, fili come tubi da 1 mm) | — |
 | Confrontare i rotori commerciali dell’Enigma D di `COMMERCIAL_ROTORS` (`src/engine/models.ts`) con CryptoCellar: Bauer, *Decrypted Secrets*, p. 124, dà cablaggi diversi (rotore I `HRWYIPCGVXL…`, tacca G). Sonnet, effort high, 0,5 h; se il motore cambia, servono vettori di test nuovi | sessione Claude (fatto il 2026-11-04: cablaggi corretti, motore invariato; resta aperta la questione delle tacche, in «Da verificare» di `docs/stato.md`) | la voce «Motore» di «Da verificare» in `docs/stato.md` passa a «Verificato», con la fonte |
 
 ### Regole comuni a tutte le fasi
@@ -136,11 +154,15 @@ dipendono da nessuna fase; vanno chiusi prima della 4h.
 - Creazione di `marcofarina/enigma` da parte dell’utente e aggiunta alla sessione prima della fase 0.
 - I testi sono bozze: ogni rilascio passa per una PR di revisione dei contenuti.
 - Fasi 3D (rischi annotati il 2026-11-05, nella revisione di Opus): la qualità visiva dipende da un modello costruito da un LLM con l’MCP di Blender, e le stime di 4j e 4k sono per chi usa l’MCP per la prima volta; le trasparenze della lezione animata pesano sui telefoni (la 5d le misura); le inquadrature della 5d richiedono più giri guardando il risultato, ed è la parte meno prevedibile delle stime.
+- Modello ibrido (2026-11-05): la copia di partenza sta fuori da git (D21), quindi se ASHISH
+  ritira il modello da Sketchfab resta solo lo zip di Marco. Marco ne tiene una copia nel suo
+  backup; lo sha256 è in `docs/piano/fase-4l.md`. La cottura delle texture della 4m è il passo
+  meno prevedibile di quelle tre fasi.
 
 ## File del piano
 
 Ogni file sta in `docs/piano/`. Una fase si esegue leggendo questo indice e il file della fase;
-dalla 4i alla 5e serve anche `convenzione-3d.md`.
+dalla 4i alla 5g serve anche `convenzione-3d.md`, e per la G5 e la 5g `docs/design.md`.
 
 | File | Contenuto |
 |---|---|
@@ -150,6 +172,12 @@ dalla 4i alla 5e serve anche `convenzione-3d.md`.
 | `fase-4k.md` | Modello 3D: animazione dello smontaggio |
 | `fase-5a.md` | Pagina 3D: architettura, caricamento e digitazione |
 | `fase-5b.md` | Pagina 3D: vista esplosa, cablaggio e nottolini |
+| `fase-4l.md` | Modello ibrido: esterno di terzi, scomposizione e catena di esportazione |
+| `fase-4m.md` | Modello ibrido: l’interno allo stesso livello dell’esterno |
+| `fase-4n.md` | Modello ibrido: smontaggio, anteprima e chiusura |
+| `fase-g5.md` | Pagina 3D: riprogettazione su Claude Design |
+| `fase-5f.md` | Pagina 3D: resa |
+| `fase-5g.md` | Pagina 3D: nuovo layout e navigazione |
 | `fase-5c.md` | Pagina 3D: schede dei pezzi |
 | `fase-5d.md` | Lezione animata: copione, lettore e scena |
 | `fase-5e.md` | Lezione animata: testo, voce e crediti |
