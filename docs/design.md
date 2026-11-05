@@ -269,6 +269,167 @@ nuovo, e il nastro non perde lettere.
 - **Figure con il segnale.** Gli stessi colori di andata e ritorno della macchina, nella variante
   `-paper` sul foglio.
 
+## Pagina 3D
+
+Esito della fase G5 di `docs/piano/fase-g5.md`. È il riferimento per la 5g (layout e navigazione),
+la 5c (schede dei pezzi) e la 5d (lezione animata): chi le esegue costruisce da qui, senza
+riaprire il canvas.
+
+- Canvas di Claude Design: <https://claude.ai/artifact/R69SCDPFsCdLEXa3GExRdJ> (privato,
+  dell’account di Marco). Le artboard di riferimento sono «B · Banco e foglio · 1280 × 720»
+  (`B-1280.dc.html`) e «B · Banco e foglio · 375 px» (`B-375.dc.html`). Le Tweaks mostrano il
+  tema, la fase 0 o 4, la scheda di un pezzo e la lezione animata.
+- Direzione scelta da Marco il 2026-11-05: «Banco e foglio» (B), fra «Il palco» (A) e «Vetrina e
+  cassetto» (C). È la griglia del simulatore applicata alla macchina in 3D: il vano della scena a
+  sinistra, il foglio a destra, e nessun pannello si sovrappone mai alla scena.
+- Screenshot «prima» in `docs/screenshot/macchina-prima/`. Nel canvas la scena è uno di quegli
+  screenshot, con l’inquadratura di oggi: a fase 4 il coperchio e il pannello frontale escono dal
+  bordo. La 5g li riporta dentro con l’area libera definita qui sotto.
+
+### I difetti e come li risolve la direzione B
+
+| Difetto (Marco, 2026-11-05) | Soluzione |
+| --- | --- |
+| La scena non è la protagonista | sopra la piega ci sono solo la scena e il foglio; titolo e testo d’apertura non la spingono più in basso |
+| In vista esplosa i pannelli coprono i pezzi | la scheda, la lezione e ogni testo stanno nel foglio, fuori dalla scena |
+| Col trackpad la navigazione non è ovvia e manca il pan | pulsantiera e gesti scritti nel piede del vano, sempre visibili |
+
+### Decisioni
+
+Prese da Marco il 2026-11-05 scegliendo la direzione B, che le conteneva.
+
+1. **Lo smontaggio diventa un elenco delle cinque fasi.** Un gruppo di pulsanti di opzione
+   (`role="radiogroup"` con `input type="radio"`) prende il posto del cursore continuo: si sceglie
+   una fase e la macchina ci arriva con la sua animazione, ma non ci si ferma a metà. Il testo
+   della fase non cambia più lunghezza, perché ogni fase ha la sua riga fissa. Nella 5g
+   spariscono la stringa `machine3d.phaseBetween` e la funzione `testoSelettore`, e i test che
+   fanno `fill` sul cursore scelgono invece l’opzione.
+2. **«Rimonta la macchina» sparisce.** Si rimonta scegliendo «macchina chiusa», la prima voce
+   dell’elenco. La stringa `machine3d.reassemble` esce da `src/i18n/it.json`.
+3. **Il testo d’apertura va sotto la piega**, in una sezione «Come si usa» sul foglio della
+   pagina. Le istruzioni sui gesti passano nel piede del vano, accanto alla
+   pulsantiera.
+4. **Sopra la piega il fondo è la vernice della macchina** in entrambi i temi, come nel
+   simulatore; il tema cambia il foglio e la pagina sotto la piega (`--paper` del foglio del
+   simulatore: `#fbfbf8` in chiaro, `#e4e1d7` in scuro, con gli inchiostri del tema chiaro).
+
+### Inventario: dove va ogni pezzo della pagina
+
+Ogni pezzo di oggi di `src/components/macchina/Macchina.tsx` e `src/pages/macchina/index.astro`, più
+quelli che portano la 5g, la 5c e la 5d.
+
+| Pezzo | Funzione | Dove va |
+| --- | --- | --- |
+| Titolo `machine3d.title` | dire dove si è | primo elemento del foglio, `h1` |
+| Testo d’apertura `machine3d.intro` | spiegare che cosa si fa | sotto la piega, sezione «Come si usa», accorciato: i gesti stanno nel piede (decisione 3) |
+| — (nuovo) riga della configurazione | dire quale macchina si batte | sotto il titolo: «Enigma I · rotori I II III · anelli 01 01 01», dalla configurazione della query |
+| Avvisi della query (`sim.share.invalid`, `machine3d.otherModel` con il link) | link sbagliato o di un altro modello | riga di stato in cima al foglio, sopra il titolo |
+| Anteprima statica | la macchina senza JavaScript e prima del pulsante | nel vano, al posto della scena, `object-fit: contain` |
+| Pulsante «Avvia la vista 3D» e nota del peso | caricare three.js e il modello solo a richiesta | targhetta al centro del vano, come oggi |
+| Stato «Caricamento del modello…» | attesa | in basso nel vano, come oggi |
+| Scena (`role="application"`) | girare la macchina e battere | vano, sopra il piede |
+| Avvisi senza WebGL ed errore, con «Apri il simulatore» | ripiego | nel vano, al posto della scena, su `--machine-well` |
+| Selettore dello smontaggio | smontare la macchina | foglio, sezione «Smontaggio»: elenco delle cinque fasi (decisione 1); compare quando la scena è pronta |
+| «Rimonta la macchina» | rimontare | decisione 2: sparisce |
+| Avviso «La macchina è smontata e non cifra…» | tasto rifiutato | foglio, sotto l’elenco delle fasi, testo `--ink-muted` 13 px |
+| Annuncio per i lettori di schermo (`data-annuncio`) | dire la lampada accesa o il rifiuto | invariato, `sr-only` |
+| Nastro: Finestrelle | posizione dei rotori | foglio, a destra nella riga del titolo «Messaggio» |
+| Nastro: Tasti e Lampade (`data-nastro`) | il testo battuto e quello cifrato | foglio, sezione «Messaggio»: gruppi di cinque, tasti in piccolo sopra e lampade in grassetto sotto, come il foglio del simulatore |
+| «Ricomincia», «Apri questa configurazione nel simulatore» | azzerare, passare al simulatore | in fondo alla sezione «Messaggio»; il secondo si accorcia in «Apri nel simulatore» |
+| Crediti del modello (ASHISH, licenze) | attribuzione | sotto la piega, dopo «Come si usa», 12 px |
+| `noscript` | senza JavaScript | sotto l’anteprima nel vano |
+| — (5g) pulsantiera: viste, zoom, ripristino | guidare la camera senza gesti | piede del vano, a sinistra |
+| — (5g) aiuto sui gesti | dire come si guida col trackpad, col mouse e col tocco | piede del vano, a destra, sempre visibile |
+| — (5c) scheda di un pezzo | nome, spiegazione, link alla lezione, «Mostralo a «fase»» | foglio, al posto della sezione «Messaggio», con × per chiuderla |
+| — (5c) elenco dei pezzi | scegliere un pezzo senza il mouse | pulsante «Pezzi» accanto a «Guarda come funziona»; l’elenco si apre nel foglio come la scheda |
+| — (5d) «Guarda come funziona» | avviare la lezione animata | foglio, sotto la riga della configurazione; durante la lezione diventa «Esci dalla lezione» |
+| — (5d) lettore e sottotitolo | seguire la lezione | foglio, al posto di «Smontaggio» e «Messaggio»: titolo con «passo 3 / 9», sottotitolo, ◀ ⏸ ▶, «A passi, senza voce», «Trascrizione» in un `<details>` |
+
+### Griglia a 1280 × 720
+
+Tutte le misure in px a 1280 × 720, da scrivere in `rem`. Sopra la piega il fondo è
+`.machine-paint`.
+
+```text
+ 0   ┌─────────────────────────────────────────────────────────────────────────────┐
+     │ Enigma  Rainbow Bits     Simulatore  Macchina 3D  …  Docenti  [◐]        │ 52
+64   ├─────────────────────── 860 ───────────────────────┬16┬────── 364 ──────────┤
+     │                                                     │  │ La macchina in 3D    │
+     │                  scena 860 × 586                    │  │ Enigma I · …         │
+     │                                                     │  │ [Guarda…] [Pezzi]    │
+     │                                                     │  │ Smontaggio           │
+     │                                                     │  │  ● 0 … 4 (5 × 34)    │
+     │                                                     │  │ Messaggio  A A Q     │
+650  ├─────────────────────────────────────────────────────┤  │  gruppi da cinque    │
+     │ [Fronte][Dall’alto][Rotori][Pannello…] [−][+][⟲]  gesti │ [Ricomincia][Apri…]  │ 56
+706  └─────────────────────────────────────────────────────┴──┴──────────────────────┘
+720  ─ piega ─ sotto: foglio della pagina, «Come si usa», crediti
+```
+
+| Zona | Posizione a 1280 × 720 (x, y, larghezza × altezza) |
+| --- | --- |
+| Intestazione | 0, 0, 1280 × 52; padding orizzontale 20 (come il simulatore) |
+| Vano | 20, 64, 860 × 642; raggio `--radius-well`; fondo `--machine-well` |
+| Scena | nel vano 0, 0, 860 × 586: è tutta la tela WebGL |
+| Piede del vano | nel vano 0, 586, 860 × 56; filetto `--machine-line` sopra; padding 0 × 12 |
+| Viste | piede, a sinistra: quattro pulsanti alti 32, distanza 4 |
+| Zoom e ripristino | piede, 12 dopo le viste: tre pulsanti 32 × 32, distanza 4 |
+| Gesti | piede, allineati a destra: «Trascina ruota · Shift o tasto destro sposta · Rotella avvicina», 12 px, `--alu-muted` |
+| Foglio | 896, 64, 364 × 642; raggio `--radius-sheet`; padding 18 × 20; sezioni distanti 14 |
+| Titolo | foglio, in alto: 22 / 1,15, peso 800, `wdth` 112; riga della configurazione 12 px `--ink-muted` |
+| Pulsanti del foglio | sotto il titolo: «Guarda come funziona» (peso 600) e «Pezzi», alti 36, bordo `currentColor` da 1,5 |
+| Sezione «Smontaggio» | titolo 13 / 600 in `--print-red` con filetto da 1,5; cinque righe da 34: pallino da 14 su una linea verticale `--print-red-soft`, numero 0–4 in Courier Prime 12, nome della fase 14 (700 se scelta); avviso del blocco sotto |
+| Sezione «Messaggio» | titolo come sopra, «finestrelle A A Q» a destra; gruppi: tasti 11 px `--ink-faint`, lampade 17 px peso 700, Courier Prime; pulsanti alti 36 in fondo |
+| Sotto la piega | da y 720, `--paper`, padding 36 × 80: «Come si usa» (20 / 700, testo 17 / 1,6 in colonna da 640), crediti 12 px |
+
+**Altre risoluzioni.** Come il simulatore: la griglia si scala intera con `font-size` radice
+uguale a `min(100vw / 80, 100vh / 45)`, fra 12,8 e 24 px. A 1440 × 900 e oltre l’altezza in più
+va al vano e al foglio. Sotto 1024 × 576 vale la griglia a 375 px, che si allarga fino a quella
+larghezza.
+
+### Griglia a 375 px
+
+Dall’alto, una colonna:
+
+| Zona | Misure a 375 px |
+| --- | --- |
+| Intestazione | 52; marchio e pulsante del menu da 44 |
+| Scena | 375 × 320, a tutta larghezza, senza raggio, `--machine-well` |
+| Piede | 60; padding 8 × 12: menu `select` «Vista» (largo quanto resta), poi −, +, ⟲ da 44 × 44 |
+| Gesti | sotto il piede: «Un dito ruota · due dita spostano e avvicinano», 12 px |
+| Foglio | margine 12 sopra e 8 ai lati, padding 16: titolo 24 / 800, riga della configurazione, «Guarda come funziona» e «Pezzi» alti 44, «Smontaggio» con righe da 44, «Messaggio» con pulsanti da 44 |
+| Sotto il foglio | «Come si usa» e crediti, su `--paper` |
+
+Alla piega (812) si vedono la scena, il piede e l’inizio dello smontaggio. Sul telefono la scheda di un pezzo e la
+lezione prendono il posto delle sezioni del foglio come a desktop; quando si aprono, il fuoco va
+al loro titolo e la pagina scorre fin lì.
+
+### Area libera della camera
+
+La scena è tutta libera: il piede sta fuori dalla tela WebGL e nessun pannello le si sovrappone,
+né a macchina smontata né con la scheda o la lezione aperte. La 5g inquadra i pezzi della fase
+corrente con `fitToBox` e un margine del **6 %** della scena su ogni lato (a 1280 × 720: 52 px ai
+lati e 35 px sopra e sotto), uguale a ogni larghezza. Il margine resta lo stesso con la scheda
+aperta, perché la scheda sta nel foglio.
+
+### Pulsantiera da tastiera e con `prefers-reduced-motion`
+
+- **Ordine del Tab**: scena, viste, zoom e ripristino, poi il foglio (pulsanti, fase scelta,
+  pulsanti del messaggio). Sono `button` veri; Invio e Spazio li premono.
+- **Viste**: la vista attiva ha `aria-pressed="true"`; scegliere una fase dello smontaggio la
+  azzera, perché la camera torna all’inquadratura della fase. Dopo il clic il fuoco resta sul
+  pulsante.
+- **Zoom**: ogni pressione avvicina o allontana di un passo fisso; al limite il pulsante è
+  `disabled`. **Ripristino**: torna all’inquadratura della fase corrente.
+- **Elenco delle fasi**: un solo arresto del Tab; le frecce su e giù cambiano fase, come ogni
+  gruppo di opzioni.
+- **Scena**: con il fuoco sulla scena le lettere battono e Backspace annulla; nessun tasto
+  muove la camera. Da tastiera la camera si guida con la pulsantiera.
+- **`prefers-reduced-motion: reduce`**: viste, zoom, ripristino e cambi di fase saltano subito
+  alla nuova inquadratura, senza transizione; i pezzi vanno subito alla fase scelta; la lezione
+  animata parte «A passi, senza voce», come «Passo passo» al posto di «Al rallentatore» nel
+  simulatore.
+
 ## Da confermare con Marco
 
 1. Il simulatore resta scuro anche nel tema chiaro; il tema cambia solo il foglio e le pagine.
