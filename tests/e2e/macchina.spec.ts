@@ -20,9 +20,22 @@ function richieste(page: Page): string[] {
 const avvia = (page: Page) => page.getByRole('button', { name: 'Avvia la vista 3D' });
 const scena = (page: Page) => page.getByRole('application', { name: /Enigma I in 3D/ });
 const annuncio = (page: Page) => page.locator('[data-annuncio]');
-const selettore = (page: Page) => page.getByLabel('Smontaggio', { exact: true });
-const finestrelle = (page: Page) => page.locator('.macchina-nastro dd').first();
-const MESSAGGIO_BLOCCO = 'La macchina è smontata e non cifra: riporta il selettore su «macchina chiusa».';
+/** Le cinque fasi dello smontaggio sono un gruppo di pulsanti di opzione. */
+const fasi = (page: Page) => page.getByRole('radiogroup', { name: 'Smontaggio' });
+const fase = (page: Page, nome: string) => page.getByRole('radio', { name: nome, exact: true });
+const finestrelle = (page: Page) => page.locator('[data-finestrelle]');
+const tempoClip = (page: Page) => page.locator('canvas');
+const MESSAGGIO_BLOCCO = 'La macchina è smontata e non cifra: scegli «macchina chiusa» nell’elenco.';
+
+/** Sul telefono le viste sono un menu, a desktop quattro pulsanti: questo sceglie l'una o l'altra. */
+async function scegliVista(page: Page, nome: string) {
+  const pulsante = page.getByRole('button', { name: nome, exact: true });
+  if (await pulsante.isVisible()) await pulsante.click();
+  else await page.getByLabel('Vista', { exact: true }).selectOption({ label: nome });
+}
+
+/** La camera come la scrive la scena: azimut, angolo polare e distanza. */
+const camera = async (page: Page) => (await page.locator('canvas').getAttribute('data-camera')) ?? '';
 
 /** Apre `/macchina/` con l'Enigma I da `positions` (rotori I, II e III) e avvia la vista. */
 async function avviaDa(page: Page, positions: string) {
@@ -76,7 +89,7 @@ test('un link dell’Enigma I apre la stessa configurazione con il messaggio', a
   await page.goto(`macchina/?${encodeConfig(config)}&t=CIAO`);
   await expect(page.locator('[data-nastro="lampade"]')).toHaveText(encipherWith(config, 'CIAO'));
   await expect(page.getByRole('note')).toHaveCount(0);
-  await expect(page.getByRole('link', { name: 'Apri questa configurazione nel simulatore' })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: 'Apri nel simulatore' })).toHaveAttribute(
     'href',
     `/enigma/?${encodeConfig(config)}&t=CIAO`,
   );
@@ -91,7 +104,7 @@ test('con un’Enigma M4 nella query avvisa e rimanda al simulatore', async ({ p
     `/enigma/?${query}`,
   );
   // Sotto c’è l’Enigma I di base.
-  await expect(page.getByRole('link', { name: 'Apri questa configurazione nel simulatore' })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: 'Apri nel simulatore' })).toHaveAttribute(
     'href',
     `/enigma/?${encodeConfig(defaultConfig('I'))}`,
   );
@@ -115,36 +128,37 @@ test('senza WebGL resta un avviso con il rimando al simulatore', async ({ page }
 test.describe('smontaggio', () => {
   test.setTimeout(60_000);
 
-  test('il selettore a 4 dice la fase in parole e porta la clip alla fine', async ({ page }) => {
+  test('l’elenco ha cinque fasi e la clip arriva alla fase scelta', async ({ page }) => {
     await avviaDa(page, 'AAA');
-    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'macchina chiusa');
-    await selettore(page).fill('4');
-    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'meccanica sotto i tasti');
+    await expect(fasi(page).getByRole('radio')).toHaveCount(5);
+    await expect(fase(page, 'macchina chiusa')).toBeChecked();
+    await fase(page, 'meccanica sotto i tasti').check();
+    await expect(fase(page, 'meccanica sotto i tasti')).toBeChecked();
     // La clip dura 4 s e si ferma un attimo prima, dove un'azione che si ripete tornerebbe a zero.
-    await expect(page.locator('canvas')).toHaveAttribute('data-tempo-clip', /^3\.99/);
-    await selettore(page).fill('2.5');
-    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'da rotori estratti a rotori aperti');
-    await expect(page.locator('canvas')).toHaveAttribute('data-tempo-clip', '2.5');
-    await page.getByRole('button', { name: 'Rimonta la macchina' }).click();
-    await expect(selettore(page)).toHaveValue('0');
-    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'macchina chiusa');
+    await expect(tempoClip(page)).toHaveAttribute('data-tempo-clip', /^3\.99/, { timeout: 15_000 });
+    await fase(page, 'rotori estratti').check();
+    await expect(tempoClip(page)).toHaveAttribute('data-tempo-clip', '2', { timeout: 15_000 });
+    // Non c'è più «Rimonta la macchina»: si rimonta scegliendo la prima voce.
+    await expect(page.getByRole('button', { name: 'Rimonta la macchina' })).toHaveCount(0);
+    await fase(page, 'macchina chiusa').check();
+    await expect(tempoClip(page)).toHaveAttribute('data-tempo-clip', '0', { timeout: 15_000 });
   });
 
-  test('con i tasti freccia il selettore passa da una fase all’altra', async ({ page }) => {
+  test('con le frecce l’elenco passa da una fase all’altra', async ({ page }) => {
     await avviaDa(page, 'AAA');
-    await selettore(page).focus();
-    await page.keyboard.press('ArrowRight');
-    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'macchina aperta');
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('ArrowRight');
-    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'rotori aperti');
-    await page.keyboard.press('ArrowLeft');
-    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'rotori estratti');
+    await fase(page, 'macchina chiusa').focus();
+    await page.keyboard.press('ArrowDown');
+    await expect(fase(page, 'macchina aperta')).toBeChecked();
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await expect(fase(page, 'rotori aperti')).toBeChecked();
+    await page.keyboard.press('ArrowUp');
+    await expect(fase(page, 'rotori estratti')).toBeChecked();
   });
 
   test('a macchina smontata la tastiera non cifra e il messaggio viene annunciato', async ({ page }) => {
     await avviaDa(page, 'AAA');
-    await selettore(page).fill('2');
+    await fase(page, 'rotori estratti').check();
     await scena(page).focus();
     await page.keyboard.press('a');
     await expect(annuncio(page)).toHaveText(MESSAGGIO_BLOCCO);
@@ -155,7 +169,7 @@ test.describe('smontaggio', () => {
     await expect(annuncio(page)).toHaveText(MESSAGGIO_BLOCCO);
 
     // Rimontata, la macchina cifra di nuovo, e l'annuncio torna a essere la lampada.
-    await page.getByRole('button', { name: 'Rimonta la macchina' }).click();
+    await fase(page, 'macchina chiusa').check();
     await expect(page.locator('[data-blocco]')).toHaveCount(0);
     await scena(page).focus();
     await page.keyboard.press('a');
@@ -181,13 +195,12 @@ test.describe('smontaggio', () => {
     );
   });
 
-  test('con prefers-reduced-motion il selettore sposta lo stesso i pezzi', async ({ browser, baseURL }) => {
+  test('con prefers-reduced-motion la fase scelta si raggiunge subito', async ({ browser, baseURL }) => {
     const context = await browser.newContext({ reducedMotion: 'reduce', baseURL: baseURL ?? '' });
     const page = await context.newPage();
     await avviaDa(page, 'AAA');
-    await selettore(page).fill('3');
-    await expect(page.locator('canvas')).toHaveAttribute('data-tempo-clip', '3');
-    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'rotori aperti');
+    await fase(page, 'rotori aperti').check();
+    await expect(tempoClip(page)).toHaveAttribute('data-tempo-clip', '3', { timeout: 5_000 });
     await context.close();
   });
 
@@ -196,9 +209,73 @@ test.describe('smontaggio', () => {
     await page.goto(`macchina/?${encodeConfig(config)}`);
     await avvia(page).click();
     await expect(scena(page)).toHaveAttribute('data-fase', 'pronta', { timeout: 45_000 });
-    await selettore(page).fill('3');
-    await expect(selettore(page)).toHaveAttribute('aria-valuetext', 'rotori aperti');
+    await fase(page, 'rotori aperti').check();
+    await expect(tempoClip(page)).toHaveAttribute('data-tempo-clip', '3', { timeout: 15_000 });
     const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
     expect(results.violations).toEqual([]);
+  });
+});
+
+test.describe('camera', () => {
+  test.setTimeout(60_000);
+
+  test('«Dall’alto» sceglie la vista e la camera si porta in verticale', async ({ page }) => {
+    await avviaDa(page, 'AAA');
+    await expect(scena(page)).toHaveAttribute('data-vista', 'fase');
+    await scegliVista(page, 'Dall’alto');
+    await expect(scena(page)).toHaveAttribute('data-vista', 'alto');
+    // L'angolo polare (il secondo numero) tende a 0,05 rad.
+    await expect.poll(async () => Number((await camera(page)).split(' ')[1])).toBeLessThan(0.1);
+    // Scegliere una fase azzera la vista; «Ripristina la vista» fa lo stesso.
+    await fase(page, 'macchina aperta').check();
+    await expect(scena(page)).toHaveAttribute('data-vista', 'fase');
+    await scegliVista(page, 'Rotori');
+    await expect(scena(page)).toHaveAttribute('data-vista', 'rotori');
+    await page.getByRole('button', { name: 'Ripristina la vista' }).click();
+    await expect(scena(page)).toHaveAttribute('data-vista', 'fase');
+  });
+
+  test('la pulsantiera si raggiunge con Tab dalla scena, nell’ordine scena, viste, zoom', async ({ page }) => {
+    await avviaDa(page, 'AAA');
+    await expect(scena(page)).toBeFocused();
+    await page.keyboard.press('Tab');
+    const nellaPulsantiera = () => page.evaluate(() => document.activeElement?.closest('[data-pulsantiera]') !== null);
+    expect(await nellaPulsantiera()).toBe(true);
+    // Si arriva ai pulsanti dello zoom e del ripristino, e poi si esce dalla pulsantiera verso il foglio.
+    await page.getByRole('button', { name: 'Allontana' }).focus();
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('button', { name: 'Avvicina' })).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('button', { name: 'Ripristina la vista' })).toBeFocused();
+    await page.keyboard.press('Tab');
+    expect(await nellaPulsantiera()).toBe(false);
+  });
+
+  test('lo zoom con i pulsanti avvicina e allontana la camera', async ({ page }) => {
+    await avviaDa(page, 'AAA');
+    const distanza = async () => Number((await camera(page)).split(' ')[2]);
+    await expect.poll(distanza).toBeGreaterThan(0);
+    // La camera si assesta dopo l'inquadratura iniziale.
+    await expect.poll(async () => (await camera(page)) === (await camera(page))).toBe(true);
+    const prima = await distanza();
+    await page.getByRole('button', { name: 'Avvicina' }).click();
+    await expect.poll(distanza).toBeLessThan(prima * 0.9);
+    await page.getByRole('button', { name: 'Allontana' }).click();
+    await page.getByRole('button', { name: 'Allontana' }).click();
+    await expect.poll(distanza).toBeGreaterThan(prima * 1.1);
+  });
+
+  test('una lettera con il fuoco sulla scena accende la lampada e non muove la camera', async ({ page }) => {
+    await avviaDa(page, 'AAA');
+    await expect.poll(async () => (await camera(page)) === (await camera(page))).toBe(true);
+    await page.waitForTimeout(1500); // l'inquadratura iniziale ha finito di assestarsi
+    const prima = await camera(page);
+    await scena(page).focus();
+    for (const lettera of ['w', 'a', 's', 'd', 'q', 'e', 'z', 'x', 'ArrowLeft', 'ArrowUp', 'PageDown']) {
+      await page.keyboard.press(lettera);
+    }
+    await expect(annuncio(page)).toContainText('Lampada');
+    await page.waitForTimeout(500);
+    expect(await camera(page)).toBe(prima);
   });
 });

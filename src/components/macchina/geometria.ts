@@ -48,19 +48,6 @@ export function tempoClip(valore: number): number {
   return Math.min(Math.max(valore, 0), DURATA_CLIP - 1e-4);
 }
 
-/**
- * Dove sta il selettore rispetto alle fasi: su una fase intera (0 = macchina chiusa, 1–4) oppure
- * fra due, quando la clip è a metà.
- */
-export type PosizioneSelettore = { fase: number } | { da: number; a: number };
-
-export function posizioneSelettore(valore: number): PosizioneSelettore {
-  const v = Math.min(Math.max(valore, 0), FASI);
-  const vicina = Math.round(v);
-  if (Math.abs(v - vicina) < 0.01) return { fase: vicina };
-  return { da: Math.floor(v), a: Math.ceil(v) };
-}
-
 /** Quanto di una grandezza che compare fra `da` e `a` si vede con il selettore su `valore`: da 0 a 1. */
 export function rampa(valore: number, da: number, a: number): number {
   return Math.min(Math.max((valore - da) / (a - da), 0), 1);
@@ -94,28 +81,173 @@ export function segmentiCablaggio(
   return punti;
 }
 
-/** La camera segue lo smontaggio: dove guarda (`y`, in metri) e quanto si allontana (`scala`, 1 = macchina chiusa). */
-export interface Inquadratura {
-  y: number;
-  scala: number;
+/*
+ * La camera (fase 5g, docs/design.md «Pagina 3D»). Le inquadrature non sono più scritte a mano per
+ * fase: la camera inquadra l'ingombro dei pezzi con un margine fisso, dalla direzione che si è
+ * scelta. Qui stanno i conti, senza three.js.
+ */
+
+/** Il margine dell'inquadratura: il 6 % della scena su ogni lato (docs/design.md, «Area libera della camera»). */
+export const MARGINE_SCENA = 0.06;
+
+/** Da dove guarda la camera: l'angolo attorno all'asse verticale (0 = dal fronte, +Z) e quello dall'alto (0 = in verticale). */
+export interface Direzione {
+  azimut: number;
+  polare: number;
 }
 
-const INQUADRATURE: readonly Inquadratura[] = [
-  { y: 0.055, scala: 1 },
-  { y: 0.075, scala: 1.1 },
-  { y: 0.1, scala: 1.3 },
-  { y: 0.11, scala: 1.35 },
-  { y: 0.14, scala: 1.5 },
+/** L'inquadratura di partenza, la stessa dell'anteprima resa da Blender: da (0,52 · 0,6 · 0,8) m verso il centro della macchina. */
+export const DIREZIONE_PREDEFINITA: Direzione = { azimut: 0.576, polare: 1.05 };
+
+/** La camera non scende sotto il piano d'appoggio (come l'`OrbitControls` di prima). */
+export const POLARE_MASSIMO = Math.PI / 2 - 0.05;
+
+export const DISTANZA_MINIMA = 0.15;
+export const DISTANZA_MASSIMA = 3;
+
+export type IdVista = 'fronte' | 'alto' | 'rotori' | 'pannello';
+
+/** Ciò che la pagina può chiedere alla camera con i pulsanti. */
+export interface ComandiCamera {
+  vista: (id: IdVista) => void;
+  /** `1` avvicina, `-1` allontana, di un passo fisso. */
+  zoom: (verso: 1 | -1) => void;
+  /** Torna all'inquadratura della fase corrente. */
+  ripristina: () => void;
+}
+
+/** Se un altro passo di zoom è possibile: i pulsanti si spengono ai limiti. */
+export interface StatoZoom {
+  puoAvvicinare: boolean;
+  puoAllontanare: boolean;
+}
+
+/**
+ * Una vista predefinita: il punto di vista (la direzione da cui si guarda) e il bersaglio (i nodi di
+ * cui si inquadra l'ingombro alla fase corrente; `null` = tutta la macchina). Il bersaglio segue i
+ * pezzi quando si smontano, quindi la vista «Rotori» inquadra i rotori anche estratti.
+ */
+export interface Vista extends Direzione {
+  id: IdVista;
+  nodi: readonly string[] | null;
+}
+
+export const VISTE: readonly Vista[] = [
+  { id: 'fronte', azimut: 0, polare: 1.2, nodi: null },
+  { id: 'alto', azimut: 0, polare: 0.05, nodi: null },
+  { id: 'rotori', azimut: 0.35, polare: 0.85, nodi: ['rotore_sinistro', 'rotore_centrale', 'rotore_destro'] },
+  { id: 'pannello', azimut: 0, polare: 1.45, nodi: ['pannello_spine', 'sportello_spine'] },
 ];
 
-/** L'inquadratura per un valore del selettore, interpolata fra quelle delle fasi. */
-export function inquadratura(valore: number): Inquadratura {
-  const v = Math.min(Math.max(valore, 0), FASI);
-  const sotto = Math.min(Math.floor(v), FASI - 1);
-  const t = v - sotto;
-  const a = INQUADRATURE[sotto]!;
-  const b = INQUADRATURE[sotto + 1]!;
-  return { y: a.y + (b.y - a.y) * t, scala: a.scala + (b.scala - a.scala) * t };
+/** I pezzi che la pagina distingue: il doppio clic centra la camera su uno di questi (e le viste ne inquadrano alcuni). */
+export const PEZZI: readonly string[] = [
+  'cassa',
+  'coperchio_legno',
+  'coperchio_interno',
+  'sportello_spine',
+  'pannello_spine',
+  'tastiera',
+  'ruota_ingresso',
+  'riflettore',
+  'asse_rotori',
+  ...NODI_ROTORI,
+  'nottolino_destro',
+  'nottolino_centrale',
+  'nottolino_sinistro',
+  'leva_tasti',
+  'batteria',
+];
+
+/**
+ * Il pezzo a cui appartiene un nodo, oppure `null`: i pezzi di un rotore (anello, nucleo…) sono il
+ * rotore, ogni lampada è un pezzo, i tasti no (un doppio clic su un tasto li batte due volte e basta).
+ */
+export function pezzoDelNodo(nome: string): string | null {
+  if (letteraDelNodo(nome, 'tasto')) return null;
+  if (letteraDelNodo(nome, 'lampada')) return nome;
+  const rotore = NODI_ROTORI.find((r) => nome === r || nome.startsWith(`${r}_`));
+  if (rotore) return rotore;
+  return PEZZI.includes(nome) ? nome : null;
+}
+
+export type Punto = readonly [number, number, number];
+
+/** Un parallelepipedo allineato agli assi, in metri. */
+export interface Scatola {
+  min: Punto;
+  max: Punto;
+}
+
+/** Da dove sta la camera rispetto al bersaglio, come vettore unitario. */
+export function versoLaCamera({ azimut, polare }: Direzione): Punto {
+  return [Math.sin(polare) * Math.sin(azimut), Math.cos(polare), Math.sin(polare) * Math.cos(azimut)];
+}
+
+const prodotto = (a: Punto, b: Punto) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+
+/**
+ * Dove mettere la camera perché una scatola stia nel quadro con un margine uguale su ogni lato,
+ * guardandola dalla direzione data: il bersaglio è il centro della scatola e la distanza è la minima
+ * per cui i suoi otto spigoli stanno nella parte centrale della scena (la scena meno due margini).
+ * `fov` è il campo verticale in radianti, `aspetto` larghezza su altezza della scena.
+ */
+export function inquadra(
+  scatola: Scatola,
+  direzione: Direzione,
+  fov: number,
+  aspetto: number,
+  margine = MARGINE_SCENA,
+): { bersaglio: Punto; distanza: number } {
+  const centro: Punto = [
+    (scatola.min[0] + scatola.max[0]) / 2,
+    (scatola.min[1] + scatola.max[1]) / 2,
+    (scatola.min[2] + scatola.max[2]) / 2,
+  ];
+  const verso = versoLaCamera(direzione);
+  const destra: Punto = [Math.cos(direzione.azimut), 0, -Math.sin(direzione.azimut)];
+  const su: Punto = [
+    verso[1] * destra[2] - verso[2] * destra[1],
+    verso[2] * destra[0] - verso[0] * destra[2],
+    verso[0] * destra[1] - verso[1] * destra[0],
+  ];
+  const utile = 1 - 2 * margine;
+  const tanV = Math.tan(fov / 2);
+  const tanH = tanV * aspetto;
+  let distanza = 0;
+  for (const x of [scatola.min[0], scatola.max[0]]) {
+    for (const y of [scatola.min[1], scatola.max[1]]) {
+      for (const z of [scatola.min[2], scatola.max[2]]) {
+        const p: Punto = [x - centro[0], y - centro[1], z - centro[2]];
+        const profondita = prodotto(p, verso);
+        distanza = Math.max(
+          distanza,
+          profondita + Math.abs(prodotto(p, destra)) / (utile * tanH),
+          profondita + Math.abs(prodotto(p, su)) / (utile * tanV),
+        );
+      }
+    }
+  }
+  return { bersaglio: centro, distanza };
+}
+
+/** Un passo dello zoom: ogni pressione porta la camera a questa frazione della distanza (o al suo inverso). */
+export const PASSO_ZOOM = 0.75;
+
+/** La distanza dopo un passo di zoom (`verso` 1 = avvicina), sempre dentro i limiti. */
+export function distanzaDopoLoZoom(distanza: number, verso: 1 | -1): number {
+  const nuova = verso > 0 ? distanza * PASSO_ZOOM : distanza / PASSO_ZOOM;
+  return Math.min(Math.max(nuova, DISTANZA_MINIMA), DISTANZA_MASSIMA);
+}
+
+/** L'angolo equivalente a `voluto` più vicino a `attuale`: la camera non rifà indietro i giri già fatti. */
+export function angoloPiuVicinoA(attuale: number, voluto: number): number {
+  const giro = 2 * Math.PI;
+  return voluto + giro * Math.round((attuale - voluto) / giro);
+}
+
+/** Quanto, a macchina smontata, dura il passaggio da una fase all'altra: un secondo per fase, al più 2,5 s in tutto. */
+export function velocitaSmontaggio(da: number, a: number): number {
+  return Math.max(1, Math.abs(a - da) / 2.5);
 }
 
 /** Quanto ruota un nottolino a un tasto: va e torna, `u` da 0 a 1 è il tempo del movimento. Quello in presa spinge di più. */
