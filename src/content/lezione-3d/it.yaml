@@ -1,11 +1,14 @@
 # Il copione della lezione animata della pagina 3D (fase 5d di docs/piano/fase-5d.md, D16–D19).
-# Testo provvisorio: quello definitivo, con la voce, lo scrive la 5e.
+# Testo rivisto con le norme di scrittura il 2026-11-06; la voce definitiva la sceglie la 5e.
 #
 # In testa la configurazione, nel formato della query della home, e la lettera: fisse, perché la voce
 # deve poter dire quale lampada si accende (D19). Poi i passi, in ordine; ogni passo ha:
 # - id: il nome del file audio, `public/lezione-3d/it/<id>.m4a`;
-# - testo: una o due frasi, controllate da `lint:content`; `node scripts/voce.ts` rifà l’audio dei
-#   passi il cui testo è cambiato;
+# - testo: una o due frasi, il sottotitolo, controllate da `lint:content`;
+# - voce (facoltativo): il testo che legge la voce, quando non è uguale al sottotitolo. Numeri romani
+#   e posizioni dei rotori scritti come si pronunciano («rotori uno, due e tre», «A, A, B») e i tag
+#   audio di ElevenLabs fra parentesi quadre; `node scripts/voce.ts` rifà l’audio dei passi il cui
+#   testo della voce è cambiato;
 # - camera: un’inquadratura con nome (insieme, tastiera, pannello, rotori, riflettore; vedi
 #   `INQUADRATURE_LEZIONE` in `src/components/macchina/geometria.ts`);
 # - fantasma: i nodi del modello che diventano semitrasparenti, con i soli spigoli (`lampade` vale
@@ -20,30 +23,31 @@ configurazione: v=1&m=I&w=I-II-III&r=AAA&p=AAA&u=B&s=AT.OK
 lettera: A
 passi:
   - id: apertura
-    testo: 'Questa è un’Enigma I con i rotori I, II e III, tutti con la A in finestrella, e due cavi nel pannello a spine: uno fra A e T, l’altro fra O e K. Seguiamo la corrente quando l’operatore preme il tasto A.'
+    testo: 'Questa Enigma I ha i rotori I, II e III, tutti con la A in finestrella, e due cavi nel pannello a spine: uno collega A e T, l’altro O e K. Seguiamo la corrente quando l’operatore preme la A.'
+    voce: 'Questa Enigma uno ha i rotori uno, due e tre, tutti con la A in finestrella, e due cavi nel pannello a spine: uno collega A e T, l’altro O e K. [pause] Seguiamo la corrente quando l’operatore preme la A.'
     camera: insieme
   - id: tasto
-    testo: 'Il tasto A scende. Prima che il contatto sotto il tasto si chiuda, la leva sotto la tastiera spinge i tre nottolini contro i rotori.'
+    testo: 'Il tasto A comincia a scendere e abbassa la barra dei tasti, che spinge in avanti i tre nottolini. Il circuito è ancora aperto: il deviatore del tasto scatta solo in fondo alla corsa.'
     camera: tastiera
     evidenzia: [tasto_a]
     azione: premi
     rallenta: true
   - id: passo
-    testo: 'Il rotore di destra avanza di un passo e in finestrella la A diventa B. Gli altri due rotori restano fermi, perché i loro nottolini non hanno trovato una tacca.'
+    testo: 'Il nottolino di destra fa avanzare il rotore di destra di un passo, e nella sua finestrella la A diventa B. Gli altri due nottolini non trovano una tacca sull’anello a cui appoggiano, e i rotori centrale e di sinistra restano fermi.'
     camera: rotori
     fantasma: [coperchio_legno, coperchio_interno]
     evidenzia: [rotore_destro]
     azione: passo
     rallenta: true
   - id: spine-andata
-    testo: 'Ora il contatto è chiuso, e la corrente va dal tasto A alla presa A del pannello a spine; il cavo fra A e T la porta alla presa T. La linea semplifica il percorso: i fili veri corrono sotto la piastra.'
+    testo: 'Ora il tasto è in fondo e il suo deviatore collega il filo della A alla batteria: la corrente arriva alla presa A del pannello a spine, e il cavo la porta alla presa T. La linea arancione va diritta da un punto all’altro, mentre i fili veri corrono sotto la piastra.'
     camera: pannello
     fantasma: &davanti [cassa, coperchio_legno, sportello_spine, tastiera]
     azione: segnale
     fino: spine-andata
     rallenta: true
   - id: ingresso
-    testo: 'Dalla presa T un filo porta la corrente al contatto T della ruota d’ingresso, e di lì nel rotore di destra. Il cablaggio del rotore la fa uscire dal contatto J.'
+    testo: 'Dalla presa T la corrente raggiunge il contatto T della ruota d’ingresso ed entra nel rotore di destra. Il cablaggio del rotore la porta al contatto J, sul lato rivolto al rotore centrale.'
     camera: rotori
     fantasma:
       &dentro [
@@ -63,7 +67,7 @@ passi:
     fino: rotore-destro-andata
     rallenta: true
   - id: rotori-andata
-    testo: 'Il rotore centrale porta la J in B, quello di sinistra la B in K.'
+    testo: 'Il rotore centrale porta la corrente dalla J alla B, quello di sinistra dalla B alla K.'
     camera: rotori
     fantasma: *dentro
     azione: segnale
@@ -77,27 +81,35 @@ passi:
     fino: riflettore
     rallenta: true
   - id: rotori-ritorno
-    testo: 'All’indietro il rotore di sinistra porta la N in K, il centrale la K in D e quello di destra la D in O.'
+    testo: 'Al ritorno la corrente attraversa i rotori da sinistra a destra: il rotore di sinistra la porta dalla N alla K, il centrale dalla K alla D, quello di destra dalla D alla O.'
+    voce: 'Al ritorno la corrente attraversa i rotori da sinistra a destra: [slowly] il rotore di sinistra la porta dalla N alla K, il centrale dalla K alla D, quello di destra dalla D alla O.'
     camera: rotori
     fantasma: *dentro
     azione: segnale
     fino: rotore-destro-ritorno
     rallenta: true
   - id: spine-ritorno
-    testo: 'La corrente esce dalla ruota d’ingresso sul contatto O e torna alla presa O del pannello. Il secondo cavo, fra O e K, la porta alla presa K.'
+    testo: 'Dal contatto O della ruota d’ingresso la corrente torna alla presa O del pannello a spine, e il secondo cavo la porta alla presa K.'
     camera: pannello
     fantasma: *davanti
     azione: segnale
     fino: spine-ritorno
     rallenta: true
   - id: lampada
-    testo: 'Dalla presa K la corrente arriva alla lampada K, che si accende: la A è diventata K.'
+    testo: 'Il tasto K è a riposo, quindi il suo deviatore porta la corrente alla lampada K, che si accende.'
     camera: tastiera
     fantasma: [cassa]
     evidenzia: [lampada_k]
     azione: lampada
     rallenta: true
+  - id: cifrata
+    testo: 'La macchina ha cifrato la A in K, con i rotori già in AAB.'
+    voce: 'La macchina ha cifrato la A in K, con i rotori già in A, A, B.'
+    camera: tastiera
+    fantasma: [cassa]
+    evidenzia: [lampada_k]
   - id: prova
-    testo: 'Ora prova tu. I rotori sono in A A B: batti di nuovo A e guarda quale lampada si accende.'
+    testo: 'Ora prova tu: batti di nuovo la A. I rotori passano ad AAC e la corrente segue un’altra strada, quindi la lampada non sarà più la K.'
+    voce: 'Ora prova tu: batti di nuovo la A. [pause] I rotori passano ad A, A, C e la corrente segue un’altra strada, quindi la lampada non sarà più la K.'
     camera: insieme
     azione: prova

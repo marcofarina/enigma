@@ -7,7 +7,9 @@ import {
   avanzamento,
   quadroDelPasso,
   segmentiDelPercorso,
+  senzaTag,
   STADI,
+  testoDellaVoce,
   trattiFino,
   type Durate,
   type PassoCopione,
@@ -42,9 +44,15 @@ describe('copione', () => {
     expect(press.output).toMatch(/^[A-Z]$/);
   });
 
-  it('la voce nomina la lampada che il motore accende', () => {
-    const lampada = copione.passi.find((p) => p.azione === 'lampada');
-    expect(lampada?.testo).toContain(`lampada ${press.output}`);
+  it('sottotitolo e voce nominano la lampada che il motore accende', () => {
+    const lampada = copione.passi.find((p) => p.azione === 'lampada')!;
+    expect(lampada.testo).toContain(`lampada ${press.output}`);
+    expect(senzaTag(testoDellaVoce(lampada))).toContain(`lampada ${press.output}`);
+  });
+
+  it('i tag audio stanno solo nel testo della voce', () => {
+    expect(copione.passi.filter((p) => /[[\]]/.test(p.testo)).map((p) => p.id)).toEqual([]);
+    expect(senzaTag('Si accende. [pause] La macchina [slowly] cifra.')).toBe('Si accende. La macchina cifra.');
   });
 
   it('i nodi di fantasma ed evidenzia sono nel modello', () => {
@@ -179,7 +187,7 @@ describe('audio', () => {
   it('ogni passo ha il suo file e una durata fatta sul testo di adesso', () => {
     for (const passo of copione.passi) {
       expect(existsSync(join(radice, 'public', 'lezione-3d', 'it', `${passo.id}.m4a`)), passo.id).toBe(true);
-      expect(durate[passo.id]?.hash, passo.id).toBe(impronta(passo.testo));
+      expect(durate[passo.id]?.hash, passo.id).toBe(impronta(testoDellaVoce(passo)));
       expect(durate[passo.id]?.durata, passo.id).toBeGreaterThan(1);
     }
     expect(Object.keys(durate)).toHaveLength(copione.passi.length);

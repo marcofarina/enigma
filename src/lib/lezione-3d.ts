@@ -38,8 +38,14 @@ export type IdStadio = (typeof STADI)[number];
 
 export interface PassoCopione {
   id: string;
-  /** Una o due frasi: il sottotitolo e il testo della voce. */
+  /** Una o due frasi: il sottotitolo, e il testo della voce se manca `voce`. */
   testo: string;
+  /**
+   * Il testo che legge la voce, quando non è uguale al sottotitolo: numeri romani e sigle scritti come
+   * si pronunciano, e i tag audio di ElevenLabs fra parentesi quadre (`[pause]`), che a schermo non
+   * vanno. Dice le stesse cose di `testo`.
+   */
+  voce?: string | undefined;
   camera: Inquadratura;
   /** Nodi del modello che diventano semitrasparenti, con i soli spigoli principali. */
   fantasma: string[];
@@ -59,6 +65,16 @@ export interface Copione {
   lettera: string;
   passi: PassoCopione[];
 }
+
+/** Il testo che legge la voce: `voce` se c’è, altrimenti il sottotitolo. */
+export const testoDellaVoce = (passo: Pick<PassoCopione, 'testo' | 'voce'>): string => passo.voce ?? passo.testo;
+
+/** Il testo della voce senza i tag audio fra parentesi quadre, per una voce che non li conosce. */
+export const senzaTag = (testo: string): string =>
+  testo
+    .replace(/\[[^\]]*\]/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
 
 /** Per ogni passo, quanti secondi dura il suo audio e l’impronta del testo da cui è stato fatto. */
 export type Durate = Record<string, { durata: number; hash: string }>;

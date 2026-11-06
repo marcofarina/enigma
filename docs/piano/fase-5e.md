@@ -28,6 +28,34 @@ usare, fermati e chiedilo a Marco.
 - oppure la tua voce: la sessione prepara il testo, tu registri un file per passo con i nomi di
   `durate.json`.
 
+**Già fatto prima della fase** (2026-11-06, su richiesta di Marco, branch `testo-lezione-3d`).
+
+- **Passata delle norme sul testo** (`scrittura-didattica.md` §8, `scrittura-umana.md`,
+  `scrittura-parlata.md` §1) e allineamento con la lezione 3 e con `pezzi.yaml`: «deviatore» e
+  «barra dei tasti» al posto di «contatto sotto il tasto» e «leva»; la corrente parte dalla batteria
+  attraverso il deviatore della A, non «dal tasto»; la lampada si accende perché il deviatore del tasto
+  K è a riposo, come nella lezione 3; i nottolini «non trovano una tacca sull’anello a cui appoggiano»,
+  come nella lezione 5. Il passo `lampada` è diviso in due (`lampada` e `cifrata`): la lampada si
+  accendeva alla fine dell’audio, mentre la voce diceva «si accende» a metà. Ora i passi sono 12, per
+  101,8 s con la voce segnaposto. Restano da fare i passi 2–6 qui sotto: le fonti dei passi non ci sono
+  ancora, e il testo lo rivede Marco.
+- **Campo `voce`** nel copione: il testo che legge la voce quando non è uguale al sottotitolo. Serve
+  per i numeri romani («Enigma uno», «rotori uno, due e tre»), per le posizioni dei rotori («A, A, B»
+  invece di «AAB», che una voce legge come una parola) e per i tag audio di ElevenLabs, che a schermo
+  non vanno. L’impronta in `durate.json` è fatta sul testo della voce; `scripts/voce.ts` toglie i tag
+  quando usa `say`, che li leggerebbe. Tag messi: due `[pause]`, prima di «Seguiamo la corrente» e
+  prima di «I rotori passano ad A, A, C», e uno `[slowly]` sulla catena di lettere del ritorno.
+  Nessun tag di emozione.
+- **ElevenLabs** (verificato il 2026-11-06). I tag audio funzionano via API con Eleven v4
+  (`eleven_v4`), v4 Turbo e v3; vanno fra parentesi quadre, prima delle parole su cui agiscono, e
+  valgono finché non ne arriva un altro; `[pause]` e `[long pause]` sostituiscono l’SSML. La pagina di
+  ElevenLabs non dice niente sull’italiano: i tag vanno ascoltati passo per passo. Il connettore MCP
+  di ElevenLabs nel registro di Claude, a giudicare dalla descrizione e dai nomi degli strumenti, serve
+  a gestire gli agenti vocali (ElevenAgents), non a generare un file audio da un testo: l’adattatore di `voce.ts` chiama direttamente l’API di sintesi, con la chiave in
+  `ELEVENLABS_API_KEY`. Con un file per passo il modello non sente il contesto dei passi vicini: se
+  l’intonazione salta da un passo all’altro, si possono passare `previous_text` e `next_text`
+  (parametri dell’API da verificare nella fase).
+
 **Passi**
 
 1. **Testo.** Una o due frasi per passo, scritte per essere ascoltate: frasi brevi, soggetto
