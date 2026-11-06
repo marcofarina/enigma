@@ -565,6 +565,104 @@ html.macchina-root .site-header > .machine-paint > div {
   color: var(--sheet-ink-muted);
 }
 
+/* ── Lezione animata (fase 5d) ───────────────────────────────────────────────────────────────── */
+
+.macchina-pulsanti .macchina-guarda {
+  font-weight: 600;
+}
+
+.macchina-lezione {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.macchina-lezione .macchina-intestazione {
+  margin-bottom: 0;
+}
+
+.macchina-contatore {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--type-caption);
+  color: var(--sheet-ink-muted);
+}
+
+/* Il sottotitolo: il testo del passo, alto quanto due righe anche quando ne occupa una. */
+.macchina-sottotitolo {
+  min-height: 4.2em;
+  margin: 0;
+  font-size: var(--type-body);
+  line-height: 1.4;
+}
+
+.macchina-lettore {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.macchina-lettore button {
+  display: grid;
+  place-items: center;
+  width: 2.25rem; /* 36 */
+  height: 2.25rem;
+  padding: 0;
+  border: 1.5px solid var(--sheet-ink);
+  border-radius: var(--radius);
+  background: none;
+  color: var(--sheet-ink);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.macchina-lettore button:hover:not(:disabled) {
+  background: var(--sheet-ink);
+  color: var(--sheet);
+}
+
+.macchina-lettore button:disabled {
+  border-color: var(--sheet-field-border);
+  color: var(--sheet-ink-muted);
+  cursor: not-allowed;
+}
+
+.macchina-senza-voce {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
+.macchina-senza-voce input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--sheet-ink);
+}
+
+.macchina-trascrizione summary {
+  cursor: pointer;
+  color: var(--sheet-ink-muted);
+}
+
+.macchina-trascrizione ol {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  font-size: var(--type-caption);
+}
+
+.macchina-trascrizione li + li {
+  margin-top: 0.375rem;
+}
+
+.macchina-trascrizione li[aria-current='step'] {
+  font-weight: 700;
+}
+
 /* ── Sotto la piega ─────────────────────────────────────────────────────────────────────────── */
 
 .macchina-sotto {
@@ -672,6 +770,15 @@ html.macchina-root .site-header > .machine-paint > div {
   }
 
   .macchina-foglio .btn {
+    min-height: 2.75rem;
+  }
+
+  .macchina-lettore button {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .macchina-senza-voce {
     min-height: 2.75rem;
   }
 

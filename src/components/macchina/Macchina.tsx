@@ -1,18 +1,23 @@
-import { Component, lazy, Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Component, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useStore } from 'zustand';
 import { groupLetters, toIndex, windowLetters } from '@/engine';
 import { t, tf, type UiKey } from '@/i18n';
+import type { Copione, Durate } from '@/lib/lezione-3d';
 import { modello3d } from '@/lib/modello3d';
 import { url } from '@/lib/url';
 import { currentState } from '../simulator/session.ts';
 import { FASI, VISTE, type ComandiCamera, type IdVista, type StatoZoom } from './geometria.ts';
 import { createSimulatorStore, useKeyCapture } from '../simulator/store.ts';
 import { queryPerIlSimulatore, sessioneDallaQuery } from './configurazione.ts';
+import { creaStoreLezione, inProva, preparaLezione, quadroDi } from './lezione.ts';
 import { ElencoPezzi, SchedaPezzo } from './Pezzi.tsx';
 import type { Pezzo } from './pezzi.ts';
 
 /** three.js, React Three Fiber, drei e il `.glb` arrivano solo con questo import, dopo il pulsante. */
 const Scena = lazy(() => import('./Scena.tsx'));
+
+/** Il lettore della lezione animata arriva solo con «Guarda come funziona» (fase 5d). */
+const LezioneAnimata = lazy(() => import('../lesson/LezioneAnimata.tsx'));
 
 /** Quante lettere del nastro mostra la pagina: le ultime sei gruppi da cinque. */
 const LETTERE_NASTRO = 30;
@@ -100,11 +105,14 @@ const anelliInCifre = (anelli: string) =>
 export default function Macchina({
   peso,
   pezzi,
+  lezione,
 }: {
   /** Quanto scarica la vista, letto alla build da `pesoVista()`. */
   peso: string;
   /** Le schede dei pezzi, da `src/content/pezzi.yaml`, con lezione e fonti già risolte. */
   pezzi: readonly Pezzo[];
+  /** La lezione animata (fase 5d): il copione, le durate dell’audio e la cartella dei file audio. */
+  lezione: { copione: Copione; durate: Durate; audio: string };
 }) {
   const [{ store, avviso }] = useState(initialStore);
   const [fase, setFase] = useState<Fase>('anteprima');
@@ -121,9 +129,24 @@ export default function Macchina({
   const smontata = smontaggio > 0;
   const session = useStore(store, (s) => s.session);
   const pulse = useStore(store, (s) => s.pulse);
+
+  // La lezione animata (fase 5d): il lettore scrive passo e tempo in `statoLezione`, la scena li legge.
+  // Da «ora prova tu» la scena torna allo store e la tastiera cifra di nuovo.
+  const [lezioneAperta, setLezioneAperta] = useState(false);
+  const [statoLezione] = useState(creaStoreLezione);
+  const datiLezione = useMemo(() => preparaLezione(lezione.copione, lezione.durate), [lezione]);
+  const provaLezione = useStore(statoLezione, (s) => inProva(datiLezione, s.indice));
+  const lampadaLezione = useStore(statoLezione, (s) => quadroDi(datiLezione, s).lampada);
+  const lezioneInScena = lezioneAperta && !provaLezione;
+  const inScena = useMemo(
+    () => (lezioneInScena ? { lezione: datiLezione, stato: statoLezione } : null),
+    [lezioneInScena, datiLezione, statoLezione],
+  );
   // A macchina smontata la tastiera non cifra: né quella fisica né i tasti del modello. Il rifiuto si annuncia.
   const rifiuta = useCallback(() => setBlocco((b) => ({ n: (b?.n ?? 0) + 1, pulse, ritirato: false })), [pulse]);
   const palco = useKeyCapture(store, () => {
+    // Durante la lezione la tastiera è ferma: la scena la guida il copione.
+    if (lezioneInScena) return true;
     if (!smontata) return false;
     rifiuta();
     return true;
@@ -170,10 +193,31 @@ export default function Macchina({
     fuoco.current = null;
     if (dove === 'palco') palco.current?.focus({ preventScroll: true });
     else foglio.current?.querySelector<HTMLElement>(`[data-fuoco="${dove}"]`)?.focus();
-  }, [pannello, palco]);
+  }, [pannello, palco, lezioneAperta]);
   const schedaAperta = pannello.tipo === 'scheda' ? pezzi.find((p) => p.id === pannello.id) : undefined;
 
   const avvia = () => setFase(haWebGL2() ? 'caricamento' : 'senza-webgl');
+
+  // «Guarda come funziona» chiude scheda ed elenco, rimonta la macchina e, se serve, avvia la vista 3D.
+  const apriLezione = () => {
+    statoLezione.setState({ indice: 0, t: 0 });
+    scegliFase(0);
+    setPannello({ tipo: 'messaggio' });
+    if (fase === 'anteprima') avvia();
+    setLezioneAperta(true);
+  };
+  const chiudiLezione = () => {
+    fuoco.current = 'lezione';
+    setLezioneAperta(false);
+  };
+  // «Ora prova tu»: lo store prende la configurazione del copione con il tasto già battuto, così la
+  // scena resta com'era e la prossima lettera si cifra da lì.
+  useEffect(() => {
+    if (!lezioneAperta || !provaLezione) return;
+    const stato = store.getState();
+    stato.configure(() => datiLezione.config);
+    stato.press(datiLezione.copione.lettera);
+  }, [lezioneAperta, provaLezione, store, datiLezione]);
   const onPronto = useCallback(() => setFase('pronta'), []);
   const onErrore = useCallback(() => setFase('errore'), []);
 
@@ -229,6 +273,7 @@ export default function Macchina({
                   evidenziati={schedaAperta?.nodi ?? null}
                   onPezzo={onPezzo}
                   onFasiPezzi={setFasiPezzi}
+                  lezione={inScena}
                 />
               </Suspense>
             </Confine>
@@ -350,7 +395,16 @@ export default function Macchina({
         <div className="macchina-pulsanti">
           <button
             type="button"
+            className="btn macchina-guarda"
+            data-fuoco="lezione"
+            onClick={lezioneAperta ? chiudiLezione : apriLezione}
+          >
+            {t(lezioneAperta ? 'machine3d.lesson.exit' : 'machine3d.lesson.start')}
+          </button>
+          <button
+            type="button"
             className="btn"
+            disabled={lezioneAperta}
             aria-expanded={pannello.tipo === 'elenco'}
             aria-controls={pannello.tipo === 'messaggio' ? undefined : 'macchina-pannello-pezzi'}
             data-fuoco="pezzi"
@@ -360,7 +414,20 @@ export default function Macchina({
           </button>
         </div>
 
-        {pronta && (
+        {lezioneAperta && (
+          <Suspense fallback={null}>
+            <LezioneAnimata
+              copione={lezione.copione}
+              durate={lezione.durate}
+              audio={lezione.audio}
+              stato={statoLezione}
+              senzaVoce={ridotto}
+              pronta={fase !== 'anteprima' && fase !== 'caricamento'}
+            />
+          </Suspense>
+        )}
+
+        {pronta && !lezioneAperta && (
           <section aria-labelledby="macchina-smontaggio" className="macchina-sezione">
             <h2 id="macchina-smontaggio">{t('machine3d.explode.label')}</h2>
             <div role="radiogroup" aria-labelledby="macchina-smontaggio" className="macchina-fasi">
@@ -391,7 +458,9 @@ export default function Macchina({
 
         {/* Annuncio per chi usa un lettore di schermo, e appiglio per i test: una riga nuova a ogni tasto. */}
         <p className="sr-only" aria-live="polite" aria-atomic="true" data-annuncio>
-          {blocco && blocco.pulse === pulse ? (
+          {lezioneInScena ? (
+            lampadaLezione && <span key="lezione">{tf('machine3d.live', { letter: datiLezione.press.output })}</span>
+          ) : blocco && blocco.pulse === pulse ? (
             <span key={`blocco-${blocco.n}`}>{t('machine3d.locked')}</span>
           ) : (
             ultimo && pulse > 0 && <span key={pulse}>{tf('machine3d.live', { letter: ultimo.output })}</span>
@@ -413,7 +482,8 @@ export default function Macchina({
         <section
           aria-labelledby="macchina-messaggio"
           className="macchina-sezione"
-          hidden={pannello.tipo !== 'messaggio'}
+          // Durante la lezione il messaggio torna solo con «ora prova tu», quando la tastiera cifra di nuovo.
+          hidden={pannello.tipo !== 'messaggio' || lezioneInScena}
         >
           <div className="macchina-intestazione">
             <h2 id="macchina-messaggio">{t('machine3d.message')}</h2>

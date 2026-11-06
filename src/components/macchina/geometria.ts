@@ -1,4 +1,5 @@
 import { LETTER_COUNT } from '@/engine';
+import type { Inquadratura } from '@/lib/lezione-3d';
 
 /*
  * Conti della pagina 3D che non toccano three.js, così si provano senza WebGL. Le regole vengono
@@ -260,3 +261,18 @@ export function angoloNottolino(u: number, inPresa: boolean): number {
 
 /** Quanto ruota a un tasto la leva sotto i tasti, in radianti: il suo movimento accompagna quello dei nottolini. */
 export const OSCILLAZIONE_LEVA = 0.05;
+
+/*
+ * Le inquadrature della lezione animata (fase 5d): il copione le chiama per nome. Come le viste
+ * predefinite, ognuna è una direzione e i nodi di cui inquadra l'ingombro, a macchina chiusa.
+ */
+
+const LAMPADE = Array.from({ length: LETTER_COUNT }, (_, i) => `lampada_${String.fromCharCode(97 + i)}`);
+
+export const INQUADRATURE_LEZIONE: Readonly<Record<Inquadratura, Direzione & { nodi: readonly string[] | null }>> = {
+  insieme: { ...DIREZIONE_PREDEFINITA, nodi: null },
+  tastiera: { azimut: 0, polare: 0.7, nodi: ['tastiera', ...LAMPADE] },
+  pannello: { azimut: 0.25, polare: 1.15, nodi: ['pannello_spine', 'sportello_spine', 'tastiera'] },
+  rotori: { azimut: 0.3, polare: 0.55, nodi: ['ruota_ingresso', ...NODI_ROTORI, 'riflettore'] },
+  riflettore: { azimut: -0.7, polare: 0.9, nodi: ['riflettore', 'rotore_sinistro'] },
+};

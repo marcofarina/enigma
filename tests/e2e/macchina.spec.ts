@@ -1,6 +1,9 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { defaultConfig, encipherWith, encodeConfig, MODELS } from '../../src/engine/index.ts';
+import { parse } from 'yaml';
+import { decodeConfigOrThrow, defaultConfig, encipherWith, encodeConfig, MODELS } from '../../src/engine/index.ts';
 
 /*
  * La pagina 3D (fase 5a di docs/piano.md). three.js e il modello arrivano solo dopo il pulsante e
@@ -357,5 +360,111 @@ test.describe('schede dei pezzi', () => {
     await page.keyboard.press('Escape');
     await expect(scena(page)).toBeFocused();
     await expect(page.getByRole('heading', { name: 'Messaggio' })).toBeVisible();
+  });
+});
+
+test.describe('lezione animata', () => {
+  // Il Chromium dei test disegna sulla CPU (SwiftShader): le animazioni al rallentatore vanno a pochi
+  // fotogrammi al secondo, e attraversare la lezione a passi richiede circa un minuto.
+  test.setTimeout(150_000);
+
+  // La configurazione e la lettera vengono dal copione: il risultato atteso lo calcola il motore.
+  const copione = parse(
+    readFileSync(join(import.meta.dirname, '..', '..', 'src', 'content', 'lezione-3d', 'it.yaml'), 'utf8'),
+  ) as {
+    configurazione: string;
+    lettera: string;
+    passi: { id: string; azione?: string }[];
+  };
+  const config = decodeConfigOrThrow(copione.configurazione);
+  const guarda = (page: Page) => page.getByRole('button', { name: 'Guarda come funziona' });
+  const successivo = (page: Page) => page.getByRole('button', { name: 'Passo successivo' });
+  const aPassi = (page: Page) => page.getByRole('checkbox', { name: 'A passi, senza voce' });
+  const passoCorrente = (page: Page) => page.locator('[data-lezione]');
+  /** Un file audio della lezione. */
+  const audio = (url: string) => /\/lezione-3d\/.*\.m4a$/.test(new URL(url).pathname);
+
+  /** Avanza a passi fino al passo con l'azione data. */
+  async function finoA(page: Page, azione: string) {
+    const id = copione.passi.find((p) => p.azione === azione)?.id;
+    for (let i = 0; i < copione.passi.length && (await passoCorrente(page).getAttribute('data-lezione')) !== id; i++) {
+      await successivo(page).click();
+    }
+    await expect(passoCorrente(page)).toHaveAttribute('data-lezione', id ?? '');
+  }
+
+  test('nessun audio si scarica prima del clic su «Guarda come funziona»', async ({ page }) => {
+    const urls = richieste(page);
+    await page.goto('macchina/');
+    await page.waitForLoadState('networkidle');
+    await avvia(page).click();
+    await expect(scena(page)).toHaveAttribute('data-fase', 'pronta', { timeout: 45_000 });
+    await page.waitForTimeout(500);
+    expect(urls.filter(audio)).toEqual([]);
+
+    // Con la voce, al clic arriva l'audio del primo passo, e solo dal sito.
+    await guarda(page).click();
+    await expect
+      .poll(() => urls.filter(audio))
+      .toContainEqual(expect.stringMatching(`/${copione.passi[0]?.id}\\.m4a$`));
+  });
+
+  test('a passi, la lezione arriva alla lampada che accende il motore', async ({ page }) => {
+    await page.goto('macchina/');
+    await guarda(page).click();
+    await expect(page.getByRole('heading', { name: 'Come funziona' })).toBeFocused();
+    await aPassi(page).check();
+    await expect(scena(page)).toHaveAttribute('data-fase', 'pronta', { timeout: 45_000 });
+    // Durante la lezione il messaggio e lo smontaggio lasciano il posto al lettore.
+    await expect(fasi(page)).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Messaggio' })).toBeHidden();
+
+    await finoA(page, 'lampada');
+    await expect(annuncio(page)).toHaveText(`Lampada ${encipherWith(config, copione.lettera)}`);
+    await expect(page.locator('[data-contatore]')).toHaveText(
+      `passo ${copione.passi.findIndex((p) => p.azione === 'lampada') + 1} / ${copione.passi.length}`,
+    );
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test('dopo «ora prova tu» la tastiera cifra di nuovo, da dove era arrivata la lezione', async ({ page }) => {
+    await page.goto('macchina/');
+    await guarda(page).click();
+    await aPassi(page).check();
+    await expect(scena(page)).toHaveAttribute('data-fase', 'pronta', { timeout: 45_000 });
+
+    // Durante la lezione la tastiera è ferma.
+    await scena(page).focus();
+    await page.keyboard.press('q');
+    await expect(page.locator('[data-nastro="tasti"]')).toHaveText('');
+
+    await finoA(page, 'prova');
+    await expect(successivo(page)).toBeDisabled();
+    await expect(page.locator('[data-nastro="tasti"]')).toHaveText(copione.lettera);
+    await scena(page).focus();
+    await page.keyboard.press('b');
+    const atteso = encipherWith(config, `${copione.lettera}B`);
+    await expect(annuncio(page)).toHaveText(`Lampada ${atteso.at(-1)}`);
+    await expect(page.locator('[data-nastro="lampade"]')).toHaveText(atteso);
+
+    // «Esci dalla lezione» rimette il messaggio e lo smontaggio, e il fuoco torna sul pulsante.
+    await page.getByRole('button', { name: 'Esci dalla lezione' }).click();
+    await expect(guarda(page)).toBeFocused();
+    await expect(fasi(page)).toBeVisible();
+  });
+
+  test('con prefers-reduced-motion la lezione parte a passi, senza voce', async ({ browser, baseURL }) => {
+    const context = await browser.newContext({ reducedMotion: 'reduce', baseURL: baseURL ?? '' });
+    const page = await context.newPage();
+    const urls = richieste(page);
+    await page.goto('macchina/');
+    await guarda(page).click();
+    await expect(aPassi(page)).toBeChecked();
+    await expect(scena(page)).toHaveAttribute('data-fase', 'pronta', { timeout: 45_000 });
+    await successivo(page).click();
+    await expect(passoCorrente(page)).toHaveAttribute('data-lezione', copione.passi[1]?.id ?? '');
+    expect(urls.filter(audio)).toEqual([]);
+    await context.close();
   });
 });
