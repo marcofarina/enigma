@@ -420,7 +420,8 @@ test.describe('lezione animata', () => {
     await expect(page.getByRole('heading', { name: 'Messaggio' })).toBeHidden();
 
     await finoA(page, 'lampada');
-    await expect(annuncio(page)).toHaveText(`Lampada ${encipherWith(config, copione.lettera)}`);
+    // Al rallentatore la corrente arriva alla lampada alla fine del passo, che dura quanto il suo audio.
+    await expect(annuncio(page)).toHaveText(`Lampada ${encipherWith(config, copione.lettera)}`, { timeout: 20_000 });
     await expect(page.locator('[data-contatore]')).toHaveText(
       `passo ${copione.passi.findIndex((p) => p.azione === 'lampada') + 1} / ${copione.passi.length}`,
     );

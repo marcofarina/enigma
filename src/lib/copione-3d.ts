@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { z } from 'astro/zod';
 import { parse } from 'yaml';
 import { decodeConfig } from '../engine/codec.ts';
-import { AZIONI, INQUADRATURE, nodiDi, STADI, type Copione, type Durate } from './lezione-3d.ts';
+import { AZIONI, INQUADRATURE, nodiDi, STADI, testoDellaVoce, type Copione, type Durate } from './lezione-3d.ts';
 
 /*
  * La lettura del copione della lezione animata (fase 5d), con lo schema. Solo lato server e negli
@@ -17,6 +17,7 @@ const passo = z
   .object({
     id: z.string().regex(/^[a-z0-9-]+$/),
     testo: z.string().min(1),
+    voce: z.string().min(1).optional(),
     camera: z.enum(INQUADRATURE),
     fantasma: z.array(nodo).default([]).transform(nodiDi),
     evidenzia: z.array(nodo).default([]).transform(nodiDi),
@@ -69,7 +70,7 @@ export function leggiCopione(sorgente: string): Copione {
   return risultato.data;
 }
 
-/** L’impronta del testo di un passo: `scripts/voce.ts` rifà l’audio solo se cambia. */
+/** L’impronta del testo della voce di un passo: `scripts/voce.ts` rifà l’audio solo se cambia. */
 export function impronta(testo: string): string {
   return createHash('sha256').update(testo).digest('hex').slice(0, 16);
 }
@@ -81,7 +82,7 @@ export function impronta(testo: string): string {
 export function lezioneDellaPagina(radice = process.cwd()): { copione: Copione; durate: Durate } {
   const copione = leggiCopione(readFileSync(join(radice, 'src', 'content', 'lezione-3d', 'it.yaml'), 'utf8'));
   const durate = JSON.parse(readFileSync(join(radice, 'public', 'lezione-3d', 'it', 'durate.json'), 'utf8')) as Durate;
-  const vecchi = copione.passi.filter((p) => durate[p.id]?.hash !== impronta(p.testo)).map((p) => p.id);
+  const vecchi = copione.passi.filter((p) => durate[p.id]?.hash !== impronta(testoDellaVoce(p))).map((p) => p.id);
   if (vecchi.length > 0) {
     throw new Error(
       `L’audio della lezione 3D non corrisponde al copione (${vecchi.join(', ')}): rilancia node scripts/voce.ts.`,

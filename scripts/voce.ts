@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { impronta, leggiCopione } from '../src/lib/copione-3d.ts';
-import type { Durate } from '../src/lib/lezione-3d.ts';
+import { senzaTag, testoDellaVoce, type Durate } from '../src/lib/lezione-3d.ts';
 
 /*
  * L’audio della lezione animata (fase 5d di docs/piano/fase-5d.md): un file per passo del copione,
@@ -10,7 +10,10 @@ import type { Durate } from '../src/lib/lezione-3d.ts';
  * Rifà solo i passi il cui testo è cambiato (o il cui file manca) e toglie i file dei passi che non ci
  * sono più.
  *
- * In questa fase la voce è il segnaposto di macOS, `say -v Alice` (D17): `say` scrive un AIFF,
+ * La voce legge il campo `voce` del passo, se c’è, altrimenti `testo`; l’impronta è fatta su quello.
+ *
+ * In questa fase la voce è il segnaposto di macOS, `say -v Alice` (D17), che non conosce i tag audio di
+ * ElevenLabs: li toglie prima di leggere. `say` scrive un AIFF,
  * `afconvert` lo porta in AAC dentro un M4A, `afinfo` ne legge la durata. La voce definitiva la sceglie
  * la 5e; se è la voce di Marco, registrata frase per frase, questo script cambia solo nella funzione
  * `registra`.
@@ -32,7 +35,7 @@ const prima: Durate = existsSync(fileDurate) ? (JSON.parse(readFileSync(fileDura
 function registra(id: string, testo: string): number {
   const aiff = join(cartella, `${id}.aiff`);
   const m4a = join(cartella, `${id}.m4a`);
-  execFileSync('say', ['-v', VOCE, '-o', aiff, testo]);
+  execFileSync('say', ['-v', VOCE, '-o', aiff, senzaTag(testo)]);
   execFileSync('afconvert', ['-f', 'm4af', '-d', 'aac', aiff, m4a]);
   rmSync(aiff);
   return durataDi(m4a);
@@ -48,7 +51,9 @@ function durataDi(file: string): number {
 
 const dopo: Durate = {};
 let rifatti = 0;
-for (const { id, testo } of copione.passi) {
+for (const passo of copione.passi) {
+  const { id } = passo;
+  const testo = testoDellaVoce(passo);
   const hash = impronta(testo);
   const vecchio = prima[id];
   if (vecchio && vecchio.hash === hash && existsSync(join(cartella, `${id}.m4a`))) {
