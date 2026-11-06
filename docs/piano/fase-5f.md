@@ -108,7 +108,7 @@ Valori in `RESA` e `OMBRA` in testa a `src/components/macchina/Scena.tsx`.
   fasi 0, 2 e 4 in tema chiaro e scuro, con la lampada B accesa (si batte A). Le prende
   `node scripts/schermate-3d.ts <cartella>` sulla build, con Playwright: le stesse inquadrature per la
   5d, se servono.
-- **Giudizio di Marco sulle immagini:** in attesa.
+- **Giudizio di Marco sulle immagini:** approvate (2026-11-06, all’apertura della 5c).
 
 Comandi eseguiti:
 
