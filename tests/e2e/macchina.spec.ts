@@ -91,7 +91,7 @@ test('un link dell’Enigma I apre la stessa configurazione con il messaggio', a
   await expect(page.getByRole('note')).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Apri nel simulatore' })).toHaveAttribute(
     'href',
-    `/enigma/?${encodeConfig(config)}&t=CIAO`,
+    `/?${encodeConfig(config)}&t=CIAO`,
   );
 });
 
@@ -99,14 +99,11 @@ test('con un’Enigma M4 nella query avvisa e rimanda al simulatore', async ({ p
   const query = encodeConfig(defaultConfig('M4'));
   await page.goto(`macchina/?${query}`);
   await expect(page.getByRole('note').filter({ hasText: MODELS.M4.label })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Apri il link nel simulatore' })).toHaveAttribute(
-    'href',
-    `/enigma/?${query}`,
-  );
+  await expect(page.getByRole('link', { name: 'Apri il link nel simulatore' })).toHaveAttribute('href', `/?${query}`);
   // Sotto c’è l’Enigma I di base.
   await expect(page.getByRole('link', { name: 'Apri nel simulatore' })).toHaveAttribute(
     'href',
-    `/enigma/?${encodeConfig(defaultConfig('I'))}`,
+    `/?${encodeConfig(defaultConfig('I'))}`,
   );
 });
 
@@ -121,7 +118,7 @@ test('senza WebGL resta un avviso con il rimando al simulatore', async ({ page }
   await page.goto('macchina/');
   await avvia(page).click();
   await expect(page.getByRole('note').filter({ hasText: 'non ha WebGL' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Apri il simulatore' })).toHaveAttribute('href', /^\/enigma\/\?v=1/);
+  await expect(page.getByRole('link', { name: 'Apri il simulatore' })).toHaveAttribute('href', /^\/\?v=1/);
   expect(urls.filter(pesante)).toEqual([]);
 });
 

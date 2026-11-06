@@ -9,7 +9,7 @@ export default defineConfig({
   retries: process.env['CI'] ? 1 : 0,
   reporter: process.env['CI'] ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {
-    baseURL: `http://localhost:${port}/enigma/`,
+    baseURL: `http://localhost:${port}/`,
     trace: 'on-first-retry',
     // La pagina 3D (fase 5a) vuole WebGL 2. Il Chromium headless di Playwright 1.63 (Chromium 153) lo
     // ha già con SwiftShader su macOS; il flag lo garantisce dove Chromium non ripiega più da solo
@@ -22,7 +22,7 @@ export default defineConfig({
   ],
   webServer: {
     command: `pnpm exec astro preview --port ${port} --ignore-lock`,
-    url: `http://localhost:${port}/enigma/`,
+    url: `http://localhost:${port}/`,
     reuseExistingServer: !process.env['CI'],
   },
 });

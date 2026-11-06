@@ -147,7 +147,7 @@ test('un link condivisibile riapre configurazione e messaggio', async ({ page })
 
 test('un vecchio link /simulatore/?… apre la stessa configurazione nella home', async ({ page }) => {
   await page.goto('simulatore/?v=1&m=I&w=II-IV-V&r=BUL&p=BLA&u=B&s=AV.BS.CG.DL.FU.HZ.IN.KM.OW.RX&t=EDPUD');
-  await expect(page).toHaveURL(/\/enigma\/\?v=1&m=I&w=II-IV-V/);
+  await expect(page).toHaveURL(/\/\?v=1&m=I&w=II-IV-V/);
   await expect(page.getByRole('heading', { name: 'Messaggio' })).toBeVisible();
   await expect(lit(page)).toHaveText('AUFKL');
   await expect(page.getByRole('combobox', { name: 'Rotore sinistro' })).toHaveValue('II');
@@ -157,7 +157,7 @@ test('il link condiviso porta alla home e si mostra anche come codice QR', async
   await open(page);
   await page.getByRole('button', { name: 'Condividi' }).click();
   const share = panel(page, 'Link condivisibile');
-  await expect(share.getByLabel('Link alla configurazione')).toHaveValue(/\/enigma\/\?v=1&m=I/);
+  await expect(share.getByLabel('Link alla configurazione')).toHaveValue(/\/\?v=1&m=I/);
   await share.getByRole('button', { name: 'Mostra il codice QR' }).click();
   await expect(share.getByRole('img', { name: 'Codice QR del link condivisibile' })).toBeVisible();
   await expect(share.getByRole('button', { name: 'Nascondi il codice QR' })).toHaveAttribute('aria-expanded', 'true');
@@ -277,10 +277,7 @@ for (const [width, height] of [
       const notice = page.getByText('Qui hai la macchina pronta a cifrare.');
       await expect(notice).toBeVisible();
       await expect(notice).toContainText('si configurano su un computer');
-      await expect(page.getByRole('link', { name: 'Apri le lezioni' })).toHaveAttribute(
-        'href',
-        /\/enigma\/come-funziona\/$/,
-      );
+      await expect(page.getByRole('link', { name: 'Apri le lezioni' })).toHaveAttribute('href', /\/come-funziona\/$/);
       const brand = await page.getByRole('link', { name: 'Enigma' }).boundingBox();
       const menu = await page.getByRole('button', { name: 'Menu' }).boundingBox();
       expect(brand && menu && Math.abs(brand.y + brand.height / 2 - (menu.y + menu.height / 2))).toBeLessThan(2);
