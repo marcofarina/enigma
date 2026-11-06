@@ -27,10 +27,11 @@ const temaCodice = {
   ],
 };
 
-// Il sito è pubblicato come project site di GitHub Pages: https://marcofarina.github.io/enigma/
+// Il sito è pubblicato su GitHub Pages con dominio personalizzato: https://enigma.rainbowbits.cloud/
+// (il file public/CNAME dice a GitHub Pages quale dominio servire). Il sito sta alla radice, quindi base è '/'.
 export default defineConfig({
-  site: 'https://marcofarina.github.io',
-  base: '/enigma',
+  site: 'https://enigma.rainbowbits.cloud',
+  base: '/',
   trailingSlash: 'always',
   integrations: [react(), mdx()],
   markdown: {

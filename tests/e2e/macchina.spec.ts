@@ -91,7 +91,7 @@ test('un link dell’Enigma I apre la stessa configurazione con il messaggio', a
   await expect(page.getByRole('note')).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Apri nel simulatore' })).toHaveAttribute(
     'href',
-    `/enigma/?${encodeConfig(config)}&t=CIAO`,
+    `/?${encodeConfig(config)}&t=CIAO`,
   );
 });
 
@@ -99,14 +99,11 @@ test('con un’Enigma M4 nella query avvisa e rimanda al simulatore', async ({ p
   const query = encodeConfig(defaultConfig('M4'));
   await page.goto(`macchina/?${query}`);
   await expect(page.getByRole('note').filter({ hasText: MODELS.M4.label })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Apri il link nel simulatore' })).toHaveAttribute(
-    'href',
-    `/enigma/?${query}`,
-  );
+  await expect(page.getByRole('link', { name: 'Apri il link nel simulatore' })).toHaveAttribute('href', `/?${query}`);
   // Sotto c’è l’Enigma I di base.
   await expect(page.getByRole('link', { name: 'Apri nel simulatore' })).toHaveAttribute(
     'href',
-    `/enigma/?${encodeConfig(defaultConfig('I'))}`,
+    `/?${encodeConfig(defaultConfig('I'))}`,
   );
 });
 
@@ -121,7 +118,7 @@ test('senza WebGL resta un avviso con il rimando al simulatore', async ({ page }
   await page.goto('macchina/');
   await avvia(page).click();
   await expect(page.getByRole('note').filter({ hasText: 'non ha WebGL' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Apri il simulatore' })).toHaveAttribute('href', /^\/enigma\/\?v=1/);
+  await expect(page.getByRole('link', { name: 'Apri il simulatore' })).toHaveAttribute('href', /^\/\?v=1/);
   expect(urls.filter(pesante)).toEqual([]);
 });
 
@@ -277,5 +274,88 @@ test.describe('camera', () => {
     await expect(annuncio(page)).toContainText('Lampada');
     await page.waitForTimeout(500);
     expect(await camera(page)).toBe(prima);
+  });
+});
+
+test.describe('schede dei pezzi', () => {
+  test.setTimeout(60_000);
+  const pezzi = (page: Page) => page.getByRole('button', { name: 'Pezzi', exact: true });
+  const voce = (page: Page, nome: string) =>
+    page.getByRole('region', { name: 'I pezzi della macchina' }).getByRole('button', { name: nome, exact: true });
+
+  test('dall’elenco, con la tastiera, si apre la scheda e il fuoco torna dove era', async ({ page }) => {
+    await page.goto('macchina/');
+    // L’elenco c’è anche prima della vista 3D: la scheda è testo.
+    await pezzi(page).focus();
+    await page.keyboard.press('Enter');
+    await expect(pezzi(page)).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.getByRole('heading', { name: 'I pezzi della macchina' })).toBeFocused();
+    await expect(page.getByRole('region', { name: 'I pezzi della macchina' }).getByRole('listitem')).toHaveCount(21);
+
+    await voce(page, 'Anello').focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('heading', { name: 'Anello', exact: true })).toBeFocused();
+    const scheda = page.getByRole('region', { name: 'Anello', exact: true });
+    await expect(
+      scheda.getByRole('link', { name: 'Leggi la lezione «I rotori: cablaggio, posizione e anello»' }),
+    ).toHaveAttribute('href', '/come-funziona/i-rotori/');
+    // Prima della vista 3D non c’è niente da smontare.
+    await expect(scheda.getByRole('button', { name: /^Smonta fino a/ })).toHaveCount(0);
+
+    // Esc chiude la scheda e torna all’elenco, sulla voce che l’aveva aperta; un altro Esc torna al messaggio.
+    await page.keyboard.press('Escape');
+    await expect(voce(page, 'Anello')).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(pezzi(page)).toBeFocused();
+    await expect(page.getByRole('heading', { name: 'Messaggio' })).toBeVisible();
+  });
+
+  test('ogni scheda porta a una lezione che esiste', async ({ page, request }, testInfo) => {
+    test.skip(testInfo.project.name !== 'desktop', 'basta un progetto');
+    await page.goto('macchina/');
+    await pezzi(page).click();
+    const nomi = await page
+      .getByRole('region', { name: 'I pezzi della macchina' })
+      .getByRole('button')
+      .allTextContents();
+    const lezioni = new Set<string>();
+    for (const nome of nomi.filter((n) => n !== '×')) {
+      await voce(page, nome).click();
+      lezioni.add((await page.locator('[data-scheda] a[href^="/"]').getAttribute('href')) ?? '');
+      await page.getByRole('button', { name: 'Chiudi la scheda' }).click();
+    }
+    expect(lezioni.size).toBeGreaterThan(4);
+    for (const href of lezioni) expect((await request.get(href)).ok(), href).toBe(true);
+  });
+
+  test('a vista avviata la scheda porta lo smontaggio alla fase del pezzo e resta accessibile', async ({ page }) => {
+    await avviaDa(page, 'AAA');
+    await pezzi(page).click();
+    await voce(page, 'Corpo del rotore').click();
+    await page.getByRole('button', { name: 'Smonta fino a «rotori aperti»' }).click();
+    await expect(fase(page, 'rotori aperti')).toBeChecked();
+    await expect(tempoClip(page)).toHaveAttribute('data-tempo-clip', '3', { timeout: 15_000 });
+    // Le lampade non si muovono: niente pulsante.
+    await page.getByRole('button', { name: 'Chiudi la scheda' }).click();
+    await voce(page, 'Lampade').click();
+    await expect(page.getByRole('button', { name: /^Smonta fino a/ })).toHaveCount(0);
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(results.violations).toEqual([]);
+  });
+
+  test('un clic su un pezzo del modello apre la sua scheda', async ({ page }) => {
+    await avviaDa(page, 'AAA');
+    await scegliVista(page, 'Pannello a spine');
+    await page.waitForTimeout(800);
+    const tela = page.locator('canvas');
+    const box = await tela.boundingBox();
+    if (!box) throw new Error('la scena non ha una tela');
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(page.locator('[data-scheda]')).toHaveAttribute('data-scheda', /^(pannello-spine|sportello-spine)$/);
+    await expect(page.locator('[data-scheda] h2')).toBeFocused();
+    // Chiusa la scheda, il fuoco torna alla scena e il messaggio riappare.
+    await page.keyboard.press('Escape');
+    await expect(scena(page)).toBeFocused();
+    await expect(page.getByRole('heading', { name: 'Messaggio' })).toBeVisible();
   });
 });

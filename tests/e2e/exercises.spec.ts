@@ -33,7 +33,7 @@ test('un esercizio corregge la risposta e ricorda le varianti risolte', async ({
   await page.getByRole('button', { name: 'Verifica' }).click();
   await expect(page.getByRole('status').filter({ hasText: 'Corretto.' })).toBeVisible();
   await expect(page.getByText('Varianti risolte: 1')).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Rivedi nel simulatore' })).toHaveAttribute('href', /enigma\/\?v=1/);
+  await expect(page.getByRole('link', { name: 'Rivedi nel simulatore' })).toHaveAttribute('href', /\?v=1/);
 
   await page.goto('esercizi/');
   await expect(

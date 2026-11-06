@@ -453,6 +453,33 @@ Dove la realizzazione di `docs/piano/fase-5g.md` si scosta dalla lettera del can
 - **Aiuto sui gesti.** Il testo per il tocco compare con `(pointer: coarse)` o sotto i 480 px; per
   il resto vale quello per il mouse.
 
+### Come l’ha realizzata la 5c
+
+Dove le schede dei pezzi di `docs/piano/fase-5c.md` si scostano dall’inventario:
+
+- **Pulsante «Pezzi».** Sta sotto la riga della configurazione, da solo finché la 5d non aggiunge
+  «Guarda come funziona». C’è da subito, anche prima di «Avvia la vista 3D» e senza WebGL, perché
+  scheda ed elenco sono testo; ha `aria-expanded` mentre l’elenco è aperto. Al telefono il
+  segnaposto del foglio è cresciuto da 266 a 324 px per far posto al pulsante (spostamento del
+  layout, 5f).
+- **Elenco.** Due colonne di nomi, nell’ordine di `src/content/pezzi.yaml` (prima il percorso della
+  corrente, poi il movimento dei rotori, poi la cassa); ogni nome è un pulsante. Elenco e scheda
+  prendono il posto di «Messaggio», che resta nella pagina con `hidden`.
+- **Fuoco.** Aprendo l’elenco o la scheda il fuoco va al loro titolo; × ed Esc chiudono. Chiusa la
+  scheda, il fuoco torna alla voce dell’elenco che l’aveva aperta, oppure alla scena se l’aveva
+  aperta un clic sul modello; chiuso l’elenco, torna a «Pezzi».
+- **Pulsante della fase.** «Smonta fino a «rotori aperti»» al posto di «Mostralo a «fase»», che con
+  i nomi delle fasi suonava male. C’è solo a vista avviata e solo per i pezzi che lo smontaggio muove
+  (o che stanno dentro un pezzo mosso, come i tasti nella tastiera).
+- **Clic sul modello.** Un clic su un tasto batte la lettera, come prima: la scheda della tastiera si
+  apre dalla piastra dei tasti o dall’elenco. Ogni altro pezzo apre la sua scheda. Le parti di un
+  rotore (anello, corpo, contatti, cricchetto, rotella) aprono la propria scheda solo dalla fase
+  «rotori aperti»: prima il clic apre quella del rotore. La manina compare su tutti i pezzi con una
+  scheda.
+- **Evidenza.** Il pezzo della scheda aperta ha un contorno di 3 px nel colore `--signal-return`
+  (l’`Outlines` di drei dentro ogni sua mesh), diverso dall’arancio delle lampade e dal rosso dei
+  cavi; segue il pezzo nello smontaggio.
+
 ## Da confermare con Marco
 
 1. Il simulatore resta scuro anche nel tema chiaro; il tema cambia solo il foglio e le pagine.

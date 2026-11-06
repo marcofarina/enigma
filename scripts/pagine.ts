@@ -1,7 +1,7 @@
 /**
  * Le pagine che i test controllano. Le legge `tests/e2e/smoke.spec.ts` (axe) e
  * `scripts/lighthouse.ts` (budget di prestazioni e accessibilità).
- * I percorsi sono relativi a `base` (`/enigma/`).
+ * I percorsi sono relativi a `base` (`/`).
  */
 
 /** Le pagine principali: la home, il simulatore, una lezione per sezione, gli esercizi, le schede, il glossario, i docenti, la macchina in 3D (stato iniziale, prima del pulsante). */

@@ -1,0 +1,168 @@
+# Le schede dei pezzi della pagina 3D (fase 5c di docs/piano/fase-5c.md). Ogni voce: id, nome, nodi
+# (i nodi del modello che aprono la scheda, vedi docs/piano/convenzione-3d.md), descrizione (due o tre
+# frasi, controllate da `lint:content`), lezione (pagina del sito che spiega il pezzo, senza base) e
+# fonti (id di fonti.yaml) se la descrizione riporta un fatto sulla macchina vera.
+#
+# La scheda rimanda alla lezione, non la ripete. L’ordine è quello dell’elenco «Pezzi»: prima il
+# percorso della corrente, poi il movimento dei rotori, poi la cassa. Un clic su un nodo risale al
+# primo antenato che compare in `nodi`; un pezzo staccabile da un altro pezzo con la sua scheda (le
+# parti di un rotore) apre la propria solo dalla fase dello smontaggio che lo stacca.
+- id: tastiera
+  nome: Tastiera
+  nodi: [tastiera]
+  descrizione: Ventisei tasti nell’ordine delle macchine da scrivere tedesche, che comincia con QWERTZ. Sotto ogni tasto c’è un deviatore che, con il tasto premuto fino in fondo, collega il filo della sua lettera alla batteria e stacca la lampada della stessa lettera.
+  lezione: come-funziona/tastiera-lampade-e-circuito/
+  fonti: [crypto-museum-enigma-i, crypto-museum-funzionamento]
+- id: pannello-spine
+  nome: Pannello a spine
+  nodi: [pannello_spine]
+  descrizione: Ventisei prese, una per lettera. Un cavo infilato in due prese scambia le loro lettere quando la corrente va verso i rotori e di nuovo quando ne torna; una lettera senza cavo passa com’è.
+  lezione: come-funziona/il-pannello-a-spine/
+  fonti: [crypto-museum-steckerbrett]
+- id: sportello-spine
+  nome: Sportello del pannello a spine
+  nodi: [sportello_spine]
+  descrizione: Sportello di legno davanti al pannello a spine. Durante l’uso andava chiuso, perché tenesse le spine inserite fino in fondo; altrimenti un tasto poteva accendere tre lampade insieme.
+  lezione: come-funziona/il-pannello-a-spine/
+  fonti: [crypto-museum-enigma-i]
+- id: ruota-ingresso
+  nome: Ruota d’ingresso
+  nodi: [ruota_ingresso]
+  descrizione: Disco fisso di contatti a destra dei rotori. Dal pannello a spine la corrente passa per la ruota d’ingresso ed entra nel rotore di destra; dopo il riflettore ripassa per la ruota d’ingresso e torna al pannello. Sull’Enigma I i fili arrivano ai contatti della ruota d’ingresso in ordine alfabetico, quindi la ruota lascia ogni lettera com’è.
+  lezione: come-funziona/tastiera-lampade-e-circuito/
+  fonti: [crypto-museum-enigma-i, crypto-museum-funzionamento]
+- id: rotore-destro
+  nome: Rotore di destra
+  nodi: [rotore_destro]
+  descrizione: Il rotore veloce, che avanza di un passo a ogni tasto, prima che la corrente passi. Quando la tacca del suo anello arriva sotto il nottolino che vi appoggia, il nottolino si infila nella tacca e al tasto successivo fa avanzare anche il rotore centrale.
+  lezione: come-funziona/il-passo-e-il-doppio-passo/
+  fonti: [crypto-museum-funzionamento]
+- id: rotore-centrale
+  nome: Rotore centrale
+  nodi: [rotore_centrale]
+  descrizione: Il rotore centrale avanza quando il rotore di destra passa la propria tacca. Quando il rotore centrale arriva sulla propria tacca, il nottolino che vi si infila spinge insieme il rotore di sinistra e quello centrale, che così avanza in due tasti di fila. È il doppio passo.
+  lezione: come-funziona/il-passo-e-il-doppio-passo/
+  fonti: [crypto-museum-funzionamento]
+- id: rotore-sinistro
+  nome: Rotore di sinistra
+  nodi: [rotore_sinistro]
+  descrizione: Il rotore lento, che avanza solo quando il rotore centrale è sulla sua tacca. Nel ciclo della macchina, il rotore di sinistra fa un passo ogni 650 tasti.
+  lezione: come-funziona/il-passo-e-il-doppio-passo/
+- id: anello
+  nome: Anello
+  nodi: [rotore_destro_anello, rotore_centrale_anello, rotore_sinistro_anello]
+  descrizione: Corona con i numeri da 01 a 26, quelli che si leggono nella finestrella. L’anello si blocca rispetto al cablaggio in una delle 26 posizioni, la Ringstellung, e porta la tacca, quindi girarlo sposta anche il momento in cui scatta il rotore vicino. Nel modello la tacca sta sempre sotto il 01; nella macchina vera il suo posto cambia da un rotore all’altro.
+  lezione: come-funziona/i-rotori/
+  fonti: [crypto-museum-funzionamento]
+- id: nucleo
+  nome: Corpo del rotore
+  nodi: [rotore_destro_nucleo, rotore_centrale_nucleo, rotore_sinistro_nucleo]
+  descrizione: Disco di materiale isolante con dentro 26 fili, che collegano ogni contatto della faccia destra a un contatto della faccia sinistra in un ordine rimescolato. Ogni rotore, indicato con un numero romano, ha il suo cablaggio. A rotori aperti il corpo del rotore diventa trasparente e lascia vedere i fili del rotore scelto nella configurazione.
+  lezione: come-funziona/i-rotori/
+  fonti: [crypto-museum-funzionamento]
+- id: contatti
+  nome: Contatti del rotore
+  nodi:
+    [
+      rotore_destro_contatti_molla,
+      rotore_destro_contatti_piani,
+      rotore_centrale_contatti_molla,
+      rotore_centrale_contatti_piani,
+      rotore_sinistro_contatti_molla,
+      rotore_sinistro_contatti_piani,
+    ]
+  descrizione: Ventisei contatti a molla sulla faccia destra del rotore e 26 contatti piatti sulla sinistra. La corrente entra nel rotore dai contatti a molla ed esce da quelli piatti, che toccano i contatti a molla del rotore successivo, a sinistra.
+  lezione: come-funziona/i-rotori/
+  fonti: [crypto-museum-cablaggi, crypto-museum-funzionamento]
+- id: cricchetto
+  nome: Cricchetto
+  nodi: [rotore_destro_cricchetto, rotore_centrale_cricchetto, rotore_sinistro_cricchetto]
+  descrizione: Ruota dentata sul fianco del rotore. A ogni tasto il nottolino spinge su un dente del cricchetto e fa avanzare il rotore di un passo.
+  lezione: come-funziona/il-passo-e-il-doppio-passo/
+- id: rotella
+  nome: Rotella
+  nodi: [rotore_destro_rotella, rotore_centrale_rotella, rotore_sinistro_rotella]
+  descrizione: Rotella zigrinata con cui l’operatore gira il rotore a mano, per portarlo nella posizione di partenza del messaggio. La lettera della posizione si legge nella finestrella sopra il rotore.
+  lezione: come-funziona/i-rotori/
+  fonti: [crypto-museum-enigma-i]
+- id: asse-rotori
+  nome: Asse dei rotori
+  nodi: [asse_rotori]
+  descrizione: Asse su cui sono infilati i tre rotori. Per cambiare i rotori l’operatore spostava di lato il riflettore, estraeva dalla macchina i rotori con l’asse e poi li sfilava.
+  lezione: come-funziona/i-rotori/
+  fonti: [crypto-museum-enigma-i]
+- id: riflettore
+  nome: Riflettore
+  nodi: [riflettore]
+  descrizione: Disco a sinistra dei rotori, con 13 fili che collegano le 26 lettere a coppie. Il riflettore rimanda la corrente indietro attraverso i rotori, per un’altra strada. I riflettori B e C dell’Enigma I avevano un cablaggio fisso.
+  lezione: come-funziona/il-riflettore/
+  fonti: [crypto-museum-enigma-i, crypto-museum-funzionamento]
+- id: lampade
+  nome: Lampade
+  nodi:
+    [
+      lampada_a,
+      lampada_b,
+      lampada_c,
+      lampada_d,
+      lampada_e,
+      lampada_f,
+      lampada_g,
+      lampada_h,
+      lampada_i,
+      lampada_j,
+      lampada_k,
+      lampada_l,
+      lampada_m,
+      lampada_n,
+      lampada_o,
+      lampada_p,
+      lampada_q,
+      lampada_r,
+      lampada_s,
+      lampada_t,
+      lampada_u,
+      lampada_v,
+      lampada_w,
+      lampada_x,
+      lampada_y,
+      lampada_z,
+    ]
+  descrizione: Ventisei lampadine in tre file, nello stesso ordine dei tasti, ciascuna sotto la sua lettera. A ogni tasto si accende la lampada della lettera cifrata, mai quella del tasto premuto, perché il deviatore del tasto l’ha staccata.
+  lezione: come-funziona/tastiera-lampade-e-circuito/
+  fonti: [crypto-museum-enigma-i]
+- id: batteria
+  nome: Batteria
+  nodi: [batteria]
+  descrizione: Batteria da 4,5 volt che accende le lampade, in un vano nell’angolo posteriore destro della macchina, sotto uno sportellino a cerniera. Nel modello la forma della batteria è stimata.
+  lezione: come-funziona/tastiera-lampade-e-circuito/
+  fonti: [crypto-museum-enigma-i]
+- id: nottolini
+  nome: Nottolini
+  nodi: [nottolino_destro, nottolino_centrale, nottolino_sinistro]
+  descrizione: Tre leve davanti ai rotori, che a ogni tasto spingono in avanti. Il nottolino di destra fa avanzare sempre il rotore veloce; gli altri due appoggiano sull’anello del rotore alla loro destra e, quando trovano la tacca, vi si infilano e spingono anche il rotore alla loro sinistra.
+  lezione: come-funziona/il-passo-e-il-doppio-passo/
+  fonti: [crypto-museum-funzionamento]
+- id: leva-tasti
+  nome: Barra dei tasti
+  nodi: [leva_tasti]
+  descrizione: Barra comune sotto i tasti, che qualunque tasto abbassa. La barra muove i tre nottolini, quindi ogni tasto fa avanzare i rotori prima che il suo deviatore chiuda il circuito.
+  lezione: come-funziona/il-passo-e-il-doppio-passo/
+- id: coperchio-interno
+  nome: Coperchio dei rotori
+  nodi: [coperchio_interno]
+  descrizione: Parte della piastra che copre i rotori, con le tre finestrelle da cui si leggono le loro posizioni. Per cambiare i rotori o gli anelli l’operatore alzava il coperchio dei rotori.
+  lezione: come-funziona/i-rotori/
+  fonti: [crypto-museum-enigma-i]
+- id: coperchio-legno
+  nome: Coperchio della cassa
+  nodi: [coperchio_legno]
+  descrizione: Coperchio della cassa di legno, aperto dietro la macchina come nelle foto dei musei. Dentro il coperchio stavano i due cavi di scorta del pannello a spine.
+  lezione: come-funziona/il-pannello-a-spine/
+  fonti: [crypto-museum-enigma-i]
+- id: cassa
+  nome: Cassa
+  nodi: [cassa]
+  descrizione: Cassa di legno per il trasporto, di quercia nella maggior parte delle Enigma I, a cui la macchina è fissata dal fondo. La cassa è larga 28 cm, profonda 34 e alta 16 a coperchio chiuso.
+  lezione: come-funziona/che-cos-e-enigma/
+  fonti: [crypto-museum-enigma-i, technikmuseum-enigma]

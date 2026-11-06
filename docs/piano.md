@@ -89,7 +89,7 @@ indice e il proprio file in `docs/piano/` (tabella in fondo).
 | G5 | Pagina 3D: riprogettazione su Claude Design | Opus | high | 2 h | —; Marco presente per scegliere | fatta (2026-11-05) |
 | 5f | Pagina 3D: resa | Opus | high | 2,5 h | 4l | fatta (2026-11-05) |
 | 5g | Pagina 3D: nuovo layout e navigazione | Sonnet | high | 3 h | G5 | fatta (2026-11-05) |
-| 5c | Pagina 3D: schede dei pezzi | Opus | high | 2,5 h | 4n, 5g | da fare |
+| 5c | Pagina 3D: schede dei pezzi | Opus | high | 2,5 h | 4n, 5g | fatta (2026-11-06) |
 | 5d | Lezione animata: copione, lettore e scena | Opus | high | 3 h | 4n, 5f, 5g, D16–D19 | da fare |
 | 5e | Lezione animata: testo, voce e crediti | Opus | high | 2,5 h | 5d; Marco ha scelto la voce (D17) | da fare |
 

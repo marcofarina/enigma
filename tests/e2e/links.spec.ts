@@ -6,7 +6,7 @@ test.describe.configure({ mode: 'serial' });
 test('nessun link interno è rotto', async ({ page, request, baseURL }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop', 'basta un progetto');
   test.setTimeout(120_000);
-  const root = new URL(baseURL ?? 'http://localhost:4321/enigma/');
+  const root = new URL(baseURL ?? 'http://localhost:4321/');
   const queue = [root.href];
   const seen = new Set(queue);
   const broken: string[] = [];
