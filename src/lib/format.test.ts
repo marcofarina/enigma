@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { groupDigits, scientific, numberInWords } from './format.ts';
+import { groupDigits, megabytes, scientific, numberInWords } from './format.ts';
 
 describe('formattazione dei numeri', () => {
   it('raggruppa le cifre a tre a tre', () => {
@@ -14,6 +14,14 @@ describe('formattazione dei numeri', () => {
     expect(scientific(62_583_939_499_390_760_715_264_000n)).toBe('6,26 × 10²⁵');
     expect(scientific(99_960n)).toBe('1,00 × 10⁵');
     expect(scientific(325n)).toBe('325');
+  });
+});
+
+describe('pesi dei file', () => {
+  it('scrive i megabyte con un decimale e la virgola', () => {
+    expect(megabytes(6_329_479)).toBe('6,0\u00a0MB');
+    expect(megabytes(5_452_595)).toBe('5,2\u00a0MB');
+    expect(megabytes(512 * 1024)).toBe('0,5\u00a0MB');
   });
 });
 

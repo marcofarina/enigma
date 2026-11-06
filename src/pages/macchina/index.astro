@@ -5,6 +5,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { t } from '@/i18n';
 import { licenseLabel } from '@/lib/images';
 import { modello3d } from '@/lib/modello3d';
+import { pesoVista } from '@/lib/peso-vista';
 
 /*
  * La macchina in 3D (fasi 5a e 5g di docs/piano.md, decisione D15; layout in docs/design.md,
@@ -16,7 +17,7 @@ import { modello3d } from '@/lib/modello3d';
 
 <BaseLayout title={t('machine3d.title')} description={t('machine3d.description')} htmlClass="macchina-root" largo>
   <div class="macchina-banco machine machine-paint">
-    <Macchina client:only="react">
+    <Macchina client:only="react" peso={pesoVista()}>
       <div slot="fallback" class="macchina">
         <div class="macchina-vano">
           <div class="macchina-palco machine">
@@ -34,7 +35,7 @@ import { modello3d } from '@/lib/modello3d';
             </noscript>
           </div>
         </div>
-        <div class="macchina-foglio">
+        <div class="macchina-foglio macchina-foglio-segnaposto">
           <h1 class="macchina-titolo">{t('machine3d.title')}</h1>
         </div>
       </div>

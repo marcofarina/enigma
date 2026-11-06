@@ -1,7 +1,8 @@
-import { CameraControls, CameraControlsImpl, Environment, Lightformer, useGLTF } from '@react-three/drei';
+import { CameraControls, CameraControlsImpl, ContactShadows, Environment, useGLTF } from '@react-three/drei';
 import { Canvas, createPortal, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import {
+  ACESFilmicToneMapping,
   AnimationMixer,
   Box3,
   CatmullRomCurve3,
@@ -9,6 +10,7 @@ import {
   LineCurve3,
   Mesh,
   MeshStandardMaterial,
+  PointLight,
   TubeGeometry,
   Vector3,
   type AnimationAction,
@@ -52,8 +54,29 @@ import {
  * arrivano three.js, React Three Fiber e drei. Nessuna richiesta esce dal sito: il `.glb` sta in
  * `public/`, compresso con meshopt, il cui decoder sta nel bundle di drei (dalla 4l); niente Draco
  * (drei ne scaricherebbe il decoder da gstatic) e niente `preset` di `<Environment>` (li scarica da
- * un CDN); la luce la fanno i Lightformer.
+ * un CDN): la luce d’ambiente è una HDRI servita dal sito (`modello3d.ambiente`).
  */
+
+/**
+ * La resa (fase 5f). Tone mapping ACES: con le texture di ASHISH tiene il legno caldo e il nero della
+ * vernice, mentre AgX li sbiadisce. La luce viene quasi tutta dalla HDRI da studio, girata perché la
+ * finestra di luce batta di lato sulla piastra e non la sbianchi; una luce direzionale debole dà il
+ * verso alle ombre dei tasti. Niente `ambientLight`: appiattirebbe l’occlusione delle texture.
+ */
+const RESA = {
+  esposizione: 1.1,
+  ambiente: { intensita: 0.8, rotazione: 1.6 },
+  direzionale: { posizione: [-0.5, 1.2, 0.8] as [number, number, number], intensita: 0.8 },
+} as const;
+
+/**
+ * L’ombra di contatto sotto la macchina: una sola resa per fase (`frames={1}`), perché la scena gira
+ * a richiesta. Il piano copre la macchina smontata, con la tastiera davanti e il coperchio dietro.
+ * Sta mezzo millimetro sotto il fondo della cassa (`sotto`), non sopra: `ContactShadows` sfuma
+ * l’ombra disegnando un piano nell’origine con la sua camera, che guarda in su dal piano dell’ombra;
+ * con l’ombra sopra l’origine quel piano le resta dietro e la sfumatura cancella tutto.
+ */
+const OMBRA = { lato: 1.1, lontano: 0.4, sfumatura: 5, opacita: 0.9, risoluzione: 512, sotto: 0.0005 } as const;
 
 /**
  * La camera dell’anteprima di `scripts/blender/costruisci.py`, convertita in glTF: obiettivo da
@@ -84,6 +107,8 @@ interface Parti {
   leva: Object3D | undefined;
   tasti: Map<string, Object3D>;
   lampade: Map<string, MeshStandardMaterial>;
+  /** Dove sta ogni lampada, per portarci la luce che illumina il foro della piastra. */
+  ancoreLampade: Map<string, Object3D>;
 }
 
 /** Il raggio dei contatti scritto negli `extras` del nodo (convenzione-3d), con quello dell'abbozzo come ripiego. */
@@ -107,7 +132,10 @@ function preparaModello(scena: Object3D): Parti {
 
   const tasti = new Map<string, Object3D>();
   const lampade = new Map<string, MeshStandardMaterial>();
+  const ancoreLampade = new Map<string, Object3D>();
   scena.traverse((nodo) => {
+    const ancora = /^ancora_lampada_([a-z])$/.exec(nodo.name);
+    if (ancora?.[1]) ancoreLampade.set(ancora[1].toUpperCase(), nodo);
     const tasto = letteraDelNodo(nodo.name, 'tasto');
     if (tasto) {
       tasti.set(tasto, nodo);
@@ -155,7 +183,14 @@ function preparaModello(scena: Object3D): Parti {
     return nodo;
   });
 
-  const parti = { rotori, nottolini, leva: scena.getObjectByName('leva_tasti') ?? undefined, tasti, lampade };
+  const parti = {
+    rotori,
+    nottolini,
+    leva: scena.getObjectByName('leva_tasti') ?? undefined,
+    tasti,
+    lampade,
+    ancoreLampade,
+  };
   scena.userData['parti'] = parti;
   return parti;
 }
@@ -188,6 +223,12 @@ function letteraDelTasto(oggetto: Object3D | null): string | null {
 function mostraManina(tela: HTMLElement, sopraUnTasto: boolean) {
   tela.style.cursor = sopraUnTasto ? 'pointer' : '';
 }
+
+/** L’emissivo della lettera accesa, e la luce sopra la lampada: quanto è forte, quanto sale sopra l’ancora, fin dove arriva. */
+const INTENSITA_LAMPADA = 2.5;
+const INTENSITA_LUCE_LAMPADA = 0.02;
+const ALTEZZA_LUCE_LAMPADA = 0.008;
+const PORTATA_LUCE_LAMPADA = 0.05;
 
 /** Quanto dura il movimento di un tasto: i nottolini vanno e tornano, e i rotori spinti scattano avanti. */
 const DURATA_PASSO_MS = 180;
@@ -224,8 +265,15 @@ interface Movimento {
  * che trovano una tacca, di più) e i rotori che il motore fa avanzare scattano al loro posto: senza
  * animazione con `prefers-reduced-motion`. Restituisce la funzione che scioglie il legame.
  */
-function collegaAlloStore(parti: Parti, store: SimulatorStore, ridisegna: () => void, ridotto: boolean): () => void {
+function collegaAlloStore(
+  parti: Parti,
+  store: SimulatorStore,
+  luce: PointLight,
+  ridisegna: () => void,
+  ridotto: boolean,
+): () => void {
   const segnale = coloreDelSegnale();
+  luce.color.copy(segnale);
   const spento = new Color(0, 0, 0);
   let impulso = store.getState().pulse;
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -312,14 +360,23 @@ function collegaAlloStore(parti: Parti, store: SimulatorStore, ridisegna: () => 
       });
     }
 
-    // La lampada accesa prende il colore del segnale anche nella tinta: con il solo emissivo, sopra
-    // la tessera crema, l’arancio si perderebbe nel bianco.
+    // La lampada accesa prende il colore del segnale anche nella tinta, e l’emissivo va oltre 1: con
+    // il tone mapping è quello che fa sembrare accesa la lettera, non solo dipinta d’arancio.
     for (const [lettera, materiale] of parti.lampade) {
       const accesa = ultimo?.output === lettera;
       materiale.color.copy(accesa ? segnale : (materiale.userData['tinta'] as Color));
       materiale.emissive.copy(accesa ? segnale : spento);
-      materiale.emissiveIntensity = accesa ? 0.8 : 0;
+      materiale.emissiveIntensity = accesa ? INTENSITA_LAMPADA : 0;
     }
+    // Una luce piccola sopra la lampada accesa colora il bordo del foro. Resta nella scena anche spenta
+    // (intensità 0): toglierla e rimetterla farebbe ricompilare i materiali a ogni tasto.
+    const ancora = ultimo && parti.ancoreLampade.get(ultimo.output);
+    if (ancora) {
+      ancora.updateWorldMatrix(true, false);
+      ancora.getWorldPosition(luce.position);
+      luce.position.y += ALTEZZA_LUCE_LAMPADA;
+    }
+    luce.intensity = ancora ? INTENSITA_LUCE_LAMPADA : 0;
 
     // Il tasto scende solo quando lo si preme, non con Annulla né con un link che porta un messaggio.
     if (tasto) {
@@ -697,6 +754,7 @@ function Modello({
   const invalidate = useThree((s) => s.invalidate);
   const tela = useThree((s) => s.gl.domElement);
   const parti = useMemo(() => preparaModello(scene), [scene]);
+  const luceLampada = useMemo(() => new PointLight('white', 0, PORTATA_LUCE_LAMPADA, 2), []);
   const clip = animations.find((a) => a.name === 'smontaggio');
   const animazione = useSmontaggio(scene, clip);
   const machine = useStore(store, (s) => s.session.machine);
@@ -726,10 +784,15 @@ function Modello({
   });
 
   useEffect(() => {
-    const sciogli = collegaAlloStore(parti, store, () => invalidate(), ridotto);
+    const sciogli = collegaAlloStore(parti, store, luceLampada, () => invalidate(), ridotto);
     onPronto();
     return sciogli;
-  }, [store, parti, invalidate, onPronto, ridotto]);
+  }, [store, parti, luceLampada, invalidate, onPronto, ridotto]);
+
+  // L'ultima fase a cui i pezzi sono arrivati: l'ombra di contatto si rifà solo lì.
+  // Si aggiorna durante il render, come vuole React per uno stato che deriva da un altro.
+  const [faseArrivata, setFaseArrivata] = useState(fase);
+  if (valore === fase && faseArrivata !== fase) setFaseArrivata(fase);
 
   // Il valore è il tempo della clip: l'azione sta in pausa e si porta al punto voluto.
   useEffect(() => {
@@ -795,6 +858,18 @@ function Modello({
             <CablaggioRotore key={parte.rotore.name} parte={parte} cablaggio={rotore.forward} smontaggio={valore} />
           ) : null;
         })}
+      <primitive object={luceLampada} />
+      {/* L'ombra si rifà quando i pezzi sono arrivati alla fase: durante il movimento resta quella di prima. */}
+      <ContactShadows
+        key={faseArrivata}
+        frames={1}
+        position={[0, -OMBRA.sotto, 0]}
+        scale={OMBRA.lato}
+        far={OMBRA.lontano}
+        blur={OMBRA.sfumatura}
+        opacity={OMBRA.opacita}
+        resolution={OMBRA.risoluzione}
+      />
       <CaviPannello scena={scene} coppie={coppie ?? EMPTY} smontaggio={valore} />
       <Regia
         fase={fase}
@@ -837,15 +912,18 @@ export default function Scena({
   onZoom: (stato: StatoZoom) => void;
 }) {
   return (
-    <Canvas frameloop="demand" dpr={[1, 2]} flat camera={CAMERA} gl={{ alpha: true, antialias: true }}>
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[-0.5, 1.2, 0.8]} intensity={1.8} />
-      {/* Riflessi per i metalli, fatti in scena: nessun file HDR da scaricare. */}
-      <Environment resolution={128}>
-        <Lightformer form="rect" intensity={1.5} position={[0, 3, 0]} rotation-x={Math.PI / 2} scale={[6, 6, 1]} />
-        <Lightformer form="rect" intensity={0.8} position={[-3, 1, 2]} rotation-y={Math.PI / 3} scale={[3, 2, 1]} />
-        <Lightformer form="rect" intensity={0.6} position={[3, 1, -2]} rotation-y={-Math.PI / 2} scale={[3, 2, 1]} />
-      </Environment>
+    <Canvas
+      frameloop="demand"
+      dpr={[1, 2]}
+      camera={CAMERA}
+      gl={{ alpha: true, antialias: true, toneMapping: ACESFilmicToneMapping, toneMappingExposure: RESA.esposizione }}
+    >
+      <directionalLight position={RESA.direzionale.posizione} intensity={RESA.direzionale.intensita} />
+      <Environment
+        files={modello3d.ambiente.file}
+        environmentIntensity={RESA.ambiente.intensita}
+        environmentRotation={[0, RESA.ambiente.rotazione, 0]}
+      />
       <CameraControls makeDefault />
       <Suspense fallback={null}>
         <Modello

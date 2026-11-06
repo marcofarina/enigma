@@ -581,8 +581,7 @@
   "machine3d.zoomOut": "Allontana",
   "machine3d.viewReset": "Ripristina la vista",
   "machine3d.message": "Messaggio",
-  "machine3d.start": "Avvia la vista 3D",
-  "machine3d.startNote": "La vista scarica circa {size}.",
+  "machine3d.startWithSize": "Avvia la vista 3D ({size})",
   "machine3d.loading": "Caricamento del modello…",
   "machine3d.previewAlt": "Anteprima del modello 3D dell’Enigma I: la cassa di legno aperta, vista di tre quarti, con la tastiera, le lampade e le finestrelle dei tre rotori.",
   "machine3d.sceneLabel": "Enigma I in 3D. Batti una lettera per cifrarla, Backspace annulla.",
@@ -612,5 +611,7 @@
   "sources.model3dExterior": "La cassa con il coperchio di legno, la piastra con le lampade, il coperchio dei rotori, la tastiera e il pannello a spine vengono, modificati, da",
   "sources.model3dExteriorAuthor": "di",
   "sources.model3dExteriorLicense": "con licenza",
+  "sources.model3dLight": "La luce della scena viene dall’immagine HDRI «studio» che Blender distribuisce, di Greg Zaal per",
+  "sources.model3dLightLicense": "in pubblico dominio (CC0).",
   "sources.model3dExteriorChanges": "Le modifiche: il modello è ruotato e scalato alle misure della cassa, scomposto nei pezzi che la pagina muove, senza le spine e i cavi del pannello (li disegna la pagina) e con le prese che le spine coprivano; le texture sono ridotte a 2048 pixel."
 }

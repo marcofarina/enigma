@@ -23,6 +23,15 @@ export const modello3d = {
     licenza: 'CC-BY-4.0',
     urlLicenza: 'https://creativecommons.org/licenses/by/4.0/deed.it',
   },
+  /**
+   * La luce d’ambiente della scena (fase 5f): la HDRI «studio» che Blender distribuisce, 1024 × 512, di
+   * Greg Zaal per Poly Haven, CC0 (`datafiles/studiolights/world/license.txt` di Blender).
+   */
+  ambiente: {
+    file: url('ambienti/studio.exr'),
+    autore: 'Greg Zaal',
+    url: 'https://polyhaven.com/',
+  },
   /** Il carattere dell’atlante dei numeri degli anelli. */
   carattere: { licenza: 'SIL OFL 1.1', url: 'https://openfontlicense.org/' },
   /** Ancora della voce nella pagina «Fonti e crediti». */
