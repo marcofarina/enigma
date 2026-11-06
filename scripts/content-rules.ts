@@ -222,7 +222,7 @@ export function lintContent(source: string, properNames: readonly string[] = [])
 }
 
 /** Campi dei file YAML che contengono prosa italiana. */
-const YAML_PROSE_FIELDS = ['definizione', 'didascalia', 'descrizione', 'contesto', 'procedura', 'traduzione'];
+const YAML_PROSE_FIELDS = ['testo', 'definizione', 'didascalia', 'descrizione', 'contesto', 'procedura', 'traduzione'];
 
 /** Regole della prosa applicate ai campi testuali di un file YAML dei contenuti. */
 export function lintYaml(source: string, properNames: readonly string[] = []): Issue[] {

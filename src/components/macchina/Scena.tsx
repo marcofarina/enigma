@@ -7,10 +7,17 @@ import {
   Box3,
   CatmullRomCurve3,
   Color,
+  CylinderGeometry,
+  EdgesGeometry,
+  Group,
+  LineBasicMaterial,
   LineCurve3,
+  LineSegments,
   Mesh,
+  MeshBasicMaterial,
   MeshStandardMaterial,
   PointLight,
+  SphereGeometry,
   TubeGeometry,
   Vector3,
   type AnimationAction,
@@ -32,12 +39,14 @@ import {
   DISTANZA_MASSIMA,
   DISTANZA_MINIMA,
   distanzaDopoLoZoom,
+  INQUADRATURE_LEZIONE,
   inquadra,
   letteraDelNodo,
   NODI_ROTORI,
   OSCILLAZIONE_LEVA,
   pezzoDelNodo,
   POLARE_MASSIMO,
+  puntoContatto,
   rampa,
   rotazioniRotore,
   segmentiCablaggio,
@@ -48,6 +57,15 @@ import {
   type Direzione,
   type StatoZoom,
 } from './geometria.ts';
+import type { Inquadratura, Punto, Quadro } from '@/lib/lezione-3d';
+import {
+  creaStoreLezione,
+  quadroDi,
+  type Lezione,
+  type LezioneInScena,
+  type StatoLezione,
+  type StoreLezione,
+} from './lezione.ts';
 import { faseDelPezzo, indiceDeiNodi, schedaDelClic, type AnelloCatena, type Pezzo } from './pezzi.ts';
 
 /*
@@ -135,6 +153,8 @@ function preparaModello(scena: Object3D): Parti {
   const lampade = new Map<string, MeshStandardMaterial>();
   const ancoreLampade = new Map<string, Object3D>();
   scena.traverse((nodo) => {
+    // Le mesh del `.glb`, per distinguerle da quelle che aggiunge la pagina (cablaggio, contorni): solo loro diventano fantasma.
+    if (nodo instanceof Mesh) nodo.userData['delModello'] = true;
     const ancora = /^ancora_lampada_([a-z])$/.exec(nodo.name);
     if (ancora?.[1]) ancoreLampade.set(ancora[1].toUpperCase(), nodo);
     const tasto = letteraDelNodo(nodo.name, 'tasto');
@@ -295,6 +315,39 @@ function angoloPiuVicino(da: number, a: number): number {
 
 const easeOut = (u: number) => 1 - (1 - u) ** 3;
 
+/** I nottolini e la leva a un punto `u` (da 0 a 1) del loro andare e tornare; quelli in presa spingono di più. */
+function posaNottolini(parti: Parti, u: number, inPresa: readonly boolean[]) {
+  parti.nottolini.forEach((nottolino, i) => {
+    nottolino.rotation.x = VERSO_NOTTOLINO * angoloNottolino(u, inPresa[i] ?? false);
+  });
+  if (parti.leva) parti.leva.rotation.x = VERSO_LEVA * OSCILLAZIONE_LEVA * Math.sin(Math.PI * Math.min(u, 1));
+}
+
+/**
+ * Accende la lampada della lettera (nessuna con `null`). La lampada accesa prende il colore del
+ * segnale anche nella tinta, e l’emissivo va oltre 1: con il tone mapping è quello che fa sembrare
+ * accesa la lettera, non solo dipinta d’arancio. Una luce piccola sopra la lampada colora il bordo
+ * del foro; resta nella scena anche spenta (intensità 0), perché toglierla e rimetterla farebbe
+ * ricompilare i materiali a ogni tasto.
+ */
+function accendiLampada(parti: Parti, luce: PointLight, segnale: Color, lettera: string | null) {
+  for (const [l, materiale] of parti.lampade) {
+    const accesa = l === lettera;
+    materiale.color.copy(accesa ? segnale : (materiale.userData['tinta'] as Color));
+    materiale.emissive.copy(accesa ? segnale : SPENTO);
+    materiale.emissiveIntensity = accesa ? INTENSITA_LAMPADA : 0;
+  }
+  const ancora = lettera ? parti.ancoreLampade.get(lettera) : undefined;
+  if (ancora) {
+    ancora.updateWorldMatrix(true, false);
+    ancora.getWorldPosition(luce.position);
+    luce.position.y += ALTEZZA_LUCE_LAMPADA;
+  }
+  luce.intensity = ancora ? INTENSITA_LUCE_LAMPADA : 0;
+}
+
+const SPENTO = new Color(0, 0, 0);
+
 /** Un tasto in corso: da dove partono i rotori spinti e quali nottolini sono in presa. */
 interface Movimento {
   inizio: number;
@@ -321,7 +374,6 @@ function collegaAlloStore(
 ): () => void {
   const segnale = coloreDelSegnale();
   luce.color.copy(segnale);
-  const spento = new Color(0, 0, 0);
   let impulso = store.getState().pulse;
   let timer: ReturnType<typeof setTimeout> | undefined;
   let abbassato: Object3D | undefined;
@@ -334,13 +386,6 @@ function collegaAlloStore(
   const rialza = () => {
     if (abbassato) abbassato.position.y = abbassato.userData['riposo'] as number;
     abbassato = undefined;
-  };
-
-  const posaNottolini = (u: number, inPresa: boolean[]) => {
-    parti.nottolini.forEach((nottolino, i) => {
-      nottolino.rotation.x = VERSO_NOTTOLINO * angoloNottolino(u, inPresa[i] ?? false);
-    });
-    if (parti.leva) parti.leva.rotation.x = VERSO_LEVA * OSCILLAZIONE_LEVA * Math.sin(Math.PI * Math.min(u, 1));
   };
 
   const posaRotori = (u: number, m: Movimento) => {
@@ -356,7 +401,7 @@ function collegaAlloStore(
     cancelAnimationFrame(frame);
     clearTimeout(scadenza);
     if (movimento) posaRotori(1, movimento);
-    posaNottolini(0, []);
+    posaNottolini(parti, 0, []);
     movimento = undefined;
   };
 
@@ -364,7 +409,7 @@ function collegaAlloStore(
     if (!movimento) return;
     const u = Math.min((ora - movimento.inizio) / DURATA_PASSO_MS, 1);
     posaRotori(u, movimento);
-    posaNottolini(u, movimento.inPresa);
+    posaNottolini(parti, u, movimento.inPresa);
     ridisegna();
     if (u < 1) frame = requestAnimationFrame(passo);
     else fermaMovimento();
@@ -407,23 +452,7 @@ function collegaAlloStore(
       });
     }
 
-    // La lampada accesa prende il colore del segnale anche nella tinta, e l’emissivo va oltre 1: con
-    // il tone mapping è quello che fa sembrare accesa la lettera, non solo dipinta d’arancio.
-    for (const [lettera, materiale] of parti.lampade) {
-      const accesa = ultimo?.output === lettera;
-      materiale.color.copy(accesa ? segnale : (materiale.userData['tinta'] as Color));
-      materiale.emissive.copy(accesa ? segnale : spento);
-      materiale.emissiveIntensity = accesa ? INTENSITA_LAMPADA : 0;
-    }
-    // Una luce piccola sopra la lampada accesa colora il bordo del foro. Resta nella scena anche spenta
-    // (intensità 0): toglierla e rimetterla farebbe ricompilare i materiali a ogni tasto.
-    const ancora = ultimo && parti.ancoreLampade.get(ultimo.output);
-    if (ancora) {
-      ancora.updateWorldMatrix(true, false);
-      ancora.getWorldPosition(luce.position);
-      luce.position.y += ALTEZZA_LUCE_LAMPADA;
-    }
-    luce.intensity = ancora ? INTENSITA_LUCE_LAMPADA : 0;
+    accendiLampada(parti, luce, segnale, ultimo?.output ?? null);
 
     // Il tasto scende solo quando lo si preme, non con Annulla né con un link che porta un messaggio.
     if (tasto) {
@@ -452,6 +481,326 @@ function collegaAlloStore(
     fermaMovimento();
     rialza();
   };
+}
+
+/**
+ * Lega la scena alla lezione animata (fase 5d) al posto dello store: a ogni scrittura del lettore il
+ * tasto, i rotori, i nottolini e la lampada prendono il loro stato dal quadro del passo. I rotori vanno
+ * dallo stato di prima a quello dopo il tasto, i nottolini vanno e tornano nello stesso tempo; con il
+ * rallentatore il movimento dura tutto il passo. Restituisce la funzione che scioglie il legame.
+ */
+function collegaAllaLezione(
+  parti: Parti,
+  lezione: Lezione,
+  stato: StoreLezione,
+  luce: PointLight,
+  ridisegna: () => void,
+): () => void {
+  const segnale = coloreDelSegnale();
+  luce.color.copy(segnale);
+  const { press, prima, config, inPresa } = lezione;
+  const angoli = parti.rotori.map((_, slot) => {
+    const anello = toIndex(config.rings[slot] ?? 'A');
+    const da = rotazioniRotore(prima.positions[slot] ?? 0, anello);
+    const a = rotazioniRotore(press.state.positions[slot] ?? 0, anello);
+    return { anello: da.anello, da: da.rotore, a: angoloPiuVicino(da.rotore, a.rotore) };
+  });
+  const tasto = parti.tasti.get(press.input);
+  const rialza = () => {
+    if (tasto) tasto.position.y = tasto.userData['riposo'] as number;
+  };
+
+  // Il lettore scrive a ogni fotogramma; la scena si ridisegna solo se il quadro cambia.
+  let ultimo = '';
+  const applica = (corrente: StatoLezione) => {
+    const quadro = quadroDi(lezione, corrente);
+    const chiave = `${quadro.tastoGiu} ${quadro.passo} ${quadro.lampada}`;
+    if (chiave === ultimo) return;
+    ultimo = chiave;
+    parti.rotori.forEach(({ rotore, anello }, slot) => {
+      const angolo = angoli[slot]!;
+      anello.rotation.x = angolo.anello;
+      rotore.rotation.x = angolo.da + (angolo.a - angolo.da) * easeOut(quadro.passo);
+    });
+    posaNottolini(parti, quadro.passo, inPresa.slice(-parti.nottolini.length));
+    if (tasto) tasto.position.y = (tasto.userData['riposo'] as number) - (quadro.tastoGiu ? CORSA_TASTO : 0);
+    accendiLampada(parti, luce, segnale, quadro.lampada ? press.output : null);
+    ridisegna();
+  };
+
+  applica(stato.getState());
+  const smetti = stato.subscribe(applica);
+  return () => {
+    smetti();
+    rialza();
+    posaNottolini(parti, 0, []);
+  };
+}
+
+/*
+ * Le parti fantasma della lezione (fase 5d): semitrasparenti e senza scrivere la profondità, con i
+ * soli spigoli principali (`EdgesGeometry` con una soglia sull’angolo), non il wireframe dei
+ * triangoli. Prendono un materiale piatto al posto di quello con le texture. L’ordine di disegno è
+ * fisso, perché three.js non ordini male le trasparenze: prima le superfici fantasma, poi i loro
+ * spigoli, poi il percorso della corrente visto attraverso i pezzi.
+ */
+
+const ORDINE = { fantasma: 10, spigoli: 11, percorsoAttraverso: 12 } as const;
+
+/** Sopra questo angolo fra due facce lo spigolo si disegna: restano i contorni, non le sfaccettature. */
+const SOGLIA_SPIGOLI = 35;
+
+/** Quanto si vedono le superfici e gli spigoli fantasma. */
+const OPACITA_FANTASMA = { superficie: 0.07, spigoli: 0.4 } as const;
+
+/** Gli spigoli di una mesh, calcolati alla prima volta che serve e poi tenuti nella mesh. */
+function spigoliDi(mesh: Mesh, materiale: LineBasicMaterial): LineSegments {
+  const giaFatti = mesh.userData['spigoli'] as LineSegments | undefined;
+  if (giaFatti) return giaFatti;
+  const linee = new LineSegments(new EdgesGeometry(mesh.geometry, SOGLIA_SPIGOLI), materiale);
+  linee.renderOrder = ORDINE.spigoli;
+  linee.raycast = () => {};
+  linee.visible = false;
+  mesh.add(linee);
+  mesh.userData['spigoli'] = linee;
+  return linee;
+}
+
+function Fantasmi({ scena, nodi }: { scena: Object3D; nodi: readonly string[] }) {
+  const invalidate = useThree((s) => s.invalidate);
+  const materiali = useMemo(() => {
+    const colore = coloreDelToken('--alu-bright', '#f2efe6');
+    return {
+      superficie: new MeshBasicMaterial({
+        color: colore,
+        transparent: true,
+        opacity: OPACITA_FANTASMA.superficie,
+        depthWrite: false,
+      }),
+      spigoli: new LineBasicMaterial({
+        color: colore,
+        transparent: true,
+        opacity: OPACITA_FANTASMA.spigoli,
+        depthWrite: false,
+      }),
+    };
+  }, []);
+  useEffect(
+    () => () => {
+      materiali.superficie.dispose();
+      materiali.spigoli.dispose();
+    },
+    [materiali],
+  );
+  useEffect(() => {
+    const cambiate: { mesh: Mesh; materiale: Mesh['material']; ordine: number }[] = [];
+    for (const nome of nodi) {
+      scena.getObjectByName(nome)?.traverse((o) => {
+        if (!(o instanceof Mesh) || !o.userData['delModello'] || o.userData['fantasma']) return;
+        cambiate.push({ mesh: o, materiale: o.material, ordine: o.renderOrder });
+        o.userData['fantasma'] = true;
+        o.material = materiali.superficie;
+        o.renderOrder = ORDINE.fantasma;
+        spigoliDi(o, materiali.spigoli).visible = true;
+      });
+    }
+    invalidate();
+    return () => {
+      for (const { mesh, materiale, ordine } of cambiate) {
+        mesh.material = materiale;
+        mesh.renderOrder = ordine;
+        mesh.userData['fantasma'] = false;
+        (mesh.userData['spigoli'] as LineSegments).visible = false;
+      }
+      invalidate();
+    };
+  }, [scena, nodi, materiali, invalidate]);
+  return null;
+}
+
+/*
+ * Il percorso della corrente (fase 5d): una linea che si accende tratto per tratto, dagli stadi della
+ * traccia del motore alle ancore del modello e ai contatti sulle facce dei rotori. I tratti vanno
+ * diritti da un punto all’altro: il copione dice che non seguono i fili veri. La linea si disegna due
+ * volte: piena dove si vede, e tenue attraverso i pezzi che la coprono.
+ */
+
+/** Il raggio della linea del percorso, in metri, e quello della testa che avanza. */
+const RAGGIO_PERCORSO = 0.0012;
+const RAGGIO_TESTA = 0.003;
+const OPACITA_ATTRAVERSO = 0.45;
+
+/** Il contatto `contatto` sulla faccia di un nodo che ha l’asse lungo X, a `x` metri dalla sua origine. */
+function contattoSullaFaccia(nodo: Object3D, x: number, raggio: number, contatto: number): Vector3 {
+  const { y, z } = puntoContatto(contatto, raggio);
+  const punto = nodo.position.clone().add(new Vector3(x, y, z));
+  return nodo.parent ? nodo.parent.localToWorld(punto) : punto;
+}
+
+/** Il raggio dei contatti di un nodo, dagli `extras`. */
+const raggioDi = (nodo: Object3D) => {
+  const raggio = nodo.userData['raggio_contatti'];
+  return typeof raggio === 'number' ? raggio : RAGGIO_PREDEFINITO;
+};
+
+/** Dove sta un punto del percorso, nel mondo, a macchina chiusa. */
+function puntoNelModello(scena: Object3D, parti: Parti, punto: Punto): Vector3 {
+  const nodo = (nome: string) => {
+    const trovato = scena.getObjectByName(nome);
+    if (!trovato) throw new Error(`Il modello 3D non ha il nodo ${nome}.`);
+    return trovato;
+  };
+  switch (punto.tipo) {
+    case 'tasto':
+    case 'presa':
+    case 'lampada':
+      return nodo(`ancora_${punto.tipo}_${punto.lettera.toLowerCase()}`).getWorldPosition(new Vector3());
+    case 'ingresso':
+    case 'riflettore': {
+      // La faccia verso i rotori: a sinistra per la ruota d’ingresso, a destra per il riflettore.
+      const pezzo = nodo(punto.tipo === 'ingresso' ? 'ruota_ingresso' : 'riflettore');
+      const scatola = new Box3().setFromObject(pezzo);
+      const origine = pezzo.getWorldPosition(new Vector3());
+      const x = (punto.tipo === 'ingresso' ? scatola.min.x : scatola.max.x) - origine.x;
+      return contattoSullaFaccia(pezzo, x, raggioDi(pezzo), punto.contatto);
+    }
+    case 'rotore': {
+      const parte = parti.rotori[punto.slot];
+      if (!parte) throw new Error(`Il modello 3D non ha il rotore ${punto.slot}.`);
+      const x = punto.faccia === 'destra' ? parte.facce.ingresso : parte.facce.uscita;
+      return contattoSullaFaccia(parte.rotore, x, parte.raggio, punto.contatto);
+    }
+  }
+}
+
+const SU = new Vector3(0, 1, 0);
+
+/** Un tratto: un cilindro alto 1 con la base nell’origine, orientato e allungato a ogni fotogramma. */
+interface Tratto {
+  da: Vector3;
+  direzione: Vector3;
+  lunghezza: number;
+  pieno: Mesh;
+  attraverso: Mesh;
+}
+
+function PercorsoCorrente({
+  scena,
+  parti,
+  lezione,
+  stato,
+  misuraChiusa,
+}: {
+  scena: Object3D;
+  parti: Parti;
+  lezione: Lezione;
+  stato: StoreLezione;
+  /** Esegue una misura con la clip alla macchina chiusa, e poi la rimette dov’era. */
+  misuraChiusa: <T>(misura: () => T) => T;
+}) {
+  const invalidate = useThree((s) => s.invalidate);
+  const { gruppo, aggiorna, libera } = useMemo(() => {
+    const colori = {
+      andata: coloreDelToken('--signal-forward', '#ff9d2e'),
+      ritorno: coloreDelToken('--signal-return', '#7cc0ff'),
+    };
+    const materiale = (colore: Color, attraverso: boolean) =>
+      new MeshBasicMaterial({
+        color: colore,
+        toneMapped: false,
+        ...(attraverso ? { transparent: true, opacity: OPACITA_ATTRAVERSO, depthTest: false, depthWrite: false } : {}),
+      });
+    const materiali = {
+      andata: { pieno: materiale(colori.andata, false), attraverso: materiale(colori.andata, true) },
+      ritorno: { pieno: materiale(colori.ritorno, false), attraverso: materiale(colori.ritorno, true) },
+    };
+    const cilindro = new CylinderGeometry(RAGGIO_PERCORSO, RAGGIO_PERCORSO, 1, 8, 1).translate(0, 0.5, 0);
+    const sfera = new SphereGeometry(RAGGIO_TESTA, 16, 8);
+    const gruppo = new Group();
+    gruppo.raycast = () => {};
+
+    const punti = misuraChiusa(() => {
+      scena.updateMatrixWorld(true);
+      return lezione.segmenti.map((s): [Vector3, Vector3] => [
+        puntoNelModello(scena, parti, s.da),
+        puntoNelModello(scena, parti, s.a),
+      ]);
+    });
+    const tratti: Tratto[] = lezione.segmenti.map((segmento, i) => {
+      const [da, a] = punti[i]!;
+      const verso = a.clone().sub(da);
+      const lunghezza = verso.length();
+      const coppia = materiali[segmento.ritorno ? 'ritorno' : 'andata'];
+      const pieno = new Mesh(cilindro, coppia.pieno);
+      const attraverso = new Mesh(cilindro, coppia.attraverso);
+      attraverso.renderOrder = ORDINE.percorsoAttraverso;
+      for (const mesh of [pieno, attraverso]) {
+        mesh.position.copy(da);
+        mesh.quaternion.setFromUnitVectors(SU, verso.clone().normalize());
+        mesh.visible = false;
+        mesh.raycast = () => {};
+        gruppo.add(mesh);
+      }
+      return { da, direzione: verso.normalize(), lunghezza, pieno, attraverso };
+    });
+    const testa = new Mesh(sfera, materiali.andata.pieno);
+    testa.visible = false;
+    gruppo.add(testa);
+
+    /** La lunghezza percorsa fino all’inizio del tratto `i`. */
+    const fino = [0];
+    tratti.forEach((t) => fino.push(fino.at(-1)! + t.lunghezza));
+
+    const aggiorna = (quadro: Quadro) => {
+      const { da, a, u } = quadro.segnale;
+      const accesa = (fino[da] ?? 0) + ((fino[a] ?? 0) - (fino[da] ?? 0)) * u;
+      let punta: { tratto: Tratto; quanto: number; ritorno: boolean } | null = null;
+      tratti.forEach((tratto, i) => {
+        const quanto = Math.min(Math.max(accesa - fino[i]!, 0), tratto.lunghezza);
+        for (const mesh of [tratto.pieno, tratto.attraverso]) {
+          mesh.visible = quanto > 0;
+          mesh.scale.set(1, Math.max(quanto, 1e-6), 1);
+        }
+        if (quanto > 0) punta = { tratto, quanto, ritorno: lezione.segmenti[i]!.ritorno };
+      });
+      // La testa segna dove è arrivata la corrente mentre avanza; ferma, sparisce.
+      const inCorsa = u < 1 && a > da;
+      const p = punta as { tratto: Tratto; quanto: number; ritorno: boolean } | null;
+      testa.visible = inCorsa && p !== null;
+      if (p) {
+        testa.position.copy(p.tratto.da).addScaledVector(p.tratto.direzione, p.quanto);
+        testa.material = materiali[p.ritorno ? 'ritorno' : 'andata'].pieno;
+      }
+    };
+    const libera = () => {
+      cilindro.dispose();
+      sfera.dispose();
+      for (const coppia of Object.values(materiali)) {
+        coppia.pieno.dispose();
+        coppia.attraverso.dispose();
+      }
+    };
+    return { gruppo, aggiorna, libera };
+  }, [scena, parti, lezione, misuraChiusa]);
+
+  useEffect(() => {
+    let ultimo = '';
+    const applica = (corrente: StatoLezione) => {
+      const quadro = quadroDi(lezione, corrente);
+      const { da, a, u } = quadro.segnale;
+      // Fermo il segnale, fermo il disegno: solo i passi con la corrente in corsa ridisegnano.
+      const chiave = a > da ? `${da} ${a} ${u}` : `${a}`;
+      if (chiave === ultimo) return;
+      ultimo = chiave;
+      aggiorna(quadro);
+      invalidate();
+    };
+    applica(stato.getState());
+    return stato.subscribe(applica);
+  }, [lezione, stato, aggiorna, invalidate]);
+  useEffect(() => libera, [libera]);
+
+  return <primitive object={gruppo} />;
 }
 
 /** I valori che dipendono dal selettore e che la scena applica al modello, fuori dal mixer. */
@@ -536,10 +885,13 @@ function CaviPannello({
   scena,
   coppie,
   smontaggio,
+  sempre,
 }: {
   scena: Object3D;
   coppie: readonly string[];
   smontaggio: number;
+  /** Nella lezione animata i cavi si vedono anche a macchina chiusa: la corrente ci passa. */
+  sempre: boolean;
 }) {
   const colore = useMemo(() => coloreDelToken('--print-red', '#b3261e'), []);
   const geometrie = useMemo(() => {
@@ -553,7 +905,7 @@ function CaviPannello({
     });
   }, [scena, coppie]);
   useEffect(() => () => geometrie.forEach((g) => g.dispose()), [geometrie]);
-  const visibili = smontaggio >= 0.8;
+  const visibili = sempre || smontaggio >= 0.8;
   return (
     <group visible={visibili}>
       {geometrie.map((geometria, i) => (
@@ -627,6 +979,7 @@ function segnalaCamera(tela: HTMLElement, controlli: CameraControlsImpl) {
  */
 function Regia({
   fase,
+  lezione,
   ridotto,
   ingombro,
   comandiRef,
@@ -634,6 +987,8 @@ function Regia({
   onZoom,
 }: {
   fase: number;
+  /** L'inquadratura che chiede il passo corrente della lezione animata, se c'è una lezione in scena. */
+  lezione: Inquadratura | null;
   ridotto: boolean;
   /** L'ingombro dei nodi (tutta la macchina se `null`) quando lo smontaggio è alla fase intera `fase`. */
   ingombro: (fase: number, nodi: readonly string[] | null) => Box3;
@@ -727,6 +1082,20 @@ function Regia({
     giaInquadrata.current = true;
   }, [controlli, fase, ridotto, ingombro, vai]);
 
+  // La lezione animata chiede un'inquadratura per nome a ogni passo; finita la lezione, la camera torna
+  // a quella della fase. Con `prefers-reduced-motion` sono stacchi.
+  const eraInLezione = useRef(false);
+  useEffect(() => {
+    if (!controlli) return;
+    if (lezione) {
+      const inquadratura = INQUADRATURE_LEZIONE[lezione];
+      vai(inquadratura, ingombro(0, inquadratura.nodi), !ridotto);
+    } else if (eraInLezione.current) {
+      vai(DIREZIONE_PREDEFINITA, ingombro(corrente.current.fase, null), !ridotto);
+    }
+    eraInLezione.current = lezione !== null;
+  }, [controlli, lezione, ridotto, ingombro, vai]);
+
   useEffect(() => {
     if (!controlli) return;
     const vista = (id: string) => {
@@ -790,6 +1159,7 @@ function Modello({
   evidenziati,
   onPezzo,
   onFasiPezzi,
+  lezione,
 }: {
   store: SimulatorStore;
   fase: number;
@@ -804,6 +1174,7 @@ function Modello({
   evidenziati: readonly string[] | null;
   onPezzo: (id: string) => void;
   onFasiPezzi: (fasi: Record<string, number | null>) => void;
+  lezione: LezioneInScena | null;
 }) {
   const { scene, animations } = useGLTF(modello3d.file, false, true);
   const invalidate = useThree((s) => s.invalidate);
@@ -814,6 +1185,9 @@ function Modello({
   const animazione = useSmontaggio(scene, clip);
   const machine = useStore(store, (s) => s.session.machine);
   const coppie = useStore(store, (s) => s.session.config.plugboard);
+  // Il passo della lezione cambia di rado; il resto del quadro la scena lo legge a ogni fotogramma, fuori da React.
+  const indiceLezione = useStore(lezione?.stato ?? STATO_FERMO, (s) => s.indice);
+  const passoLezione = lezione ? (lezione.lezione.copione.passi[indiceLezione] ?? null) : null;
 
   // La fase scelta è un bersaglio: la clip ci arriva in un secondo per fase (subito con `prefers-reduced-motion`).
   const [valore, setValore] = useState(fase);
@@ -839,10 +1213,12 @@ function Modello({
   });
 
   useEffect(() => {
-    const sciogli = collegaAlloStore(parti, store, luceLampada, () => invalidate(), ridotto);
+    const sciogli = lezione
+      ? collegaAllaLezione(parti, lezione.lezione, lezione.stato, luceLampada, () => invalidate())
+      : collegaAlloStore(parti, store, luceLampada, () => invalidate(), ridotto);
     onPronto();
     return sciogli;
-  }, [store, parti, luceLampada, invalidate, onPronto, ridotto]);
+  }, [store, parti, luceLampada, invalidate, onPronto, ridotto, lezione]);
 
   // L'ultima fase a cui i pezzi sono arrivati: l'ombra di contatto si rifà solo lì.
   // Si aggiorna durante il render, come vuole React per uno stato che deriva da un altro.
@@ -874,6 +1250,18 @@ function Modello({
     },
     [animazione, scene],
   );
+  // Una misura a macchina chiusa, per il percorso della corrente: le ancore non seguono lo smontaggio, i rotori sì.
+  const misuraChiusa = useCallback(
+    <T,>(misura: () => T): T => {
+      portaLaClip(animazione, 0);
+      scene.updateMatrixWorld(true);
+      const risultato = misura();
+      portaLaClip(animazione, corrente.current);
+      scene.updateMatrixWorld(true);
+      return risultato;
+    },
+    [animazione, scene],
+  );
 
   // Le schede dei pezzi: da nodo a scheda, e la fase in cui ogni pezzo si vede, per il pulsante della scheda.
   const indice = useMemo(() => indiceDeiNodi(pezzi), [pezzi]);
@@ -890,9 +1278,10 @@ function Modello({
 
   // Il primo pezzo colpito decide: un tasto nascosto dietro la cassa non si preme. Un tasto batte la
   // sua lettera; ogni altro pezzo apre la sua scheda.
+  // Durante la lezione animata il modello non risponde ai clic: la scena la guida il copione.
   const onClick = (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();
-    if (event.delta > 4) return; // era un trascinamento della camera
+    if (event.delta > 4 || lezione) return; // era un trascinamento della camera, o c'è la lezione
     const lettera = letteraDelTasto(event.object);
     if (!lettera) {
       const scheda = schedaSotto(event.object);
@@ -912,7 +1301,7 @@ function Modello({
   };
   const onPointerMove = (event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
-    mostraManina(tela, letteraDelTasto(event.object) !== null || schedaSotto(event.object) !== null);
+    mostraManina(tela, !lezione && (letteraDelTasto(event.object) !== null || schedaSotto(event.object) !== null));
   };
 
   return (
@@ -943,10 +1332,32 @@ function Modello({
         opacity={OMBRA.opacita}
         resolution={OMBRA.risoluzione}
       />
-      <CaviPannello scena={scene} coppie={coppie ?? EMPTY} smontaggio={valore} />
-      {evidenziati && <Evidenza scena={scene} nodi={evidenziati} />}
+      <CaviPannello
+        scena={scene}
+        coppie={(lezione ? lezione.lezione.config.plugboard : coppie) ?? EMPTY}
+        smontaggio={valore}
+        sempre={lezione !== null}
+      />
+      {lezione ? (
+        <>
+          {passoLezione && passoLezione.fantasma.length > 0 && <Fantasmi scena={scene} nodi={passoLezione.fantasma} />}
+          {passoLezione && passoLezione.evidenzia.length > 0 && (
+            <Evidenza scena={scene} nodi={passoLezione.evidenzia} />
+          )}
+          <PercorsoCorrente
+            scena={scene}
+            parti={parti}
+            lezione={lezione.lezione}
+            stato={lezione.stato}
+            misuraChiusa={misuraChiusa}
+          />
+        </>
+      ) : (
+        evidenziati && <Evidenza scena={scene} nodi={evidenziati} />
+      )}
       <Regia
         fase={fase}
+        lezione={passoLezione?.camera ?? null}
         ridotto={ridotto}
         ingombro={ingombro}
         comandiRef={comandiRef}
@@ -958,6 +1369,9 @@ function Modello({
 }
 
 const EMPTY: readonly string[] = [];
+
+/** Uno stato di lezione che non cambia mai: `useStore` lo legge quando non c’è una lezione in scena. */
+const STATO_FERMO = creaStoreLezione();
 
 export default function Scena({
   store,
@@ -973,8 +1387,15 @@ export default function Scena({
   evidenziati,
   onPezzo,
   onFasiPezzi,
+  lezione,
 }: {
   store: SimulatorStore;
+  /**
+   * La lezione animata in scena (fase 5d): finché c’è, la scena segue il copione e non lo store, i
+   * clic sul modello non fanno niente e la pagina tiene la macchina chiusa. Va memorizzata: ogni
+   * oggetto nuovo rifà il legame.
+   */
+  lezione: LezioneInScena | null;
   /** La fase dello smontaggio da raggiungere: da 0 (macchina chiusa) a 4 (meccanica sotto i tasti). */
   fase: number;
   /** `prefers-reduced-motion`: i pezzi e la camera saltano alle posizioni nuove, senza transizioni. */
@@ -1025,6 +1446,7 @@ export default function Scena({
           evidenziati={evidenziati}
           onPezzo={onPezzo}
           onFasiPezzi={onFasiPezzi}
+          lezione={lezione}
         />
       </Suspense>
     </Canvas>

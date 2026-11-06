@@ -1,0 +1,103 @@
+# Il copione della lezione animata della pagina 3D (fase 5d di docs/piano/fase-5d.md, D16–D19).
+# Testo provvisorio: quello definitivo, con la voce, lo scrive la 5e.
+#
+# In testa la configurazione, nel formato della query della home, e la lettera: fisse, perché la voce
+# deve poter dire quale lampada si accende (D19). Poi i passi, in ordine; ogni passo ha:
+# - id: il nome del file audio, `public/lezione-3d/it/<id>.m4a`;
+# - testo: una o due frasi, controllate da `lint:content`; `node scripts/voce.ts` rifà l’audio dei
+#   passi il cui testo è cambiato;
+# - camera: un’inquadratura con nome (insieme, tastiera, pannello, rotori, riflettore; vedi
+#   `INQUADRATURE_LEZIONE` in `src/components/macchina/geometria.ts`);
+# - fantasma: i nodi del modello che diventano semitrasparenti, con i soli spigoli (`lampade` vale
+#   per le ventisei lampade: vedi `GRUPPI_NODI` in `src/lib/lezione-3d.ts`);
+# - evidenzia: i nodi con il contorno;
+# - azione: premi, passo, segnale (con `fino`, uno stadio della traccia: vedi `STADI` in
+#   `src/lib/lezione-3d.ts`), lampada, prova; in quest’ordine, e prova nell’ultimo passo;
+# - rallenta: l’azione dura quanto la voce, invece della velocità vera.
+# Un passo lascia la scena come l’ha portata la sua azione; camera, fantasma ed evidenzia valgono
+# solo per il passo in cui stanno.
+configurazione: v=1&m=I&w=I-II-III&r=AAA&p=AAA&u=B&s=AT.OK
+lettera: A
+passi:
+  - id: apertura
+    testo: 'Questa è un’Enigma I con i rotori I, II e III, tutti con la A in finestrella, e due cavi nel pannello a spine: uno fra A e T, l’altro fra O e K. Seguiamo la corrente quando l’operatore preme il tasto A.'
+    camera: insieme
+  - id: tasto
+    testo: 'Il tasto A scende. Prima che il contatto sotto il tasto si chiuda, la leva sotto la tastiera spinge i tre nottolini contro i rotori.'
+    camera: tastiera
+    evidenzia: [tasto_a]
+    azione: premi
+    rallenta: true
+  - id: passo
+    testo: 'Il rotore di destra avanza di un passo e in finestrella la A diventa B. Gli altri due rotori restano fermi, perché i loro nottolini non hanno trovato una tacca.'
+    camera: rotori
+    fantasma: [coperchio_legno, coperchio_interno]
+    evidenzia: [rotore_destro]
+    azione: passo
+    rallenta: true
+  - id: spine-andata
+    testo: 'Ora il contatto è chiuso, e la corrente va dal tasto A alla presa A del pannello a spine; il cavo fra A e T la porta alla presa T. La linea semplifica il percorso: i fili veri corrono sotto la piastra.'
+    camera: pannello
+    fantasma: &davanti [cassa, coperchio_legno, sportello_spine, tastiera]
+    azione: segnale
+    fino: spine-andata
+    rallenta: true
+  - id: ingresso
+    testo: 'Dalla presa T un filo porta la corrente al contatto T della ruota d’ingresso, e di lì nel rotore di destra. Il cablaggio del rotore la fa uscire dal contatto J.'
+    camera: rotori
+    fantasma:
+      &dentro [
+        cassa,
+        coperchio_legno,
+        coperchio_interno,
+        sportello_spine,
+        tastiera,
+        rotore_destro,
+        rotore_centrale,
+        rotore_sinistro,
+        ruota_ingresso,
+        riflettore,
+        lampade,
+      ]
+    azione: segnale
+    fino: rotore-destro-andata
+    rallenta: true
+  - id: rotori-andata
+    testo: 'Il rotore centrale porta la J in B, quello di sinistra la B in K.'
+    camera: rotori
+    fantasma: *dentro
+    azione: segnale
+    fino: rotore-sinistro-andata
+    rallenta: true
+  - id: riflettore
+    testo: 'Il riflettore collega la K con la N e rimanda la corrente nei rotori, per un’altra strada.'
+    camera: riflettore
+    fantasma: *dentro
+    azione: segnale
+    fino: riflettore
+    rallenta: true
+  - id: rotori-ritorno
+    testo: 'All’indietro il rotore di sinistra porta la N in K, il centrale la K in D e quello di destra la D in O.'
+    camera: rotori
+    fantasma: *dentro
+    azione: segnale
+    fino: rotore-destro-ritorno
+    rallenta: true
+  - id: spine-ritorno
+    testo: 'La corrente esce dalla ruota d’ingresso sul contatto O e torna alla presa O del pannello. Il secondo cavo, fra O e K, la porta alla presa K.'
+    camera: pannello
+    fantasma: *davanti
+    azione: segnale
+    fino: spine-ritorno
+    rallenta: true
+  - id: lampada
+    testo: 'Dalla presa K la corrente arriva alla lampada K, che si accende: la A è diventata K.'
+    camera: tastiera
+    fantasma: [cassa]
+    evidenzia: [lampada_k]
+    azione: lampada
+    rallenta: true
+  - id: prova
+    testo: 'Ora prova tu. I rotori sono in A A B: batti di nuovo A e guarda quale lampada si accende.'
+    camera: insieme
+    azione: prova

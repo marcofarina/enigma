@@ -480,6 +480,26 @@ Dove le schede dei pezzi di `docs/piano/fase-5c.md` si scostano dall’inventari
   (l’`Outlines` di drei dentro ogni sua mesh), diverso dall’arancio delle lampade e dal rosso dei
   cavi; segue il pezzo nello smontaggio.
 
+### Come l’ha realizzata la 5d
+
+Dove la lezione animata di `docs/piano/fase-5d.md` si scosta dall’inventario:
+
+- **Pulsanti.** «Guarda come funziona» sta prima di «Pezzi», peso 600; durante la lezione diventa
+  «Esci dalla lezione» e «Pezzi» si spegne. C’è da subito: se la vista 3D non è avviata, la avvia, e
+  la lezione aspetta al primo passo («La lezione parte appena il modello è caricato.»). Uscendo, il
+  fuoco torna sul pulsante.
+- **Lettore.** Una sezione del foglio con il titolo «Come funziona» e, a destra, «passo 3 / 11» in
+  Courier Prime; sotto il sottotitolo (17 px, alto due righe e mezzo per non far saltare i comandi),
+  poi ◀, ⏸ e ▶ (36 × 36, a 375 px 44 × 44) e la casella «A passi, senza voce»; in fondo
+  «Trascrizione» in un `<details>`, con il passo corrente in grassetto. Il pulsante di mezzo è
+  «Pausa», «Riprendi» o, a passo finito, «Rivedi il passo» (⟲). All’apertura il fuoco va al titolo.
+- **Sottotitolo.** Con la voce ha `aria-live="off"` (lo dice la voce); a passi è `polite`.
+- **«Ora prova tu».** All’ultimo passo il lettore resta, e sotto torna «Messaggio» con il tasto della
+  lezione già sul nastro.
+- **Colori della scena.** Il percorso è `--signal-forward` all’andata e `--signal-return` dal
+  riflettore, come nello schema del simulatore; i fantasma sono `--alu-bright`, superfici al 7 % e
+  spigoli al 40 %.
+
 ## Da confermare con Marco
 
 1. Il simulatore resta scuro anche nel tema chiaro; il tema cambia solo il foglio e le pagine.
