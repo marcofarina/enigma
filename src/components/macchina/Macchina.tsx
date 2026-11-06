@@ -8,6 +8,8 @@ import { currentState } from '../simulator/session.ts';
 import { FASI, VISTE, type ComandiCamera, type IdVista, type StatoZoom } from './geometria.ts';
 import { createSimulatorStore, useKeyCapture } from '../simulator/store.ts';
 import { queryPerIlSimulatore, sessioneDallaQuery } from './configurazione.ts';
+import { ElencoPezzi, SchedaPezzo } from './Pezzi.tsx';
+import type { Pezzo } from './pezzi.ts';
 
 /** three.js, React Three Fiber, drei e il `.glb` arrivano solo con questo import, dopo il pulsante. */
 const Scena = lazy(() => import('./Scena.tsx'));
@@ -60,6 +62,15 @@ function initialStore() {
   return { store: createSimulatorStore(session), avviso };
 }
 
+/**
+ * Che cosa mostra il foglio sotto lo smontaggio: il messaggio, l’elenco dei pezzi o la scheda di un
+ * pezzo (fase 5c). `da` dice chi ha aperto la scheda, perché alla chiusura il fuoco torni lì.
+ */
+type Pannello = { tipo: 'messaggio' } | { tipo: 'elenco' } | { tipo: 'scheda'; id: string; da: 'elenco' | 'scena' };
+
+/** Dove va il fuoco dopo un cambio di pannello: un elemento con `data-fuoco`, oppure la scena. */
+type Fuoco = string | 'palco';
+
 /** La vista attiva: una predefinita, l'inquadratura della fase (all'avvio, dopo «Ripristina» e a ogni cambio di fase), oppure la camera mossa a mano. */
 type VistaAttiva = IdVista | 'fase' | 'libera';
 
@@ -88,8 +99,12 @@ const anelliInCifre = (anelli: string) =>
  */
 export default function Macchina({
   peso,
+  pezzi,
 }: {
-  /** Quanto scarica la vista, letto alla build da `pesoVista()`. */ peso: string;
+  /** Quanto scarica la vista, letto alla build da `pesoVista()`. */
+  peso: string;
+  /** Le schede dei pezzi, da `src/content/pezzi.yaml`, con lezione e fonti già risolte. */
+  pezzi: readonly Pezzo[];
 }) {
   const [{ store, avviso }] = useState(initialStore);
   const [fase, setFase] = useState<Fase>('anteprima');
@@ -99,6 +114,10 @@ export default function Macchina({
   const [vista, setVista] = useState<VistaAttiva>('fase');
   const [zoom, setZoom] = useState<StatoZoom>({ puoAvvicinare: true, puoAllontanare: true });
   const comandi = useRef<ComandiCamera | null>(null);
+  const [pannello, setPannello] = useState<Pannello>({ tipo: 'messaggio' });
+  const [fasiPezzi, setFasiPezzi] = useState<Readonly<Record<string, number | null>>>({});
+  const foglio = useRef<HTMLDivElement>(null);
+  const fuoco = useRef<Fuoco | null>(null);
   const smontata = smontaggio > 0;
   const session = useStore(store, (s) => s.session);
   const pulse = useStore(store, (s) => s.pulse);
@@ -126,6 +145,33 @@ export default function Macchina({
     setVista('fase');
   };
   const onCameraLibera = useCallback(() => setVista('libera'), []);
+
+  // Elenco e scheda: a ogni apertura e chiusura il fuoco va dove serve (docs/design.md, «Pagina 3D»).
+  const apri = (nuovo: Pannello, dove: Fuoco) => {
+    fuoco.current = dove;
+    setPannello(nuovo);
+  };
+  const apriElenco = () => apri({ tipo: 'elenco' }, 'elenco');
+  const chiudiElenco = () => apri({ tipo: 'messaggio' }, 'pezzi');
+  const apriScheda = (id: string, da: 'elenco' | 'scena') => apri({ tipo: 'scheda', id, da }, 'scheda');
+  const chiudiScheda = () => {
+    if (pannello.tipo !== 'scheda') return;
+    if (pannello.da === 'elenco') apri({ tipo: 'elenco' }, `voce:${pannello.id}`);
+    else apri({ tipo: 'messaggio' }, 'palco');
+  };
+  // Il clic su un pezzo del modello: la scena chiama questa, stabile fra un render e l’altro.
+  const onPezzo = useCallback((id: string) => {
+    fuoco.current = 'scheda';
+    setPannello({ tipo: 'scheda', id, da: 'scena' });
+  }, []);
+  useEffect(() => {
+    const dove = fuoco.current;
+    if (!dove) return;
+    fuoco.current = null;
+    if (dove === 'palco') palco.current?.focus({ preventScroll: true });
+    else foglio.current?.querySelector<HTMLElement>(`[data-fuoco="${dove}"]`)?.focus();
+  }, [pannello, palco]);
+  const schedaAperta = pannello.tipo === 'scheda' ? pezzi.find((p) => p.id === pannello.id) : undefined;
 
   const avvia = () => setFase(haWebGL2() ? 'caricamento' : 'senza-webgl');
   const onPronto = useCallback(() => setFase('pronta'), []);
@@ -179,6 +225,10 @@ export default function Macchina({
                   comandiRef={comandi}
                   onCameraLibera={onCameraLibera}
                   onZoom={setZoom}
+                  pezzi={pezzi}
+                  evidenziati={schedaAperta?.nodi ?? null}
+                  onPezzo={onPezzo}
+                  onFasiPezzi={setFasiPezzi}
                 />
               </Suspense>
             </Confine>
@@ -281,7 +331,7 @@ export default function Macchina({
         </div>
       </div>
 
-      <div className="macchina-foglio">
+      <div className="macchina-foglio" ref={foglio}>
         {avviso.tipo === 'link-non-valido' && <Avviso>{t('sim.share.invalid')}</Avviso>}
         {avviso.tipo === 'altro-modello' && (
           <Avviso>
@@ -297,6 +347,18 @@ export default function Macchina({
             rings: anelliInCifre(session.config.rings),
           })}
         </p>
+        <div className="macchina-pulsanti">
+          <button
+            type="button"
+            className="btn"
+            aria-expanded={pannello.tipo === 'elenco'}
+            aria-controls={pannello.tipo === 'messaggio' ? undefined : 'macchina-pannello-pezzi'}
+            data-fuoco="pezzi"
+            onClick={pannello.tipo === 'elenco' ? chiudiElenco : apriElenco}
+          >
+            {t('machine3d.parts')}
+          </button>
+        </div>
 
         {pronta && (
           <section aria-labelledby="macchina-smontaggio" className="macchina-sezione">
@@ -336,7 +398,23 @@ export default function Macchina({
           )}
         </p>
 
-        <section aria-labelledby="macchina-messaggio" className="macchina-sezione">
+        {pannello.tipo === 'elenco' && (
+          <ElencoPezzi pezzi={pezzi} onScegli={(id) => apriScheda(id, 'elenco')} onChiudi={chiudiElenco} />
+        )}
+        {schedaAperta && (
+          <SchedaPezzo
+            pezzo={schedaAperta}
+            fase={pronta ? (fasiPezzi[schedaAperta.id] ?? null) : null}
+            onMostra={scegliFase}
+            onChiudi={chiudiScheda}
+          />
+        )}
+
+        <section
+          aria-labelledby="macchina-messaggio"
+          className="macchina-sezione"
+          hidden={pannello.tipo !== 'messaggio'}
+        >
           <div className="macchina-intestazione">
             <h2 id="macchina-messaggio">{t('machine3d.message')}</h2>
             <p className="macchina-finestrelle">

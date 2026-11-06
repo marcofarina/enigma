@@ -14,7 +14,7 @@ import { chromium } from '@playwright/test';
 import { pagineLighthouse } from './pagine.ts';
 
 const porta = 4322;
-const base = `http://localhost:${porta}/enigma/`;
+const base = `http://localhost:${porta}/`;
 const budget = { performance: 90, accessibility: 100 };
 const tentativi = 3;
 

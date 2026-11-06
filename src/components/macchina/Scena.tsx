@@ -1,4 +1,4 @@
-import { CameraControls, CameraControlsImpl, ContactShadows, Environment, useGLTF } from '@react-three/drei';
+import { CameraControls, CameraControlsImpl, ContactShadows, Environment, Outlines, useGLTF } from '@react-three/drei';
 import { Canvas, createPortal, useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import {
@@ -48,6 +48,7 @@ import {
   type Direzione,
   type StatoZoom,
 } from './geometria.ts';
+import { faseDelPezzo, indiceDeiNodi, schedaDelClic, type AnelloCatena, type Pezzo } from './pezzi.ts';
 
 /*
  * La scena della pagina 3D. Sta in un modulo a sé, importato solo dopo «Avvia la vista 3D»: con lui
@@ -219,9 +220,55 @@ function letteraDelTasto(oggetto: Object3D | null): string | null {
   return null;
 }
 
-/** La manina sopra i tasti: la tela la cambia solo da qui. */
-function mostraManina(tela: HTMLElement, sopraUnTasto: boolean) {
-  tela.style.cursor = sopraUnTasto ? 'pointer' : '';
+/** La manina sopra i tasti e sopra i pezzi che hanno una scheda: la tela la cambia solo da qui. */
+function mostraManina(tela: HTMLElement, cliccabile: boolean) {
+  tela.style.cursor = cliccabile ? 'pointer' : '';
+}
+
+/** Dal nodo alla radice, con la `fase` che il caricatore glTF copia dagli `extras` in `userData`. */
+function catenaDi(oggetto: Object3D | null): AnelloCatena[] {
+  const catena: AnelloCatena[] = [];
+  for (let nodo = oggetto; nodo; nodo = nodo.parent) {
+    const fase = nodo.userData['fase'];
+    catena.push({ nome: nodo.name, fase: typeof fase === 'number' ? fase : undefined });
+  }
+  return catena;
+}
+
+/**
+ * Lo spessore del contorno del pezzo evidenziato, in pixel della tela. In drei 10 è il modo senza
+ * `screenspace`: con `screenspace` lo spessore è in unità della mesh (il nome dice il contrario).
+ */
+const SPESSORE_CONTORNO = 3;
+
+/**
+ * Il contorno dei pezzi della scheda aperta (fase 5c): un `Outlines` di drei dentro ogni mesh dei
+ * nodi, nel colore del segnale di ritorno, diverso dall’arancio delle lampade e dal rosso dei cavi.
+ * Il contorno segue i pezzi nello smontaggio, perché sta dentro le loro mesh.
+ */
+function Evidenza({ scena, nodi }: { scena: Object3D; nodi: readonly string[] }) {
+  const colore = useMemo(() => coloreDelToken('--signal-return', '#7cc0ff'), []);
+  const invalidate = useThree((s) => s.invalidate);
+  const mesh = useMemo(() => {
+    const trovate: Mesh[] = [];
+    for (const nome of nodi) scena.getObjectByName(nome)?.traverse((o) => o instanceof Mesh && trovate.push(o));
+    return trovate;
+  }, [scena, nodi]);
+  useEffect(() => {
+    invalidate();
+    return () => invalidate();
+  }, [mesh, invalidate]);
+  return (
+    <>
+      {mesh.map((m) => (
+        <Contorno key={m.uuid} mesh={m} colore={colore} />
+      ))}
+    </>
+  );
+}
+
+function Contorno({ mesh, colore }: { mesh: Mesh; colore: Color }) {
+  return createPortal(<Outlines thickness={SPESSORE_CONTORNO} color={colore} toneMapped={false} />, mesh);
 }
 
 /** L’emissivo della lettera accesa, e la luce sopra la lampada: quanto è forte, quanto sale sopra l’ancora, fin dove arriva. */
@@ -739,6 +786,10 @@ function Modello({
   comandiRef,
   onCameraLibera,
   onZoom,
+  pezzi,
+  evidenziati,
+  onPezzo,
+  onFasiPezzi,
 }: {
   store: SimulatorStore;
   fase: number;
@@ -749,6 +800,10 @@ function Modello({
   comandiRef: MutableRefObject<ComandiScena | null>;
   onCameraLibera: () => void;
   onZoom: (stato: StatoZoom) => void;
+  pezzi: readonly Pezzo[];
+  evidenziati: readonly string[] | null;
+  onPezzo: (id: string) => void;
+  onFasiPezzi: (fasi: Record<string, number | null>) => void;
 }) {
   const { scene, animations } = useGLTF(modello3d.file, false, true);
   const invalidate = useThree((s) => s.invalidate);
@@ -820,12 +875,30 @@ function Modello({
     [animazione, scene],
   );
 
-  // Il primo pezzo colpito decide: un tasto nascosto dietro la cassa non si preme.
+  // Le schede dei pezzi: da nodo a scheda, e la fase in cui ogni pezzo si vede, per il pulsante della scheda.
+  const indice = useMemo(() => indiceDeiNodi(pezzi), [pezzi]);
+  useEffect(() => {
+    const fasi: Record<string, number | null> = {};
+    for (const pezzo of pezzi) {
+      const primo = pezzo.nodi[0];
+      const nodo = primo === undefined ? undefined : scene.getObjectByName(primo);
+      fasi[pezzo.id] = nodo ? faseDelPezzo(pezzo, new Map([[nodo.name, catenaDi(nodo)]])) : null;
+    }
+    onFasiPezzi(fasi);
+  }, [scene, pezzi, onFasiPezzi]);
+  const schedaSotto = (oggetto: Object3D) => schedaDelClic(catenaDi(oggetto), indice, fase);
+
+  // Il primo pezzo colpito decide: un tasto nascosto dietro la cassa non si preme. Un tasto batte la
+  // sua lettera; ogni altro pezzo apre la sua scheda.
   const onClick = (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();
     if (event.delta > 4) return; // era un trascinamento della camera
     const lettera = letteraDelTasto(event.object);
-    if (!lettera) return;
+    if (!lettera) {
+      const scheda = schedaSotto(event.object);
+      if (scheda) onPezzo(scheda);
+      return;
+    }
     if (bloccata) onBloccata();
     else store.getState().press(lettera);
   };
@@ -839,7 +912,7 @@ function Modello({
   };
   const onPointerMove = (event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
-    mostraManina(tela, letteraDelTasto(event.object) !== null);
+    mostraManina(tela, letteraDelTasto(event.object) !== null || schedaSotto(event.object) !== null);
   };
 
   return (
@@ -871,6 +944,7 @@ function Modello({
         resolution={OMBRA.risoluzione}
       />
       <CaviPannello scena={scene} coppie={coppie ?? EMPTY} smontaggio={valore} />
+      {evidenziati && <Evidenza scena={scene} nodi={evidenziati} />}
       <Regia
         fase={fase}
         ridotto={ridotto}
@@ -895,6 +969,10 @@ export default function Scena({
   comandiRef,
   onCameraLibera,
   onZoom,
+  pezzi,
+  evidenziati,
+  onPezzo,
+  onFasiPezzi,
 }: {
   store: SimulatorStore;
   /** La fase dello smontaggio da raggiungere: da 0 (macchina chiusa) a 4 (meccanica sotto i tasti). */
@@ -910,6 +988,13 @@ export default function Scena({
   /** La camera è stata mossa a mano (o con il doppio clic): nessuna vista predefinita è più attiva. */
   onCameraLibera: () => void;
   onZoom: (stato: StatoZoom) => void;
+  /** Le schede dei pezzi (fase 5c): un clic su un pezzo chiama `onPezzo` con l’id della sua scheda. */
+  pezzi: readonly Pezzo[];
+  /** I nodi della scheda aperta, da contornare; `null` se non c’è una scheda aperta. */
+  evidenziati: readonly string[] | null;
+  onPezzo: (id: string) => void;
+  /** Una volta, a modello caricato: in quale fase dello smontaggio si vede ogni pezzo (`null` se non si muove). */
+  onFasiPezzi: (fasi: Record<string, number | null>) => void;
 }) {
   return (
     <Canvas
@@ -936,6 +1021,10 @@ export default function Scena({
           comandiRef={comandiRef as MutableRefObject<ComandiScena | null>}
           onCameraLibera={onCameraLibera}
           onZoom={onZoom}
+          pezzi={pezzi}
+          evidenziati={evidenziati}
+          onPezzo={onPezzo}
+          onFasiPezzi={onFasiPezzi}
         />
       </Suspense>
     </Canvas>

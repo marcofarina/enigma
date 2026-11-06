@@ -118,6 +118,11 @@ una griglia stimata li sdoppierebbe. Le file sono 9, 8 e 9, nell’ordine di `FI
 26,2 mm di passo; la fila di sopra e quella di sotto sono spostate di mezzo passo rispetto a quella di
 mezzo.
 
+**Schede dei pezzi** (5c). `src/content/pezzi.yaml` dà a ogni pezzo una scheda e ne elenca i nodi;
+`src/components/macchina/pezzi.test.ts` controlla che ogni nodo elencato sia nel `.glb` e che ogni
+nodo con `fase` abbia una scheda. Chi aggiunge o rinomina un nodo con `fase` aggiorna anche
+`pezzi.yaml`, nello stesso commit.
+
 **`extras`.** Solo due proprietà: `fase`, un intero da 1 a 4 su ogni nodo che la clip muove, e
 `raggio_contatti`, in metri, sui tre rotori, sulla ruota d’ingresso e sul riflettore; gli altri
 nodi non le hanno (l’abbozzo usa 0,035 m). Le proprietà

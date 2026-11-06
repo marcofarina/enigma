@@ -1,23 +1,53 @@
 ---
+import { getCollection, getEntries } from 'astro:content';
 import '@/components/macchina/macchina.css';
 import Macchina from '@/components/macchina/Macchina.tsx';
+import type { Pezzo } from '@/components/macchina/pezzi';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { t } from '@/i18n';
 import { licenseLabel } from '@/lib/images';
+import { isLessonIn, lessonSlug } from '@/lib/lessons';
 import { modello3d } from '@/lib/modello3d';
 import { pesoVista } from '@/lib/peso-vista';
+import { url } from '@/lib/url';
+import sorgentePezzi from '@/content/pezzi.yaml?raw';
 
 /*
  * La macchina in 3D (fasi 5a e 5g di docs/piano.md, decisione D15; layout in docs/design.md,
  * «Pagina 3D»). Finché React non parte, e senza JavaScript, la pagina mostra l’anteprima resa da
  * Blender; three.js e il modello arrivano solo dopo «Avvia la vista 3D». Sopra la piega ci sono
  * solo la scena e il foglio; il resto della pagina sta sotto.
+ *
+ * Le schede dei pezzi (fase 5c) arrivano all’isola con la lezione e le fonti già risolte: una
+ * lezione che non esiste ferma la build.
  */
+
+const lezioni = await getCollection('lezioni', (l) =>
+  ['come-funziona', 'storia', 'crittoanalisi'].some((sezione) => isLessonIn(l, sezione)),
+);
+const titoloDella = (percorso: string) => {
+  const lezione = lezioni.find((l) => `${l.data.sezione}/${lessonSlug(l)}/` === percorso);
+  if (!lezione) throw new Error(`pezzi.yaml: la lezione ${percorso} non esiste.`);
+  return lezione.data.title;
+};
+// L’elenco segue l’ordine del file, che il caricatore della collezione non conserva.
+const ordine = [...sorgentePezzi.matchAll(/^- id: (\S+)$/gm)].map((m) => m[1]);
+const voci = (await getCollection('pezzi')).sort((a, b) => ordine.indexOf(a.id) - ordine.indexOf(b.id));
+const pezzi: Pezzo[] = await Promise.all(
+  voci.map(async ({ id, data }) => ({
+    id,
+    nome: data.nome,
+    nodi: data.nodi,
+    descrizione: data.descrizione,
+    lezione: { href: url(data.lezione), titolo: titoloDella(data.lezione) },
+    fonti: (await getEntries(data.fonti)).map(({ data: f }) => ({ autori: f.autori, titolo: f.titolo, url: f.url })),
+  })),
+);
 ---
 
 <BaseLayout title={t('machine3d.title')} description={t('machine3d.description')} htmlClass="macchina-root" largo>
   <div class="macchina-banco machine machine-paint">
-    <Macchina client:only="react" peso={pesoVista()}>
+    <Macchina client:only="react" peso={pesoVista()} pezzi={pezzi}>
       <div slot="fallback" class="macchina">
         <div class="macchina-vano">
           <div class="macchina-palco machine">

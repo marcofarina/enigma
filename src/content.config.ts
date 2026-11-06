@@ -85,6 +85,24 @@ const glossario = defineCollection({
   }),
 });
 
+/**
+ * Le schede dei pezzi della pagina 3D (fase 5c di docs/piano/fase-5c.md). `nodi` sono nomi di nodi
+ * del modello; che esistano, e che ogni nodo mosso dallo smontaggio abbia una scheda, lo controlla
+ * `src/lib/pezzi.test.ts`.
+ */
+const pezzi = defineCollection({
+  loader: file('./src/content/pezzi.yaml'),
+  schema: z.object({
+    nome: z.string(),
+    nodi: z.array(z.string().regex(/^[a-z_]+$/)).min(1),
+    /** Due o tre frasi, controllate da `lint:content`. */
+    descrizione: z.string(),
+    /** Pagina della lezione che spiega il pezzo, senza `base` (per esempio `come-funziona/i-rotori/`). */
+    lezione: z.string().regex(/^[a-z0-9-]+(\/[a-z0-9-]+)*\/$/),
+    fonti: z.array(reference('fonti')).default([]),
+  }),
+});
+
 /** Solo lettere maiuscole: gli spazi fra i gruppi del modulo si tolgono. */
 const lettere = z
   .string()
@@ -161,4 +179,4 @@ const missioni = defineCollection({
     }),
 });
 
-export const collections = { lezioni, fonti, immagini, glossario, missioni };
+export const collections = { lezioni, fonti, immagini, glossario, missioni, pezzi };

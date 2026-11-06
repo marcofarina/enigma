@@ -21,7 +21,7 @@ if (!cartella) {
 }
 
 const porta = 4323;
-const base = `http://localhost:${porta}/enigma/`;
+const base = `http://localhost:${porta}/`;
 const FASI = [
   { n: 0, nome: 'macchina chiusa' },
   { n: 2, nome: 'rotori estratti' },

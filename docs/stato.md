@@ -157,6 +157,15 @@ Valgono solo nel container delle sessioni cloud, dove le norme non sono raggiung
   browser della sessione lo rifiuta); da provare su una LIM vera. I collegamenti con il curricolo
   citano la Direttiva 16 gennaio 2012, n. 4: da aggiornare quando le Linee guida della riforma
   degli istituti tecnici arriveranno al triennio.
+- Schede dei pezzi della pagina 3D (fase 5c, `src/content/pezzi.yaml`): due schede descrivono pezzi
+  che nessuna fonte consultata nomina. Il **cricchetto** («ruota dentata sul fianco del rotore», su
+  cui spinge il nottolino): Crypto Museum (pagine «How does an Enigma machine work?», dei cablaggi e
+  dell’Enigma I) parla di tacche e nottolini, non della ruota. La **barra dei tasti** («barra comune
+  sotto i tasti» che muove i nottolini): Crypto Museum dice solo che il tasto comanda il movimento
+  dei rotori. Entrambe le schede non hanno `fonti`; da confermare con Bauer o con una foto della
+  meccanica. Il «passo ogni 650 tasti» del rotore di sinistra è un conto (16 900 / 26), non una
+  fonte. Le altre schede sono controllate su Crypto Museum il 2026-11-06 (pagine dell’Enigma I, del
+  funzionamento e dei cablaggi) e sulla scheda del Deutsches Technikmuseum per le misure.
 
 ## Verificato (rotori dell’Enigma D, 2026-11-04)
 
