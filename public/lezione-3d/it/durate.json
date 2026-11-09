@@ -1,50 +1,50 @@
 {
   "apertura": {
-    "durata": 10.717,
+    "durata": 15.491,
     "hash": "0f8a72a8e2759d3e"
   },
   "tasto": {
-    "durata": 10.144,
+    "durata": 11.886,
     "hash": "85a2a42903f8d812"
   },
   "passo": {
-    "durata": 12.153,
+    "durata": 14.759,
     "hash": "2ecca2999e0d6687"
   },
   "spine-andata": {
-    "durata": 13.43,
+    "durata": 17.398,
     "hash": "3d21464df2926a49"
   },
   "ingresso": {
-    "durata": 10.528,
+    "durata": 12.199,
     "hash": "6c48c876136db28f"
   },
   "rotori-andata": {
-    "durata": 5.036,
+    "durata": 6.426,
     "hash": "5b800179fd177b76"
   },
   "riflettore": {
-    "durata": 5.198,
+    "durata": 6.348,
     "hash": "82b8a597c03970d1"
   },
   "rotori-ritorno": {
-    "durata": 9.541,
+    "durata": 13.949,
     "hash": "ead0ea7460d4b6a3"
   },
   "spine-ritorno": {
-    "durata": 7.115,
+    "durata": 8.829,
     "hash": "ac0c97c4f1e70432"
   },
   "lampada": {
-    "durata": 5.814,
+    "durata": 6.766,
     "hash": "f7405de443948552"
   },
   "cifrata": {
-    "durata": 3.921,
+    "durata": 5.721,
     "hash": "d419037de448ea91"
   },
   "prova": {
-    "durata": 8.194,
+    "durata": 11.729,
     "hash": "6d2880a30da74f3d"
   }
 }

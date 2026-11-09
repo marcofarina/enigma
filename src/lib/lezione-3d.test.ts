@@ -193,10 +193,10 @@ describe('audio', () => {
     expect(Object.keys(durate)).toHaveLength(copione.passi.length);
   });
 
-  it('la lezione dura fra uno e due minuti', () => {
+  it('la lezione dura fra uno e due minuti e venti (D17)', () => {
     const totale = Object.values(durate).reduce((s, d) => s + d.durata, 0);
     expect(totale).toBeGreaterThan(60);
-    expect(totale).toBeLessThan(120);
+    expect(totale).toBeLessThan(140);
   });
 
   it('la pagina legge copione e durate senza errori', () => {
