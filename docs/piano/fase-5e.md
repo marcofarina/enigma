@@ -45,7 +45,9 @@ usare, fermati e chiedilo a Marco.
 - **Voce importata** il 2026-11-09 (passo 3 fatto): Adriatico di ElevenLabs, 12 file generati da Marco
   sul sito e importati con `node scripts/voce.ts --da ~/Downloads` (AAC mono a 48 kbit/s). Durata
   131,5 s, peso 876 KB. Restano i passi 2, 4, 5 e 6; nei crediti (passo 4) vanno le condizioni del
-  piano gratuito di ElevenLabs, che chiede l’attribuzione e vieta l’uso commerciale.
+  piano gratuito di ElevenLabs, che chiede l’attribuzione e vieta l’uso commerciale. Marco ha
+  ascoltato la lezione sul server locale: l’audio va bene. Ci saranno correzioni all’animazione della
+  camera, da fare in un secondo momento.
 - **Campo `voce`** nel copione: il testo che legge la voce quando non è uguale al sottotitolo. Serve
   per i numeri romani («Enigma uno», «rotori uno, due e tre»), per le posizioni dei rotori («A, A, B»
   invece di «AAB», che una voce legge come una parola) e per i tag audio di ElevenLabs, che a schermo
