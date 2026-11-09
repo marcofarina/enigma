@@ -39,6 +39,13 @@ usare, fermati e chiedilo a Marco.
   accendeva alla fine dell’audio, mentre la voce diceva «si accende» a metà. Ora i passi sono 12, per
   101,8 s con la voce segnaposto. Restano da fare i passi 2–6 qui sotto: le fonti dei passi non ci sono
   ancora, e il testo lo rivede Marco.
+- **Testo approvato da Marco** il 2026-11-09, così com’è in `src/content/lezione-3d/it.yaml` (12 passi,
+  1 863 caratteri letti dalla voce). Il passo 6 resta da fare solo per i fatti: se la verifica delle
+  fonti (passo 2) smentisce una frase, la correzione torna a Marco.
+- **Voce importata** il 2026-11-09 (passo 3 fatto): Adriatico di ElevenLabs, 12 file generati da Marco
+  sul sito e importati con `node scripts/voce.ts --da ~/Downloads` (AAC mono a 48 kbit/s). Durata
+  131,5 s, peso 876 KB. Restano i passi 2, 4, 5 e 6; nei crediti (passo 4) vanno le condizioni del
+  piano gratuito di ElevenLabs, che chiede l’attribuzione e vieta l’uso commerciale.
 - **Campo `voce`** nel copione: il testo che legge la voce quando non è uguale al sottotitolo. Serve
   per i numeri romani («Enigma uno», «rotori uno, due e tre»), per le posizioni dei rotori («A, A, B»
   invece di «AAB», che una voce legge come una parola) e per i tag audio di ElevenLabs, che a schermo
@@ -59,7 +66,7 @@ usare, fermati e chiedilo a Marco.
 **Passi**
 
 1. **Testo.** Una o due frasi per passo, scritte per essere ascoltate: frasi brevi, soggetto
-   esplicito (`scrittura-parlata.md` §1). Durata totale fra 60 e 120 secondi.
+   esplicito (`scrittura-parlata.md` §1). Durata totale fra 60 e 140 secondi (il tetto era 120: lo ha alzato Marco il 2026-11-09, D17).
 2. **Fatti.** Ogni fatto storico o meccanico rimanda a una voce di `fonti.yaml`, con un campo
    `fonti` nel passo. In particolare l’ordine «prima avanza il rotore, poi si chiude il circuito» e
    la lampada accesa finché il tasto resta premuto: controllali su `crypto-museum-funzionamento`.
@@ -83,7 +90,7 @@ exit 0.
 pnpm test
 ```
 con un test che controlla che ogni passo abbia il suo audio in `durate.json` con l’hash del testo
-corrente, che la durata totale stia fra 60 e 120 secondi e che gli audio pesino insieme meno di
+corrente, che la durata totale stia fra 60 e 140 secondi e che gli audio pesino insieme meno di
 1,5 MB.
 
 ```bash
